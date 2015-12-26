@@ -19,12 +19,13 @@ import com.gmail.trentech.pjp.ConfigManager;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.Resource;
 import com.gmail.trentech.pjp.events.TeleportEvent;
+import com.gmail.trentech.pjp.portals.Plate;
 
 import ninja.leaping.configurate.ConfigurationNode;
 
 public class PlateEventManager {
 
-	public static HashMap<Player, Location<World>> creators = new HashMap<>();
+	public static HashMap<Player, Plate> creators = new HashMap<>();
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Modify event, @First Player player) {
@@ -50,18 +51,24 @@ public class PlateEventManager {
 			
 			if(config.getNode("Plates", locationName, "World").getString() == null){
 				return;
-			}
-			
+			}			
 			String worldName = config.getNode("Plates", locationName, "World").getString();
-			int x = config.getNode("Plates", locationName, "X").getInt();
-			int y = config.getNode("Plates", locationName, "Y").getInt();
-			int z = config.getNode("Plates", locationName, "Z").getInt();
 			
 			if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
 				player.sendMessage(Texts.of(TextColors.DARK_RED, worldName, " does not exist"));
 				return;
 			}
 			World world = Main.getGame().getServer().getWorld(worldName).get();
+			
+			int x = world.getSpawnLocation().getBlockX();
+			int y = world.getSpawnLocation().getBlockY();
+			int z = world.getSpawnLocation().getBlockZ();
+			
+			if(config.getNode("Plates", locationName, "X").getString() != null && config.getNode("Plates", locationName, "Y").getString() != null && config.getNode("Plates", locationName, "Z").getString() != null){
+				x = config.getNode("Plates", locationName, "X").getInt();
+				y = config.getNode("Plates", locationName, "Y").getInt();
+				z = config.getNode("Plates", locationName, "Z").getInt();
+			}
 			
 			if(!player.hasPermission("pjp.plate.interact." + worldName)){
 				player.sendMessage(Texts.of(TextColors.DARK_RED, "you do not have permission"));
@@ -124,12 +131,14 @@ public class PlateEventManager {
             ConfigManager loader = new ConfigManager("portals.conf");
             ConfigurationNode config = loader.getConfig();
 
-            Location<World> destination = creators.get(player);
+            Plate plate = creators.get(player);
             
-            config.getNode("Plates", locationName, "World").setValue(destination.getExtent().getName());
-            config.getNode("Plates", locationName, "X").setValue(destination.getBlockX());
-            config.getNode("Plates", locationName, "Y").setValue(destination.getBlockY());
-            config.getNode("Plates", locationName, "Z").setValue(destination.getBlockZ());
+            config.getNode("Plates", locationName, "World").setValue(plate.getLocation().getExtent().getName());
+            if(!plate.isSpawn()){
+                config.getNode("Plates", locationName, "X").setValue(plate.getLocation().getBlockX());
+                config.getNode("Plates", locationName, "Y").setValue(plate.getLocation().getBlockY());
+                config.getNode("Plates", locationName, "Z").setValue(plate.getLocation().getBlockZ());
+            }
 
             loader.save();
           

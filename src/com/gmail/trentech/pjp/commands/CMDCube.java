@@ -39,9 +39,11 @@ public class CMDCube implements CommandExecutor {
 		World world = Main.getGame().getServer().getWorld(worldName).get();
 		
 		Location<World> location;
+		boolean spawn = false;
 		
 		if(!args.hasAny("coords")) {
 			location = world.getSpawnLocation();
+			spawn = true;
 		}else{
 			location = Resource.getLocation(world, args.<String>getOne("coords").get());
 		}
@@ -51,7 +53,7 @@ public class CMDCube implements CommandExecutor {
 			return CommandResult.empty();
 		}
 
-		CuboidBuilder builder = new CuboidBuilder(location);
+		CuboidBuilder builder = new CuboidBuilder(location, spawn);
 
 		CuboidBuilder.getActiveBuilders().put(player, builder);
 

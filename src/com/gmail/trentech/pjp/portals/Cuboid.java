@@ -21,16 +21,18 @@ public class Cuboid implements Iterable<BlockSnapshot> {
 
 	protected final String worldName;
 	protected final Location<World> destination;
+	protected final boolean spawn;
 
 	protected BlockState block = BlockState.builder().blockType(BlockTypes.STONE).build();
 	protected final int x1, y1, z1;
 	protected final int x2, y2, z2;
 
-	public Cuboid(BlockState block, Location<World> destination, Location<World> loc1, Location<World> loc2) {
+	public Cuboid(BlockState block, Location<World> destination, Location<World> loc1, Location<World> loc2, boolean spawn) {
 		if (!loc1.getExtent().equals(loc2.getExtent())){
 			throw new IllegalArgumentException("Locations must be on the same world");
 		}
 		this.destination = destination;
+		this.spawn = spawn;
 
 		if(block != null){
 			this.block = block;
@@ -45,12 +47,13 @@ public class Cuboid implements Iterable<BlockSnapshot> {
 		this.z2 = Math.max(loc1.getBlockZ(), loc2.getBlockZ());
 	}
 	
-	public Cuboid(BlockState block, String worldName, Location<World> destination, int x1, int y1, int z1, int x2, int y2, int z2) {
+	public Cuboid(BlockState block, String worldName, Location<World> destination, int x1, int y1, int z1, int x2, int y2, int z2, boolean spawn) {
 		if(block != null){
 			this.block = block;
 		}
 		this.worldName = worldName;
 		this.destination = destination;
+		this.spawn = spawn;
 		this.x1 = Math.min(x1, x2);
 		this.y1 = Math.min(y1, y2);
 		this.z1 = Math.min(z1, z2);
@@ -156,9 +159,12 @@ public class Cuboid implements Iterable<BlockSnapshot> {
 		
         configCuboids.getNode("Cuboids", uuid, "Locations").setValue(locations);
         configCuboids.getNode("Cuboids", uuid, "World").setValue(destination.getExtent().getName());
-        configCuboids.getNode("Cuboids", uuid, "X").setValue(destination.getBlockX());
-        configCuboids.getNode("Cuboids", uuid, "Y").setValue(destination.getBlockY());
-        configCuboids.getNode("Cuboids", uuid, "Z").setValue(destination.getBlockZ());
+        
+        if(!spawn){
+            configCuboids.getNode("Cuboids", uuid, "X").setValue(destination.getBlockX());
+            configCuboids.getNode("Cuboids", uuid, "Y").setValue(destination.getBlockY());
+            configCuboids.getNode("Cuboids", uuid, "Z").setValue(destination.getBlockZ());
+        }
 
         loaderCuboids.save();
 	}

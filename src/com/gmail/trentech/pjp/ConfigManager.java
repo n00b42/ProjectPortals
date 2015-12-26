@@ -129,16 +129,24 @@ public class ConfigManager {
 					if(!loc.equalsIgnoreCase(locationName)){						
 						continue;
 					}
-					
+
 					String worldName = config.getNode("Cuboids", uuid, "World").getString();
-					int x = config.getNode("Cuboids", uuid, "X").getInt();
-					int y = config.getNode("Cuboids", uuid, "Y").getInt();
-					int z = config.getNode("Cuboids", uuid, "Z").getInt();
 					
 					if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
 						continue;
 					}
+					World world = Main.getGame().getServer().getWorld(worldName).get();
 					
+					int x = world.getSpawnLocation().getBlockX();
+					int y = world.getSpawnLocation().getBlockY();
+					int z = world.getSpawnLocation().getBlockZ();
+					
+					if(config.getNode("Cuboids", uuid, "X").getString() != null && config.getNode("Cuboids", uuid, "Y").getString() != null && config.getNode("Cuboids", uuid, "Z").getString() != null){
+						x = config.getNode("Cuboids", uuid, "X").getInt();
+						y = config.getNode("Cuboids", uuid, "Y").getInt();
+						z = config.getNode("Cuboids", uuid, "Z").getInt();
+					}
+
 					return Main.getGame().getServer().getWorld(worldName).get().getLocation(x, y, z);
 				}
 			}

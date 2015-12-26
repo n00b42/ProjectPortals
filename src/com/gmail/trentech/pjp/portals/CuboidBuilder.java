@@ -13,11 +13,14 @@ public class CuboidBuilder {
 	private Location<World> destination;
 	private Location<World> location;
 	
+	private boolean spawn = false;
+	
 	private static HashMap<Player, CuboidBuilder> activeBuilders = new HashMap<>();
 	private static List<Player> creators = new ArrayList<>();
 
-	public CuboidBuilder(Location<World> destination) {
+	public CuboidBuilder(Location<World> destination, boolean spawn) {
 		this.destination = destination;
+		this.spawn = spawn;
 	}
 	
 	public CuboidBuilder() {
@@ -42,6 +45,10 @@ public class CuboidBuilder {
 
 	public static List<Player> getCreators() {
 		return creators;
+	}
+
+	public boolean isSpawn() {
+		return spawn;
 	}
 }
 

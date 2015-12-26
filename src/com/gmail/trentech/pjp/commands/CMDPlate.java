@@ -14,6 +14,7 @@ import org.spongepowered.api.world.World;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.Resource;
 import com.gmail.trentech.pjp.listeners.PlateEventManager;
+import com.gmail.trentech.pjp.portals.Plate;
 
 public class CMDPlate implements CommandExecutor {
 
@@ -38,9 +39,11 @@ public class CMDPlate implements CommandExecutor {
 		World world = Main.getGame().getServer().getWorld(worldName).get();
 		
 		Location<World> location;
+		boolean spawn = false;
 		
 		if(!args.hasAny("coords")) {
 			location = world.getSpawnLocation();
+			spawn = true;
 		}else{
 			location = Resource.getLocation(world, args.<String>getOne("coords").get());
 		}
@@ -50,7 +53,7 @@ public class CMDPlate implements CommandExecutor {
 			return CommandResult.empty();
 		}
 		
-		PlateEventManager.creators.put(player, location);
+		PlateEventManager.creators.put(player, new Plate(location, spawn));
 		
 		player.sendMessage(Texts.of(TextColors.DARK_GREEN, "Place pressure plate to create presure plate portal"));
 

@@ -19,12 +19,13 @@ import com.gmail.trentech.pjp.ConfigManager;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.Resource;
 import com.gmail.trentech.pjp.events.TeleportEvent;
+import com.gmail.trentech.pjp.portals.Button;
 
 import ninja.leaping.configurate.ConfigurationNode;
 
 public class ButtonEventManager {
 
-	public static HashMap<Player, Location<World>> creators = new HashMap<>();
+	public static HashMap<Player, Button> creators = new HashMap<>();
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Modify event, @First Player player) {
@@ -51,11 +52,7 @@ public class ButtonEventManager {
 			if(config.getNode("Buttons", locationName, "World").getString() == null){
 				return;
 			}
-			
 			String worldName = config.getNode("Buttons", locationName, "World").getString();
-			int x = config.getNode("Buttons", locationName, "X").getInt();
-			int y = config.getNode("Buttons", locationName, "Y").getInt();
-			int z = config.getNode("Buttons", locationName, "Z").getInt();
 			
 			if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
 				player.sendMessage(Texts.of(TextColors.DARK_RED, worldName, " does not exist"));
@@ -63,6 +60,16 @@ public class ButtonEventManager {
 			}
 			World world = Main.getGame().getServer().getWorld(worldName).get();
 			
+			int x = world.getSpawnLocation().getBlockX();
+			int y = world.getSpawnLocation().getBlockY();
+			int z = world.getSpawnLocation().getBlockZ();
+			
+			if(config.getNode("Buttons", locationName, "X").getString() != null && config.getNode("Buttons", locationName, "Y").getString() != null && config.getNode("Buttons", locationName, "Z").getString() != null){
+				x = config.getNode("Buttons", locationName, "X").getInt();
+				y = config.getNode("Buttons", locationName, "Y").getInt();
+				z = config.getNode("Buttons", locationName, "Z").getInt();
+			}
+
 			if(!player.hasPermission("pjw.button.interact." + worldName)){
 				player.sendMessage(Texts.of(TextColors.DARK_RED, "you do not have permission"));
 				return;
@@ -124,12 +131,14 @@ public class ButtonEventManager {
             ConfigManager loader = new ConfigManager("portals.conf");
             ConfigurationNode config = loader.getConfig();
 
-            Location<World> destination = creators.get(player);
+            Button button = creators.get(player);
             
-            config.getNode("Buttons", locationName, "World").setValue(destination.getExtent().getName());
-            config.getNode("Buttons", locationName, "X").setValue(destination.getBlockX());
-            config.getNode("Buttons", locationName, "Y").setValue(destination.getBlockY());
-            config.getNode("Buttons", locationName, "Z").setValue(destination.getBlockZ());
+            config.getNode("Buttons", locationName, "World").setValue(button.getLocation().getExtent().getName());
+            if(!button.isSpawn()){
+                config.getNode("Buttons", locationName, "X").setValue(button.getLocation().getBlockX());
+                config.getNode("Buttons", locationName, "Y").setValue(button.getLocation().getBlockY());
+                config.getNode("Buttons", locationName, "Z").setValue(button.getLocation().getBlockZ());
+            }
 
             loader.save();
             

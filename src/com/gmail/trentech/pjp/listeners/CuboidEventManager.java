@@ -153,7 +153,7 @@ public class CuboidEventManager {
 			
 			player.sendMessage(Texts.of(TextColors.DARK_GREEN, "Starting point selected"));
 		}else{
-			Cuboid Cuboid = new Cuboid(event.getTargetBlock().getState(), builder.getDestination(), builder.getLocation(), event.getTargetBlock().getLocation().get());
+			Cuboid Cuboid = new Cuboid(event.getTargetBlock().getState(), builder.getDestination(), builder.getLocation(), event.getTargetBlock().getLocation().get(), builder.isSpawn());
 
 			boolean CuboidConstructEvent = Main.getGame().getEventManager().post(new CuboidConstructEvent(Cuboid.getLocations(), Cause.of(player)));
 			if(!CuboidConstructEvent) {
