@@ -146,12 +146,14 @@ public class CuboidEventManager {
 				
                 player.sendMessage(Texts.of(TextColors.DARK_GREEN, "Cuboid has been removed"));
         	}
+        	event.setCancelled(true);
 		}else if(builder.getLocation() == null){
 			builder.setLocation(event.getTargetBlock().getLocation().get());
 			
 			CuboidBuilder.getActiveBuilders().put(player, builder);
 			
 			player.sendMessage(Texts.of(TextColors.DARK_GREEN, "Starting point selected"));
+			event.setCancelled(true);
 		}else{
 			Cuboid Cuboid = new Cuboid(event.getTargetBlock().getState(), builder.getDestination(), builder.getLocation(), event.getTargetBlock().getLocation().get(), builder.isSpawn());
 
@@ -159,6 +161,7 @@ public class CuboidEventManager {
 			if(!CuboidConstructEvent) {
 				Cuboid.build();
 			}
+			event.setCancelled(true);
 		}
 	}
 }

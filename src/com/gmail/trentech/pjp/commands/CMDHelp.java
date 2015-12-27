@@ -29,21 +29,25 @@ public class CMDHelp implements CommandExecutor {
 		}
 		String command = args.<String>getOne("command").get();
 		String description = null;
+		String syntax = null;
 		String example = null;
 		
 		switch(command.toLowerCase()){
 			case "button":
 				description = " Use this command to create a button that will teleport you to other worlds";
+				syntax = " /portal button <world> [x] [y] [z]";
 				example = " /portal button MyWorld\n"
 						+ " /portal button MyWorld -100 65 254";
 				break;
 			case "plate":
 				description = " Use this command to create a pressure plate that will teleport you to other worlds";
+				syntax = " /portal plate <world> [x] [y] [z]";
 				example = " /portal plate MyWorld\n"
 						+ " /portal plate MyWorld -100 65 254";
 				break;
 			case "cube":
-				description = " Create cuboid portal to another dimension. No arguments allow for deleting portals.";
+				description = " Create cuboid portal to another dimension, or specified location. No arguments allow for deleting portals.";
+				syntax = " /portal cube <world> [x] [y] [z]";
 				example = " /portal cube MyWorld\n"
 						+ " /portal cube MyWorld -100 65 254\n"
 						+ " /portal cube show";
@@ -53,11 +57,11 @@ public class CMDHelp implements CommandExecutor {
 				return CommandResult.empty();
 		}
 		
-		help(command, description, example).sendTo(src);
+		help(command, description, syntax, example).sendTo(src);
 		return CommandResult.success();
 	}
 	
-	private PaginationBuilder help(String command, String description, String example){
+	private PaginationBuilder help(String command, String description, String syntax, String example){
 		PaginationBuilder pages = Main.getGame().getServiceManager().provide(PaginationService.class).get().builder();
 
 		pages.title(Texts.builder().color(TextColors.DARK_GREEN).append(Texts.of(TextColors.AQUA, command)).build());
@@ -66,6 +70,8 @@ public class CMDHelp implements CommandExecutor {
 
 		list.add(Texts.of(TextColors.AQUA, "Description:"));
 		list.add(Texts.of(TextColors.GREEN, description));
+		list.add(Texts.of(TextColors.AQUA, "Syntax:"));
+		list.add(Texts.of(TextColors.GREEN, syntax));
 		list.add(Texts.of(TextColors.AQUA, "Example:"));
 		list.add(Texts.of(TextColors.GREEN,  example, TextColors.DARK_GREEN));
 		

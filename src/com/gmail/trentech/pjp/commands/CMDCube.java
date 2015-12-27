@@ -49,7 +49,7 @@ public class CMDCube implements CommandExecutor {
 		}
 		
 		if(location == null){
-			src.sendMessage(Texts.of(TextColors.YELLOW, "/portal plate <world> [x] [y] [z]"));
+			src.sendMessage(Texts.of(TextColors.YELLOW, "/portal cube <world> [x] [y] [z]"));
 			return CommandResult.empty();
 		}
 

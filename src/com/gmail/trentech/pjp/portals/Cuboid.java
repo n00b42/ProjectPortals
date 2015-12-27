@@ -144,6 +144,9 @@ public class Cuboid implements Iterable<BlockSnapshot> {
         	if(config.getNode("Options", "Cube", "Replace-Frame").getBoolean()){	
             	if(location.getBlockType() != BlockTypes.AIR){
             		location.setBlock(block);
+            	}else{
+            		//BlockState block = BlockState.builder().blockType(BlockTypes.WATER).build();
+            		//location.setBlock(block);
             	}
         	}
         	
