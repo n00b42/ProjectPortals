@@ -1,6 +1,10 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
+version="0.1.2"
+group="com.gmail.trentech"
+archivesBaseName="ProjectWorlds"
+
 repositories {
     mavenCentral()
     maven {
