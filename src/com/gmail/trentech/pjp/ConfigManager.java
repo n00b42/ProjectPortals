@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -69,6 +71,9 @@ public class ConfigManager {
 			if(config.getNode("Options", "Cube", "Replace-Frame").getString() == null) {
 				config.getNode("Options", "Cube", "Replace-Frame").setValue(true);
 			}
+			if(config.getNode("Options", "Cube", "Fill").getString() == null) {
+				config.getNode("Options", "Cube", "Fill").setValue(true).setComment("Fill space in cube with water");
+			}
 			if(config.getNode("Options", "Show-Particles").getString() == null) {
 				config.getNode("Options", "Show-Particles").setValue(true).setComment("Display particle effects on portal creation and teleporting");
 			}
@@ -105,15 +110,28 @@ public class ConfigManager {
 	public boolean removeCuboidLocation(String locationName){
 		for(Entry<Object, ? extends ConfigurationNode> node : config.getNode("Cuboids").getChildrenMap().entrySet()){
 			String uuid = node.getKey().toString();
+			
 			List<String> list = config.getNode("Cuboids", uuid, "Locations").getChildrenList().stream().map(ConfigurationNode::getString).collect(Collectors.toList());
-	    	
+
+	    	if(!list.contains(locationName)){
+	    		continue;
+	    	}
+
 			for(String loc : list){
-				if(loc.equalsIgnoreCase(locationName)){
-					config.getNode("Cuboids", uuid).setValue(null);
-					save();
-					return true;
-				}
+	        	String[] info = loc.split("\\.");
+
+	        	Location<World> location = Main.getGame().getServer().getWorld(info[0]).get().getLocation(Integer.parseInt(info[1]), Integer.parseInt(info[2]), Integer.parseInt(info[3]));
+
+            	if(location.getBlockType().equals(BlockTypes.FLOWING_WATER)){
+            		BlockState block = BlockState.builder().blockType(BlockTypes.AIR).build();
+            		location.setBlock(block);
+            	}
 			}
+			
+			config.getNode("Cuboids", uuid).setValue(null);
+			save();
+			
+			return true;
 		}
 		return false;
 	}
@@ -124,32 +142,28 @@ public class ConfigManager {
 
 	    	List<String> list = config.getNode("Cuboids", uuid, "Locations").getChildrenList().stream().map(ConfigurationNode::getString).collect(Collectors.toList());
 
-			if(list != null){
-				for(String loc : list){
-					if(!loc.equalsIgnoreCase(locationName)){						
-						continue;
-					}
-
-					String worldName = config.getNode("Cuboids", uuid, "World").getString();
-					
-					if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
-						continue;
-					}
-					World world = Main.getGame().getServer().getWorld(worldName).get();
-					
-					int x = world.getSpawnLocation().getBlockX();
-					int y = world.getSpawnLocation().getBlockY();
-					int z = world.getSpawnLocation().getBlockZ();
-					
-					if(config.getNode("Cuboids", uuid, "X").getString() != null && config.getNode("Cuboids", uuid, "Y").getString() != null && config.getNode("Cuboids", uuid, "Z").getString() != null){
-						x = config.getNode("Cuboids", uuid, "X").getInt();
-						y = config.getNode("Cuboids", uuid, "Y").getInt();
-						z = config.getNode("Cuboids", uuid, "Z").getInt();
-					}
-
-					return Main.getGame().getServer().getWorld(worldName).get().getLocation(x, y, z);
-				}
+	    	if(!list.contains(locationName)){
+	    		continue;
+	    	}
+	    	
+			String worldName = config.getNode("Cuboids", uuid, "World").getString();
+			
+			if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
+				continue;
 			}
+			World world = Main.getGame().getServer().getWorld(worldName).get();
+			
+			int x = world.getSpawnLocation().getBlockX();
+			int y = world.getSpawnLocation().getBlockY();
+			int z = world.getSpawnLocation().getBlockZ();
+			
+			if(config.getNode("Cuboids", uuid, "X").getString() != null && config.getNode("Cuboids", uuid, "Y").getString() != null && config.getNode("Cuboids", uuid, "Z").getString() != null){
+				x = config.getNode("Cuboids", uuid, "X").getInt();
+				y = config.getNode("Cuboids", uuid, "Y").getInt();
+				z = config.getNode("Cuboids", uuid, "Z").getInt();
+			}
+
+			return Main.getGame().getServer().getWorld(worldName).get().getLocation(x, y, z);
 		}
 		return null;
 	}

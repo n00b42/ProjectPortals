@@ -1,7 +1,12 @@
 package com.gmail.trentech.pjp.listeners;
 
+import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.cause.entity.damage.source.BlockDamageSource;
+import org.spongepowered.api.event.entity.DamageEntityEvent;
+import org.spongepowered.api.event.entity.IgniteEntityEvent;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.action.TextActions;
@@ -39,4 +44,50 @@ public class EventManager {
 
 		player.sendTitle(Titles.of(Texts.of(TextColors.DARK_GREEN, dest.getExtent().getName()), Texts.of(TextColors.AQUA, "x: ", dest.getExtent().getSpawnLocation().getBlockX(), ", y: ", dest.getExtent().getSpawnLocation().getBlockY(),", z: ", dest.getExtent().getSpawnLocation().getBlockZ())));
 	}
+	
+    @Listener
+    public void onDamageEntityEvent(DamageEntityEvent event, @First BlockDamageSource damageSource) {
+    	if(!(event.getTargetEntity() instanceof Player)) {
+    		return;
+    	}
+
+        BlockSnapshot block = damageSource.getBlockSnapshot();
+        
+        if(!block.getState().getType().equals(BlockTypes.FLOWING_LAVA)){
+        	return;
+        }
+        
+        Location<World> location = block.getLocation().get();
+        
+		String locationName = location.getExtent().getName() + "." + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
+
+		if(new ConfigManager("portals.conf").getCuboid(locationName) == null){
+			return;
+		}
+		
+		event.setCancelled(true);
+    }
+    
+    @Listener
+    public void onIgniteEntityEvent(IgniteEntityEvent event, @First BlockDamageSource damageSource) {
+    	if(!(event.getTargetEntity() instanceof Player)) {
+    		return;
+    	}
+
+        BlockSnapshot block = damageSource.getBlockSnapshot();
+        
+        if(!block.getState().getType().equals(BlockTypes.FLOWING_LAVA)){
+        	return;
+        }
+        
+        Location<World> location = block.getLocation().get();
+        
+		String locationName = location.getExtent().getName() + "." + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
+
+		if(new ConfigManager("portals.conf").getCuboid(locationName) == null){
+			return;
+		}
+		
+		event.setCancelled(true);
+    }
 }

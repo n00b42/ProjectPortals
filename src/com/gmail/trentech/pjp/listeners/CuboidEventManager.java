@@ -1,6 +1,10 @@
 package com.gmail.trentech.pjp.listeners;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
@@ -11,6 +15,7 @@ import org.spongepowered.api.event.entity.DisplaceEntityEvent;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -54,6 +59,34 @@ public class CuboidEventManager {
         player.sendMessage(Texts.of(TextColors.DARK_GREEN, "New cube portal created"));
 	}
 	
+	@Listener
+	public void onChangeBlockEvent(ChangeBlockEvent.Post event){
+		ConfigManager loader = new ConfigManager("portals.conf");
+
+		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
+			if(!transaction.getOriginal().getState().getType().equals(BlockTypes.FLOWING_WATER)){
+				continue;
+			}
+			
+			List<Location<World>> list = new ArrayList<>();
+			
+			list.add(transaction.getOriginal().getLocation().get().getRelative(Direction.NORTH));
+			list.add(transaction.getOriginal().getLocation().get().getRelative(Direction.SOUTH));
+			list.add(transaction.getOriginal().getLocation().get().getRelative(Direction.EAST));
+			list.add(transaction.getOriginal().getLocation().get().getRelative(Direction.WEST));
+			list.add(transaction.getOriginal().getLocation().get().getRelative(Direction.UP));
+
+			for(Location<World> location : list){
+				String locationName = location.getExtent().getName() + "." + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
+
+				if(loader.getCuboid(locationName) == null){
+					continue;
+				}
+				event.setCancelled(true);
+			}
+		}
+	}
+			
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Place event, @First Player player) {
 		if(CuboidBuilder.getCreators().contains(player)){
