@@ -35,19 +35,22 @@ public class CMDHelp implements CommandExecutor {
 		switch(command.toLowerCase()){
 			case "button":
 				description = " Use this command to create a button that will teleport you to other worlds";
-				syntax = " /portal button <world> [x] [y] [z]";
+				syntax = " /portal button <world> [x] [y] [z]\n"
+						+ " /p b <world> [x] [y] [z]";
 				example = " /portal button MyWorld\n"
 						+ " /portal button MyWorld -100 65 254";
 				break;
 			case "plate":
 				description = " Use this command to create a pressure plate that will teleport you to other worlds";
-				syntax = " /portal plate <world> [x] [y] [z]";
+				syntax = " /portal plate <world> [x] [y] [z]\n"
+						+ " /p p <world> [x] [y] [z]";
 				example = " /portal plate MyWorld\n"
 						+ " /portal plate MyWorld -100 65 254";
 				break;
 			case "cube":
 				description = " Create cuboid portal to another dimension, or specified location. No arguments allow for deleting portals.";
-				syntax = " /portal cube <world> [x] [y] [z]";
+				syntax = " /portal cube <world> [x] [y] [z]\n"
+						+ " /p c <world> [x] [y] [z]";;
 				example = " /portal cube MyWorld\n"
 						+ " /portal cube MyWorld -100 65 254\n"
 						+ " /portal cube show";
