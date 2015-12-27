@@ -70,7 +70,7 @@ public class ButtonEventManager {
 				z = config.getNode("Buttons", locationName, "Z").getInt();
 			}
 
-			if(!player.hasPermission("pjw.button.interact." + worldName)){
+			if(!player.hasPermission("pjp.button.interact." + worldName)){
 				player.sendMessage(Texts.of(TextColors.DARK_RED, "you do not have permission"));
 				return;
 			}
@@ -97,7 +97,7 @@ public class ButtonEventManager {
 				continue;
 			}
 			
-			if(!player.hasPermission("pjw.button.break")){
+			if(!player.hasPermission("pjp.button.break")){
 				player.sendMessage(Texts.of(TextColors.DARK_RED, "you do not have permission"));
 				event.setCancelled(true);
 			}else{
@@ -121,7 +121,7 @@ public class ButtonEventManager {
 			
 			Location<World> location = transaction.getFinal().getLocation().get();
 
-			if(!player.hasPermission("pjw.button.place." + location.getExtent().getName())){
+			if(!player.hasPermission("pjp.button.place." + location.getExtent().getName())){
 	        	player.sendMessage(Texts.of(TextColors.DARK_RED, "You do not have permission to create teleport buttons in this world"));
 	        	return;
 			}

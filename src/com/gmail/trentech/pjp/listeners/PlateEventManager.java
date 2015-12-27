@@ -121,7 +121,7 @@ public class PlateEventManager {
 			
 			Location<World> location = transaction.getFinal().getLocation().get();
 			
-			if(!player.hasPermission("pjp.button.place." + location.getExtent().getName())){
+			if(!player.hasPermission("pjp.plate.place." + location.getExtent().getName())){
 	        	player.sendMessage(Texts.of(TextColors.DARK_RED, "You do not have permission to create teleport pressure playes in this world"));
 	        	return;
 			}

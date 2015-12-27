@@ -24,10 +24,6 @@ public class EventManager {
 		Location<World> src = event.getSrc();
 		Location<World> dest = event.getDest();
 
-		if(!player.hasPermission("pjw.worlds." + dest.getExtent().getName())){
-			player.sendMessage(Texts.of(TextColors.DARK_RED, "You do not have permission to travel to ", dest.getExtent().getName()));
-			return;
-		}
 		if(!player.setLocationSafely(dest)){
 			CMDTeleportUnSafe.players.put(player, dest);
 			player.sendMessage(Texts.builder().color(TextColors.DARK_RED).append(Texts.of("Unsafe spawn point detected. Teleport anyway? ")).onClick(TextActions.runCommand("/tu")).append(Texts.of(TextColors.GOLD, TextStyles.UNDERLINE, "Click Here")).build());

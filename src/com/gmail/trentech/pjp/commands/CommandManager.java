@@ -44,14 +44,14 @@ public class CommandManager {
 
 	public CommandSpec cmdHelp = CommandSpec.builder()
 		    .description(Texts.of("I need help"))
-		    .permission("pjw.cmd.portal")
+		    .permission("pjp.cmd.portal")
 		    .arguments(GenericArguments.optional(GenericArguments.string(Texts.of("command"))))
 		    .executor(new CMDHelp())
 		    .build();
 	
 	public CommandSpec cmdPortal = CommandSpec.builder()
 		    .description(Texts.of("Portal base command"))
-		    .permission("pjw.cmd.world.portal")
+		    .permission("pjp.cmd.portal")
 		    .child(cmdCube, "cube", "c")
 		    .child(cmdButton, "button", "b")
 		    .child(cmdPlate, "plate", "p")
