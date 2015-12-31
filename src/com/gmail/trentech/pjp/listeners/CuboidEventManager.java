@@ -61,7 +61,7 @@ public class CuboidEventManager {
 	
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Post event){
-		ConfigManager loader = new ConfigManager("portals.conf");
+		ConfigManager configManager = new ConfigManager("portals.conf");
 
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			if(!transaction.getOriginal().getState().getType().equals(BlockTypes.FLOWING_WATER)){
@@ -79,7 +79,7 @@ public class CuboidEventManager {
 			for(Location<World> location : list){
 				String locationName = location.getExtent().getName() + "." + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 
-				if(loader.getCuboid(locationName) == null){
+				if(configManager.getCuboid(locationName) == null){
 					continue;
 				}
 				event.setCancelled(true);
@@ -94,13 +94,13 @@ public class CuboidEventManager {
 			return;
 		}
 
-		ConfigManager loader = new ConfigManager("portals.conf");
+		ConfigManager configManager = new ConfigManager("portals.conf");
 
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			Location<World> location = transaction.getFinal().getLocation().get();		
 			String locationName = location.getExtent().getName() + "." + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 
-			if(loader.getCuboid(locationName) == null){
+			if(configManager.getCuboid(locationName) == null){
 				continue;
 			}
 			
@@ -118,13 +118,13 @@ public class CuboidEventManager {
 			return;
 		}
 
-		ConfigManager loader = new ConfigManager("portals.conf");
+		ConfigManager configManager = new ConfigManager("portals.conf");
 
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			Location<World> location = transaction.getFinal().getLocation().get();		
 			String locationName = location.getExtent().getName() + "." + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 
-			if(loader.getCuboid(locationName) == null){
+			if(configManager.getCuboid(locationName) == null){
 				continue;
 			}
 			
@@ -142,15 +142,15 @@ public class CuboidEventManager {
 		}
 		Player player = (Player) event.getTargetEntity();
 		
-		ConfigManager loader = new ConfigManager("portals.conf");
+		ConfigManager configManager = new ConfigManager("portals.conf");
 
 		Location<World> location = player.getLocation();		
 		String locationName = location.getExtent().getName() + "." + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 
-		if(loader.getCuboid(locationName) == null){
+		if(configManager.getCuboid(locationName) == null){
 			return;
 		}		
-		Location<World> destination = loader.getCuboid(locationName);
+		Location<World> destination = configManager.getCuboid(locationName);
 		
 		if(!player.hasPermission("pjp.cube.interact." + destination.getExtent().getName())){
 			player.sendMessage(Texts.of(TextColors.DARK_RED, "you do not have permission"));

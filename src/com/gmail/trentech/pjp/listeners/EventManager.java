@@ -34,6 +34,7 @@ public class EventManager {
 			player.sendMessage(Texts.builder().color(TextColors.DARK_RED).append(Texts.of("Unsafe spawn point detected. Teleport anyway? ")).onClick(TextActions.runCommand("/tu")).append(Texts.of(TextColors.GOLD, TextStyles.UNDERLINE, "Click Here")).build());
 			return;
 		}
+		
 		if(new ConfigManager().getConfig().getNode("Options", "Show-Particles").getBoolean()){
 			Resource.spawnParticles(src, 0.5, true);
 			Resource.spawnParticles(src.getRelative(Direction.UP), 0.5, true);

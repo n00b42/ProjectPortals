@@ -157,19 +157,19 @@ public class Cuboid implements Iterable<BlockSnapshot> {
         
         String uuid = UUID.randomUUID().toString();
         
-        ConfigManager loaderCuboids = new ConfigManager("portals.conf");
-		ConfigurationNode configCuboids = loaderCuboids.getConfig();
+        ConfigManager configManager = new ConfigManager("portals.conf");
+		ConfigurationNode config = configManager.getConfig();
 		
-        configCuboids.getNode("Cuboids", uuid, "Locations").setValue(locations);
-        configCuboids.getNode("Cuboids", uuid, "World").setValue(destination.getExtent().getName());
+		config.getNode("Cuboids", uuid, "Locations").setValue(locations);
+		config.getNode("Cuboids", uuid, "World").setValue(destination.getExtent().getName());
         
         if(!spawn){
-            configCuboids.getNode("Cuboids", uuid, "X").setValue(destination.getBlockX());
-            configCuboids.getNode("Cuboids", uuid, "Y").setValue(destination.getBlockY());
-            configCuboids.getNode("Cuboids", uuid, "Z").setValue(destination.getBlockZ());
+        	config.getNode("Cuboids", uuid, "X").setValue(destination.getBlockX());
+        	config.getNode("Cuboids", uuid, "Y").setValue(destination.getBlockY());
+        	config.getNode("Cuboids", uuid, "Z").setValue(destination.getBlockZ());
         }
 
-        loaderCuboids.save();
+        configManager.save();
 	}
 
 }

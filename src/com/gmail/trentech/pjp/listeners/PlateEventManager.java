@@ -86,8 +86,8 @@ public class PlateEventManager {
 			return;
 		}
 
-		ConfigManager loader = new ConfigManager("portals.conf");
-		ConfigurationNode config = loader.getConfig();
+		ConfigManager configManager = new ConfigManager("portals.conf");
+		ConfigurationNode config = configManager.getConfig();
 		
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			Location<World> location = transaction.getFinal().getLocation().get();		
@@ -102,7 +102,7 @@ public class PlateEventManager {
 				event.setCancelled(true);
 			}else{
 				config.getNode("Plates", locationName).setValue(null);
-				loader.save();
+				configManager.save();
 				player.sendMessage(Texts.of(TextColors.DARK_GREEN, "Broke pressure plate portal"));
 			}
 		}
@@ -128,8 +128,8 @@ public class PlateEventManager {
 			
 			String locationName = location.getExtent().getName() + "." + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 
-            ConfigManager loader = new ConfigManager("portals.conf");
-            ConfigurationNode config = loader.getConfig();
+            ConfigManager configManager = new ConfigManager("portals.conf");
+            ConfigurationNode config = configManager.getConfig();
 
             Plate plate = creators.get(player);
             
@@ -140,7 +140,7 @@ public class PlateEventManager {
                 config.getNode("Plates", locationName, "Z").setValue(plate.getLocation().getBlockZ());
             }
 
-            loader.save();
+            configManager.save();
           
     		if(new ConfigManager().getConfig().getNode("Options", "Show-Particles").getBoolean()){
     			Resource.spawnParticles(location, 1.0, false);
