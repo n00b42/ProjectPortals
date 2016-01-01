@@ -16,7 +16,6 @@ import org.spongepowered.api.event.block.tileentity.ChangeSignEvent;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -34,24 +33,24 @@ public class SignEventManager {
 
 		ListValue<Text> lines = signData.getValue(Keys.SIGN_LINES).get();
 
-		Text portalSign = Texts.of("[Portal]");
+		Text portalSign = Text.of("[Portal]");
 		if(!lines.get(0).equals(portalSign)) {
 			return;
 		}
 
 		if(!player.hasPermission("pjp.sign.place." + player.getWorld().getName())) {
-			player.sendMessage(Texts.of(TextColors.DARK_RED, "You do not have permission to place portal signs in this world"));
+			player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to place portal signs in this world"));
 			event.setCancelled(true);
 			return;
 		}
 		
-		if(!Main.getGame().getServer().getWorld(Texts.toPlain(lines.get(1))).isPresent()){
-			player.sendMessage(Texts.of(TextColors.DARK_RED, Texts.toPlain(lines.get(1)), " does not exist"));
+		if(!Main.getGame().getServer().getWorld(lines.get(1).toPlain()).isPresent()){
+			player.sendMessage(Text.of(TextColors.DARK_RED, lines.get(1).toPlain(), " does not exist"));
 			event.setCancelled(true);
 			return;
 		}
 
-		lines.set(0, Texts.of(TextColors.DARK_BLUE, "[Portal]"));
+		lines.set(0, Text.of(TextColors.DARK_BLUE, "[Portal]"));
 
 		event.getText().set(lines);
 		
@@ -76,20 +75,20 @@ public class SignEventManager {
 
 		ListValue<Text> lines = signData.getValue(Keys.SIGN_LINES).get();
 
-		Text portalSign = Texts.of(TextColors.DARK_BLUE, "[Portal]");
+		Text portalSign = Text.of(TextColors.DARK_BLUE, "[Portal]");
 		if(!lines.get(0).equals(portalSign)) {
         	return;
 		}
 
-		if(!Main.getGame().getServer().getWorld(Texts.toPlain(lines.get(1))).isPresent()){
-			player.sendMessage(Texts.of(TextColors.DARK_RED, Texts.toPlain(lines.get(1)), " does not exist"));
+		if(!Main.getGame().getServer().getWorld(lines.get(1).toPlain()).isPresent()){
+			player.sendMessage(Text.of(TextColors.DARK_RED, lines.get(1).toPlain(), " does not exist"));
 			event.setCancelled(true);
 			return;
 		}		
-		World world = Main.getGame().getServer().getWorld(Texts.toPlain(lines.get(1))).get();
+		World world = Main.getGame().getServer().getWorld(lines.get(1).toPlain()).get();
 		
 		if(!player.hasPermission("pjp.sign.interact." + world.getName())) {
-			player.sendMessage(Texts.of(TextColors.DARK_RED, "You do not have permission to interact with portal signs"));
+			player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to interact with portal signs"));
 			event.setCancelled(true);
 			return;
 		}
@@ -126,13 +125,13 @@ public class SignEventManager {
 	    
 		ListValue<Text> lines = signData.getValue(Keys.SIGN_LINES).get();
 
-		Text kitSign = Texts.of(TextColors.DARK_BLUE, "[Portal]");
+		Text kitSign = Text.of(TextColors.DARK_BLUE, "[Portal]");
 		if(!lines.get(0).equals(kitSign)) {
         	return;
 		}
 
 		if(!player.hasPermission("pjp.sign.break")) {
-			player.sendMessage(Texts.of(TextColors.DARK_RED, "You do not have permission to break portal signs"));
+			player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to break portal signs"));
 			event.setCancelled(true);
 			return;
 		}

@@ -13,7 +13,7 @@ import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.entity.DisplaceEntityEvent;
 import org.spongepowered.api.event.filter.cause.First;
-import org.spongepowered.api.text.Texts;
+import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Location;
@@ -33,13 +33,13 @@ public class CuboidEventManager {
 	@Listener
 	public void onCuboidConstructEvent(CuboidConstructEvent event, @First Player player){
 		if(!player.hasPermission("pjp.cube.create." + player.getWorld().getName())){
-			player.sendMessage(Texts.of(TextColors.DARK_RED, "You do not have permission to create Cuboids in this world"));
+			player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to create Cuboids in this world"));
         	event.setCancelled(true);
         	return;
 		}
 		
         if(event.getLocations() == null){
-        	player.sendMessage(Texts.of(TextColors.DARK_RED, "Cuboids cannot over lap over Cuboids"));
+        	player.sendMessage(Text.of(TextColors.DARK_RED, "Cuboids cannot over lap over Cuboids"));
         	event.setCancelled(true);
         	return;
         }
@@ -48,7 +48,7 @@ public class CuboidEventManager {
         
         int size = config.getNode("Options", "Cube", "Size").getInt();
         if(event.getLocations().size() > size){
-        	player.sendMessage(Texts.of(TextColors.DARK_RED, "Cuboids cannot be larger than ", size, " blocks"));
+        	player.sendMessage(Text.of(TextColors.DARK_RED, "Cuboids cannot be larger than ", size, " blocks"));
         	event.setCancelled(true);
         	return;
         }
@@ -56,7 +56,7 @@ public class CuboidEventManager {
         CuboidBuilder.getActiveBuilders().remove(player);
         CuboidBuilder.getCreators().add(player);
         
-        player.sendMessage(Texts.of(TextColors.DARK_GREEN, "New cube portal created"));
+        player.sendMessage(Text.of(TextColors.DARK_GREEN, "New cube portal created"));
 	}
 	
 	@Listener
@@ -105,7 +105,7 @@ public class CuboidEventManager {
 			}
 			
 			if(!player.hasPermission("pjp.cube.place")){
-				player.sendMessage(Texts.of(TextColors.DARK_RED, "you do not have permission"));
+				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission"));
 				event.setCancelled(true);
 			}
 		}
@@ -129,7 +129,7 @@ public class CuboidEventManager {
 			}
 			
 			if(!player.hasPermission("pjp.cube.break")){
-				player.sendMessage(Texts.of(TextColors.DARK_RED, "you do not have permission"));
+				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission"));
 				event.setCancelled(true);
 			}
 		}
@@ -153,7 +153,7 @@ public class CuboidEventManager {
 		Location<World> destination = configManager.getCuboid(locationName);
 		
 		if(!player.hasPermission("pjp.cube.interact." + destination.getExtent().getName())){
-			player.sendMessage(Texts.of(TextColors.DARK_RED, "you do not have permission"));
+			player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission"));
 			return;
 		}
 		
@@ -177,7 +177,7 @@ public class CuboidEventManager {
         	if(loaderCuboids.removeCuboidLocation(locationName)){
 				CuboidBuilder.getActiveBuilders().remove(player);
 				
-                player.sendMessage(Texts.of(TextColors.DARK_GREEN, "Cuboid has been removed"));
+                player.sendMessage(Text.of(TextColors.DARK_GREEN, "Cuboid has been removed"));
         	}
         	event.setCancelled(true);
 		}else if(builder.getLocation() == null){
@@ -185,7 +185,7 @@ public class CuboidEventManager {
 			
 			CuboidBuilder.getActiveBuilders().put(player, builder);
 			
-			player.sendMessage(Texts.of(TextColors.DARK_GREEN, "Starting point selected"));
+			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Starting point selected"));
 			event.setCancelled(true);
 		}else{
 			Cuboid Cuboid = new Cuboid(event.getTargetBlock().getState(), builder.getDestination(), builder.getLocation(), event.getTargetBlock().getLocation().get(), builder.isSpawn());

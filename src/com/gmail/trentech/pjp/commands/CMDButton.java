@@ -6,7 +6,7 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.text.Texts;
+import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -21,19 +21,19 @@ public class CMDButton implements CommandExecutor {
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if(!(src instanceof Player)){
-			src.sendMessage(Texts.of(TextColors.DARK_RED, "Must be a player"));
+			src.sendMessage(Text.of(TextColors.DARK_RED, "Must be a player"));
 			return CommandResult.empty();
 		}
 		Player player = (Player) src;
 		
 		if(!args.hasAny("name")) {
-			src.sendMessage(Texts.of(TextColors.YELLOW, "/portal button <world> [x] [y] [z]"));
+			src.sendMessage(Text.of(TextColors.YELLOW, "/portal button <world> [x] [y] [z]"));
 			return CommandResult.empty();
 		}
 		String worldName = args.<String>getOne("name").get();
 
 		if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
-			src.sendMessage(Texts.of(TextColors.DARK_RED, "World ", worldName, " does not exist"));
+			src.sendMessage(Text.of(TextColors.DARK_RED, "World ", worldName, " does not exist"));
 			return CommandResult.empty();
 		}
 		World world = Main.getGame().getServer().getWorld(worldName).get();
@@ -49,13 +49,13 @@ public class CMDButton implements CommandExecutor {
 		}
 		
 		if(location == null){
-			src.sendMessage(Texts.of(TextColors.YELLOW, "/portal button <world> [x] [y] [z]"));
+			src.sendMessage(Text.of(TextColors.YELLOW, "/portal button <world> [x] [y] [z]"));
 			return CommandResult.empty();
 		}
 		
 		ButtonEventManager.creators.put(player, new Button(location, spawn));
 
-		player.sendMessage(Texts.of(TextColors.DARK_GREEN, "Place button to create button portal"));
+		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place button to create button portal"));
 
 		return CommandResult.success();
 	}

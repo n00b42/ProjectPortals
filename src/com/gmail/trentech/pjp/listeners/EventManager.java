@@ -8,11 +8,11 @@ import org.spongepowered.api.event.cause.entity.damage.source.BlockDamageSource;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
 import org.spongepowered.api.event.entity.IgniteEntityEvent;
 import org.spongepowered.api.event.filter.cause.First;
-import org.spongepowered.api.text.Texts;
+import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
-import org.spongepowered.api.text.title.Titles;
+import org.spongepowered.api.text.title.Title;
 import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -31,7 +31,7 @@ public class EventManager {
 
 		if(!player.setLocationSafely(dest)){
 			CMDTeleportUnSafe.players.put(player, dest);
-			player.sendMessage(Texts.builder().color(TextColors.DARK_RED).append(Texts.of("Unsafe spawn point detected. Teleport anyway? ")).onClick(TextActions.runCommand("/tu")).append(Texts.of(TextColors.GOLD, TextStyles.UNDERLINE, "Click Here")).build());
+			player.sendMessage(Text.builder().color(TextColors.DARK_RED).append(Text.of("Unsafe spawn point detected. Teleport anyway? ")).onClick(TextActions.runCommand("/tu")).append(Text.of(TextColors.GOLD, TextStyles.UNDERLINE, "Click Here")).build());
 			return;
 		}
 		
@@ -43,7 +43,7 @@ public class EventManager {
 			Resource.spawnParticles(dest.getRelative(Direction.UP), 1.0, false);
 		}
 
-		player.sendTitle(Titles.of(Texts.of(TextColors.DARK_GREEN, dest.getExtent().getName()), Texts.of(TextColors.AQUA, "x: ", dest.getExtent().getSpawnLocation().getBlockX(), ", y: ", dest.getExtent().getSpawnLocation().getBlockY(),", z: ", dest.getExtent().getSpawnLocation().getBlockZ())));
+		player.sendTitle(Title.of(Text.of(TextColors.DARK_GREEN, dest.getExtent().getName()), Text.of(TextColors.AQUA, "x: ", dest.getExtent().getSpawnLocation().getBlockX(), ", y: ", dest.getExtent().getSpawnLocation().getBlockY(),", z: ", dest.getExtent().getSpawnLocation().getBlockZ())));
 	}
 	
     @Listener

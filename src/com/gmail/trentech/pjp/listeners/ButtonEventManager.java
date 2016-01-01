@@ -10,7 +10,7 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.filter.cause.First;
-import org.spongepowered.api.text.Texts;
+import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -55,7 +55,7 @@ public class ButtonEventManager {
 			String worldName = config.getNode("Buttons", locationName, "World").getString();
 			
 			if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
-				player.sendMessage(Texts.of(TextColors.DARK_RED, worldName, " does not exist"));
+				player.sendMessage(Text.of(TextColors.DARK_RED, worldName, " does not exist"));
 				return;
 			}
 			World world = Main.getGame().getServer().getWorld(worldName).get();
@@ -71,7 +71,7 @@ public class ButtonEventManager {
 			}
 
 			if(!player.hasPermission("pjp.button.interact." + worldName)){
-				player.sendMessage(Texts.of(TextColors.DARK_RED, "you do not have permission"));
+				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission"));
 				return;
 			}
 
@@ -98,12 +98,12 @@ public class ButtonEventManager {
 			}
 			
 			if(!player.hasPermission("pjp.button.break")){
-				player.sendMessage(Texts.of(TextColors.DARK_RED, "you do not have permission"));
+				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission"));
 				event.setCancelled(true);
 			}else{
 				config.getNode("Buttons", locationName).setValue(null);
 				configManager.save();
-				player.sendMessage(Texts.of(TextColors.DARK_GREEN, "Broke button portal"));
+				player.sendMessage(Text.of(TextColors.DARK_GREEN, "Broke button portal"));
 			}
 		}
 	}
@@ -122,7 +122,7 @@ public class ButtonEventManager {
 			Location<World> location = transaction.getFinal().getLocation().get();
 
 			if(!player.hasPermission("pjp.button.place." + location.getExtent().getName())){
-	        	player.sendMessage(Texts.of(TextColors.DARK_RED, "You do not have permission to create teleport buttons in this world"));
+	        	player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to create teleport buttons in this world"));
 	        	return;
 			}
 
@@ -146,7 +146,7 @@ public class ButtonEventManager {
     			Resource.spawnParticles(location, 1.0, false);
     		}
 
-            player.sendMessage(Texts.of(TextColors.DARK_GREEN, "New button portal created"));
+            player.sendMessage(Text.of(TextColors.DARK_GREEN, "New button portal created"));
             
             creators.remove(player);
 		}
