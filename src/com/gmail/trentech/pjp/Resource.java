@@ -12,7 +12,7 @@ import com.flowpowered.math.vector.Vector3d;
 public class Resource {
 
 	public final static String NAME = "Project Portals";
-	public final static String VERSION = "0.1.4";
+	public final static String VERSION = "0.2.4";
 	public final static String ID = "Project Portals";
 
 	public static void spawnParticles(Location<World> location, double range, boolean sub){
