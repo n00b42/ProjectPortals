@@ -38,16 +38,17 @@ public class CuboidEventManager {
         	return;
 		}
 		
-        if(event.getLocations() == null){
+        if(!event.getLocations().isPresent()){
         	player.sendMessage(Text.of(TextColors.DARK_RED, "Cuboids cannot over lap over Cuboids"));
         	event.setCancelled(true);
         	return;
         }
+        List<String> locations = event.getLocations().get();
         
         ConfigurationNode config = new ConfigManager().getConfig();
         
         int size = config.getNode("Options", "Cube", "Size").getInt();
-        if(event.getLocations().size() > size){
+        if(locations.size() > size){
         	player.sendMessage(Text.of(TextColors.DARK_RED, "Cuboids cannot be larger than ", size, " blocks"));
         	event.setCancelled(true);
         	return;
@@ -170,7 +171,7 @@ public class CuboidEventManager {
 		
         ConfigManager loaderCuboids = new ConfigManager("portals.conf");
 
-		if(builder.getDestination() == null){
+		if(!builder.getDestination().isPresent()){
         	Location<World> location = event.getTargetBlock().getLocation().get();
         	String locationName = location.getExtent().getName() + "." + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
         	
@@ -180,7 +181,7 @@ public class CuboidEventManager {
                 player.sendMessage(Text.of(TextColors.DARK_GREEN, "Cuboid has been removed"));
         	}
         	event.setCancelled(true);
-		}else if(builder.getLocation() == null){
+		}else if(!builder.getLocation().isPresent()){
 			builder.setLocation(event.getTargetBlock().getLocation().get());
 			
 			CuboidBuilder.getActiveBuilders().put(player, builder);
@@ -188,7 +189,7 @@ public class CuboidEventManager {
 			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Starting point selected"));
 			event.setCancelled(true);
 		}else{
-			Cuboid Cuboid = new Cuboid(event.getTargetBlock().getState(), builder.getDestination(), builder.getLocation(), event.getTargetBlock().getLocation().get(), builder.isSpawn());
+			Cuboid Cuboid = new Cuboid(event.getTargetBlock().getState(), builder.getDestination().get(), builder.getLocation().get(), event.getTargetBlock().getLocation().get(), builder.isSpawn());
 
 			boolean CuboidConstructEvent = Main.getGame().getEventManager().post(new CuboidConstructEvent(Cuboid.getLocations(), Cause.of(player)));
 			if(!CuboidConstructEvent) {
