@@ -37,6 +37,7 @@ public class CMDRemove implements CommandExecutor {
 			return CommandResult.empty();
 		}
 		
+		config.getNode("Remaining").setValue(config.getNode("Remaining").getInt() + 1);
 		config.getNode("Homes").removeChild(homeName);
 
 		configManager.save();
