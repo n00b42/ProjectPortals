@@ -1,4 +1,4 @@
-package com.gmail.trentech.pjp.commands;
+package com.gmail.trentech.pjp.commands.portal;
 
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -13,9 +13,10 @@ import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.Resource;
-import com.gmail.trentech.pjp.portals.CuboidBuilder;
+import com.gmail.trentech.pjp.listeners.PlateEventManager;
+import com.gmail.trentech.pjp.portals.Plate;
 
-public class CMDCube implements CommandExecutor {
+public class CMDPlate implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
@@ -26,9 +27,8 @@ public class CMDCube implements CommandExecutor {
 		Player player = (Player) src;
 		
 		if(!args.hasAny("name")) {
-			src.sendMessage(Text.of(TextColors.DARK_GREEN, "Right click the Cuboid to remove"));
-			CuboidBuilder.getActiveBuilders().put((Player) src, new CuboidBuilder());
-			return CommandResult.success();
+			src.sendMessage(Text.of(TextColors.GOLD, "/portal plate <world> [x] [y] [z]"));
+			return CommandResult.empty();
 		}
 		String worldName = args.<String>getOne("name").get();
 
@@ -49,17 +49,14 @@ public class CMDCube implements CommandExecutor {
 		}
 		
 		if(location == null){
-			src.sendMessage(Text.of(TextColors.YELLOW, "/portal cube <world> [x] [y] [z]"));
+			src.sendMessage(Text.of(TextColors.YELLOW, "/portal plate <world> [x] [y] [z]"));
 			return CommandResult.empty();
 		}
-
-		CuboidBuilder builder = new CuboidBuilder(location, spawn);
-
-		CuboidBuilder.getActiveBuilders().put(player, builder);
-
-		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Right click starting point"));
+		
+		PlateEventManager.creators.put(player, new Plate(location, spawn));
+		
+		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place pressure plate to create presure plate portal"));
 
 		return CommandResult.success();
 	}
-
 }

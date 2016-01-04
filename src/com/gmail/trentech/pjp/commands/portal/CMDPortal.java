@@ -1,4 +1,4 @@
-package com.gmail.trentech.pjp.commands;
+package com.gmail.trentech.pjp.commands.portal;
 
 import java.util.ArrayList;
 import java.util.List;

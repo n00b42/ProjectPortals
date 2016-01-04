@@ -4,11 +4,103 @@ import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.text.Text;
 
+import com.gmail.trentech.pjp.commands.home.CMDHome;
+import com.gmail.trentech.pjp.commands.portal.CMDButton;
+import com.gmail.trentech.pjp.commands.portal.CMDCube;
+import com.gmail.trentech.pjp.commands.portal.CMDHelp;
+import com.gmail.trentech.pjp.commands.portal.CMDPlate;
+import com.gmail.trentech.pjp.commands.portal.CMDPortal;
+import com.gmail.trentech.pjp.commands.portal.CMDShow;
+import com.gmail.trentech.pjp.commands.warp.CMDWarp;
+
 public class CommandManager {
 	
 	public CommandSpec cmdTeleportUnSafe = CommandSpec.builder()
 		    .executor(new CMDTeleportUnSafe())
 		    .build();
+	
+	
+	public CommandSpec cmdWarpCreate = CommandSpec.builder()
+		    .description(Text.of("Create a new warp point"))
+		    .permission("pjp.cmd.warp.create")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))))
+		    .executor(new com.gmail.trentech.pjp.commands.warp.CMDCreate())
+		    .build();
+	
+	public CommandSpec cmdWarpRemove = CommandSpec.builder()
+		    .description(Text.of("Remove an existing warp point"))
+		    .permission("pjp.cmd.warp.remove")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))))
+		    .executor(new com.gmail.trentech.pjp.commands.warp.CMDRemove())
+		    .build();
+	
+	public CommandSpec cmdWarpList = CommandSpec.builder()
+		    .description(Text.of("List all available warp points"))
+		    .permission("pjp.cmd.warp.list")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))))
+		    .executor(new com.gmail.trentech.pjp.commands.warp.CMDList())
+		    .build();
+	
+	public CommandSpec cmdWarpHelp = CommandSpec.builder()
+		    .description(Text.of("I need help"))
+		    .permission("pjp.cmd.warp")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))))
+		    .executor(new com.gmail.trentech.pjp.commands.warp.CMDHelp())
+		    .build();
+	
+	public CommandSpec cmdWarp = CommandSpec.builder()
+		    .description(Text.of("Warp base command"))
+		    .permission("pjp.cmd.warp")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))),
+		    		GenericArguments.optional(GenericArguments.string(Text.of("player"))))
+		    .child(cmdWarpCreate, "create", "c")
+		    .child(cmdWarpRemove, "remove", "r")
+		    .child(cmdWarpList, "list", "l")
+		    .child(cmdWarpHelp, "help", "h")
+		    .executor(new CMDWarp())
+		    .build();
+	
+	
+	public CommandSpec cmdHomeCreate = CommandSpec.builder()
+		    .description(Text.of("Create a new home"))
+		    .permission("pjp.cmd.home.create")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))))
+		    .executor(new com.gmail.trentech.pjp.commands.home.CMDCreate())
+		    .build();
+	
+	public CommandSpec cmdHomeRemove = CommandSpec.builder()
+		    .description(Text.of("Remove an existing home"))
+		    .permission("pjp.cmd.home.remove")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))))
+		    .executor(new com.gmail.trentech.pjp.commands.home.CMDRemove())
+		    .build();
+	
+	public CommandSpec cmdHomeList = CommandSpec.builder()
+		    .description(Text.of("List all homes"))
+		    .permission("pjp.cmd.home.list")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))))
+		    .executor(new com.gmail.trentech.pjp.commands.home.CMDList())
+		    .build();
+	
+	public CommandSpec cmdHomeHelp = CommandSpec.builder()
+		    .description(Text.of("I need help"))
+		    .permission("pjp.cmd.home")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))))
+		    .executor(new com.gmail.trentech.pjp.commands.home.CMDHelp())
+		    .build();
+	
+	public CommandSpec cmdHome = CommandSpec.builder()
+		    .description(Text.of("Home base command"))
+		    .permission("pjp.cmd.home")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))),
+		    		GenericArguments.optional(GenericArguments.string(Text.of("player"))))
+		    .child(cmdHomeCreate, "create", "c")
+		    .child(cmdHomeRemove, "remove", "r")
+		    .child(cmdHomeList, "list", "l")
+		    .child(cmdHomeHelp, "help", "h")
+		    .executor(new CMDHome())
+		    .build();
+	
 	
 	public CommandSpec cmdShow = CommandSpec.builder()
 		    .description(Text.of("Fills all portal regions to make them temporarly visible"))

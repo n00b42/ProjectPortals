@@ -1,7 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
-version="0.1.4"
+version="0.2.5"
 group="com.gmail.trentech"
 archivesBaseName="ProjectPortals"
 
@@ -14,5 +14,5 @@ repositories {
 }
 
 dependencies {
-    compile "org.spongepowered:spongeapi:3.0.1-SNAPSHOT"
+    compile "org.spongepowered:spongeapi:3.1.0-SNAPSHOT"
 }

@@ -40,6 +40,8 @@ public class Main {
     	getGame().getEventManager().registerListeners(this, new PlateEventManager());
     	
     	getGame().getCommandManager().register(this, new CommandManager().cmdPortal, "portal", "p");
+    	getGame().getCommandManager().register(this, new CommandManager().cmdWarp, "warp", "wp");
+    	getGame().getCommandManager().register(this, new CommandManager().cmdHome, "home", "h");
     	getGame().getCommandManager().register(this, new CommandManager().cmdTeleportUnSafe, "tu");
 
     }

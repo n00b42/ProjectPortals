@@ -1,4 +1,4 @@
-package com.gmail.trentech.pjp.commands;
+package com.gmail.trentech.pjp.commands.portal;
 
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
