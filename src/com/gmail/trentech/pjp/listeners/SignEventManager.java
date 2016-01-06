@@ -1,5 +1,6 @@
 package com.gmail.trentech.pjp.listeners;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.spongepowered.api.block.BlockSnapshot;
@@ -33,25 +34,30 @@ public class SignEventManager {
 
 		ListValue<Text> lines = signData.getValue(Keys.SIGN_LINES).get();
 
-		Text portalSign = Text.of("[Portal]");
-		if(!lines.get(0).equals(portalSign)) {
+		Text title = lines.get(0);
+		
+		if(!(title.equals(Text.of("[Portal]")) && title.equals(Text.of("[portal]")))) {
 			return;
 		}
 
+		String worldName = Resource.getBaseName(lines.get(1).toPlain());
+		String prettyWorldName = Resource.getPrettyName(worldName);
+		
 		if(!player.hasPermission("pjp.sign.place")) {
 			player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to place portal signs"));
 			event.setCancelled(true);
 			return;
 		}
 		
-		if(!Main.getGame().getServer().getWorld(lines.get(1).toPlain()).isPresent()){
-			player.sendMessage(Text.of(TextColors.DARK_RED, lines.get(1).toPlain(), " does not exist"));
+		if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
+			player.sendMessage(Text.of(TextColors.DARK_RED, prettyWorldName, " does not exist"));
 			event.setCancelled(true);
 			return;
 		}
 
 		lines.set(0, Text.of(TextColors.DARK_BLUE, "[Portal]"));
-
+		lines.set(1, Text.of(prettyWorldName));
+		
 		event.getText().set(lines);
 		
 		if(new ConfigManager().getConfig().getNode("Options", "Show-Particles").getBoolean()){
@@ -67,25 +73,34 @@ public class SignEventManager {
 
 		Location<World> block = event.getTargetBlock().getLocation().get();
 
-		Optional<SignData> data = block.getOrCreate(SignData.class);
-		if(!data.isPresent()){
+		Optional<SignData> optionalSignData = block.getOrCreate(SignData.class);
+		if(!optionalSignData.isPresent()){
 			return;
 		}
-		SignData signData = data.get();
+		SignData signData = optionalSignData.get();
 
 		ListValue<Text> lines = signData.getValue(Keys.SIGN_LINES).get();
 
-		Text portalSign = Text.of(TextColors.DARK_BLUE, "[Portal]");
-		if(!lines.get(0).equals(portalSign)) {
+		Text title = Text.of(TextColors.DARK_BLUE, "[Portal]");
+		
+		if(!lines.get(0).equals(title)) {
         	return;
 		}
 
-		if(!Main.getGame().getServer().getWorld(lines.get(1).toPlain()).isPresent()){
-			player.sendMessage(Text.of(TextColors.DARK_RED, lines.get(1).toPlain(), " does not exist"));
+		String worldName = Resource.getBaseName(lines.get(1).toPlain());
+		String prettyWorldName = Resource.getPrettyName(worldName);
+		
+		if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
+			player.sendMessage(Text.of(TextColors.DARK_RED, prettyWorldName, " does not exist"));
+
+			signData.set(Keys.SIGN_LINES, new ArrayList<Text>());
+			
+			block.offer(signData);
+			
 			event.setCancelled(true);
 			return;
-		}		
-		World world = Main.getGame().getServer().getWorld(lines.get(1).toPlain()).get();
+		}
+		World world = Main.getGame().getServer().getWorld(worldName).get();
 		
 		if(!player.hasPermission("pjp.sign.interact")) {
 			player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to interact with portal signs"));
@@ -98,42 +113,35 @@ public class SignEventManager {
 	
 	@Listener
 	public void onSignBreakEvent(ChangeBlockEvent.Break event, @First Player player) {
-	    SignData signData = null;
-	    
 	    for(Transaction<BlockSnapshot> blockTransaction : event.getTransactions()){
-	    	Optional<Location<World>> blockOptional = blockTransaction.getOriginal().getLocation();	
+	    	Optional<Location<World>> optionalBlock = blockTransaction.getOriginal().getLocation();	
 	    	
-	    	if(!blockOptional.isPresent()){
+	    	if(!optionalBlock.isPresent()){
 	    		continue;
 	    	}
-    		Location<World> block = blockOptional.get();
+    		Location<World> block = optionalBlock.get();
     		
     		if(!(block.getBlock().getType().equals(BlockTypes.WALL_SIGN) && block.getBlock().getType().equals(BlockTypes.STANDING_SIGN))){
     			continue;
     		}	
-			Optional<SignData> signDataOptional = block.getOrCreate(SignData.class);
+			Optional<SignData> optionalSignData = block.getOrCreate(SignData.class);
 			
-			if(signDataOptional.isPresent()){
-				signData = signDataOptional.get();
-				break;
+			if(!optionalSignData.isPresent()){
+				continue;
+			}
+
+			ListValue<Text> lines = optionalSignData.get().getValue(Keys.SIGN_LINES).get();
+
+			Text title = Text.of(TextColors.DARK_BLUE, "[Portal]");
+			if(!lines.get(0).equals(title)) {
+				continue;
+			}
+
+			if(!player.hasPermission("pjp.sign.break")) {
+				player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to break portal signs"));
+				event.setCancelled(true);
+				return;
 			}
 	    }
-
-	    if(signData == null){
-	    	return;
-	    }
-	    
-		ListValue<Text> lines = signData.getValue(Keys.SIGN_LINES).get();
-
-		Text kitSign = Text.of(TextColors.DARK_BLUE, "[Portal]");
-		if(!lines.get(0).equals(kitSign)) {
-        	return;
-		}
-
-		if(!player.hasPermission("pjp.sign.break")) {
-			player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to break portal signs"));
-			event.setCancelled(true);
-			return;
-		}
 	}
 }

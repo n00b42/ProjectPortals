@@ -35,20 +35,21 @@ public class ButtonEventManager {
 			BlockSnapshot block = transaction.getFinal();
 			BlockType type = block.getState().getType();
 			
-			if(!(type.equals(BlockTypes.STONE_BUTTON) && type.equals(BlockTypes.STONE_BUTTON))){
+			if(!type.equals(BlockTypes.STONE_BUTTON) && !type.equals(BlockTypes.STONE_BUTTON)){
 				return;
 			}
 
-			if(!block.get(Keys.POWERED).isPresent()){
+			if(!block.getExtendedState().get(Keys.POWERED).isPresent()){
 				return;
 			}
 
-			if(!block.get(Keys.POWERED).get()){
+			if(!block.getExtendedState().get(Keys.POWERED).get()){
 				return;
 			}
 			
 			if(!player.hasPermission("pjp.button.interact")){
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with button portals"));
+				event.setCancelled(true);
 				return;
 			}
 			
@@ -63,7 +64,7 @@ public class ButtonEventManager {
 			String worldName = config.getNode("Buttons", locationName, "World").getString();
 			
 			if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
-				player.sendMessage(Text.of(TextColors.DARK_RED, worldName, " does not exist"));
+				player.sendMessage(Text.of(TextColors.DARK_RED, Resource.getPrettyName(worldName), " does not exist"));
 				return;
 			}
 			World world = Main.getGame().getServer().getWorld(worldName).get();
@@ -120,7 +121,7 @@ public class ButtonEventManager {
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			BlockType type = transaction.getFinal().getState().getType();
 			
-			if(!(type.equals(BlockTypes.STONE_BUTTON) && type.equals(BlockTypes.STONE_BUTTON))){
+			if(!type.equals(BlockTypes.STONE_BUTTON) && !type.equals(BlockTypes.STONE_BUTTON)){
 				continue;
 			}
 

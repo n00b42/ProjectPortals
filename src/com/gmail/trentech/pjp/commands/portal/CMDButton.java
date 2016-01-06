@@ -30,10 +30,10 @@ public class CMDButton implements CommandExecutor {
 			src.sendMessage(Text.of(TextColors.YELLOW, "/portal button <world> [x] [y] [z]"));
 			return CommandResult.empty();
 		}
-		String worldName = args.<String>getOne("name").get();
+		String worldName = Resource.getBaseName(args.<String>getOne("name").get());
 
 		if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
-			src.sendMessage(Text.of(TextColors.DARK_RED, "World ", worldName, " does not exist"));
+			src.sendMessage(Text.of(TextColors.DARK_RED, Resource.getPrettyName(worldName), " does not exist"));
 			return CommandResult.empty();
 		}
 		World world = Main.getGame().getServer().getWorld(worldName).get();

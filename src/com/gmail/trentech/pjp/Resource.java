@@ -12,7 +12,7 @@ import com.flowpowered.math.vector.Vector3d;
 public class Resource {
 
 	public final static String NAME = "Project Portals";
-	public final static String VERSION = "0.3.9";
+	public final static String VERSION = "0.3.10";
 	public final static String ID = "Project Portals";
 
 	public static void spawnParticles(Location<World> location, double range, boolean sub){
@@ -39,6 +39,26 @@ public class Resource {
 				location.getExtent().spawnParticles(Main.getGame().getRegistry().createBuilder(ParticleEffect.Builder.class)
 						.type(ParticleTypes.SPELL_WITCH).motion(Vector3d.UP).count(3).build(), location.getPosition().add(v2,v3,v2));
 			}
+		}
+	}
+	
+	public static String getPrettyName(String worldName){
+		if(worldName.equalsIgnoreCase("DIM-1")){
+			return "nether";
+		}else if(worldName.equalsIgnoreCase("DIM1")){
+			return "end";
+		}else{
+			return worldName;
+		}
+	}
+	
+	public static String getBaseName(String prettyWorldName){
+		if(prettyWorldName.equalsIgnoreCase("nether")){
+			return "DIM-1";
+		}else if(prettyWorldName.equalsIgnoreCase("end")){
+			return "DIM1";
+		}else{
+			return prettyWorldName;
 		}
 	}
 	
