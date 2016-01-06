@@ -35,18 +35,26 @@ public class CMDCreate implements CommandExecutor {
 		ConfigurationNode config = configManager.getConfig();
 		
 		int defaultAmount = new ConfigManager().getConfig().getNode("Options", "Homes").getInt();
+
+		int amount = 0;
+		if(config.getNode("Amount").getString() != null){
+			amount = config.getNode("Amount").getInt();
+		}
 		
-		int amount = defaultAmount;
-		if(config.getNode("Remaining").getString() != null){
-			amount = config.getNode("Remaining").getInt();
+		int extra = 0;
+		for(int i = 1; i <= 100; i++){
+			if(player.hasPermission("pjp.homes." + i)){
+				extra = i;
+				break;
+			}
 		}
 		
 		if(!player.hasPermission("pjp.homes.unlimited")){
-			if(amount == 0){
+			if(amount >= (defaultAmount + extra)){
 				src.sendMessage(Text.of(TextColors.DARK_RED, "You have reached the maximum number of homes you can have"));
 				return CommandResult.empty();
 			}
-			amount--;
+			amount++;
 		}
 		
 		if(config.getNode("Homes", homeName).getString() != null){
@@ -66,7 +74,7 @@ public class CMDCreate implements CommandExecutor {
 		config.getNode("Homes", homeName, "X").setValue(x);
 		config.getNode("Homes", homeName, "Y").setValue(y);
 		config.getNode("Homes", homeName, "Z").setValue(z);
-		config.getNode("Remaining").setValue(amount);
+		config.getNode("Amount").setValue(amount);
 
 		configManager.save();
 		
