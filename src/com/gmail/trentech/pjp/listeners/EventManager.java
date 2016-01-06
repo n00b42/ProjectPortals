@@ -29,7 +29,7 @@ public class EventManager {
 		Location<World> src = event.getSrc();
 		Location<World> dest = event.getDest();
 
-		if(!player.hasPermission("pjp.worlds." + dest.getExtent().getName())){
+		if(!(player.hasPermission("pjp.worlds." + dest.getExtent().getName()) || player.hasPermission("pjw.worlds." + dest.getExtent().getName()))){
 			player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to travel to ", dest.getExtent().getName()));
 			return;
 		}

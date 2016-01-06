@@ -3,6 +3,8 @@ package com.gmail.trentech.pjp.listeners;
 import java.util.HashMap;
 
 import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
@@ -31,8 +33,10 @@ public class PlateEventManager {
 	public void onChangeBlockEvent(ChangeBlockEvent.Modify event, @First Player player) {
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			BlockSnapshot block = transaction.getFinal();
-
-			if(!(block.getState().getType().getName().toUpperCase().contains("_PRESSURE_PLATE"))){
+			BlockType type = block.getState().getType();
+			
+			if(!(type.equals(BlockTypes.HEAVY_WEIGHTED_PRESSURE_PLATE) && type.equals(BlockTypes.LIGHT_WEIGHTED_PRESSURE_PLATE) 
+					&& type.equals(BlockTypes.STONE_PRESSURE_PLATE) && type.equals(BlockTypes.WOODEN_PRESSURE_PLATE))){
 				return;
 			}
 
@@ -41,6 +45,11 @@ public class PlateEventManager {
 			}
 
 			if(!block.get(Keys.POWERED).get()){
+				return;
+			}
+			
+			if(!player.hasPermission("pjp.plate.interact")){
+				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with pressure plate portals"));
 				return;
 			}
 			
@@ -69,12 +78,7 @@ public class PlateEventManager {
 				y = config.getNode("Plates", locationName, "Y").getInt();
 				z = config.getNode("Plates", locationName, "Z").getInt();
 			}
-			
-			if(!player.hasPermission("pjp.plate.interact." + worldName)){
-				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission"));
-				return;
-			}
-			
+
 			Main.getGame().getEventManager().post(new TeleportEvent(player.getLocation(), world.getLocation(x, y, z), Cause.of(player)));
 		}
 	}
@@ -98,7 +102,7 @@ public class PlateEventManager {
 			}
 			
 			if(!player.hasPermission("pjp.plate.break")){
-				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission"));
+				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to break pressure plate portals"));
 				event.setCancelled(true);
 			}else{
 				config.getNode("Plates", locationName).setValue(null);
@@ -115,14 +119,17 @@ public class PlateEventManager {
 		}
 
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
-			if(!(transaction.getFinal().getState().getType().getName().toUpperCase().contains("_PRESSURE_PLATE"))){		
+			BlockType type = transaction.getFinal().getState().getType();
+
+			if(!(type.equals(BlockTypes.HEAVY_WEIGHTED_PRESSURE_PLATE) && type.equals(BlockTypes.LIGHT_WEIGHTED_PRESSURE_PLATE) 
+					&& type.equals(BlockTypes.STONE_PRESSURE_PLATE) && type.equals(BlockTypes.WOODEN_PRESSURE_PLATE))){
 				continue;
 			}
 			
 			Location<World> location = transaction.getFinal().getLocation().get();
 			
-			if(!player.hasPermission("pjp.plate.place." + location.getExtent().getName())){
-	        	player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to create teleport pressure playes in this world"));
+			if(!player.hasPermission("pjp.plate.place")){
+	        	player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to place pressure plate portals"));
 	        	creators.remove(player);
 	        	event.setCancelled(true);
 	        	return;

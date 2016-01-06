@@ -3,6 +3,8 @@ package com.gmail.trentech.pjp.listeners;
 import java.util.HashMap;
 
 import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
@@ -31,8 +33,9 @@ public class ButtonEventManager {
 	public void onChangeBlockEvent(ChangeBlockEvent.Modify event, @First Player player) {
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			BlockSnapshot block = transaction.getFinal();
-
-			if(!(block.getState().getType().getName().toUpperCase().contains("_BUTTON"))){
+			BlockType type = block.getState().getType();
+			
+			if(!(type.equals(BlockTypes.STONE_BUTTON) && type.equals(BlockTypes.STONE_BUTTON))){
 				return;
 			}
 
@@ -41,6 +44,11 @@ public class ButtonEventManager {
 			}
 
 			if(!block.get(Keys.POWERED).get()){
+				return;
+			}
+			
+			if(!player.hasPermission("pjp.button.interact")){
+				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with button portals"));
 				return;
 			}
 			
@@ -70,11 +78,6 @@ public class ButtonEventManager {
 				z = config.getNode("Buttons", locationName, "Z").getInt();
 			}
 
-			if(!player.hasPermission("pjp.button.interact." + worldName)){
-				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission"));
-				return;
-			}
-
 			Main.getGame().getEventManager().post(new TeleportEvent(player.getLocation(), world.getLocation(x, y, z), Cause.of(player)));
 		}
 	}
@@ -98,7 +101,7 @@ public class ButtonEventManager {
 			}
 			
 			if(!player.hasPermission("pjp.button.break")){
-				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission"));
+				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to break button portals"));
 				event.setCancelled(true);
 			}else{
 				config.getNode("Buttons", locationName).setValue(null);
@@ -115,14 +118,16 @@ public class ButtonEventManager {
 		}
 
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
-			if(!(transaction.getFinal().getState().getType().getName().toUpperCase().contains("_BUTTON"))){
+			BlockType type = transaction.getFinal().getState().getType();
+			
+			if(!(type.equals(BlockTypes.STONE_BUTTON) && type.equals(BlockTypes.STONE_BUTTON))){
 				continue;
 			}
-			
+
 			Location<World> location = transaction.getFinal().getLocation().get();
 
-			if(!player.hasPermission("pjp.button.place." + location.getExtent().getName())){
-	        	player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to create teleport buttons in this world"));
+			if(!player.hasPermission("pjp.button.place")){
+	        	player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to place button portals"));
 	        	creators.remove(player);
 	        	event.setCancelled(true);
 	        	return;

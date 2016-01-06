@@ -32,12 +32,6 @@ public class CuboidEventManager {
 
 	@Listener
 	public void onCuboidConstructEvent(CuboidConstructEvent event, @First Player player){
-		if(!player.hasPermission("pjp.cube.create." + player.getWorld().getName())){
-			player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to create Cuboids in this world"));
-        	event.setCancelled(true);
-        	return;
-		}
-		
         if(!event.getLocations().isPresent()){
         	player.sendMessage(Text.of(TextColors.DARK_RED, "Cuboids cannot over lap over Cuboids"));
         	event.setCancelled(true);
@@ -106,7 +100,7 @@ public class CuboidEventManager {
 			}
 			
 			if(!player.hasPermission("pjp.cube.place")){
-				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission"));
+				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to place blocks in cube portals"));
 				event.setCancelled(true);
 			}
 		}
@@ -130,7 +124,7 @@ public class CuboidEventManager {
 			}
 			
 			if(!player.hasPermission("pjp.cube.break")){
-				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission"));
+				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to break blocks in cube portals"));
 				event.setCancelled(true);
 			}
 		}
@@ -153,8 +147,8 @@ public class CuboidEventManager {
 		}		
 		Location<World> destination = configManager.getCuboid(locationName);
 		
-		if(!player.hasPermission("pjp.cube.interact." + destination.getExtent().getName())){
-			player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission"));
+		if(!player.hasPermission("pjp.cube.interact")){
+			player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with cube portals"));
 			return;
 		}
 		
