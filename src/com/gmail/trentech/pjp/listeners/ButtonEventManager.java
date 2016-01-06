@@ -123,6 +123,8 @@ public class ButtonEventManager {
 
 			if(!player.hasPermission("pjp.button.place." + location.getExtent().getName())){
 	        	player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to create teleport buttons in this world"));
+	        	creators.remove(player);
+	        	event.setCancelled(true);
 	        	return;
 			}
 
