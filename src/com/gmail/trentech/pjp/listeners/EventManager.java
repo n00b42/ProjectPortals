@@ -1,7 +1,10 @@
 package com.gmail.trentech.pjp.listeners;
 
+import java.util.function.Consumer;
+
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.cause.entity.damage.source.BlockDamageSource;
@@ -19,7 +22,6 @@ import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.ConfigManager;
 import com.gmail.trentech.pjp.Resource;
-import com.gmail.trentech.pjp.commands.CMDTeleportUnSafe;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 
 public class EventManager {
@@ -35,8 +37,7 @@ public class EventManager {
 		}
 		
 		if(!player.setLocationSafely(dest)){
-			CMDTeleportUnSafe.players.put(player, dest);
-			player.sendMessage(Text.builder().color(TextColors.DARK_RED).append(Text.of("Unsafe spawn point detected. Teleport anyway? ")).onClick(TextActions.runCommand("/tu")).append(Text.of(TextColors.GOLD, TextStyles.UNDERLINE, "Click Here")).build());
+			player.sendMessage(Text.builder().color(TextColors.DARK_RED).append(Text.of("Unsafe spawn point detected. Teleport anyway? ")).onClick(TextActions.executeCallback(unsafeTeleport(dest))).append(Text.of(TextColors.GOLD, TextStyles.UNDERLINE, "Click Here")).build());
 			return;
 		}
 		
@@ -96,4 +97,13 @@ public class EventManager {
 		
 		event.setCancelled(true);
     }
+    
+	public static Consumer<CommandSource> unsafeTeleport(Location<World> location){
+		return (CommandSource src) -> {
+			Player player = (Player)src;
+
+			player.setLocation(location);
+			player.sendTitle(Title.of(Text.of(TextColors.GOLD, Resource.getPrettyName(location.getExtent().getName())), Text.of(TextColors.DARK_PURPLE, "x: ", location.getExtent().getSpawnLocation().getBlockX(), ", y: ", location.getExtent().getSpawnLocation().getBlockY(),", z: ", location.getExtent().getSpawnLocation().getBlockZ())));
+		};
+	}
 }

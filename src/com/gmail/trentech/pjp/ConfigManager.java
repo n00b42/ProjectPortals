@@ -23,7 +23,7 @@ public class ConfigManager {
 	private ConfigurationLoader<CommentedConfigurationNode> loader;
 	
 	public ConfigManager(String folder, String configName) {
-		folder = "config/" + Resource.NAME + "/" + folder + "/";
+		folder = "config/projectportals/" + folder + "/";
         if (!new File(folder).isDirectory()) {
         	new File(folder).mkdirs();
         }
@@ -35,7 +35,7 @@ public class ConfigManager {
 	}
 	
 	public ConfigManager(String configName) {
-		String folder = "config/" + Resource.NAME + "/";
+		String folder = "config/projectportals/";
         if (!new File(folder).isDirectory()) {
         	new File(folder).mkdirs();
         }
@@ -47,7 +47,7 @@ public class ConfigManager {
 	}
 	
 	public ConfigManager() {
-		String folder = "config/" + Resource.NAME + "/";
+		String folder = "config/projectportals/";
         if (!new File(folder).isDirectory()) {
         	new File(folder).mkdirs();
         }
@@ -91,6 +91,15 @@ public class ConfigManager {
 			}
 			if(config.getNode("Options", "Show-Particles").getString() == null) {
 				config.getNode("Options", "Show-Particles").setValue(true).setComment("Display particle effects on portal creation and teleporting");
+			}
+			if(config.getNode("Options", "Command-Alias", "portal").getString() == null) {
+				config.getNode("Options", "Command-Alias", "portal").setValue("p");
+			}
+			if(config.getNode("Options", "Command-Alias", "home").getString() == null) {
+				config.getNode("Options", "Command-Alias", "home").setValue("h");
+			}
+			if(config.getNode("Options", "Command-Alias", "warp").getString() == null) {
+				config.getNode("Options", "Command-Alias", "warp").setValue("wp");
 			}
 		}else if(file.getName().equalsIgnoreCase("portals.conf")){
 			if(config.getNode("Buttons").getString() == null) {

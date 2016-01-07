@@ -14,12 +14,7 @@ import com.gmail.trentech.pjp.commands.portal.CMDShow;
 import com.gmail.trentech.pjp.commands.warp.CMDWarp;
 
 public class CommandManager {
-	
-	public CommandSpec cmdTeleportUnSafe = CommandSpec.builder()
-		    .executor(new CMDTeleportUnSafe())
-		    .build();
-	
-	
+
 	public CommandSpec cmdWarpCreate = CommandSpec.builder()
 		    .description(Text.of("Create a new warp point"))
 		    .permission("pjp.cmd.warp.create")
