@@ -47,13 +47,7 @@ public class PlateEventManager {
 			if(!block.getExtendedState().get(Keys.POWERED).get()){
 				return;
 			}
-			
-			if(!player.hasPermission("pjp.plate.interact")){
-				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with pressure plate portals"));
-				event.setCancelled(true);
-				return;
-			}
-			
+
 			Location<World> location = block.getLocation().get();		
 			String locationName = location.getExtent().getName() + "." + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 
@@ -80,6 +74,12 @@ public class PlateEventManager {
 				z = config.getNode("Plates", locationName, "Z").getInt();
 			}
 
+			if(!player.hasPermission("pjp.plate.interact")){
+				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with pressure plate portals"));
+				event.setCancelled(true);
+				return;
+			}
+			
 			Main.getGame().getEventManager().post(new TeleportEvent(player.getLocation(), world.getLocation(x, y, z), Cause.of(player)));
 		}
 	}

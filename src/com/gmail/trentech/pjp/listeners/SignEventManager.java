@@ -1,6 +1,5 @@
 package com.gmail.trentech.pjp.listeners;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 import org.spongepowered.api.block.BlockSnapshot;
@@ -93,9 +92,9 @@ public class SignEventManager {
 		if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
 			player.sendMessage(Text.of(TextColors.DARK_RED, prettyWorldName, " does not exist"));
 
-			signData.set(Keys.SIGN_LINES, new ArrayList<Text>());
-			
-			block.offer(signData);
+			//signData.set(Keys.SIGN_LINES, new ArrayList<Text>());
+			block.remove(Keys.SIGN_LINES);
+			//block.offer(signData);
 			
 			event.setCancelled(true);
 			return;

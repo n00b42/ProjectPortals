@@ -47,11 +47,7 @@ public class ButtonEventManager {
 				return;
 			}
 			
-			if(!player.hasPermission("pjp.button.interact")){
-				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with button portals"));
-				event.setCancelled(true);
-				return;
-			}
+
 			
 			Location<World> location = block.getLocation().get();		
 			String locationName = location.getExtent().getName() + "." + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
@@ -79,6 +75,12 @@ public class ButtonEventManager {
 				z = config.getNode("Buttons", locationName, "Z").getInt();
 			}
 
+			if(!player.hasPermission("pjp.button.interact")){
+				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with button portals"));
+				event.setCancelled(true);
+				return;
+			}
+			
 			Main.getGame().getEventManager().post(new TeleportEvent(player.getLocation(), world.getLocation(x, y, z), Cause.of(player)));
 		}
 	}
