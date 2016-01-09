@@ -10,6 +10,7 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.cause.entity.damage.source.BlockDamageSource;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
 import org.spongepowered.api.event.entity.IgniteEntityEvent;
+import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
@@ -22,10 +23,17 @@ import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.ConfigManager;
 import com.gmail.trentech.pjp.Resource;
+import com.gmail.trentech.pjp.commands.CMDBack;
 import com.gmail.trentech.pjp.events.TeleportEvent;
+import com.gmail.trentech.pjp.portals.LocationType;
 
 public class EventManager {
 
+	@Listener
+	public void onRespawnPlayerEvent(RespawnPlayerEvent event, @First Player player){
+		System.out.println("FIRE");
+	}
+	
 	@Listener
 	public void onTeleportEvent(TeleportEvent event, @First Player player){
 		Location<World> src = event.getSrc();
@@ -50,6 +58,14 @@ public class EventManager {
 		}
 
 		player.sendTitle(Title.of(Text.of(TextColors.DARK_GREEN, Resource.getPrettyName(dest.getExtent().getName())), Text.of(TextColors.AQUA, "x: ", dest.getBlockX(), ", y: ", dest.getBlockY(),", z: ", dest.getBlockZ())));
+		
+		if(event.getLocationType().equals(LocationType.RANDOM)){
+			Resource.generateRandomLocation(dest.getExtent());
+		}
+		
+		if(player.hasPermission("pjp.cmd.back")){
+			CMDBack.players.put(player, src);
+		}
 	}
 	
     @Listener
@@ -68,7 +84,7 @@ public class EventManager {
         
 		String locationName = location.getExtent().getName() + "." + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 
-		if(new ConfigManager("portals.conf").getCuboid(locationName) == null){
+		if(new ConfigManager("portals.conf").getConfig().getNode("Cuboids", locationName, "World").getString() == null){
 			return;
 		}
 		
@@ -91,13 +107,13 @@ public class EventManager {
         
 		String locationName = location.getExtent().getName() + "." + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 
-		if(new ConfigManager("portals.conf").getCuboid(locationName) == null){
+		if(new ConfigManager("portals.conf").getConfig().getNode("Cuboids", locationName, "World").getString() == null){
 			return;
 		}
 		
 		event.setCancelled(true);
     }
-    
+
 	public static Consumer<CommandSource> unsafeTeleport(Location<World> location){
 		return (CommandSource src) -> {
 			Player player = (Player)src;

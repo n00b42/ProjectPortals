@@ -92,17 +92,17 @@ public class Cuboid implements Iterable<BlockSnapshot> {
 
 	public Optional<List<String>> getLocations(){
 		List<String> locations = new ArrayList<>();
+		ConfigurationNode config = new ConfigManager("portals.conf").getConfig();
+		
 	    for (BlockSnapshot block : this){
 	    	Location<World> location = block.getLocation().get();
 
 	    	String locationName = location.getExtent().getName() + "." + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 
-	    	ConfigManager configManager = new ConfigManager("portals.conf");
-			
-			if(configManager.getCuboid(locationName) != null){
+			if(config.getNode("Cuboids", locationName, "World").getString() == null){
 				Optional.empty();
 			}
-			
+
 			locations.add(locationName);
 	    }
 	    return Optional.of(locations);

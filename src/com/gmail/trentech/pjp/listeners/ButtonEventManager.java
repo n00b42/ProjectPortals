@@ -36,7 +36,7 @@ public class ButtonEventManager {
 			BlockSnapshot block = transaction.getFinal();
 			BlockType type = block.getState().getType();
 			
-			if(!type.equals(BlockTypes.STONE_BUTTON) && !type.equals(BlockTypes.STONE_BUTTON)){
+			if(!type.equals(BlockTypes.STONE_BUTTON) && !type.equals(BlockTypes.WOODEN_BUTTON)){
 				return;
 			}
 
@@ -71,20 +71,24 @@ public class ButtonEventManager {
 			World world = Main.getGame().getServer().getWorld(worldName).get();
 			
 			Location<World> spawnLocation;
+			LocationType locationType;
 			
 			if(config.getNode("Buttons", locationName, "Random").getBoolean()){
-				spawnLocation = Resource.getRandomLocation(world, new ConfigManager().getConfig().getNode("Options", "Random-Spawn-Radius").getLong());
+				spawnLocation = Resource.getRandomLocation(world);
+				locationType = LocationType.RANDOM;
 			}else if(config.getNode("Buttons", locationName, "X").getString() != null && config.getNode("Buttons", locationName, "Y").getString() != null && config.getNode("Buttons", locationName, "Z").getString() != null){
 				int x = config.getNode("Buttons", locationName, "X").getInt();
 				int y = config.getNode("Buttons", locationName, "Y").getInt();
 				int z = config.getNode("Buttons", locationName, "Z").getInt();
 				
 				spawnLocation = world.getLocation(x, y, z);
+				locationType = LocationType.NORMAL;
 			}else{
 				spawnLocation = world.getSpawnLocation();
+				locationType = LocationType.SPAWN;
 			}
 
-			Main.getGame().getEventManager().post(new TeleportEvent(player.getLocation(), spawnLocation, Cause.of(player)));
+			Main.getGame().getEventManager().post(new TeleportEvent(player.getLocation(), spawnLocation, locationType, Cause.of(player)));
 		}
 	}
 	
@@ -126,7 +130,7 @@ public class ButtonEventManager {
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			BlockType type = transaction.getFinal().getState().getType();
 			
-			if(!type.equals(BlockTypes.STONE_BUTTON) && !type.equals(BlockTypes.STONE_BUTTON)){
+			if(!type.equals(BlockTypes.STONE_BUTTON) && !type.equals(BlockTypes.WOODEN_BUTTON)){
 				continue;
 			}
 

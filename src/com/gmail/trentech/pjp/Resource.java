@@ -1,5 +1,6 @@
 package com.gmail.trentech.pjp;
 
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -17,8 +18,10 @@ import com.flowpowered.math.vector.Vector3d;
 public class Resource {
 
 	public final static String NAME = "Project Portals";
-	public final static String VERSION = "0.4.12";
+	public final static String VERSION = "0.4.13";
 	public final static String ID = "PJP";
+	
+	private static HashMap<World, Location<World>> randomLocations = new HashMap<>();
 
 	public static void spawnParticles(Location<World> location, double range, boolean sub){
 		
@@ -85,7 +88,7 @@ public class Resource {
 		return world.getLocation(x, y, z);
 	}
 	
-	public static Location<World> getRandomLocation(World world, long radius){
+	private static Location<World> generate(World world, long radius){
 		TeleportHelper teleportHelper = Main.getGame().getTeleportHelper();
 		
 		ThreadLocalRandom random = ThreadLocalRandom.current();
@@ -97,12 +100,12 @@ public class Resource {
 		Optional<Location<World>> optionalLocation = teleportHelper.getSafeLocation(world.getLocation(x, y, z));
 
 		if(!optionalLocation.isPresent()){
-			return getRandomLocation(world, radius);
+			return generate(world, radius);
 		}
 		Location<World> location = optionalLocation.get();
 		
 		if(!location.getBlockType().equals(BlockTypes.AIR) || !location.getRelative(Direction.UP).getBlockType().equals(BlockTypes.AIR)){
-			return getRandomLocation(world, radius);
+			return generate(world, radius);
 		}
 		
 		Location<World> floor = location.getRelative(Direction.DOWN);
@@ -111,9 +114,21 @@ public class Resource {
 				|| floor.getBlockType().equals(BlockTypes.FLOWING_WATER)
 				|| floor.getBlockType().equals(BlockTypes.FLOWING_LAVA)
 				|| floor.getBlockType().equals(BlockTypes.FIRE)){
-			return getRandomLocation(world, radius);
+			return generate(world, radius);
 		}
 		
 		return location;
+	}
+
+	public static void generateRandomLocation(World world){
+		randomLocations.put(world, generate(world, new ConfigManager().getConfig().getNode("Options", "Random-Spawn-Radius").getLong()));
+	}
+	
+	public static Location<World> getRandomLocation(World world) {
+		if(randomLocations.get(world) == null){
+			generateRandomLocation(world);
+		}
+		
+		return randomLocations.get(world);
 	}
 }

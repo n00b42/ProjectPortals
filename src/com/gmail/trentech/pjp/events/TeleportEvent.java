@@ -6,16 +6,20 @@ import org.spongepowered.api.event.impl.AbstractEvent;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import com.gmail.trentech.pjp.portals.LocationType;
+
 public class TeleportEvent extends AbstractEvent implements Cancellable {
 	
 	private boolean cancelled = false;
-	private Cause cause;
-	private Location<World> src;
+	private final Cause cause;
+	private final Location<World> src;
 	private Location<World> dest;
+	private final LocationType locationType;
 	
-	public TeleportEvent(Location<World> src, Location<World> dest, Cause cause){
+	public TeleportEvent(Location<World> src, Location<World> dest, LocationType locationType, Cause cause){
 		this.src = src;
 		this.setDest(dest);
+		this.locationType = locationType;
 		this.cause = cause;
 	}
 	
@@ -44,5 +48,9 @@ public class TeleportEvent extends AbstractEvent implements Cancellable {
 
 	public Location<World> getSrc() {
 		return src;
+	}
+
+	public LocationType getLocationType() {
+		return locationType;
 	}
 }

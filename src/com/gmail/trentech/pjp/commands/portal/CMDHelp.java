@@ -55,7 +55,8 @@ public class CMDHelp implements CommandExecutor {
 				example = " /portal cube MyWorld\n"
 						+ " /portal cube MyWorld -100 65 254\n"
 						+ " /portal cube MyWorld random\n"
-						+ " /portal cube show";
+						+ " /portal cube show"
+						+ " /portal cube remove";
 				break;
 			default:
 				src.sendMessage(Text.of(TextColors.DARK_RED, "Not a valid command"));

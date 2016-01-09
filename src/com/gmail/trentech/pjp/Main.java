@@ -12,6 +12,7 @@ import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 
+import com.gmail.trentech.pjp.commands.CMDBack;
 import com.gmail.trentech.pjp.commands.CommandManager;
 import com.gmail.trentech.pjp.listeners.ButtonEventManager;
 import com.gmail.trentech.pjp.listeners.CuboidEventManager;
@@ -49,6 +50,7 @@ public class Main {
     	getGame().getCommandManager().register(this, new CommandManager().cmdPortal, "portal", config.getNode("Options", "Command-Alias", "portal").getString());
     	getGame().getCommandManager().register(this, new CommandManager().cmdWarp, "warp", config.getNode("Options", "Command-Alias", "warp").getString());
     	getGame().getCommandManager().register(this, new CommandManager().cmdHome, "home", config.getNode("Options", "Command-Alias", "home").getString());
+    	getGame().getCommandManager().register(this, new CMDBack().cmdBack, "back", config.getNode("Options", "Command-Alias", "back").getString());
     }
 
     @Listener
@@ -58,7 +60,7 @@ public class Main {
     	new ConfigManager();
     }
 
-    public static Logger getLog() {
+	public static Logger getLog() {
         return log;
     }
     

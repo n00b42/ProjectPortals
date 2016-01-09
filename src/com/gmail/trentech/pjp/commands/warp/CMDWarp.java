@@ -20,6 +20,7 @@ import org.spongepowered.api.world.World;
 import com.gmail.trentech.pjp.ConfigManager;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.events.TeleportEvent;
+import com.gmail.trentech.pjp.portals.LocationType;
 
 import ninja.leaping.configurate.ConfigurationNode;
 
@@ -76,7 +77,7 @@ public class CMDWarp implements CommandExecutor {
 				player = Main.getGame().getServer().getPlayer(playerName).get();
 			}
 			
-			Main.getGame().getEventManager().post(new TeleportEvent(player.getLocation(), world.getLocation(x, y, z), Cause.of(player)));
+			Main.getGame().getEventManager().post(new TeleportEvent(player.getLocation(), world.getLocation(x, y, z), LocationType.NORMAL, Cause.of(player)));
 			
 			return CommandResult.success();
 		}

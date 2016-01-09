@@ -21,10 +21,12 @@ import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.ConfigManager;
 import com.gmail.trentech.pjp.Main;
+import com.gmail.trentech.pjp.Resource;
 import com.gmail.trentech.pjp.events.CuboidConstructEvent;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.portals.Cuboid;
 import com.gmail.trentech.pjp.portals.CuboidBuilder;
+import com.gmail.trentech.pjp.portals.LocationType;
 
 import ninja.leaping.configurate.ConfigurationNode;
 
@@ -57,7 +59,7 @@ public class CuboidEventManager {
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Post event){
 		ConfigManager configManager = new ConfigManager("portals.conf");
-
+		
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			if(!transaction.getOriginal().getState().getType().equals(BlockTypes.FLOWING_WATER)){
 				continue;
@@ -73,7 +75,7 @@ public class CuboidEventManager {
 
 			for(Location<World> location : list){
 				String locationName = location.getExtent().getName() + "." + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
-
+				
 				if(configManager.getCuboid(locationName) == null){
 					continue;
 				}
@@ -94,7 +96,7 @@ public class CuboidEventManager {
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			Location<World> location = transaction.getFinal().getLocation().get();		
 			String locationName = location.getExtent().getName() + "." + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
-
+			
 			if(configManager.getCuboid(locationName) == null){
 				continue;
 			}
@@ -114,7 +116,7 @@ public class CuboidEventManager {
 		}
 
 		ConfigManager configManager = new ConfigManager("portals.conf");
-
+		
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			Location<World> location = transaction.getFinal().getLocation().get();		
 			String locationName = location.getExtent().getName() + "." + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
@@ -136,23 +138,50 @@ public class CuboidEventManager {
 			return;
 		}
 		Player player = (Player) event.getTargetEntity();
-		
-		ConfigManager configManager = new ConfigManager("portals.conf");
 
 		Location<World> location = player.getLocation();		
 		String locationName = location.getExtent().getName() + "." + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 
+		ConfigManager configManager = new ConfigManager("portals.conf");
+		
 		if(configManager.getCuboid(locationName) == null){
 			return;
-		}		
-		Location<World> destination = configManager.getCuboid(locationName);
+		}
+		ConfigurationNode node = configManager.getCuboid(locationName);
+		
+		String worldName = node.getNode("World").getString();
 		
 		if(!player.hasPermission("pjp.cube.interact")){
-			player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with cube portals"));
+			player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with button portals"));
+			event.setCancelled(true);
 			return;
 		}
 		
-		Main.getGame().getEventManager().post(new TeleportEvent(player.getLocation(), destination, Cause.of(player)));
+		if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
+			player.sendMessage(Text.of(TextColors.DARK_RED, Resource.getPrettyName(worldName), " does not exist"));
+			return;
+		}
+		World world = Main.getGame().getServer().getWorld(worldName).get();
+		
+		Location<World> spawnLocation;
+		LocationType locationType;
+		
+		if(node.getNode("Random").getBoolean()){
+			spawnLocation = Resource.getRandomLocation(world);
+			locationType = LocationType.RANDOM;
+		}else if(node.getNode("X").getString() != null && node.getNode("Y").getString() != null && node.getNode("Z").getString() != null){
+			int x = node.getNode("X").getInt();
+			int y = node.getNode("Y").getInt();
+			int z = node.getNode("Z").getInt();
+			
+			spawnLocation = world.getLocation(x, y, z);
+			locationType = LocationType.NORMAL;
+		}else{
+			spawnLocation = world.getSpawnLocation();
+			locationType = LocationType.SPAWN;
+		}
+
+		Main.getGame().getEventManager().post(new TeleportEvent(player.getLocation(), spawnLocation, locationType, Cause.of(player)));
 	}
 
 	@Listener
@@ -163,13 +192,13 @@ public class CuboidEventManager {
 		
 		CuboidBuilder builder = CuboidBuilder.getActiveBuilders().get(player);
 		
-        ConfigManager loaderCuboids = new ConfigManager("portals.conf");
+        ConfigManager configManager = new ConfigManager("portals.conf");
 
 		if(!builder.getLocationType().isPresent()){
         	Location<World> location = event.getTargetBlock().getLocation().get();
         	String locationName = location.getExtent().getName() + "." + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
         	
-        	if(loaderCuboids.removeCuboidLocation(locationName)){
+        	if(configManager.removeCuboidLocation(locationName)){
 				CuboidBuilder.getActiveBuilders().remove(player);
 				
                 player.sendMessage(Text.of(TextColors.DARK_GREEN, "Cuboid has been removed"));

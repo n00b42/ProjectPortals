@@ -72,20 +72,24 @@ public class PlateEventManager {
 			World world = Main.getGame().getServer().getWorld(worldName).get();
 			
 			Location<World> spawnLocation;
+			LocationType locationType;
 			
 			if(config.getNode("Plates", locationName, "Random").getBoolean()){
-				spawnLocation = Resource.getRandomLocation(world, new ConfigManager().getConfig().getNode("Options", "Random-Spawn-Radius").getLong());
+				spawnLocation = Resource.getRandomLocation(world);
+				locationType = LocationType.RANDOM;
 			}else if(config.getNode("Plates", locationName, "X").getString() != null && config.getNode("Plates", locationName, "Y").getString() != null && config.getNode("Plates", locationName, "Z").getString() != null){
 				int x = config.getNode("Plates", locationName, "X").getInt();
 				int y = config.getNode("Plates", locationName, "Y").getInt();
 				int z = config.getNode("Plates", locationName, "Z").getInt();
 				
 				spawnLocation = world.getLocation(x, y, z);
+				locationType = LocationType.NORMAL;
 			}else{
 				spawnLocation = world.getSpawnLocation();
+				locationType = LocationType.SPAWN;
 			}
 
-			Main.getGame().getEventManager().post(new TeleportEvent(player.getLocation(), spawnLocation, Cause.of(player)));
+			Main.getGame().getEventManager().post(new TeleportEvent(player.getLocation(), spawnLocation, locationType, Cause.of(player)));
 		}
 	}
 	
