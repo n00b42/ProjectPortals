@@ -14,18 +14,24 @@ public class CuboidBuilder {
 	private Optional<Location<World>> destination = Optional.empty();
 	private Optional<Location<World>> location = Optional.empty();
 	
-	private boolean spawn = false;
+	private Optional<LocationType> locationType = Optional.empty();
+	private final World world;
 	
 	private static HashMap<Player, CuboidBuilder> activeBuilders = new HashMap<>();
 	private static List<Player> creators = new ArrayList<>();
 
-	public CuboidBuilder(Location<World> destination, boolean spawn) {
-		this.destination = Optional.of(destination);
-		this.spawn = spawn;
+	public CuboidBuilder(World world, Location<World> destination, LocationType locationType) {
+		this.world = world;
+		if(destination != null){
+			this.destination = Optional.of(destination);
+		}
+		if(locationType != null){
+			this.locationType = Optional.of(locationType);
+		}
 	}
 	
 	public CuboidBuilder() {
-		
+		world = null;
 	}
 
 	public Optional<Location<World>> getDestination() {
@@ -48,8 +54,12 @@ public class CuboidBuilder {
 		return creators;
 	}
 
-	public boolean isSpawn() {
-		return spawn;
+	public Optional<LocationType> getLocationType() {
+		return locationType;
+	}
+
+	public World getWorld() {
+		return world;
 	}
 }
 

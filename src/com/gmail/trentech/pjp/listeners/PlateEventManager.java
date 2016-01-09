@@ -21,6 +21,7 @@ import com.gmail.trentech.pjp.ConfigManager;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.Resource;
 import com.gmail.trentech.pjp.events.TeleportEvent;
+import com.gmail.trentech.pjp.portals.LocationType;
 import com.gmail.trentech.pjp.portals.Plate;
 
 import ninja.leaping.configurate.ConfigurationNode;
@@ -58,29 +59,33 @@ public class PlateEventManager {
 			}			
 			String worldName = config.getNode("Plates", locationName, "World").getString();
 			
-			if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
-				player.sendMessage(Text.of(TextColors.DARK_RED, Resource.getPrettyName(worldName), " does not exist"));
-				return;
-			}
-			World world = Main.getGame().getServer().getWorld(worldName).get();
-			
-			int x = world.getSpawnLocation().getBlockX();
-			int y = world.getSpawnLocation().getBlockY();
-			int z = world.getSpawnLocation().getBlockZ();
-			
-			if(config.getNode("Plates", locationName, "X").getString() != null && config.getNode("Plates", locationName, "Y").getString() != null && config.getNode("Plates", locationName, "Z").getString() != null){
-				x = config.getNode("Plates", locationName, "X").getInt();
-				y = config.getNode("Plates", locationName, "Y").getInt();
-				z = config.getNode("Plates", locationName, "Z").getInt();
-			}
-
 			if(!player.hasPermission("pjp.plate.interact")){
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with pressure plate portals"));
 				event.setCancelled(true);
 				return;
 			}
 			
-			Main.getGame().getEventManager().post(new TeleportEvent(player.getLocation(), world.getLocation(x, y, z), Cause.of(player)));
+			if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
+				player.sendMessage(Text.of(TextColors.DARK_RED, Resource.getPrettyName(worldName), " does not exist"));
+				return;
+			}
+			World world = Main.getGame().getServer().getWorld(worldName).get();
+			
+			Location<World> spawnLocation;
+			
+			if(config.getNode("Plates", locationName, "Random").getBoolean()){
+				spawnLocation = Resource.getRandomLocation(world, new ConfigManager().getConfig().getNode("Options", "Random-Spawn-Radius").getLong());
+			}else if(config.getNode("Plates", locationName, "X").getString() != null && config.getNode("Plates", locationName, "Y").getString() != null && config.getNode("Plates", locationName, "Z").getString() != null){
+				int x = config.getNode("Plates", locationName, "X").getInt();
+				int y = config.getNode("Plates", locationName, "Y").getInt();
+				int z = config.getNode("Plates", locationName, "Z").getInt();
+				
+				spawnLocation = world.getLocation(x, y, z);
+			}else{
+				spawnLocation = world.getSpawnLocation();
+			}
+
+			Main.getGame().getEventManager().post(new TeleportEvent(player.getLocation(), spawnLocation, Cause.of(player)));
 		}
 	}
 	
@@ -106,7 +111,7 @@ public class PlateEventManager {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to break pressure plate portals"));
 				event.setCancelled(true);
 			}else{
-				config.getNode("Plates", locationName).setValue(null);
+				config.getNode("Plates").removeChild(locationName);
 				configManager.save();
 				player.sendMessage(Text.of(TextColors.DARK_GREEN, "Broke pressure plate portal"));
 			}
@@ -143,8 +148,14 @@ public class PlateEventManager {
 
             Plate plate = creators.get(player);
             
-            config.getNode("Plates", locationName, "World").setValue(plate.getLocation().getExtent().getName());
-            if(!plate.isSpawn()){
+            config.getNode("Plates", locationName, "World").setValue(plate.getWorld().getName());
+            
+            if(plate.getLocationType().equals(LocationType.SPAWN)){
+            	config.getNode("Plates", locationName, "Random").setValue(false);
+            }else if(plate.getLocationType().equals(LocationType.RANDOM)){
+                config.getNode("Plates", locationName, "Random").setValue(true);
+            }else{
+            	config.getNode("Plates", locationName, "Random").setValue(false);
                 config.getNode("Plates", locationName, "X").setValue(plate.getLocation().getBlockX());
                 config.getNode("Plates", locationName, "Y").setValue(plate.getLocation().getBlockY());
                 config.getNode("Plates", locationName, "Z").setValue(plate.getLocation().getBlockZ());

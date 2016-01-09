@@ -49,7 +49,7 @@ public class EventManager {
 			Resource.spawnParticles(dest.getRelative(Direction.UP), 1.0, false);
 		}
 
-		player.sendTitle(Title.of(Text.of(TextColors.DARK_GREEN, Resource.getPrettyName(dest.getExtent().getName())), Text.of(TextColors.AQUA, "x: ", dest.getExtent().getSpawnLocation().getBlockX(), ", y: ", dest.getExtent().getSpawnLocation().getBlockY(),", z: ", dest.getExtent().getSpawnLocation().getBlockZ())));
+		player.sendTitle(Title.of(Text.of(TextColors.DARK_GREEN, Resource.getPrettyName(dest.getExtent().getName())), Text.of(TextColors.AQUA, "x: ", dest.getBlockX(), ", y: ", dest.getBlockY(),", z: ", dest.getBlockZ())));
 	}
 	
     @Listener
@@ -103,7 +103,7 @@ public class EventManager {
 			Player player = (Player)src;
 
 			player.setLocation(location);
-			player.sendTitle(Title.of(Text.of(TextColors.GOLD, Resource.getPrettyName(location.getExtent().getName())), Text.of(TextColors.DARK_PURPLE, "x: ", location.getExtent().getSpawnLocation().getBlockX(), ", y: ", location.getExtent().getSpawnLocation().getBlockY(),", z: ", location.getExtent().getSpawnLocation().getBlockZ())));
+			player.sendTitle(Title.of(Text.of(TextColors.GOLD, Resource.getPrettyName(location.getExtent().getName())), Text.of(TextColors.DARK_PURPLE, "x: ", location.getBlockX(), ", y: ", location.getBlockY(),", z: ", location.getBlockZ())));
 		};
 	}
 }

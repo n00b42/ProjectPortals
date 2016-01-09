@@ -92,6 +92,9 @@ public class ConfigManager {
 			if(config.getNode("Options", "Show-Particles").getString() == null) {
 				config.getNode("Options", "Show-Particles").setValue(true).setComment("Display particle effects on portal creation and teleporting");
 			}
+			if(config.getNode("Options", "Random-Spawn-Radius").getString() == null) {
+				config.getNode("Options", "Random-Spawn-Radius").setValue(10000).setComment("World radius for random spawn portals.");
+			}
 			if(config.getNode("Options", "Command-Alias", "portal").getString() == null) {
 				config.getNode("Options", "Command-Alias", "portal").setValue("p");
 			}
@@ -185,17 +188,21 @@ public class ConfigManager {
 			}
 			World world = Main.getGame().getServer().getWorld(worldName).get();
 			
-			int x = world.getSpawnLocation().getBlockX();
-			int y = world.getSpawnLocation().getBlockY();
-			int z = world.getSpawnLocation().getBlockZ();
+			Location<World> spawnLocation;
 			
-			if(config.getNode("Cuboids", uuid, "X").getString() != null && config.getNode("Cuboids", uuid, "Y").getString() != null && config.getNode("Cuboids", uuid, "Z").getString() != null){
-				x = config.getNode("Cuboids", uuid, "X").getInt();
-				y = config.getNode("Cuboids", uuid, "Y").getInt();
-				z = config.getNode("Cuboids", uuid, "Z").getInt();
+			if(config.getNode("Cuboids", uuid, "Random").getBoolean()){
+				spawnLocation = Resource.getRandomLocation(world, new ConfigManager().getConfig().getNode("Options", "Random-Spawn-Radius").getLong());
+			}else if(config.getNode("Cuboids", uuid, "X").getString() != null && config.getNode("Buttons", uuid, "Y").getString() != null && config.getNode("Buttons", uuid, "Z").getString() != null){
+				int x = config.getNode("Cuboids", uuid, "X").getInt();
+				int y = config.getNode("Cuboids", uuid, "Y").getInt();
+				int z = config.getNode("Cuboids", uuid, "Z").getInt();
+				
+				spawnLocation = world.getLocation(x, y, z);
+			}else{
+				spawnLocation = world.getSpawnLocation();
 			}
 
-			return Main.getGame().getServer().getWorld(worldName).get().getLocation(x, y, z);
+			return spawnLocation;
 		}
 		return null;
 	}

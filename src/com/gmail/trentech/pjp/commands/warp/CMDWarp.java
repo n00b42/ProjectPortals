@@ -92,15 +92,15 @@ public class CMDWarp implements CommandExecutor {
 		}
 		if(src.hasPermission("pjp.cmd.warp.create")) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
-					.onClick(TextActions.runCommand("/warp help Create")).append(Text.of(" /warp create")).build());
+					.onClick(TextActions.runCommand("/pjp:warp help Create")).append(Text.of(" /warp create")).build());
 		}
 		if(src.hasPermission("pjp.cmd.warp.remove")) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
-					.onClick(TextActions.runCommand("/warp help Remove")).append(Text.of(" /warp remove")).build());
+					.onClick(TextActions.runCommand("/pjp:warp help Remove")).append(Text.of(" /warp remove")).build());
 		}
 		if(src.hasPermission("pjp.cmd.warp.list")) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
-					.onClick(TextActions.runCommand("/warp help List")).append(Text.of(" /warp list")).build());
+					.onClick(TextActions.runCommand("/pjp:warp help List")).append(Text.of(" /warp list")).build());
 		}
 		pages.contents(list);
 		

@@ -15,6 +15,7 @@ import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.Resource;
 import com.gmail.trentech.pjp.listeners.ButtonEventManager;
 import com.gmail.trentech.pjp.portals.Button;
+import com.gmail.trentech.pjp.portals.LocationType;
 
 public class CMDButton implements CommandExecutor {
 
@@ -37,24 +38,28 @@ public class CMDButton implements CommandExecutor {
 			return CommandResult.empty();
 		}
 		World world = Main.getGame().getServer().getWorld(worldName).get();
-		
-		Location<World> location;
-		boolean spawn = false;
+
+		Location<World> location = null;
+		LocationType locationType;
 		
 		if(!args.hasAny("coords")) {
-			location = world.getSpawnLocation();
-			spawn = true;
+			locationType = LocationType.SPAWN;
 		}else{
-			location = Resource.getLocation(world, args.<String>getOne("coords").get());
+			String coords = args.<String>getOne("coords").get();
+			if(coords.equalsIgnoreCase("random")){
+				locationType = LocationType.RANDOM;
+			}else{
+				locationType = LocationType.NORMAL;
+				location = Resource.getLocation(world, coords);
+				if(location == null){
+					src.sendMessage(Text.of(TextColors.YELLOW, "/portal button <world> [x] [y] [z]"));
+					return CommandResult.empty();
+				}
+			}
 		}
 		
-		if(location == null){
-			src.sendMessage(Text.of(TextColors.YELLOW, "/portal button <world> [x] [y] [z]"));
-			return CommandResult.empty();
-		}
+		ButtonEventManager.creators.put(player, new Button(world, location, locationType));
 		
-		ButtonEventManager.creators.put(player, new Button(location, spawn));
-
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place button to create button portal"));
 
 		return CommandResult.success();

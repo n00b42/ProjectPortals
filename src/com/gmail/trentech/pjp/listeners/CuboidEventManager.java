@@ -165,7 +165,7 @@ public class CuboidEventManager {
 		
         ConfigManager loaderCuboids = new ConfigManager("portals.conf");
 
-		if(!builder.getDestination().isPresent()){
+		if(!builder.getLocationType().isPresent()){
         	Location<World> location = event.getTargetBlock().getLocation().get();
         	String locationName = location.getExtent().getName() + "." + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
         	
@@ -183,7 +183,7 @@ public class CuboidEventManager {
 			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Starting point selected"));
 			event.setCancelled(true);
 		}else{
-			Cuboid Cuboid = new Cuboid(event.getTargetBlock().getState(), builder.getDestination().get(), builder.getLocation().get(), event.getTargetBlock().getLocation().get(), builder.isSpawn());
+			Cuboid Cuboid = new Cuboid(event.getTargetBlock().getState(), builder.getLocationType().get(), builder.getWorld(), builder.getDestination(), builder.getLocation().get(), event.getTargetBlock().getLocation().get());
 
 			boolean CuboidConstructEvent = Main.getGame().getEventManager().post(new CuboidConstructEvent(Cuboid.getLocations(), Cause.of(player)));
 			if(!CuboidConstructEvent) {

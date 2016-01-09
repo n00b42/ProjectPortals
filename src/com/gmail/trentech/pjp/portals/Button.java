@@ -6,18 +6,24 @@ import org.spongepowered.api.world.World;
 public class Button {
 
 	private final Location<World> location;
-	private final boolean spawn;
+	private final LocationType locationType;
+	private final World world;
 	
-	public Button(Location<World> location, boolean spawn){
+	public Button(World world, Location<World> location, LocationType locationType){
 		this.location = location;
-		this.spawn = spawn;
+		this.locationType = locationType;
+		this.world = world;
 	}
 
 	public Location<World> getLocation() {
 		return location;
 	}
 
-	public boolean isSpawn() {
-		return spawn;
+	public LocationType getLocationType() {
+		return locationType;
+	}
+	
+	public World getWorld() {
+		return world;
 	}
 }

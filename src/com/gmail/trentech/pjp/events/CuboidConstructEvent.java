@@ -14,9 +14,9 @@ public class CuboidConstructEvent extends AbstractEvent implements Cancellable {
 	private Cause cause;
 	private Optional<List<String>> locations = Optional.empty();
 	
-	public CuboidConstructEvent(List<String> locations, Cause cause){
+	public CuboidConstructEvent(Optional<List<String>> locations, Cause cause){
 		this.cause = cause;
-		this.locations = Optional.of(locations);
+		this.locations = locations;
 	}
 	
 	@Override

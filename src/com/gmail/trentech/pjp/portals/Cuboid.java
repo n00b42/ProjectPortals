@@ -3,6 +3,7 @@ package com.gmail.trentech.pjp.portals;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.spongepowered.api.block.BlockSnapshot;
@@ -19,26 +20,25 @@ import ninja.leaping.configurate.ConfigurationNode;
 
 public class Cuboid implements Iterable<BlockSnapshot> {
 
-	protected final String worldName;
-	protected final Location<World> destination;
-	protected final boolean spawn;
+	protected final World world;
+	protected final World destWorld;
+	protected final Optional<Location<World>> destination;
+	protected final LocationType locationType;
 
 	protected BlockState block = BlockState.builder().blockType(BlockTypes.STONE).build();
 	protected final int x1, y1, z1;
 	protected final int x2, y2, z2;
 
-	public Cuboid(BlockState block, Location<World> destination, Location<World> loc1, Location<World> loc2, boolean spawn) {
-		if (!loc1.getExtent().equals(loc2.getExtent())){
-			throw new IllegalArgumentException("Locations must be on the same world");
-		}
-		this.destination = destination;
-		this.spawn = spawn;
-
+	public Cuboid(BlockState block, LocationType locationType, World world, Optional<Location<World>> destination, Location<World> loc1, Location<World> loc2) {
 		if(block != null){
 			this.block = block;
 		}
 		
-		this.worldName = loc1.getExtent().getName();
+		this.destination = destination;
+		this.locationType = locationType;
+		this.destWorld = world;
+		this.world = loc1.getExtent();
+		
 		this.x1 = Math.min(loc1.getBlockX(), loc2.getBlockX());
 		this.y1 = Math.min(loc1.getBlockY(), loc2.getBlockY());
 		this.z1 = Math.min(loc1.getBlockZ(), loc2.getBlockZ());
@@ -46,36 +46,14 @@ public class Cuboid implements Iterable<BlockSnapshot> {
 		this.y2 = Math.max(loc1.getBlockY(), loc2.getBlockY());
 		this.z2 = Math.max(loc1.getBlockZ(), loc2.getBlockZ());
 	}
-	
-	public Cuboid(BlockState block, String worldName, Location<World> destination, int x1, int y1, int z1, int x2, int y2, int z2, boolean spawn) {
-		if(block != null){
-			this.block = block;
-		}
-		this.worldName = worldName;
-		this.destination = destination;
-		this.spawn = spawn;
-		this.x1 = Math.min(x1, x2);
-		this.y1 = Math.min(y1, y2);
-		this.z1 = Math.min(z1, z2);
-		this.x2 = Math.max(x1, x2);
-		this.y2 = Math.max(y1, y2);
-		this.z2 = Math.max(z1, z2);
-	}
-
-	private World getWorld() {
-		if (!Main.getGame().getServer().getWorld(worldName).isPresent()) {
-			throw new IllegalStateException("World " + this.worldName + " is not loaded");
-		}
-		return Main.getGame().getServer().getWorld(worldName).get();
-	}
 
 	public Iterator<BlockSnapshot> iterator() {
-		return new CuboidIterator(this.getWorld(), this.x1, this.y1, this.z1, this.x2, this.y2, this.z2);
+		return new CuboidIterator(world, this.x1, this.y1, this.z1, this.x2, this.y2, this.z2);
 	}
 
 	@Override
 	public String toString() {
-		return new String("Cuboid: " + this.worldName + "," + this.x1 + "," + this.y1 + "," + this.z1 + "=>" + this.x2 + "," + this.y2 + "," + this.z2);
+		return new String("Cuboid: " + this.world.getName() + "," + this.x1 + "," + this.y1 + "," + this.z1 + "=>" + this.x2 + "," + this.y2 + "," + this.z2);
 	}
 
 	public class CuboidIterator implements Iterator<BlockSnapshot> {
@@ -100,7 +78,7 @@ public class Cuboid implements Iterable<BlockSnapshot> {
 		}
 
 		public BlockSnapshot next() {
-			BlockSnapshot b = this.world.createSnapshot(this.baseX + this.x, this.baseY + this.y, this.baseZ + this.z);
+			BlockSnapshot block = this.world.createSnapshot(this.baseX + this.x, this.baseY + this.y, this.baseZ + this.z);
 			if (++x >= this.sizeX) {
 				this.x = 0;
 				if (++this.y >= this.sizeY) {
@@ -108,31 +86,30 @@ public class Cuboid implements Iterable<BlockSnapshot> {
 					++this.z;
 				}
 			}
-			return b;
+			return block;
 		}
 	}
 
-	public List<String> getLocations(){
+	public Optional<List<String>> getLocations(){
 		List<String> locations = new ArrayList<>();
 	    for (BlockSnapshot block : this){
 	    	Location<World> location = block.getLocation().get();
 
 	    	String locationName = location.getExtent().getName() + "." + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 
-	    	ConfigManager loader = new ConfigManager("portals.conf");
+	    	ConfigManager configManager = new ConfigManager("portals.conf");
 			
-			if(loader.getCuboid(locationName) != null){
-				return null;
+			if(configManager.getCuboid(locationName) != null){
+				Optional.empty();
 			}
 			
 			locations.add(locationName);
 	    }
-	    return locations;
+	    return Optional.of(locations);
 	}
 	
 	public void build(){
-
-        List<String> locations = getLocations();
+        List<String> locations = getLocations().get();
 
         for(String loc : locations){
         	String[] info = loc.split("\\.");
@@ -145,8 +122,9 @@ public class Cuboid implements Iterable<BlockSnapshot> {
             	if(!location.getBlockType().equals(BlockTypes.AIR)){
             		location.setBlock(block);
             	}else if(config.getNode("Options", "Cube", "Fill").getBoolean()){
-            		BlockState block = BlockState.builder().blockType(BlockTypes.FLOWING_WATER).build();
-            		location.setBlock(block);
+//            		BlockState block = BlockState.builder().blockType(BlockTypes.FLOWING_WATER).build();
+//            		location.setBlock(block);
+            		// BROKEN
             	}
         	}
         	
@@ -161,12 +139,17 @@ public class Cuboid implements Iterable<BlockSnapshot> {
 		ConfigurationNode config = configManager.getConfig();
 		
 		config.getNode("Cuboids", uuid, "Locations").setValue(locations);
-		config.getNode("Cuboids", uuid, "World").setValue(destination.getExtent().getName());
-        
-        if(!spawn){
-        	config.getNode("Cuboids", uuid, "X").setValue(destination.getBlockX());
-        	config.getNode("Cuboids", uuid, "Y").setValue(destination.getBlockY());
-        	config.getNode("Cuboids", uuid, "Z").setValue(destination.getBlockZ());
+		config.getNode("Cuboids", uuid, "World").setValue(destWorld.getName());
+		
+        if(locationType.equals(LocationType.SPAWN)){  	
+        	config.getNode("Cuboids", uuid, "Random").setValue(false);
+        }else if(locationType.equals(LocationType.RANDOM)){
+            config.getNode("Cuboids", uuid, "Random").setValue(true);
+        }else{
+        	config.getNode("Cuboids", uuid, "Random").setValue(false);
+            config.getNode("Cuboids", uuid, "X").setValue(destination.get().getBlockX());
+            config.getNode("Cuboids", uuid, "Y").setValue(destination.get().getBlockY());
+            config.getNode("Cuboids", uuid, "Z").setValue(destination.get().getBlockZ());
         }
 
         configManager.save();

@@ -14,6 +14,7 @@ import org.spongepowered.api.world.World;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.Resource;
 import com.gmail.trentech.pjp.listeners.PlateEventManager;
+import com.gmail.trentech.pjp.portals.LocationType;
 import com.gmail.trentech.pjp.portals.Plate;
 
 public class CMDPlate implements CommandExecutor {
@@ -37,24 +38,28 @@ public class CMDPlate implements CommandExecutor {
 			return CommandResult.empty();
 		}
 		World world = Main.getGame().getServer().getWorld(worldName).get();
-		
-		Location<World> location;
-		boolean spawn = false;
+
+		Location<World> location = null;
+		LocationType locationType;
 		
 		if(!args.hasAny("coords")) {
-			location = world.getSpawnLocation();
-			spawn = true;
+			locationType = LocationType.SPAWN;
 		}else{
-			location = Resource.getLocation(world, args.<String>getOne("coords").get());
+			String coords = args.<String>getOne("coords").get();
+			if(coords.equalsIgnoreCase("random")){
+				locationType = LocationType.RANDOM;
+			}else{
+				locationType = LocationType.NORMAL;
+				location = Resource.getLocation(world, coords);
+				if(location == null){
+					src.sendMessage(Text.of(TextColors.YELLOW, "/portal plate <world> [x] [y] [z]"));
+					return CommandResult.empty();
+				}
+			}
 		}
 		
-		if(location == null){
-			src.sendMessage(Text.of(TextColors.YELLOW, "/portal plate <world> [x] [y] [z]"));
-			return CommandResult.empty();
-		}
-		
-		PlateEventManager.creators.put(player, new Plate(location, spawn));
-		
+		PlateEventManager.creators.put(player, new Plate(world, location, locationType));
+
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place pressure plate to create presure plate portal"));
 
 		return CommandResult.success();

@@ -91,11 +91,7 @@ public class SignEventManager {
 		
 		if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
 			player.sendMessage(Text.of(TextColors.DARK_RED, prettyWorldName, " does not exist"));
-
-			//signData.set(Keys.SIGN_LINES, new ArrayList<Text>());
 			block.remove(Keys.SIGN_LINES);
-			//block.offer(signData);
-			
 			event.setCancelled(true);
 			return;
 		}
@@ -107,7 +103,25 @@ public class SignEventManager {
 			return;
 		}
 		
-		Main.getGame().getEventManager().post(new TeleportEvent(player.getLocation(), world.getSpawnLocation(), Cause.of(player)));
+		Location<World> spawnLocation;
+		if(lines.size() < 3){
+			spawnLocation = world.getSpawnLocation();
+		}else{
+			String coords = lines.get(2).toPlain();
+
+			if(coords.equalsIgnoreCase("random")){	
+				spawnLocation = Resource.getRandomLocation(world, new ConfigManager().getConfig().getNode("Options", "Random-Spawn-Radius").getLong());
+			}else{		
+				spawnLocation = Resource.getLocation(world, coords);
+			}
+		}
+		
+		if(spawnLocation == null){
+			player.sendMessage(Text.of(TextColors.DARK_RED, "Invalid coordinates"));
+			return;
+		}
+
+		Main.getGame().getEventManager().post(new TeleportEvent(player.getLocation(), spawnLocation, Cause.of(player)));
 	}
 	
 	@Listener

@@ -37,14 +37,16 @@ public class CMDHelp implements CommandExecutor {
 				syntax = " /portal button <world> [x] [y] [z]\n"
 						+ " /p b <world> [x] [y] [z]";
 				example = " /portal button MyWorld\n"
-						+ " /portal button MyWorld -100 65 254";
+						+ " /portal button MyWorld -100 65 254\n"
+						+ " /portal button MyWorld random";
 				break;
 			case "plate":
 				description = " Use this command to create a pressure plate that will teleport you to other worlds";
 				syntax = " /portal plate <world> [x] [y] [z]\n"
 						+ " /p p <world> [x] [y] [z]";
 				example = " /portal plate MyWorld\n"
-						+ " /portal plate MyWorld -100 65 254";
+						+ " /portal plate MyWorld -100 65 254\n"
+						+ " /portal plate MyWorld random";
 				break;
 			case "cube":
 				description = " Create cuboid portal to another dimension, or specified location. No arguments allow for deleting portals.";
@@ -52,6 +54,7 @@ public class CMDHelp implements CommandExecutor {
 						+ " /p c <world> [x] [y] [z]";;
 				example = " /portal cube MyWorld\n"
 						+ " /portal cube MyWorld -100 65 254\n"
+						+ " /portal cube MyWorld random\n"
 						+ " /portal cube show";
 				break;
 			default:

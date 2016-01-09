@@ -28,15 +28,15 @@ public class CMDPortal implements CommandExecutor {
 		
 		if(src.hasPermission("pjp.cmd.portal.cube")) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
-					.onClick(TextActions.runCommand("/portal help Cube")).append(Text.of(" /portal cube")).build());
+					.onClick(TextActions.runCommand("/pjp:portal help Cube")).append(Text.of(" /portal cube")).build());
 		}
 		if(src.hasPermission("pjp.cmd.portal.plate")) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
-					.onClick(TextActions.runCommand("/portal help Plate")).append(Text.of(" /portal plate")).build());
+					.onClick(TextActions.runCommand("/pjp:portal help Plate")).append(Text.of(" /portal plate")).build());
 		}
 		if(src.hasPermission("pjp.cmd.portal.button")) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
-					.onClick(TextActions.runCommand("/portal help Button")).append(Text.of(" /portal button")).build());
+					.onClick(TextActions.runCommand("/pjp:portal help Button")).append(Text.of(" /portal button")).build());
 		}
 		pages.contents(list);
 		

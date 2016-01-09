@@ -86,15 +86,15 @@ public class CMDHome implements CommandExecutor {
 		}
 		if(src.hasPermission("pjp.cmd.home.create")) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
-					.onClick(TextActions.runCommand("/home help Create")).append(Text.of(" /home create")).build());
+					.onClick(TextActions.runCommand("/pjp:home help Create")).append(Text.of(" /home create")).build());
 		}
 		if(src.hasPermission("pjp.cmd.home.remove")) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
-					.onClick(TextActions.runCommand("/home help Remove")).append(Text.of(" /home remove")).build());
+					.onClick(TextActions.runCommand("/pjp:home help Remove")).append(Text.of(" /home remove")).build());
 		}
 		if(src.hasPermission("pjp.cmd.home.list")) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
-					.onClick(TextActions.runCommand("/home help List")).append(Text.of(" /home list")).build());
+					.onClick(TextActions.runCommand("/pjp:home help List")).append(Text.of(" /home list")).build());
 		}
 		pages.contents(list);
 		
