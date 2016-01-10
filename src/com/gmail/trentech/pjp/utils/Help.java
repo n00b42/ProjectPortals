@@ -1,0 +1,88 @@
+package com.gmail.trentech.pjp.utils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
+
+import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.service.pagination.PaginationBuilder;
+import org.spongepowered.api.service.pagination.PaginationService;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
+
+import com.gmail.trentech.pjp.Main;
+
+public class Help {
+
+	private final String command;
+	private final String description;
+	private Optional<String> syntax = Optional.empty();
+	private Optional<String> example = Optional.empty();
+	
+	private static List<Help> list = new ArrayList<>();
+	
+	public Help(String command, String description){
+		this.command = command;
+		this.description = description;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public Optional<String> getSyntax() {
+		return syntax;
+	}
+
+	public void setSyntax(String syntax) {
+		this.syntax = Optional.of(syntax);
+	}
+
+	public Optional<String> getExample() {
+		return example;
+	}
+
+	public void setExample(String example) {
+		this.example = Optional.of(example);
+	}
+
+	public String getCommand() {
+		return command;
+	}
+
+	public void save(){
+		list.add(this);
+	}
+	
+	public static Consumer<CommandSource> getHelp(String input){
+		return (CommandSource src) -> {
+			for(Help help : list){
+				if(help.getCommand().equalsIgnoreCase(input)){
+					PaginationBuilder pages = Main.getGame().getServiceManager().provide(PaginationService.class).get().builder();
+					pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.AQUA, help.getCommand().toLowerCase())).build());
+					
+					List<Text> list = new ArrayList<>();
+
+					list.add(Text.of(TextColors.AQUA, "Description:"));
+					list.add(Text.of(TextColors.GREEN, help.getDescription()));
+					
+					if(help.getSyntax().isPresent()){
+						list.add(Text.of(TextColors.AQUA, "Syntax:"));
+						list.add(Text.of(TextColors.GREEN, help.getSyntax().get()));
+					}
+					if(help.getExample().isPresent()){
+						list.add(Text.of(TextColors.AQUA, "Example:"));
+						list.add(Text.of(TextColors.GREEN,  help.getExample().get(), TextColors.DARK_GREEN));
+					}
+					
+					pages.contents(list);
+					
+					pages.sendTo(src);
+					break;
+				}	
+			}
+			
+		};
+	}
+}

@@ -19,6 +19,8 @@ import com.gmail.trentech.pjp.listeners.CuboidEventManager;
 import com.gmail.trentech.pjp.listeners.EventManager;
 import com.gmail.trentech.pjp.listeners.PlateEventManager;
 import com.gmail.trentech.pjp.listeners.SignEventManager;
+import com.gmail.trentech.pjp.utils.ConfigManager;
+import com.gmail.trentech.pjp.utils.Resource;
 
 import ninja.leaping.configurate.ConfigurationNode;
 
@@ -38,26 +40,52 @@ public class Main {
 
     @Listener
     public void onInitialization(GameInitializationEvent event) {
+    	getLog().info("Initializing...");
     	fixPath();
-    	getGame().getEventManager().registerListeners(this, new EventManager());
-    	getGame().getEventManager().registerListeners(this, new SignEventManager());
-    	getGame().getEventManager().registerListeners(this, new CuboidEventManager());
-    	getGame().getEventManager().registerListeners(this, new ButtonEventManager());
-    	getGame().getEventManager().registerListeners(this, new PlateEventManager());
     	
+    	getGame().getEventManager().registerListeners(this, new EventManager());
+
     	ConfigurationNode config = new ConfigManager().getConfig();
     	
-    	getGame().getCommandManager().register(this, new CommandManager().cmdPortal, "portal", config.getNode("Options", "Command-Alias", "portal").getString());
-    	getGame().getCommandManager().register(this, new CommandManager().cmdWarp, "warp", config.getNode("Options", "Command-Alias", "warp").getString());
-    	getGame().getCommandManager().register(this, new CommandManager().cmdHome, "home", config.getNode("Options", "Command-Alias", "home").getString());
     	getGame().getCommandManager().register(this, new CMDBack().cmdBack, "back", config.getNode("Options", "Command-Alias", "back").getString());
+    	getGame().getCommandManager().register(this, new CommandManager().cmdPJP, "pjp");
+    	
+    	ConfigurationNode modules = config.getNode("Options", "Modules");
+    	
+    	if(modules.getNode("Cubes").getBoolean()){  		
+    		getGame().getEventManager().registerListeners(this, new CuboidEventManager());
+    		getGame().getCommandManager().register(this, new CommandManager().cmdCube, "cube", config.getNode("Options", "Command-Alias", "cube").getString());
+    		getLog().info("Cube module activated");
+    	}
+    	if(modules.getNode("Buttons").getBoolean()){
+    		getGame().getEventManager().registerListeners(this, new ButtonEventManager());
+    		getGame().getCommandManager().register(this, new CommandManager().cmdButton, "button", config.getNode("Options", "Command-Alias", "button").getString());
+    		getLog().info("Button module activated");
+    	}
+    	if(modules.getNode("Plates").getBoolean()){
+    		getGame().getEventManager().registerListeners(this, new PlateEventManager());
+    		getGame().getCommandManager().register(this, new CommandManager().cmdPlate, "plate", config.getNode("Options", "Command-Alias", "plate").getString());
+    		getLog().info("Plate module activated");
+    	}
+    	if(modules.getNode("Signs").getBoolean()){
+    		getGame().getEventManager().registerListeners(this, new SignEventManager());
+    		getLog().info("Sign module activated");
+    	}
+    	if(modules.getNode("Homes").getBoolean()){
+    		getGame().getEventManager().registerListeners(this, new SignEventManager());
+    		getGame().getCommandManager().register(this, new CommandManager().cmdHome, "home", config.getNode("Options", "Command-Alias", "home").getString());
+    		getLog().info("Home module activated");
+    	}
+    	if(modules.getNode("Warps").getBoolean()){
+    		getGame().getEventManager().registerListeners(this, new SignEventManager());
+    		getGame().getCommandManager().register(this, new CommandManager().cmdWarp, "warp", config.getNode("Options", "Command-Alias", "warp").getString());
+    		getLog().info("Warp module activated");
+    	}
     }
 
     @Listener
     public void onStartedServer(GameStartedServerEvent event) {
-    	getLog().info("Initializing...");
-
-    	new ConfigManager();
+    	
     }
 
 	public static Logger getLog() {

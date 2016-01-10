@@ -17,13 +17,22 @@ import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.events.TeleportEvent;
-import com.gmail.trentech.pjp.portals.LocationType;
+import com.gmail.trentech.pjp.utils.ConfigManager;
+import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDBack implements CommandExecutor {
 
 	public CommandSpec cmdBack = CommandSpec.builder().description(Text.of("Send player to last place they were")).permission("pjp.cmd.back").executor(this).build();
 	
 	public static HashMap<Player, Location<World>> players = new HashMap<>();
+	
+	public CMDBack(){
+		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "back").getString();
+		
+		Help help = new Help("back", " Use this command to teleport you to the location you previously came from");
+		help.setSyntax(" /back\n /" + alias);
+		help.save();
+	}
 	
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
@@ -37,10 +46,15 @@ public class CMDBack implements CommandExecutor {
 			src.sendMessage(Text.of(TextColors.DARK_RED, "No position to teleport to"));
 			return CommandResult.empty();
 		}
-		Location<World> location = players.get(player);
-		
-		Main.getGame().getEventManager().post(new TeleportEvent(player.getLocation(), location, LocationType.NORMAL, Cause.of(player)));
-		
+		Location<World> spawnLocation = players.get(player);
+
+		TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of("Home"));
+
+		if(!Main.getGame().getEventManager().post(teleportEvent)){
+			spawnLocation = teleportEvent.getDestination();
+			player.setLocation(spawnLocation);
+		}
+
 		return CommandResult.success();
 	}
 }

@@ -5,12 +5,6 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.text.Text;
 
 import com.gmail.trentech.pjp.commands.home.CMDHome;
-import com.gmail.trentech.pjp.commands.portal.CMDButton;
-import com.gmail.trentech.pjp.commands.portal.CMDCube;
-import com.gmail.trentech.pjp.commands.portal.CMDHelp;
-import com.gmail.trentech.pjp.commands.portal.CMDPlate;
-import com.gmail.trentech.pjp.commands.portal.CMDPortal;
-import com.gmail.trentech.pjp.commands.portal.CMDShow;
 import com.gmail.trentech.pjp.commands.warp.CMDWarp;
 
 public class CommandManager {
@@ -36,13 +30,6 @@ public class CommandManager {
 		    .executor(new com.gmail.trentech.pjp.commands.warp.CMDList())
 		    .build();
 	
-	public CommandSpec cmdWarpHelp = CommandSpec.builder()
-		    .description(Text.of("I need help"))
-		    .permission("pjp.cmd.warp")
-		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))))
-		    .executor(new com.gmail.trentech.pjp.commands.warp.CMDHelp())
-		    .build();
-	
 	public CommandSpec cmdWarp = CommandSpec.builder()
 		    .description(Text.of("Warp base command"))
 		    .permission("pjp.cmd.warp")
@@ -51,7 +38,6 @@ public class CommandManager {
 		    .child(cmdWarpCreate, "create", "c")
 		    .child(cmdWarpRemove, "remove", "r")
 		    .child(cmdWarpList, "list", "l")
-		    .child(cmdWarpHelp, "help", "h")
 		    .executor(new CMDWarp())
 		    .build();
 	
@@ -76,14 +62,7 @@ public class CommandManager {
 		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))))
 		    .executor(new com.gmail.trentech.pjp.commands.home.CMDList())
 		    .build();
-	
-	public CommandSpec cmdHomeHelp = CommandSpec.builder()
-		    .description(Text.of("I need help"))
-		    .permission("pjp.cmd.home")
-		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))))
-		    .executor(new com.gmail.trentech.pjp.commands.home.CMDHelp())
-		    .build();
-	
+
 	public CommandSpec cmdHome = CommandSpec.builder()
 		    .description(Text.of("Home base command"))
 		    .permission("pjp.cmd.home")
@@ -92,7 +71,6 @@ public class CommandManager {
 		    .child(cmdHomeCreate, "create", "c")
 		    .child(cmdHomeRemove, "remove", "r")
 		    .child(cmdHomeList, "list", "l")
-		    .child(cmdHomeHelp, "help", "h")
 		    .executor(new CMDHome())
 		    .build();
 	
@@ -103,46 +81,36 @@ public class CommandManager {
 		    .arguments(GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("name"))))
 		    .executor(new CMDShow())
 		    .build();
-	
+
 	public CommandSpec cmdCube = CommandSpec.builder()
-		    .description(Text.of("Create cuboid portal"))
-		    .permission("pjw.cmd.portal.cube")
-		    .child(cmdShow, "show", "s")
+		    .description(Text.of("Portal base command"))
+		    .permission("pjp.cmd.cube")
 		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))),
 		    		GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("coords"))))
+		    .child(cmdShow, "show", "s")
 		    .executor(new CMDCube())
 		    .build();
 	
+	
 	public CommandSpec cmdButton = CommandSpec.builder()
-		    .description(Text.of("Place a button portal"))
-		    .permission("pjw.cmd.portal.button")
+		    .description(Text.of("Portal base command"))
+		    .permission("pjp.cmd.button")
 		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))),
 		    		GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("coords"))))
 		    .executor(new CMDButton())
 		    .build();
 	
 	public CommandSpec cmdPlate = CommandSpec.builder()
-		    .description(Text.of("Place a pressure plate portal"))
-		    .permission("pjp.cmd.portal.plate")
+		    .description(Text.of("Portal base command"))
+		    .permission("pjp.cmd.plate")
 		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))),
 		    		GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("coords"))))
 		    .executor(new CMDPlate())
 		    .build();
 
-	public CommandSpec cmdHelp = CommandSpec.builder()
-		    .description(Text.of("I need help"))
-		    .permission("pjp.cmd.portal")
-		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("command"))))
-		    .executor(new CMDHelp())
-		    .build();
-	
-	public CommandSpec cmdPortal = CommandSpec.builder()
+	public CommandSpec cmdPJP = CommandSpec.builder()
 		    .description(Text.of("Portal base command"))
-		    .permission("pjp.cmd.portal")
-		    .child(cmdCube, "cube", "c")
-		    .child(cmdButton, "button", "b")
-		    .child(cmdPlate, "plate", "p")
-		    .child(cmdHelp, "help", "h")
-		    .executor(new CMDPortal())
+		    .permission("pjp.cmd")
+		    .executor(new CMDPjp())
 		    .build();
 }

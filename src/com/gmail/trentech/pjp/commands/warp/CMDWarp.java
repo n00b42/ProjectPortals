@@ -15,12 +15,13 @@ import org.spongepowered.api.service.pagination.PaginationService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.ConfigManager;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.events.TeleportEvent;
-import com.gmail.trentech.pjp.portals.LocationType;
+import com.gmail.trentech.pjp.utils.ConfigManager;
+import com.gmail.trentech.pjp.utils.Help;
 
 import ninja.leaping.configurate.ConfigurationNode;
 
@@ -77,8 +78,15 @@ public class CMDWarp implements CommandExecutor {
 				player = Main.getGame().getServer().getPlayer(playerName).get();
 			}
 			
-			Main.getGame().getEventManager().post(new TeleportEvent(player.getLocation(), world.getLocation(x, y, z), LocationType.NORMAL, Cause.of(player)));
+			Location<World> spawnLocation = world.getLocation(x, y, z);
 			
+			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of(src));
+
+			if(!Main.getGame().getEventManager().post(teleportEvent)){
+				spawnLocation = teleportEvent.getDestination();
+				player.setLocation(spawnLocation);
+			}
+
 			return CommandResult.success();
 		}
 
@@ -89,19 +97,19 @@ public class CMDWarp implements CommandExecutor {
 		List<Text> list = new ArrayList<>();
 		
 		if(src.hasPermission("pjp.cmd.warp.others")) {
-			list.add(Text.of(TextColors.GREEN, " /warp <name> [player]"));
+			list.add(Text.of(TextColors.YELLOW, " /warp <name> [player]\n"));
 		}
 		if(src.hasPermission("pjp.cmd.warp.create")) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
-					.onClick(TextActions.runCommand("/pjp:warp help Create")).append(Text.of(" /warp create")).build());
+					.onClick(TextActions.executeCallback(Help.getHelp("wcreate"))).append(Text.of(" /warp create")).build());
 		}
 		if(src.hasPermission("pjp.cmd.warp.remove")) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
-					.onClick(TextActions.runCommand("/pjp:warp help Remove")).append(Text.of(" /warp remove")).build());
+					.onClick(TextActions.executeCallback(Help.getHelp("wremove"))).append(Text.of(" /warp remove")).build());
 		}
 		if(src.hasPermission("pjp.cmd.warp.list")) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
-					.onClick(TextActions.runCommand("/pjp:warp help List")).append(Text.of(" /warp list")).build());
+					.onClick(TextActions.executeCallback(Help.getHelp("wlist"))).append(Text.of(" /warp list")).build());
 		}
 		pages.contents(list);
 		

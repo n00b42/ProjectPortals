@@ -1,24 +1,31 @@
-package com.gmail.trentech.pjp;
+package com.gmail.trentech.pjp.utils;
 
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Consumer;
 
 import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.effect.particle.ParticleEffect;
 import org.spongepowered.api.effect.particle.ParticleTypes;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.text.title.Title;
 import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.TeleportHelper;
 import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
+import com.gmail.trentech.pjp.Main;
 
 public class Resource {
 
 	public final static String NAME = "Project Portals";
-	public final static String VERSION = "0.4.13";
+	public final static String VERSION = "0.5.13";
 	public final static String ID = "PJP";
 	
 	private static HashMap<World, Location<World>> randomLocations = new HashMap<>();
@@ -93,34 +100,40 @@ public class Resource {
 		
 		ThreadLocalRandom random = ThreadLocalRandom.current();
 		
-		int x = (int) (random.nextDouble() * ((radius*2) + 1) - radius);
-		int y = random.nextInt(64, 200 + 1);
-		int z = (int) (random.nextDouble() * ((radius*2) + 1) - radius);
+		Location<World> location = world.getSpawnLocation();
 
-		Optional<Location<World>> optionalLocation = teleportHelper.getSafeLocation(world.getLocation(x, y, z));
+		for(int i = 0; i < 49; i++){
+			int x = (int) (random.nextDouble() * ((radius*2) + 1) - radius);
+			int y = random.nextInt(64, 200 + 1);
+			int z = (int) (random.nextDouble() * ((radius*2) + 1) - radius);
+			
+			Optional<Location<World>> optionalLocation = teleportHelper.getSafeLocation(world.getLocation(x, y, z));
 
-		if(!optionalLocation.isPresent()){
-			return generate(world, radius);
+			if(!optionalLocation.isPresent()){
+				continue;
+			}
+			Location<World> unsafeLocation = optionalLocation.get();
+			
+			if(!unsafeLocation.getBlockType().equals(BlockTypes.AIR) || !unsafeLocation.getRelative(Direction.UP).getBlockType().equals(BlockTypes.AIR)){
+				continue;
+			}
+			
+			Location<World> floor = unsafeLocation.getRelative(Direction.DOWN);
+			if(floor.getBlockType().equals(BlockTypes.WATER) 
+					|| floor.getBlockType().equals(BlockTypes.LAVA)
+					|| floor.getBlockType().equals(BlockTypes.FLOWING_WATER)
+					|| floor.getBlockType().equals(BlockTypes.FLOWING_LAVA)
+					|| floor.getBlockType().equals(BlockTypes.FIRE)){
+				continue;
+			}
+			
+			location = unsafeLocation;
+			break;
 		}
-		Location<World> location = optionalLocation.get();
-		
-		if(!location.getBlockType().equals(BlockTypes.AIR) || !location.getRelative(Direction.UP).getBlockType().equals(BlockTypes.AIR)){
-			return generate(world, radius);
-		}
-		
-		Location<World> floor = location.getRelative(Direction.DOWN);
-		if(floor.getBlockType().equals(BlockTypes.WATER) 
-				|| floor.getBlockType().equals(BlockTypes.LAVA)
-				|| floor.getBlockType().equals(BlockTypes.FLOWING_WATER)
-				|| floor.getBlockType().equals(BlockTypes.FLOWING_LAVA)
-				|| floor.getBlockType().equals(BlockTypes.FIRE)){
-			return generate(world, radius);
-		}
-		
 		return location;
 	}
 
-	public static void generateRandomLocation(World world){
+	private static void generateRandomLocation(World world){
 		randomLocations.put(world, generate(world, new ConfigManager().getConfig().getNode("Options", "Random-Spawn-Radius").getLong()));
 	}
 	
@@ -130,5 +143,14 @@ public class Resource {
 		}
 		
 		return randomLocations.get(world);
+	}
+	
+	public static Consumer<CommandSource> unsafeTeleport(Location<World> location){
+		return (CommandSource src) -> {
+			Player player = (Player)src;
+
+			player.setLocation(location);
+			player.sendTitle(Title.of(Text.of(TextColors.GOLD, Resource.getPrettyName(location.getExtent().getName())), Text.of(TextColors.DARK_PURPLE, "x: ", location.getBlockX(), ", y: ", location.getBlockY(),", z: ", location.getBlockZ())));
+		};
 	}
 }

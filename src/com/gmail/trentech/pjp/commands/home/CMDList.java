@@ -18,13 +18,22 @@ import org.spongepowered.api.text.Text.Builder;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
-import com.gmail.trentech.pjp.ConfigManager;
 import com.gmail.trentech.pjp.Main;
+import com.gmail.trentech.pjp.utils.ConfigManager;
+import com.gmail.trentech.pjp.utils.Help;
 
 import ninja.leaping.configurate.ConfigurationNode;
 
 public class CMDList implements CommandExecutor {
 
+	public CMDList(){
+		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "home").getString();
+		
+		Help help = new Help("hlist", " List all homes");
+		help.setSyntax(" /home list\n /" + alias + " l");
+		help.save();
+	}
+	
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if(!(src instanceof Player)){

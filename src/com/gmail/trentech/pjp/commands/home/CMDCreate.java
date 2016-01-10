@@ -11,12 +11,22 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.ConfigManager;
+import com.gmail.trentech.pjp.utils.ConfigManager;
+import com.gmail.trentech.pjp.utils.Help;
 
 import ninja.leaping.configurate.ConfigurationNode;
 
 public class CMDCreate implements CommandExecutor {
 
+	public CMDCreate(){
+		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "home").getString();
+		
+		Help help = new Help("hcreate", " Create a new home");
+		help.setSyntax(" /home create <name>\n /" + alias + " c <name>");
+		help.setExample(" /home create MyHome");
+		help.save();
+	}
+	
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if(!(src instanceof Player)){

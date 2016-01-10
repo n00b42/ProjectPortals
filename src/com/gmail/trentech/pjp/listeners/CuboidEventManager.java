@@ -11,7 +11,10 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.entity.damage.source.BlockDamageSource;
+import org.spongepowered.api.event.entity.DamageEntityEvent;
 import org.spongepowered.api.event.entity.DisplaceEntityEvent;
+import org.spongepowered.api.event.entity.IgniteEntityEvent;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
@@ -19,14 +22,13 @@ import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.ConfigManager;
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.Resource;
 import com.gmail.trentech.pjp.events.CuboidConstructEvent;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.portals.Cuboid;
 import com.gmail.trentech.pjp.portals.CuboidBuilder;
-import com.gmail.trentech.pjp.portals.LocationType;
+import com.gmail.trentech.pjp.utils.ConfigManager;
+import com.gmail.trentech.pjp.utils.Resource;
 
 import ninja.leaping.configurate.ConfigurationNode;
 
@@ -164,24 +166,25 @@ public class CuboidEventManager {
 		World world = Main.getGame().getServer().getWorld(worldName).get();
 		
 		Location<World> spawnLocation;
-		LocationType locationType;
-		
+
 		if(node.getNode("Random").getBoolean()){
 			spawnLocation = Resource.getRandomLocation(world);
-			locationType = LocationType.RANDOM;
 		}else if(node.getNode("X").getString() != null && node.getNode("Y").getString() != null && node.getNode("Z").getString() != null){
 			int x = node.getNode("X").getInt();
 			int y = node.getNode("Y").getInt();
 			int z = node.getNode("Z").getInt();
 			
 			spawnLocation = world.getLocation(x, y, z);
-			locationType = LocationType.NORMAL;
 		}else{
 			spawnLocation = world.getSpawnLocation();
-			locationType = LocationType.SPAWN;
 		}
 
-		Main.getGame().getEventManager().post(new TeleportEvent(player.getLocation(), spawnLocation, locationType, Cause.of(player)));
+		TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of("Cuboid"));
+
+		if(!Main.getGame().getEventManager().post(teleportEvent)){
+			spawnLocation = teleportEvent.getDestination();
+			player.setLocation(spawnLocation);
+		}
 	}
 
 	@Listener
@@ -212,13 +215,59 @@ public class CuboidEventManager {
 			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Starting point selected"));
 			event.setCancelled(true);
 		}else{
-			Cuboid Cuboid = new Cuboid(event.getTargetBlock().getState(), builder.getLocationType().get(), builder.getWorld(), builder.getDestination(), builder.getLocation().get(), event.getTargetBlock().getLocation().get());
+			Cuboid cuboid = new Cuboid(event.getTargetBlock().getState(), builder.getLocationType().get(), builder.getWorld(), builder.getDestination(), builder.getLocation().get(), event.getTargetBlock().getLocation().get());
 
-			boolean CuboidConstructEvent = Main.getGame().getEventManager().post(new CuboidConstructEvent(Cuboid.getLocations(), Cause.of(player)));
-			if(!CuboidConstructEvent) {
-				Cuboid.build();
+			if(!Main.getGame().getEventManager().post(new CuboidConstructEvent(cuboid.getLocations(), Cause.of(player)))) {
+				cuboid.build();
+				player.sendMessage(Text.of(TextColors.DARK_GREEN, "New cube portal created"));
 			}
 			event.setCancelled(true);
 		}
 	}
+	
+    @Listener
+    public void onDamageEntityEvent(DamageEntityEvent event, @First BlockDamageSource damageSource) {
+    	if(!(event.getTargetEntity() instanceof Player)) {
+    		return;
+    	}
+
+        BlockSnapshot block = damageSource.getBlockSnapshot();
+        
+        if(!block.getState().getType().equals(BlockTypes.FLOWING_LAVA)){
+        	return;
+        }
+        
+        Location<World> location = block.getLocation().get();
+        
+		String locationName = location.getExtent().getName() + "." + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
+
+		if(new ConfigManager("portals.conf").getConfig().getNode("Cuboids", locationName, "World").getString() == null){
+			return;
+		}
+		
+		event.setCancelled(true);
+    }
+    
+    @Listener
+    public void onIgniteEntityEvent(IgniteEntityEvent event, @First BlockDamageSource damageSource) {
+    	if(!(event.getTargetEntity() instanceof Player)) {
+    		return;
+    	}
+
+        BlockSnapshot block = damageSource.getBlockSnapshot();
+        
+        if(!block.getState().getType().equals(BlockTypes.FLOWING_LAVA)){
+        	return;
+        }
+        
+        Location<World> location = block.getLocation().get();
+        
+		String locationName = location.getExtent().getName() + "." + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
+
+		if(new ConfigManager("portals.conf").getConfig().getNode("Cuboids", locationName, "World").getString() == null){
+			return;
+		}
+		
+		event.setCancelled(true);
+    }
 }

@@ -20,11 +20,10 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.ConfigManager;
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.Resource;
 import com.gmail.trentech.pjp.events.TeleportEvent;
-import com.gmail.trentech.pjp.portals.LocationType;
+import com.gmail.trentech.pjp.utils.ConfigManager;
+import com.gmail.trentech.pjp.utils.Resource;
 
 public class SignEventManager {
 	
@@ -105,20 +104,16 @@ public class SignEventManager {
 		}
 		
 		Location<World> spawnLocation;
-		LocationType locationType;
-		
+
 		if(lines.size() < 3){
 			spawnLocation = world.getSpawnLocation();
-			locationType = LocationType.SPAWN;
 		}else{
 			String coords = lines.get(2).toPlain();
 
 			if(coords.equalsIgnoreCase("random")){	
 				spawnLocation = Resource.getRandomLocation(world);
-				locationType = LocationType.RANDOM;
 			}else{		
 				spawnLocation = Resource.getLocation(world, coords);
-				locationType = LocationType.NORMAL;
 			}
 		}
 		
@@ -127,7 +122,12 @@ public class SignEventManager {
 			return;
 		}
 
-		Main.getGame().getEventManager().post(new TeleportEvent(player.getLocation(), spawnLocation, locationType, Cause.of(player)));
+		TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of(event.getTargetBlock().getState()));
+
+		if(!Main.getGame().getEventManager().post(teleportEvent)){
+			spawnLocation = teleportEvent.getDestination();
+			player.setLocation(spawnLocation);
+		}
 	}
 	
 	@Listener

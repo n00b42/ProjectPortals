@@ -12,9 +12,9 @@ import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.ConfigManager;
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.Resource;
+import com.gmail.trentech.pjp.utils.ConfigManager;
+import com.gmail.trentech.pjp.utils.Resource;
 
 import ninja.leaping.configurate.ConfigurationNode;
 

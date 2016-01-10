@@ -1,4 +1,4 @@
-package com.gmail.trentech.pjp;
+package com.gmail.trentech.pjp.utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,6 +10,8 @@ import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
+
+import com.gmail.trentech.pjp.Main;
 
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -93,10 +95,16 @@ public class ConfigManager {
 				config.getNode("Options", "Show-Particles").setValue(true).setComment("Display particle effects on portal creation and teleporting");
 			}
 			if(config.getNode("Options", "Random-Spawn-Radius").getString() == null) {
-				config.getNode("Options", "Random-Spawn-Radius").setValue(10000).setComment("World radius for random spawn portals.");
+				config.getNode("Options", "Random-Spawn-Radius").setValue(5000).setComment("World radius for random spawn portals.");
 			}
-			if(config.getNode("Options", "Command-Alias", "portal").getString() == null) {
-				config.getNode("Options", "Command-Alias", "portal").setValue("p");
+			if(config.getNode("Options", "Command-Alias", "cube").getString() == null) {
+				config.getNode("Options", "Command-Alias", "cube").setValue("cb");
+			}
+			if(config.getNode("Options", "Command-Alias", "button").getString() == null) {
+				config.getNode("Options", "Command-Alias", "button").setValue("btn");
+			}
+			if(config.getNode("Options", "Command-Alias", "plate").getString() == null) {
+				config.getNode("Options", "Command-Alias", "plate").setValue("pl");
 			}
 			if(config.getNode("Options", "Command-Alias", "home").getString() == null) {
 				config.getNode("Options", "Command-Alias", "home").setValue("h");
@@ -105,7 +113,25 @@ public class ConfigManager {
 				config.getNode("Options", "Command-Alias", "warp").setValue("wp");
 			}
 			if(config.getNode("Options", "Command-Alias", "back").getString() == null) {
-				config.getNode("Options", "Command-Alias", "back").setValue("b");
+				config.getNode("Options", "Command-Alias", "back").setValue("bk");
+			}
+			if(config.getNode("Options", "Modules", "Cubes").getString() == null) {
+				config.getNode("Options", "Modules", "Cubes").setValue(true);
+			}
+			if(config.getNode("Options", "Modules", "Buttons").getString() == null) {
+				config.getNode("Options", "Modules", "Buttons").setValue(true);
+			}
+			if(config.getNode("Options", "Modules", "Plates").getString() == null) {
+				config.getNode("Options", "Modules", "Plates").setValue(true);
+			}
+			if(config.getNode("Options", "Modules", "Signs").getString() == null) {
+				config.getNode("Options", "Modules", "Signs").setValue(true);
+			}
+			if(config.getNode("Options", "Modules", "Warps").getString() == null) {
+				config.getNode("Options", "Modules", "Warps").setValue(true);
+			}
+			if(config.getNode("Options", "Modules", "Homes").getString() == null) {
+				config.getNode("Options", "Modules", "Homes").setValue(true);
 			}
 		}else if(file.getName().equalsIgnoreCase("portals.conf")){
 			if(config.getNode("Buttons").getString() == null) {

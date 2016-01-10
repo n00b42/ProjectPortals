@@ -17,12 +17,12 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.ConfigManager;
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.Resource;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.portals.LocationType;
 import com.gmail.trentech.pjp.portals.Plate;
+import com.gmail.trentech.pjp.utils.ConfigManager;
+import com.gmail.trentech.pjp.utils.Resource;
 
 import ninja.leaping.configurate.ConfigurationNode;
 
@@ -89,7 +89,14 @@ public class PlateEventManager {
 				locationType = LocationType.SPAWN;
 			}
 
-			Main.getGame().getEventManager().post(new TeleportEvent(player.getLocation(), spawnLocation, locationType, Cause.of(player)));
+			Plate plate = new Plate(world, spawnLocation, locationType);
+			
+			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of(plate));
+
+			if(!Main.getGame().getEventManager().post(teleportEvent)){
+				spawnLocation = teleportEvent.getDestination();
+				player.setLocation(spawnLocation);
+			}
 		}
 	}
 	

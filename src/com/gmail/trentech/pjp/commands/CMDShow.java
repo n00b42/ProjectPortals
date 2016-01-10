@@ -1,4 +1,4 @@
-package com.gmail.trentech.pjp.commands.portal;
+package com.gmail.trentech.pjp.commands;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +18,8 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.ConfigManager;
 import com.gmail.trentech.pjp.Main;
+import com.gmail.trentech.pjp.utils.ConfigManager;
 
 import ninja.leaping.configurate.ConfigurationNode;
 

@@ -9,12 +9,22 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-import com.gmail.trentech.pjp.ConfigManager;
+import com.gmail.trentech.pjp.utils.ConfigManager;
+import com.gmail.trentech.pjp.utils.Help;
 
 import ninja.leaping.configurate.ConfigurationNode;
 
 public class CMDRemove implements CommandExecutor {
 
+	public CMDRemove(){
+		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "warp").getString();
+		
+		Help help = new Help("wremove", " Remove an existing  warp point");
+		help.setSyntax(" /warp remove <name>\n /" + alias + " r <name>");
+		help.setExample(" /warp remove OldSpawn");
+		help.save();
+	}
+	
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if(!(src instanceof Player)){

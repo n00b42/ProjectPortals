@@ -1,25 +1,24 @@
 package com.gmail.trentech.pjp.events;
 
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.impl.AbstractEvent;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.portals.LocationType;
-
 public class TeleportEvent extends AbstractEvent implements Cancellable {
 	
 	private boolean cancelled = false;
+	private final Player target;
 	private final Cause cause;
-	private final Location<World> src;
-	private Location<World> dest;
-	private final LocationType locationType;
+	private final Location<World> source;
+	private Location<World> destination;
 	
-	public TeleportEvent(Location<World> src, Location<World> dest, LocationType locationType, Cause cause){
-		this.src = src;
-		this.setDest(dest);
-		this.locationType = locationType;
+	public TeleportEvent(Player target, Location<World> source, Location<World> destination, Cause cause){
+		this.target = target;
+		this.source = source;
+		this.setDestination(destination);
 		this.cause = cause;
 	}
 	
@@ -38,19 +37,19 @@ public class TeleportEvent extends AbstractEvent implements Cancellable {
 		return cause;
 	}
 
-	public Location<World> getDest() {
-		return dest;
+	public Location<World> getDestination() {
+		return destination;
 	}
 
-	public void setDest(Location<World> dest) {
-		this.dest = dest;
+	public void setDestination(Location<World> destination) {
+		this.destination = destination;
 	}
 
-	public Location<World> getSrc() {
-		return src;
+	public Location<World> getSource() {
+		return source;
 	}
 
-	public LocationType getLocationType() {
-		return locationType;
+	public Player getTarget() {
+		return target;
 	}
 }

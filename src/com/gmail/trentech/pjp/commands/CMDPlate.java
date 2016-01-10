@@ -1,4 +1,4 @@
-package com.gmail.trentech.pjp.commands.portal;
+package com.gmail.trentech.pjp.commands;
 
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -12,12 +12,24 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.Resource;
-import com.gmail.trentech.pjp.portals.CuboidBuilder;
+import com.gmail.trentech.pjp.listeners.PlateEventManager;
 import com.gmail.trentech.pjp.portals.LocationType;
+import com.gmail.trentech.pjp.portals.Plate;
+import com.gmail.trentech.pjp.utils.ConfigManager;
+import com.gmail.trentech.pjp.utils.Help;
+import com.gmail.trentech.pjp.utils.Resource;
 
-public class CMDCube implements CommandExecutor {
+public class CMDPlate implements CommandExecutor {
 
+	public CMDPlate(){
+		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "plate").getString();
+		
+		Help help = new Help("plate", " Use this command to create a pressure plate that will teleport you to other worlds");
+		help.setSyntax(" /plate <world> [x] [y] [z]\n /" + alias + " <world> [x] [y] [z]");
+		help.setExample(" /plate MyWorld\n /plate MyWorld -100 65 254\n /plate MyWorld random");
+		help.save();
+	}
+	
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if(!(src instanceof Player)){
@@ -27,49 +39,42 @@ public class CMDCube implements CommandExecutor {
 		Player player = (Player) src;
 		
 		if(!args.hasAny("name")) {
-			src.sendMessage(Text.of(TextColors.YELLOW, "/portal button <world> [x] [y] [z]"));
+			src.sendMessage(Text.of(TextColors.GOLD, "/plate <world> [x] [y] [z]"));
 			return CommandResult.empty();
 		}
 		String worldName = Resource.getBaseName(args.<String>getOne("name").get());
 
-		if(worldName.equalsIgnoreCase("remove")){
-			src.sendMessage(Text.of(TextColors.DARK_GREEN, "Right click the Cuboid to remove"));
-			CuboidBuilder.getActiveBuilders().put((Player) src, new CuboidBuilder());
-			return CommandResult.success();
-		}
-		
-		if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
+		if(!Main.getGame().getServer().getWorld(Resource.getBaseName(worldName)).isPresent()){
 			src.sendMessage(Text.of(TextColors.DARK_RED, Resource.getPrettyName(worldName), " does not exist"));
 			return CommandResult.empty();
 		}
 		World world = Main.getGame().getServer().getWorld(worldName).get();
 
-		Location<World> location = null;
+		Location<World> spawnLocation;
 		LocationType locationType;
 		
 		if(!args.hasAny("coords")) {
-			locationType = LocationType.SPAWN;
+			spawnLocation = world.getSpawnLocation();
+			locationType = LocationType.SPAWN;			
 		}else{
 			String coords = args.<String>getOne("coords").get();
-			if(coords.equalsIgnoreCase("random")){
+			if(coords.equalsIgnoreCase("random")){				
+				spawnLocation = Resource.getRandomLocation(world);
 				locationType = LocationType.RANDOM;
 			}else{
 				locationType = LocationType.NORMAL;
-				location = Resource.getLocation(world, coords);
-				if(location == null){
-					src.sendMessage(Text.of(TextColors.YELLOW, "/portal cube <world> [x] [y] [z]"));
+				spawnLocation = Resource.getLocation(world, coords);
+				if(spawnLocation == null){
+					src.sendMessage(Text.of(TextColors.YELLOW, "/plate <world> [x] [y] [z]"));
 					return CommandResult.empty();
 				}
 			}
 		}
+		
+		PlateEventManager.creators.put(player, new Plate(world, spawnLocation, locationType));
 
-		CuboidBuilder builder = new CuboidBuilder(world, location, locationType);
-
-		CuboidBuilder.getActiveBuilders().put(player, builder);
-
-		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Right click starting point"));
+		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place pressure plate to create presure plate portal"));
 
 		return CommandResult.success();
 	}
-
 }

@@ -15,12 +15,13 @@ import org.spongepowered.api.service.pagination.PaginationService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.ConfigManager;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.events.TeleportEvent;
-import com.gmail.trentech.pjp.portals.LocationType;
+import com.gmail.trentech.pjp.utils.ConfigManager;
+import com.gmail.trentech.pjp.utils.Help;
 
 import ninja.leaping.configurate.ConfigurationNode;
 
@@ -71,8 +72,15 @@ public class CMDHome implements CommandExecutor {
 				player = Main.getGame().getServer().getPlayer(playerName).get();
 			}
 			
-			Main.getGame().getEventManager().post(new TeleportEvent(player.getLocation(), world.getLocation(x, y, z), LocationType.NORMAL, Cause.of(player)));
+			Location<World> spawnLocation = world.getLocation(x, y, z);
 			
+			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of(src));
+
+			if(!Main.getGame().getEventManager().post(teleportEvent)){
+				spawnLocation = teleportEvent.getDestination();
+				player.setLocation(spawnLocation);
+			}
+
 			return CommandResult.success();
 		}
 
@@ -83,19 +91,19 @@ public class CMDHome implements CommandExecutor {
 		List<Text> list = new ArrayList<>();
 		
 		if(src.hasPermission("pjp.cmd.home.others")) {
-			list.add(Text.of(TextColors.GREEN, " /home <name> [player]"));
+			list.add(Text.of(TextColors.YELLOW, " /home <name> [player]\n"));
 		}
 		if(src.hasPermission("pjp.cmd.home.create")) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
-					.onClick(TextActions.runCommand("/pjp:home help Create")).append(Text.of(" /home create")).build());
+					.onClick(TextActions.executeCallback(Help.getHelp("hcreate"))).append(Text.of(" /home create")).build());
 		}
 		if(src.hasPermission("pjp.cmd.home.remove")) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
-					.onClick(TextActions.runCommand("/pjp:home help Remove")).append(Text.of(" /home remove")).build());
+					.onClick(TextActions.executeCallback(Help.getHelp("hremove"))).append(Text.of(" /home remove")).build());
 		}
 		if(src.hasPermission("pjp.cmd.home.list")) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
-					.onClick(TextActions.runCommand("/pjp:home help List")).append(Text.of(" /home list")).build());
+					.onClick(TextActions.executeCallback(Help.getHelp("hlist"))).append(Text.of(" /home list")).build());
 		}
 		pages.contents(list);
 		
