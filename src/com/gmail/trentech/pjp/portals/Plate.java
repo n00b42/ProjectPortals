@@ -1,29 +1,37 @@
 package com.gmail.trentech.pjp.portals;
 
-import org.spongepowered.api.world.Location;
-import org.spongepowered.api.world.World;
+import java.util.Optional;
+
+import com.gmail.trentech.pjp.utils.ConfigManager;
+
+import ninja.leaping.configurate.ConfigurationNode;
 
 public class Plate {
-
-	private final Location<World> location;
-	private final LocationType locationType;
-	private final World world;
 	
-	public Plate(World world, Location<World> location, LocationType locationType){
-		this.location = location;
-		this.locationType = locationType;
-		this.world = world;
-	}
-
-	public Location<World> getLocation() {
-		return location;
-	}
-
-	public LocationType getLocationType() {
-		return locationType;
+	public static Optional<String> get(String locationName){
+		ConfigurationNode config = new ConfigManager("portals.conf").getConfig();
+		
+		if(config.getNode("Plates", locationName).getString() == null){
+			return Optional.empty();
+		}
+		
+		return Optional.of(config.getNode("Plates", locationName).getString()); 
 	}
 	
-	public World getWorld() {
-		return world;
+	public static void remove(String locationName){
+		ConfigManager configManager = new ConfigManager("portals.conf");
+		ConfigurationNode config = configManager.getConfig();
+
+		config.getNode("Plates").removeChild(locationName);
+		configManager.save();
+	}
+	
+	public static void save(String locationName, String destination){
+		ConfigManager configManager = new ConfigManager("portals.conf");
+		ConfigurationNode config = configManager.getConfig();
+
+		config.getNode("Plates", locationName).setValue(destination);
+
+		configManager.save();
 	}
 }

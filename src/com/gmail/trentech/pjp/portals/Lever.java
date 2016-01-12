@@ -6,23 +6,23 @@ import com.gmail.trentech.pjp.utils.ConfigManager;
 
 import ninja.leaping.configurate.ConfigurationNode;
 
-public class Button {
-
+public class Lever {
+	
 	public static Optional<String> get(String locationName){
 		ConfigurationNode config = new ConfigManager("portals.conf").getConfig();
 		
-		if(config.getNode("Buttons", locationName).getString() == null){
+		if(config.getNode("Levers", locationName).getString() == null){
 			return Optional.empty();
 		}
 		
-		return Optional.of(config.getNode("Buttons", locationName).getString()); 
+		return Optional.of(config.getNode("Levers", locationName).getString()); 
 	}
 	
 	public static void remove(String locationName){
 		ConfigManager configManager = new ConfigManager("portals.conf");
 		ConfigurationNode config = configManager.getConfig();
 
-		config.getNode("Buttons").removeChild(locationName);
+		config.getNode("Levers").removeChild(locationName);
 		configManager.save();
 	}
 	
@@ -30,7 +30,7 @@ public class Button {
 		ConfigManager configManager = new ConfigManager("portals.conf");
 		ConfigurationNode config = configManager.getConfig();
 
-		config.getNode("Buttons", locationName).setValue(destination);
+		config.getNode("Levers", locationName).setValue(destination);
 
 		configManager.save();
 	}

@@ -19,16 +19,13 @@ import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.events.TeleportEvent;
-import com.gmail.trentech.pjp.portals.LocationType;
 import com.gmail.trentech.pjp.portals.Plate;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Resource;
 
-import ninja.leaping.configurate.ConfigurationNode;
+public class PlateListener {
 
-public class PlateEventManager {
-
-	public static HashMap<Player, Plate> creators = new HashMap<>();
+	public static HashMap<Player, String> creators = new HashMap<>();
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Modify event, @First Player player) {
@@ -50,48 +47,42 @@ public class PlateEventManager {
 			}
 
 			Location<World> location = block.getLocation().get();		
-			String locationName = location.getExtent().getName() + "." + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
+			String locationName = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 
-			ConfigurationNode config = new ConfigManager("portals.conf").getConfig();;
-			
-			if(config.getNode("Plates", locationName, "World").getString() == null){
+			if(!Plate.get(locationName).isPresent()){
 				return;
-			}			
-			String worldName = config.getNode("Plates", locationName, "World").getString();
+			}	
+
+			String[] destination = Plate.get(locationName).get().split(":");
 			
 			if(!player.hasPermission("pjp.plate.interact")){
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with pressure plate portals"));
 				event.setCancelled(true);
 				return;
 			}
-			
-			if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
-				player.sendMessage(Text.of(TextColors.DARK_RED, Resource.getPrettyName(worldName), " does not exist"));
+
+			if(!Main.getGame().getServer().getWorld(destination[0]).isPresent()){
+				player.sendMessage(Text.of(TextColors.DARK_RED, Resource.getPrettyName(destination[0]), " does not exist"));
 				return;
 			}
-			World world = Main.getGame().getServer().getWorld(worldName).get();
+			World world = Main.getGame().getServer().getWorld(destination[0]).get();
 			
 			Location<World> spawnLocation;
-			LocationType locationType;
-			
-			if(config.getNode("Plates", locationName, "Random").getBoolean()){
+
+			if(destination[1].equalsIgnoreCase("random")){
 				spawnLocation = Resource.getRandomLocation(world);
-				locationType = LocationType.RANDOM;
-			}else if(config.getNode("Plates", locationName, "X").getString() != null && config.getNode("Plates", locationName, "Y").getString() != null && config.getNode("Plates", locationName, "Z").getString() != null){
-				int x = config.getNode("Plates", locationName, "X").getInt();
-				int y = config.getNode("Plates", locationName, "Y").getInt();
-				int z = config.getNode("Plates", locationName, "Z").getInt();
-				
-				spawnLocation = world.getLocation(x, y, z);
-				locationType = LocationType.NORMAL;
-			}else{
+			}else if(destination[1].equalsIgnoreCase("spawn")){
 				spawnLocation = world.getSpawnLocation();
-				locationType = LocationType.SPAWN;
+			}else{
+				String[] coords = destination[1].split(".");
+				int x = Integer.parseInt(coords[0]);
+				int y = Integer.parseInt(coords[1]);
+				int z = Integer.parseInt(coords[2]);
+				
+				spawnLocation = world.getLocation(x, y, z);	
 			}
 
-			Plate plate = new Plate(world, spawnLocation, locationType);
-			
-			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of(plate));
+			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of("plate"));
 
 			if(!Main.getGame().getEventManager().post(teleportEvent)){
 				spawnLocation = teleportEvent.getDestination();
@@ -99,7 +90,7 @@ public class PlateEventManager {
 			}
 		}
 	}
-	
+
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Break event, @First Player player) {
 		if(creators.containsKey(player)){
@@ -107,14 +98,11 @@ public class PlateEventManager {
 			return;
 		}
 
-		ConfigManager configManager = new ConfigManager("portals.conf");
-		ConfigurationNode config = configManager.getConfig();
-		
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			Location<World> location = transaction.getFinal().getLocation().get();		
-			String locationName = location.getExtent().getName() + "." + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
+			String locationName = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 
-			if(config.getNode("Plates", locationName, "World").getString() == null){
+			if(!Plate.get(locationName).isPresent()){
 				continue;
 			}
 			
@@ -122,8 +110,7 @@ public class PlateEventManager {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to break pressure plate portals"));
 				event.setCancelled(true);
 			}else{
-				config.getNode("Plates").removeChild(locationName);
-				configManager.save();
+				Plate.remove(locationName);
 				player.sendMessage(Text.of(TextColors.DARK_GREEN, "Broke pressure plate portal"));
 			}
 		}
@@ -137,47 +124,30 @@ public class PlateEventManager {
 
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			BlockType type = transaction.getFinal().getState().getType();
-
-			if(!type.equals(BlockTypes.HEAVY_WEIGHTED_PRESSURE_PLATE) && !type.equals(BlockTypes.LIGHT_WEIGHTED_PRESSURE_PLATE) 
-					&& !type.equals(BlockTypes.STONE_PRESSURE_PLATE) && !type.equals(BlockTypes.WOODEN_PRESSURE_PLATE)){
+			
+			if(!type.equals(BlockTypes.STONE_BUTTON) && !type.equals(BlockTypes.WOODEN_BUTTON)){
 				continue;
 			}
-			
+
 			Location<World> location = transaction.getFinal().getLocation().get();
-			
+
 			if(!player.hasPermission("pjp.plate.place")){
-	        	player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to place pressure plate portals"));
+	        	player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to place pressure plate portals"));
 	        	creators.remove(player);
 	        	event.setCancelled(true);
 	        	return;
 			}
-			
-			String locationName = location.getExtent().getName() + "." + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 
-            ConfigManager configManager = new ConfigManager("portals.conf");
-            ConfigurationNode config = configManager.getConfig();
+			String locationName = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 
-            Plate plate = creators.get(player);
+            String destination = creators.get(player);
             
-            config.getNode("Plates", locationName, "World").setValue(plate.getWorld().getName());
-            
-            if(plate.getLocationType().equals(LocationType.SPAWN)){
-            	config.getNode("Plates", locationName, "Random").setValue(false);
-            }else if(plate.getLocationType().equals(LocationType.RANDOM)){
-                config.getNode("Plates", locationName, "Random").setValue(true);
-            }else{
-            	config.getNode("Plates", locationName, "Random").setValue(false);
-                config.getNode("Plates", locationName, "X").setValue(plate.getLocation().getBlockX());
-                config.getNode("Plates", locationName, "Y").setValue(plate.getLocation().getBlockY());
-                config.getNode("Plates", locationName, "Z").setValue(plate.getLocation().getBlockZ());
-            }
+            Plate.save(locationName, destination);
 
-            configManager.save();
-          
     		if(new ConfigManager().getConfig().getNode("Options", "Show-Particles").getBoolean()){
     			Resource.spawnParticles(location, 1.0, false);
     		}
-            
+
             player.sendMessage(Text.of(TextColors.DARK_GREEN, "New pressure plate portal created"));
             
             creators.remove(player);

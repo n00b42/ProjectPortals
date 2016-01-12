@@ -1,4 +1,4 @@
-package com.gmail.trentech.pjp.commands;
+package com.gmail.trentech.pjp.commands.cube;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,11 +20,20 @@ import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.utils.ConfigManager;
+import com.gmail.trentech.pjp.utils.Help;
 
 import ninja.leaping.configurate.ConfigurationNode;
 
 public class CMDShow implements CommandExecutor {
 
+	public CMDShow(){
+		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "cube").getString();
+		
+		Help help = new Help("show", " Fills all portal regions to make them temporarly visible");
+		help.setSyntax(" /cube show\n /" + alias + " s");
+		help.save();
+	}
+	
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if(!(src instanceof Player)){

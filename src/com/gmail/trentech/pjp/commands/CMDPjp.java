@@ -34,11 +34,19 @@ public class CMDPjp implements CommandExecutor {
 		
 		if(src.hasPermission("pjp.cmd.cube") && node.getNode("Cubes").getBoolean()) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
-					.onClick(TextActions.executeCallback(Help.getHelp("cube"))).append(Text.of(" /cube")).build());
+					.onClick(TextActions.runCommand("/pjp:cube")).append(Text.of(" /cube")).build());
 		}
+//		if(src.hasPermission("pjp.cmd.portals") && node.getNode("Portals").getBoolean()) {
+//			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
+//					.onClick(TextActions.runCommand("/pjp:portal")).append(Text.of(" /portal")).build());
+//		}
 		if(src.hasPermission("pjp.cmd.plate") && node.getNode("Plates").getBoolean()) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
 					.onClick(TextActions.executeCallback(Help.getHelp("plate"))).append(Text.of(" /plate")).build());
+		}
+		if(src.hasPermission("pjp.cmd.lever") && node.getNode("Levers").getBoolean()) {
+			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
+					.onClick(TextActions.executeCallback(Help.getHelp("lever"))).append(Text.of(" /lever")).build());
 		}
 		if(src.hasPermission("pjp.cmd.button") && node.getNode("Buttons").getBoolean()) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))

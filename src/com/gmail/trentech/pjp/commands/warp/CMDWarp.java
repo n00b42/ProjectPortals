@@ -80,7 +80,7 @@ public class CMDWarp implements CommandExecutor {
 			
 			Location<World> spawnLocation = world.getLocation(x, y, z);
 			
-			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of(src));
+			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of("warp"));
 
 			if(!Main.getGame().getEventManager().post(teleportEvent)){
 				spawnLocation = teleportEvent.getDestination();

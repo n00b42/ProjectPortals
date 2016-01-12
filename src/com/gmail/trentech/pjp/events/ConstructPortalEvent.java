@@ -1,20 +1,19 @@
 package com.gmail.trentech.pjp.events;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.impl.AbstractEvent;
 
-public class CuboidConstructEvent extends AbstractEvent implements Cancellable {
+public class ConstructPortalEvent extends AbstractEvent implements Cancellable {
 
 	private boolean cancelled = false;
 
-	private Cause cause;
-	private Optional<List<String>> locations = Optional.empty();
+	private final Cause cause;
+	private final List<String> locations;
 	
-	public CuboidConstructEvent(Optional<List<String>> locations, Cause cause){
+	public ConstructPortalEvent(List<String> locations, Cause cause){
 		this.cause = cause;
 		this.locations = locations;
 	}
@@ -34,7 +33,7 @@ public class CuboidConstructEvent extends AbstractEvent implements Cancellable {
 		return cause;
 	}
 
-	public Optional<List<String>> getLocations() {
+	public List<String> getLocations() {
 		return locations;
 	}
 }

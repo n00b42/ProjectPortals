@@ -1,8 +1,6 @@
 package com.gmail.trentech.pjp.utils;
 
-import java.util.HashMap;
 import java.util.Optional;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 
@@ -25,14 +23,11 @@ import com.gmail.trentech.pjp.Main;
 public class Resource {
 
 	public final static String NAME = "Project Portals";
-	public final static String VERSION = "0.5.13";
+	public final static String VERSION = "0.6.13";
 	public final static String ID = "PJP";
-	
-	private static HashMap<World, Location<World>> randomLocations = new HashMap<>();
 
-	public static void spawnParticles(Location<World> location, double range, boolean sub){
-		
-		Random random = new Random();
+	public static void spawnParticles(Location<World> location, double range, boolean sub){		
+		ThreadLocalRandom random = ThreadLocalRandom.current();
 		
 		for(int i = 0; i < 5; i++){
 			double v1 = 0.0 + (range - 0.0) * random.nextDouble();
@@ -133,18 +128,10 @@ public class Resource {
 		return location;
 	}
 
-	private static void generateRandomLocation(World world){
-		randomLocations.put(world, generate(world, new ConfigManager().getConfig().getNode("Options", "Random-Spawn-Radius").getLong()));
-	}
-	
 	public static Location<World> getRandomLocation(World world) {
-		if(randomLocations.get(world) == null){
-			generateRandomLocation(world);
-		}
-		
-		return randomLocations.get(world);
+		return generate(world, new ConfigManager().getConfig().getNode("Options", "Random-Spawn-Radius").getLong());
 	}
-	
+
 	public static Consumer<CommandSource> unsafeTeleport(Location<World> location){
 		return (CommandSource src) -> {
 			Player player = (Player)src;

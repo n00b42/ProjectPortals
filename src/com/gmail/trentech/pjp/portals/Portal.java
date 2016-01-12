@@ -14,20 +14,15 @@ import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Resource;
 
 import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.objectmapping.Setting;
-import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
-@ConfigSerializable
-public class Cuboid {
 
-	@Setting
+public class Portal {
+
 	private final String name;
-	@Setting
 	private final String destination;
-	@Setting
 	private final List<String> region;
 
-	public Cuboid(String name, String destination, List<String> region) {
-		this.name = name;
+	public Portal(String uuid, String destination, List<String> region) {
+		this.name = uuid;
 		this.destination = destination;
 		this.region = region;
 	}
@@ -62,30 +57,30 @@ public class Cuboid {
 		return region;
 	}
 
-	public static Optional<Cuboid> get(String locationName){
+	public static Optional<Portal> get(String locationName){
 		ConfigurationNode config = new ConfigManager("portals.conf").getConfig();
 		
-		for(Entry<Object, ? extends ConfigurationNode> node : config.getNode("Cuboids").getChildrenMap().entrySet()){
+		for(Entry<Object, ? extends ConfigurationNode> node : config.getNode("Portals").getChildrenMap().entrySet()){
 			String uuid = node.getKey().toString();
 
-	    	List<String> list = config.getNode("Cuboids", uuid, "Region").getChildrenList().stream().map(ConfigurationNode::getString).collect(Collectors.toList());
+	    	List<String> list = config.getNode("Portals", uuid, "Region").getChildrenList().stream().map(ConfigurationNode::getString).collect(Collectors.toList());
 
 	    	if(!list.contains(locationName)){
 	    		continue;
 	    	}
 	    	
-	    	String destination = config.getNode("Cuboids", uuid, "Destination").getString();
+	    	String destination = config.getNode("Portals", uuid, "Destination").getString();
 
-	    	return Optional.of(new Cuboid(uuid, destination, list));
+	    	return Optional.of(new Portal(uuid, destination, list));
 		}
 		return Optional.empty();
 	}
 	
 	public static Optional<Portal> getByName(String name){
 		ConfigurationNode config = new ConfigManager("portals.conf").getConfig();
-		if(config.getNode("Cuboids", name, "Region").getString() != null){
-			String destination = config.getNode("Cuboids", name, "Destination").getString();
-			List<String> list = config.getNode("Cuboids", name, "Region").getChildrenList().stream().map(ConfigurationNode::getString).collect(Collectors.toList());
+		if(config.getNode("Portals", name, "Region").getString() != null){
+			String destination = config.getNode("Portals", name, "Destination").getString();
+			List<String> list = config.getNode("Portals", name, "Region").getChildrenList().stream().map(ConfigurationNode::getString).collect(Collectors.toList());
 
 		    return Optional.of(new Portal(name, destination, list));
 		}
@@ -96,16 +91,16 @@ public class Cuboid {
 		ConfigManager configManager = new ConfigManager("portals.conf");
 		ConfigurationNode config = configManager.getConfig();
 		
-		config.getNode("Cuboids").removeChild(name);
+		config.getNode("Portals").removeChild(name);
 		configManager.save();
 	}
 	
-	public static void save(Cuboid cuboid){
+	public static void save(Portal portal){
 		ConfigManager configManager = new ConfigManager("portals.conf");
 		ConfigurationNode config = configManager.getConfig();
 
-		config.getNode("Cuboids", cuboid.getName(), "Destination").setValue(cuboid.destination);
-		config.getNode("Cuboids", cuboid.getName(), "Region").setValue(cuboid.getRegion());
+		config.getNode("Cuboids", portal.getName(), "Destination").setValue(portal.destination);
+		config.getNode("Cuboids", portal.getName(), "Region").setValue(portal.getRegion());
 
 		configManager.save();
 	}
@@ -115,7 +110,7 @@ public class Cuboid {
 		
 		List<Portal> list = new ArrayList<>();
 		
-		for(Entry<Object, ? extends ConfigurationNode> node : config.getNode("Cuboids").getChildrenMap().entrySet()){
+		for(Entry<Object, ? extends ConfigurationNode> node : config.getNode("Portals").getChildrenMap().entrySet()){
 			String name = node.getKey().toString();
 			list.add(getByName(name).get());    	
 		}
@@ -128,7 +123,7 @@ public class Cuboid {
 		
 		List<String> list = new ArrayList<>();
 		
-		for(Entry<Object, ? extends ConfigurationNode> node : config.getNode("Cuboids").getChildrenMap().entrySet()){
+		for(Entry<Object, ? extends ConfigurationNode> node : config.getNode("Portals").getChildrenMap().entrySet()){
 			String name = node.getKey().toString();
 	    	list.addAll(config.getNode("Cuboids", name, "Region").getChildrenList().stream().map(ConfigurationNode::getString).collect(Collectors.toList()));
 		}

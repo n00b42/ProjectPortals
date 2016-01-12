@@ -10,19 +10,19 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.listeners.PlateListener;
+import com.gmail.trentech.pjp.listeners.LeverListener;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Resource;
 
-public class CMDPlate implements CommandExecutor {
+public class CMDLever implements CommandExecutor {
 
-	public CMDPlate(){
-		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "plate").getString();
+	public CMDLever(){
+		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "lever").getString();
 		
-		Help help = new Help("plate", " Use this command to create a pressure plate that will teleport you to other worlds");
-		help.setSyntax(" /plate <world> [x] [y] [z]\n /" + alias + " <world> [x] [y] [z]");
-		help.setExample(" /plate MyWorld\n /plate MyWorld -100 65 254\n /plate MyWorld random");
+		Help help = new Help("lever", " Use this command to create a lever that will teleport you to other worlds");
+		help.setSyntax(" /lever <world> [x] [y] [z]\n /" + alias + " <world> [x] [y] [z]");
+		help.setExample(" /lever MyWorld\n /lever MyWorld -100 65 254\n /lever MyWorld random");
 		help.save();
 	}
 	
@@ -35,12 +35,12 @@ public class CMDPlate implements CommandExecutor {
 		Player player = (Player) src;
 		
 		if(!args.hasAny("name")) {
-			src.sendMessage(Text.of(TextColors.GOLD, "/plate <world> [x] [y] [z]"));
+			src.sendMessage(Text.of(TextColors.YELLOW, "/lever <world> [x] [y] [z]"));
 			return CommandResult.empty();
 		}
 		String worldName = Resource.getBaseName(args.<String>getOne("name").get());
 
-		if(!Main.getGame().getServer().getWorld(Resource.getBaseName(worldName)).isPresent()){
+		if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
 			src.sendMessage(Text.of(TextColors.DARK_RED, Resource.getPrettyName(worldName), " does not exist"));
 			return CommandResult.empty();
 		}
@@ -58,7 +58,7 @@ public class CMDPlate implements CommandExecutor {
 					Integer.parseInt(testInt[1]);
 					Integer.parseInt(testInt[2]);
 				}catch(Exception e){
-					src.sendMessage(Text.of(TextColors.YELLOW, "/plate <world> [x] [y] [z]"));
+					src.sendMessage(Text.of(TextColors.YELLOW, "/lever <world> [x] [y] [z]"));
 					return CommandResult.empty();
 				}
 				destination = worldName + ":" + testInt[0] + "." + testInt[1] + "." + testInt[2];
@@ -67,9 +67,9 @@ public class CMDPlate implements CommandExecutor {
 			destination = worldName + ":spawn";
 		}
 		
-		PlateListener.creators.put(player, destination);
+		LeverListener.creators.put(player, destination);
 		
-		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place button to create pressure plate portal"));
+		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place button to create button portal"));
 
 		return CommandResult.success();
 	}

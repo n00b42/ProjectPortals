@@ -7,7 +7,6 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.entity.DisplaceEntityEvent;
-import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
@@ -24,10 +23,12 @@ import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Resource;
 
-public class EventManager {
+public class TeleportListener {
 
 	@Listener
-	public void onTeleportEvent(TeleportEvent event, @First Player player){
+	public void onTeleportEvent(TeleportEvent event){
+		Player player = event.getTarget();
+		
 		Location<World> src = event.getSource();
 		Location<World> dest = event.getDestination();
 

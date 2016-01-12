@@ -20,15 +20,12 @@ import org.spongepowered.api.world.World;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.portals.Button;
-import com.gmail.trentech.pjp.portals.LocationType;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Resource;
 
-import ninja.leaping.configurate.ConfigurationNode;
+public class ButtonListener {
 
-public class ButtonEventManager {
-
-	public static HashMap<Player, Button> creators = new HashMap<>();
+	public static HashMap<Player, String> creators = new HashMap<>();
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Modify event, @First Player player) {
@@ -49,48 +46,42 @@ public class ButtonEventManager {
 			}
 
 			Location<World> location = block.getLocation().get();		
-			String locationName = location.getExtent().getName() + "." + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
+			String locationName = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 
-	        ConfigurationNode config = new ConfigManager("portals.conf").getConfig();
-
-			if(config.getNode("Buttons", locationName, "World").getString() == null){
+			if(!Button.get(locationName).isPresent()){
 				return;
 			}
-			String worldName = config.getNode("Buttons", locationName, "World").getString();
 			
+			String[] destination = Button.get(locationName).get().split(":");
+
 			if(!player.hasPermission("pjp.button.interact")){
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with button portals"));
 				event.setCancelled(true);
 				return;
 			}
 			
-			if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
-				player.sendMessage(Text.of(TextColors.DARK_RED, Resource.getPrettyName(worldName), " does not exist"));
+			if(!Main.getGame().getServer().getWorld(destination[0]).isPresent()){
+				player.sendMessage(Text.of(TextColors.DARK_RED, Resource.getPrettyName(destination[0]), " does not exist"));
 				return;
 			}
-			World world = Main.getGame().getServer().getWorld(worldName).get();
+			World world = Main.getGame().getServer().getWorld(destination[0]).get();
 			
 			Location<World> spawnLocation;
-			LocationType locationType;
-			
-			if(config.getNode("Buttons", locationName, "Random").getBoolean()){
+
+			if(destination[1].equalsIgnoreCase("random")){
 				spawnLocation = Resource.getRandomLocation(world);
-				locationType = LocationType.RANDOM;
-			}else if(config.getNode("Buttons", locationName, "X").getString() != null && config.getNode("Buttons", locationName, "Y").getString() != null && config.getNode("Buttons", locationName, "Z").getString() != null){
-				int x = config.getNode("Buttons", locationName, "X").getInt();
-				int y = config.getNode("Buttons", locationName, "Y").getInt();
-				int z = config.getNode("Buttons", locationName, "Z").getInt();
-				
-				spawnLocation = world.getLocation(x, y, z);
-				locationType = LocationType.NORMAL;
-			}else{
+			}else if(destination[1].equalsIgnoreCase("spawn")){
 				spawnLocation = world.getSpawnLocation();
-				locationType = LocationType.SPAWN;
+			}else{
+				String[] coords = destination[1].split(".");
+				int x = Integer.parseInt(coords[0]);
+				int y = Integer.parseInt(coords[1]);
+				int z = Integer.parseInt(coords[2]);
+				
+				spawnLocation = world.getLocation(x, y, z);	
 			}
 
-			Button button = new Button(world, spawnLocation, locationType);
-			
-			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of(button));
+			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of("button"));
 
 			if(!Main.getGame().getEventManager().post(teleportEvent)){
 				spawnLocation = teleportEvent.getDestination();
@@ -101,19 +92,11 @@ public class ButtonEventManager {
 	
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Break event, @First Player player) {
-		if(creators.containsKey(player)){
-			creators.remove(player);
-			return;
-		}
-
-		ConfigManager configManager = new ConfigManager("portals.conf");
-		ConfigurationNode config = configManager.getConfig();
-		
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			Location<World> location = transaction.getFinal().getLocation().get();		
-			String locationName = location.getExtent().getName() + "." + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
+			String locationName = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 
-			if(config.getNode("Buttons", locationName, "World").getString() == null){
+			if(!Button.get(locationName).isPresent()){
 				continue;
 			}
 			
@@ -121,8 +104,7 @@ public class ButtonEventManager {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to break button portals"));
 				event.setCancelled(true);
 			}else{
-				config.getNode("Buttons").removeChild(locationName);
-				configManager.save();
+				Button.remove(locationName);
 				player.sendMessage(Text.of(TextColors.DARK_GREEN, "Broke button portal"));
 			}
 		}
@@ -150,28 +132,12 @@ public class ButtonEventManager {
 	        	return;
 			}
 
-			String locationName = location.getExtent().getName() + "." + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
+			String locationName = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 
-            ConfigManager configManager = new ConfigManager("portals.conf");
-            ConfigurationNode config = configManager.getConfig();
+            String destination = creators.get(player);
+            
+            Button.save(locationName, destination);
 
-            Button button = creators.get(player);
-            
-            config.getNode("Buttons", locationName, "World").setValue(button.getWorld().getName());
-            
-            if(button.getLocationType().equals(LocationType.SPAWN)){	
-            	config.getNode("Buttons", locationName, "Random").setValue(false);
-            }else if(button.getLocationType().equals(LocationType.RANDOM)){
-                config.getNode("Buttons", locationName, "Random").setValue(true);
-            }else{
-            	config.getNode("Buttons", locationName, "Random").setValue(false);
-                config.getNode("Buttons", locationName, "X").setValue(button.getLocation().getBlockX());
-                config.getNode("Buttons", locationName, "Y").setValue(button.getLocation().getBlockY());
-                config.getNode("Buttons", locationName, "Z").setValue(button.getLocation().getBlockZ());
-            }
-
-            configManager.save();
-            
     		if(new ConfigManager().getConfig().getNode("Options", "Show-Particles").getBoolean()){
     			Resource.spawnParticles(location, 1.0, false);
     		}

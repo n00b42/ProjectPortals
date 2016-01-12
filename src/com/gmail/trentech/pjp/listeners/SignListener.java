@@ -25,7 +25,7 @@ import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Resource;
 
-public class SignEventManager {
+public class SignListener {
 	
 	@Listener
 	public void onSignCreateEvent(ChangeSignEvent event, @First Player player) {
@@ -33,9 +33,9 @@ public class SignEventManager {
 
 		ListValue<Text> lines = signData.getValue(Keys.SIGN_LINES).get();
 
-		Text title = lines.get(0);
+		String title = lines.get(0).toPlain();
 		
-		if(!(title.equals(Text.of("[Portal]")) && title.equals(Text.of("[portal]")))) {
+		if(!title.equalsIgnoreCase("[Portal]")) {
 			return;
 		}
 
@@ -122,7 +122,7 @@ public class SignEventManager {
 			return;
 		}
 
-		TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of(event.getTargetBlock().getState()));
+		TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of("sign"));
 
 		if(!Main.getGame().getEventManager().post(teleportEvent)){
 			spawnLocation = teleportEvent.getDestination();

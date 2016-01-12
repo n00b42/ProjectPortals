@@ -4,7 +4,11 @@ import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.text.Text;
 
+import com.gmail.trentech.pjp.commands.cube.CMDCube;
+import com.gmail.trentech.pjp.commands.cube.CMDShow;
 import com.gmail.trentech.pjp.commands.home.CMDHome;
+import com.gmail.trentech.pjp.commands.portal.CMDPortal;
+import com.gmail.trentech.pjp.commands.portal.CMDSave;
 import com.gmail.trentech.pjp.commands.warp.CMDWarp;
 
 public class CommandManager {
@@ -75,25 +79,89 @@ public class CommandManager {
 		    .build();
 	
 	
+	public CommandSpec cmdCubeCreate = CommandSpec.builder()
+		    .description(Text.of("Create a new cube portal"))
+		    .permission("pjp.cmd.cube.create")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))),
+		    		GenericArguments.optional(GenericArguments.string(Text.of("world"))),
+		    		GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("coords"))))
+		    .executor(new com.gmail.trentech.pjp.commands.cube.CMDCreate())
+		    .build();
+	
+	public CommandSpec cmdCubeRemove = CommandSpec.builder()
+		    .description(Text.of("Remove an existing cube portal"))
+		    .permission("pjp.cmd.cube.remove")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))))
+		    .executor(new com.gmail.trentech.pjp.commands.cube.CMDRemove())
+		    .build();
+	
+	public CommandSpec cmdCubeList = CommandSpec.builder()
+		    .description(Text.of("List all cube portal"))
+		    .permission("pjp.cmd.cube.list")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))))
+		    .executor(new com.gmail.trentech.pjp.commands.cube.CMDList())
+		    .build();
+	
 	public CommandSpec cmdShow = CommandSpec.builder()
-		    .description(Text.of("Fills all portal regions to make them temporarly visible"))
-		    .permission("pjp.cmd.portal.cube.show")
+		    .description(Text.of("Fills all cube portal regions to make them temporarly visible"))
+		    .permission("pjp.cmd.cube.show")
 		    .arguments(GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("name"))))
 		    .executor(new CMDShow())
 		    .build();
-
+	
 	public CommandSpec cmdCube = CommandSpec.builder()
-		    .description(Text.of("Portal base command"))
+		    .description(Text.of("Warp base command"))
 		    .permission("pjp.cmd.cube")
-		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))),
-		    		GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("coords"))))
+		    .child(cmdCubeCreate, "create", "c")
+		    .child(cmdCubeRemove, "remove", "r")
+		    .child(cmdCubeList, "list", "l")
 		    .child(cmdShow, "show", "s")
 		    .executor(new CMDCube())
+		    .build();
+
+	
+	public CommandSpec cmdPortalCreate = CommandSpec.builder()
+		    .description(Text.of("Create a new portal"))
+		    .permission("pjp.cmd.portal.create")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))),
+		    		GenericArguments.optional(GenericArguments.string(Text.of("world"))),
+		    		GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("coords"))))
+		    .executor(new com.gmail.trentech.pjp.commands.portal.CMDCreate())
+		    .build();
+	
+	public CommandSpec cmdPortalRemove = CommandSpec.builder()
+		    .description(Text.of("Remove an portal"))
+		    .permission("pjp.cmd.portal.remove")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))))
+		    .executor(new com.gmail.trentech.pjp.commands.portal.CMDRemove())
+		    .build();
+	
+	public CommandSpec cmdPortalList = CommandSpec.builder()
+		    .description(Text.of("List all portals"))
+		    .permission("pjp.cmd.portal.list")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))))
+		    .executor(new com.gmail.trentech.pjp.commands.portal.CMDList())
+		    .build();
+
+	public CommandSpec cmdSave = CommandSpec.builder()
+		    .description(Text.of("Saves generated portal"))
+		    .permission("pjp.cmd.portal.save")
+		    .executor(new CMDSave())
+		    .build();
+	
+	public CommandSpec cmdPortal = CommandSpec.builder()
+		    .description(Text.of("Portal base command"))
+		    .permission("pjp.cmd.portal")
+		    .child(cmdPortalCreate, "create", "c")
+		    .child(cmdPortalRemove, "remove", "r")
+		    .child(cmdPortalList, "list", "l")
+		    .child(cmdSave, "save", "s")
+		    .executor(new CMDPortal())
 		    .build();
 	
 	
 	public CommandSpec cmdButton = CommandSpec.builder()
-		    .description(Text.of("Portal base command"))
+		    .description(Text.of("Button base command"))
 		    .permission("pjp.cmd.button")
 		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))),
 		    		GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("coords"))))
@@ -101,15 +169,23 @@ public class CommandManager {
 		    .build();
 	
 	public CommandSpec cmdPlate = CommandSpec.builder()
-		    .description(Text.of("Portal base command"))
+		    .description(Text.of("Plate base command"))
 		    .permission("pjp.cmd.plate")
 		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))),
 		    		GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("coords"))))
 		    .executor(new CMDPlate())
 		    .build();
 
+	public CommandSpec cmdLever = CommandSpec.builder()
+		    .description(Text.of("Lever base command"))
+		    .permission("pjp.cmd.lever")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))),
+		    		GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("coords"))))
+		    .executor(new CMDLever())
+		    .build();
+	
 	public CommandSpec cmdPJP = CommandSpec.builder()
-		    .description(Text.of("Portal base command"))
+		    .description(Text.of("Lists all Project Worlds commands"))
 		    .permission("pjp.cmd")
 		    .executor(new CMDPjp())
 		    .build();

@@ -48,7 +48,7 @@ public class CMDBack implements CommandExecutor {
 		}
 		Location<World> spawnLocation = players.get(player);
 
-		TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of("Home"));
+		TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of("back"));
 
 		if(!Main.getGame().getEventManager().post(teleportEvent)){
 			spawnLocation = teleportEvent.getDestination();

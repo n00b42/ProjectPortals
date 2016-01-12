@@ -8,13 +8,9 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.world.Location;
-import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.listeners.ButtonEventManager;
-import com.gmail.trentech.pjp.portals.Button;
-import com.gmail.trentech.pjp.portals.LocationType;
+import com.gmail.trentech.pjp.listeners.ButtonListener;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Resource;
@@ -48,30 +44,30 @@ public class CMDButton implements CommandExecutor {
 			src.sendMessage(Text.of(TextColors.DARK_RED, Resource.getPrettyName(worldName), " does not exist"));
 			return CommandResult.empty();
 		}
-		World world = Main.getGame().getServer().getWorld(worldName).get();
 
-		Location<World> spawnLocation;
-		LocationType locationType;
+		String destination;
 		
-		if(!args.hasAny("coords")) {
-			spawnLocation = world.getSpawnLocation();
-			locationType = LocationType.SPAWN;			
-		}else{
+		if(args.hasAny("coords")) {
 			String coords = args.<String>getOne("coords").get();
-			if(coords.equalsIgnoreCase("random")){				
-				spawnLocation = Resource.getRandomLocation(world);
-				locationType = LocationType.RANDOM;
+			if(coords.equalsIgnoreCase("random")){
+				destination = worldName + ":random";
 			}else{
-				locationType = LocationType.NORMAL;
-				spawnLocation = Resource.getLocation(world, coords);
-				if(spawnLocation == null){
+				String[] testInt = coords.split(" ");
+				try{
+					Integer.parseInt(testInt[0]);
+					Integer.parseInt(testInt[1]);
+					Integer.parseInt(testInt[2]);
+				}catch(Exception e){
 					src.sendMessage(Text.of(TextColors.YELLOW, "/button <world> [x] [y] [z]"));
 					return CommandResult.empty();
 				}
+				destination = worldName + ":" + testInt[0] + "." + testInt[1] + "." + testInt[2];
 			}
+		}else{
+			destination = worldName + ":spawn";
 		}
 		
-		ButtonEventManager.creators.put(player, new Button(world, spawnLocation, locationType));
+		ButtonListener.creators.put(player, destination);
 		
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place button to create button portal"));
 
