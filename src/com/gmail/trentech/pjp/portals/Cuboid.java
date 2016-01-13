@@ -80,17 +80,17 @@ public class Cuboid {
 		ConfigurationNode config = new ConfigManager("portals.conf").getConfig();
 		
 		for(Entry<Object, ? extends ConfigurationNode> node : config.getNode("Cuboids").getChildrenMap().entrySet()){
-			String uuid = node.getKey().toString();
+			String name = node.getKey().toString();
 
-	    	List<String> list = config.getNode("Cuboids", uuid, "Region").getChildrenList().stream().map(ConfigurationNode::getString).collect(Collectors.toList());
+	    	List<String> list = config.getNode("Cuboids", name, "Region").getChildrenList().stream().map(ConfigurationNode::getString).collect(Collectors.toList());
 
 	    	if(!list.contains(locationName)){
 	    		continue;
 	    	}
 	    	
-	    	String destination = config.getNode("Cuboids", uuid, "Destination").getString();
+	    	String destination = config.getNode("Cuboids", name, "Destination").getString();
 
-	    	return Optional.of(new Cuboid(uuid, destination, list));
+	    	return Optional.of(new Cuboid(name, destination, list));
 		}
 		return Optional.empty();
 	}

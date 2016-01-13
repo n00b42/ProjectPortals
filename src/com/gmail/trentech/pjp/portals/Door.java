@@ -11,12 +11,12 @@ import com.gmail.trentech.pjp.utils.Resource;
 
 import ninja.leaping.configurate.ConfigurationNode;
 
-public class Button {
+public class Door {
 
 	private final String name;
 	private final String destination;
 
-	public Button(String name, String destination) {
+	public Door(String name, String destination) {
 		this.name = name;
 		this.destination = destination;
 	}
@@ -47,18 +47,18 @@ public class Button {
 		}
 	}
 
-	public static Optional<Button> get(Location<World> location){
+	public static Optional<Door> get(Location<World> location){
 		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 		
 		ConfigurationNode config = new ConfigManager("portals.conf").getConfig();
 		
-		if(config.getNode("Buttons", name).getString() == null){
+		if(config.getNode("Doors", name).getString() == null){
 			return Optional.empty();
 		}
 		
-		String destination = config.getNode("Buttons", name).getString();
+		String destination = config.getNode("Doors", name).getString();
 		
-		return Optional.of(new Button(name, destination)); 
+		return Optional.of(new Door(name, destination)); 
 	}
 	
 	public static void remove(Location<World> location){
@@ -67,7 +67,7 @@ public class Button {
 		ConfigManager configManager = new ConfigManager("portals.conf");
 		ConfigurationNode config = configManager.getConfig();
 
-		config.getNode("Buttons").removeChild(locationName);
+		config.getNode("Doors").removeChild(locationName);
 		configManager.save();
 	}
 	
@@ -77,7 +77,7 @@ public class Button {
 		ConfigManager configManager = new ConfigManager("portals.conf");
 		ConfigurationNode config = configManager.getConfig();
 
-		config.getNode("Buttons", locationName).setValue(destination);
+		config.getNode("Doors", locationName).setValue(destination);
 
 		configManager.save();
 	}

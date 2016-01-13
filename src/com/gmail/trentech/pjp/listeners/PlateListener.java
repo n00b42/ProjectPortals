@@ -47,40 +47,18 @@ public class PlateListener {
 			}
 
 			Location<World> location = block.getLocation().get();		
-			String locationName = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 
-			if(!Plate.get(locationName).isPresent()){
+			if(!Plate.get(location).isPresent()){
 				return;
 			}	
 
-			String[] destination = Plate.get(locationName).get().split(":");
+			Plate plate = Plate.get(location).get();
 			
-			if(!player.hasPermission("pjp.plate.interact")){
-				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with pressure plate portals"));
-				event.setCancelled(true);
+			if(!plate.getDestination().isPresent()){
+				player.sendMessage(Text.of(TextColors.DARK_RED, "World does not exist"));
 				return;
 			}
-
-			if(!Main.getGame().getServer().getWorld(destination[0]).isPresent()){
-				player.sendMessage(Text.of(TextColors.DARK_RED, Resource.getPrettyName(destination[0]), " does not exist"));
-				return;
-			}
-			World world = Main.getGame().getServer().getWorld(destination[0]).get();
-			
-			Location<World> spawnLocation;
-
-			if(destination[1].equalsIgnoreCase("random")){
-				spawnLocation = Resource.getRandomLocation(world);
-			}else if(destination[1].equalsIgnoreCase("spawn")){
-				spawnLocation = world.getSpawnLocation();
-			}else{
-				String[] coords = destination[1].split(".");
-				int x = Integer.parseInt(coords[0]);
-				int y = Integer.parseInt(coords[1]);
-				int z = Integer.parseInt(coords[2]);
-				
-				spawnLocation = world.getLocation(x, y, z);	
-			}
+			Location<World> spawnLocation = plate.getDestination().get();
 
 			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of("plate"));
 
@@ -100,9 +78,8 @@ public class PlateListener {
 
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			Location<World> location = transaction.getFinal().getLocation().get();		
-			String locationName = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 
-			if(!Plate.get(locationName).isPresent()){
+			if(!Plate.get(location).isPresent()){
 				continue;
 			}
 			
@@ -110,7 +87,7 @@ public class PlateListener {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to break pressure plate portals"));
 				event.setCancelled(true);
 			}else{
-				Plate.remove(locationName);
+				Plate.remove(location);
 				player.sendMessage(Text.of(TextColors.DARK_GREEN, "Broke pressure plate portal"));
 			}
 		}
@@ -138,11 +115,9 @@ public class PlateListener {
 	        	return;
 			}
 
-			String locationName = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
-
             String destination = creators.get(player);
             
-            Plate.save(locationName, destination);
+            Plate.save(location, destination);
 
     		if(new ConfigManager().getConfig().getNode("Options", "Show-Particles").getBoolean()){
     			Resource.spawnParticles(location, 1.0, false);

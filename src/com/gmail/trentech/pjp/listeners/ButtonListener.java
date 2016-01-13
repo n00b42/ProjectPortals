@@ -46,40 +46,24 @@ public class ButtonListener {
 			}
 
 			Location<World> location = block.getLocation().get();		
-			String locationName = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 
-			if(!Button.get(locationName).isPresent()){
+			if(!Button.get(location).isPresent()){
 				return;
 			}
 			
-			String[] destination = Button.get(locationName).get().split(":");
+			Button button = Button.get(location).get();
 
 			if(!player.hasPermission("pjp.button.interact")){
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with button portals"));
 				event.setCancelled(true);
 				return;
 			}
-			
-			if(!Main.getGame().getServer().getWorld(destination[0]).isPresent()){
-				player.sendMessage(Text.of(TextColors.DARK_RED, Resource.getPrettyName(destination[0]), " does not exist"));
+
+			if(!button.getDestination().isPresent()){
+				player.sendMessage(Text.of(TextColors.DARK_RED, "World does not exist"));
 				return;
 			}
-			World world = Main.getGame().getServer().getWorld(destination[0]).get();
-			
-			Location<World> spawnLocation;
-
-			if(destination[1].equalsIgnoreCase("random")){
-				spawnLocation = Resource.getRandomLocation(world);
-			}else if(destination[1].equalsIgnoreCase("spawn")){
-				spawnLocation = world.getSpawnLocation();
-			}else{
-				String[] coords = destination[1].split(".");
-				int x = Integer.parseInt(coords[0]);
-				int y = Integer.parseInt(coords[1]);
-				int z = Integer.parseInt(coords[2]);
-				
-				spawnLocation = world.getLocation(x, y, z);	
-			}
+			Location<World> spawnLocation = button.getDestination().get();
 
 			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of("button"));
 
@@ -94,9 +78,8 @@ public class ButtonListener {
 	public void onChangeBlockEvent(ChangeBlockEvent.Break event, @First Player player) {
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			Location<World> location = transaction.getFinal().getLocation().get();		
-			String locationName = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 
-			if(!Button.get(locationName).isPresent()){
+			if(!Button.get(location).isPresent()){
 				continue;
 			}
 			
@@ -104,7 +87,7 @@ public class ButtonListener {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to break button portals"));
 				event.setCancelled(true);
 			}else{
-				Button.remove(locationName);
+				Button.remove(location);
 				player.sendMessage(Text.of(TextColors.DARK_GREEN, "Broke button portal"));
 			}
 		}
@@ -132,11 +115,9 @@ public class ButtonListener {
 	        	return;
 			}
 
-			String locationName = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
-
             String destination = creators.get(player);
             
-            Button.save(locationName, destination);
+            Button.save(location, destination);
 
     		if(new ConfigManager().getConfig().getNode("Options", "Show-Particles").getBoolean()){
     			Resource.spawnParticles(location, 1.0, false);

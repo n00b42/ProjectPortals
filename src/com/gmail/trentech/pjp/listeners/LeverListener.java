@@ -37,13 +37,12 @@ public class LeverListener {
 			}
 
 			Location<World> location = block.getLocation().get();		
-			String locationName = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 
-			if(!Lever.get(locationName).isPresent()){
+			if(!Lever.get(location).isPresent()){
 				return;
 			}
 			
-			String[] destination = Lever.get(locationName).get().split(":");
+			Lever lever = Lever.get(location).get();
 
 			if(!player.hasPermission("pjp.lever.interact")){
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with lever portals"));
@@ -51,26 +50,11 @@ public class LeverListener {
 				return;
 			}
 			
-			if(!Main.getGame().getServer().getWorld(destination[0]).isPresent()){
-				player.sendMessage(Text.of(TextColors.DARK_RED, Resource.getPrettyName(destination[0]), " does not exist"));
+			if(!lever.getDestination().isPresent()){
+				player.sendMessage(Text.of(TextColors.DARK_RED, "World does not exist"));
 				return;
 			}
-			World world = Main.getGame().getServer().getWorld(destination[0]).get();
-			
-			Location<World> spawnLocation;
-
-			if(destination[1].equalsIgnoreCase("random")){
-				spawnLocation = Resource.getRandomLocation(world);
-			}else if(destination[1].equalsIgnoreCase("spawn")){
-				spawnLocation = world.getSpawnLocation();
-			}else{
-				String[] coords = destination[1].split(".");
-				int x = Integer.parseInt(coords[0]);
-				int y = Integer.parseInt(coords[1]);
-				int z = Integer.parseInt(coords[2]);
-				
-				spawnLocation = world.getLocation(x, y, z);	
-			}
+			Location<World> spawnLocation = lever.getDestination().get();
 
 			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of("lever"));
 
@@ -85,9 +69,8 @@ public class LeverListener {
 	public void onChangeBlockEvent(ChangeBlockEvent.Break event, @First Player player) {
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			Location<World> location = transaction.getFinal().getLocation().get();		
-			String locationName = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 
-			if(!Lever.get(locationName).isPresent()){
+			if(!Lever.get(location).isPresent()){
 				continue;
 			}
 			
@@ -95,7 +78,7 @@ public class LeverListener {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to break lever portals"));
 				event.setCancelled(true);
 			}else{
-				Lever.remove(locationName);
+				Lever.remove(location);
 				player.sendMessage(Text.of(TextColors.DARK_GREEN, "Broke lever portal"));
 			}
 		}
@@ -123,11 +106,9 @@ public class LeverListener {
 	        	return;
 			}
 
-			String locationName = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
-
             String destination = creators.get(player);
             
-            Lever.save(locationName, destination);
+            Lever.save(location, destination);
 
     		if(new ConfigManager().getConfig().getNode("Options", "Show-Particles").getBoolean()){
     			Resource.spawnParticles(location, 1.0, false);
