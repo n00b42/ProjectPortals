@@ -9,6 +9,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
+import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.listeners.PortalListener;
 import com.gmail.trentech.pjp.portals.builders.PortalBuilder;
 import com.gmail.trentech.pjp.utils.ConfigManager;
@@ -37,8 +38,22 @@ public class CMDSave implements CommandExecutor {
 		}
 		PortalBuilder builder = (PortalBuilder) PortalListener.getBuilders().get(player);
 
+		if(!builder.isFill()){
+			builder.fill(true);
+			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Begin filling in the frame with blocks"));
+			return CommandResult.success();
+		}
+		
 		if(builder.build()){
-			PortalListener.getBuilders().remove(player);
+			Main.getGame().getScheduler().createTaskBuilder().name("PJP" + builder.getName()).delayTicks(20).execute(new Runnable(){
+
+				@Override
+				public void run() {
+					PortalListener.getBuilders().remove(player);
+				}
+				
+			}).submit(Main.getPlugin());
+			
 			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Portal ", builder.getName(), " created successfully"));
 		}
 		

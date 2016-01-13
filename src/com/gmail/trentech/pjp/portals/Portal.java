@@ -44,7 +44,7 @@ public class Portal {
 		}else if(args[1].equalsIgnoreCase("spawn")){
 			return Optional.of(world.getSpawnLocation());
 		}else{
-			String[] coords = args[1].split(".");
+			String[] coords = args[1].split("\\.");
 			int x = Integer.parseInt(coords[0]);
 			int y = Integer.parseInt(coords[1]);
 			int z = Integer.parseInt(coords[2]);
@@ -53,25 +53,45 @@ public class Portal {
 		}
 	}
 
-	public List<String> getRegion() {
-		return region;
+	public List<Location<World>> getRegion() {
+		List<Location<World>> list = new ArrayList<>();
+		
+		for(String loc : region){
+			String[] args = loc.split(":");
+			
+			if(!Main.getGame().getServer().getWorld(args[0]).isPresent()){
+				continue;
+			}
+			World world = Main.getGame().getServer().getWorld(args[0]).get();
+
+			String[] coords = args[1].split("\\.");
+
+			int x = Integer.parseInt(coords[0]);
+			int y = Integer.parseInt(coords[1]);
+			int z = Integer.parseInt(coords[2]);
+			
+			list.add(world.getLocation(x, y, z));	
+		}
+		return list;
 	}
 
-	public static Optional<Portal> get(String locationName){
+	public static Optional<Portal> get(Location<World> location){
+		String locationName = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
+		
 		ConfigurationNode config = new ConfigManager("portals.conf").getConfig();
 		
 		for(Entry<Object, ? extends ConfigurationNode> node : config.getNode("Portals").getChildrenMap().entrySet()){
-			String uuid = node.getKey().toString();
+			String name = node.getKey().toString();
 
-	    	List<String> list = config.getNode("Portals", uuid, "Region").getChildrenList().stream().map(ConfigurationNode::getString).collect(Collectors.toList());
+	    	List<String> list = config.getNode("Portals", name, "Region").getChildrenList().stream().map(ConfigurationNode::getString).collect(Collectors.toList());
 
 	    	if(!list.contains(locationName)){
 	    		continue;
 	    	}
 	    	
-	    	String destination = config.getNode("Portals", uuid, "Destination").getString();
+	    	String destination = config.getNode("Portals", name, "Destination").getString();
 
-	    	return Optional.of(new Portal(uuid, destination, list));
+	    	return Optional.of(new Portal(name, destination, list));
 		}
 		return Optional.empty();
 	}
@@ -99,8 +119,8 @@ public class Portal {
 		ConfigManager configManager = new ConfigManager("portals.conf");
 		ConfigurationNode config = configManager.getConfig();
 
-		config.getNode("Cuboids", portal.getName(), "Destination").setValue(portal.destination);
-		config.getNode("Cuboids", portal.getName(), "Region").setValue(portal.getRegion());
+		config.getNode("Portals", portal.getName(), "Destination").setValue(portal.destination);
+		config.getNode("Portals", portal.getName(), "Region").setValue(portal.region);
 
 		configManager.save();
 	}
@@ -112,22 +132,14 @@ public class Portal {
 		
 		for(Entry<Object, ? extends ConfigurationNode> node : config.getNode("Portals").getChildrenMap().entrySet()){
 			String name = node.getKey().toString();
-			list.add(getByName(name).get());    	
+			if(config.getNode("Portals", name, "Region").getString() != null){
+				String destination = config.getNode("Portals", name, "Destination").getString();
+				List<String> region = config.getNode("Portals", name, "Region").getChildrenList().stream().map(ConfigurationNode::getString).collect(Collectors.toList());
+				list.add(new Portal(name, destination, region));
+			}
 		}
-		
+
 		return list;
 	}
-	
-	public static List<String> listAllLocations(){
-		ConfigurationNode config = new ConfigManager("portals.conf").getConfig();
-		
-		List<String> list = new ArrayList<>();
-		
-		for(Entry<Object, ? extends ConfigurationNode> node : config.getNode("Portals").getChildrenMap().entrySet()){
-			String name = node.getKey().toString();
-	    	list.addAll(config.getNode("Cuboids", name, "Region").getChildrenList().stream().map(ConfigurationNode::getString).collect(Collectors.toList()));
-		}
-		
-		return list;
-	}
+
 }

@@ -5,17 +5,19 @@ import java.util.List;
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.impl.AbstractEvent;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
 public class ConstructPortalEvent extends AbstractEvent implements Cancellable {
 
 	private boolean cancelled = false;
 
 	private final Cause cause;
-	private final List<String> locations;
+	private final List<Location<World>> locations;
 	
-	public ConstructPortalEvent(List<String> locations, Cause cause){
+	public ConstructPortalEvent(List<Location<World>> region, Cause cause){
 		this.cause = cause;
-		this.locations = locations;
+		this.locations = region;
 	}
 	
 	@Override
@@ -33,7 +35,7 @@ public class ConstructPortalEvent extends AbstractEvent implements Cancellable {
 		return cause;
 	}
 
-	public List<String> getLocations() {
+	public List<Location<World>> getLocations() {
 		return locations;
 	}
 }

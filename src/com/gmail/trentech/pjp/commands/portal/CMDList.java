@@ -12,6 +12,8 @@ import org.spongepowered.api.service.pagination.PaginationBuilder;
 import org.spongepowered.api.service.pagination.PaginationService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.portals.Portal;
@@ -39,7 +41,9 @@ public class CMDList implements CommandExecutor {
 		List<Portal> portals = Portal.list();
 
 		for(Portal portal : portals){
-			list.add(Text.of(TextColors.AQUA, "Name: ", TextColors.GREEN, portal.getName(), TextColors.AQUA, " Location: ", portal.getRegion().get(0).replace(".", " ").replace(":", " ")));
+			Location<World> location = portal.getRegion().get(0);
+			String worldName = location.getExtent().getName();
+			list.add(Text.of(TextColors.AQUA, "Name: ", TextColors.GREEN, portal.getName(), TextColors.AQUA, " Location: ", worldName, " ", location.getBlockX(), " ", location.getBlockY(), " ", location.getBlockZ()));
 		}
 
 		if(list.isEmpty()){

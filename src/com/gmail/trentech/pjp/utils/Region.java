@@ -31,6 +31,16 @@ public class Region implements Iterable<Location<World>> {
 		return new String("Region: " + world.getName() + "," + x1 + "," + y1 + "," + z1 + "=>" + x2 + "," + y2 + "," + z2);
 	}
 	
+	public int size(){
+		int size = 0;
+		Iterator<Location<World>> iterator = this.iterator();
+		while (iterator.hasNext()) {
+			iterator.next();
+			size++;
+		}
+		return size;
+	}
+	
 	public class RegionIterator implements Iterator<Location<World>> {
 		private World world;
 		private int baseX, baseY, baseZ;

@@ -14,16 +14,11 @@ import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Resource;
 
 import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.objectmapping.Setting;
-import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
-@ConfigSerializable
+
 public class Cuboid {
 
-	@Setting
 	private final String name;
-	@Setting
 	private final String destination;
-	@Setting
 	private final List<String> region;
 
 	public Cuboid(String name, String destination, List<String> region) {
@@ -49,7 +44,7 @@ public class Cuboid {
 		}else if(args[1].equalsIgnoreCase("spawn")){
 			return Optional.of(world.getSpawnLocation());
 		}else{
-			String[] coords = args[1].split(".");
+			String[] coords = args[1].split("\\.");
 			int x = Integer.parseInt(coords[0]);
 			int y = Integer.parseInt(coords[1]);
 			int z = Integer.parseInt(coords[2]);
@@ -58,11 +53,30 @@ public class Cuboid {
 		}
 	}
 
-	public List<String> getRegion() {
-		return region;
+	public List<Location<World>> getRegion() {
+		List<Location<World>> list = new ArrayList<>();
+		
+		for(String loc : region){
+			String[] args = loc.split(":");
+			
+			if(!Main.getGame().getServer().getWorld(args[0]).isPresent()){
+				continue;
+			}
+			World world = Main.getGame().getServer().getWorld(args[0]).get();
+
+			String[] coords = args[1].split("\\.");
+			int x = Integer.parseInt(coords[0]);
+			int y = Integer.parseInt(coords[1]);
+			int z = Integer.parseInt(coords[2]);
+			
+			list.add(world.getLocation(x, y, z));	
+		}
+		return list;
 	}
 
-	public static Optional<Cuboid> get(String locationName){
+	public static Optional<Cuboid> get(Location<World> location){
+		String locationName = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
+		
 		ConfigurationNode config = new ConfigManager("portals.conf").getConfig();
 		
 		for(Entry<Object, ? extends ConfigurationNode> node : config.getNode("Cuboids").getChildrenMap().entrySet()){
@@ -81,13 +95,13 @@ public class Cuboid {
 		return Optional.empty();
 	}
 	
-	public static Optional<Portal> getByName(String name){
+	public static Optional<Cuboid> getByName(String name){
 		ConfigurationNode config = new ConfigManager("portals.conf").getConfig();
 		if(config.getNode("Cuboids", name, "Region").getString() != null){
 			String destination = config.getNode("Cuboids", name, "Destination").getString();
 			List<String> list = config.getNode("Cuboids", name, "Region").getChildrenList().stream().map(ConfigurationNode::getString).collect(Collectors.toList());
 
-		    return Optional.of(new Portal(name, destination, list));
+		    return Optional.of(new Cuboid(name, destination, list));
 		}
 		return Optional.empty();
 	}
@@ -105,15 +119,15 @@ public class Cuboid {
 		ConfigurationNode config = configManager.getConfig();
 
 		config.getNode("Cuboids", cuboid.getName(), "Destination").setValue(cuboid.destination);
-		config.getNode("Cuboids", cuboid.getName(), "Region").setValue(cuboid.getRegion());
+		config.getNode("Cuboids", cuboid.getName(), "Region").setValue(cuboid.region);
 
 		configManager.save();
 	}
 	
-	public static List<Portal> list(){
+	public static List<Cuboid> list(){
 		ConfigurationNode config = new ConfigManager("portals.conf").getConfig();
 		
-		List<Portal> list = new ArrayList<>();
+		List<Cuboid> list = new ArrayList<>();
 		
 		for(Entry<Object, ? extends ConfigurationNode> node : config.getNode("Cuboids").getChildrenMap().entrySet()){
 			String name = node.getKey().toString();
@@ -122,17 +136,5 @@ public class Cuboid {
 		
 		return list;
 	}
-	
-	public static List<String> listAllLocations(){
-		ConfigurationNode config = new ConfigManager("portals.conf").getConfig();
-		
-		List<String> list = new ArrayList<>();
-		
-		for(Entry<Object, ? extends ConfigurationNode> node : config.getNode("Cuboids").getChildrenMap().entrySet()){
-			String name = node.getKey().toString();
-	    	list.addAll(config.getNode("Cuboids", name, "Region").getChildrenList().stream().map(ConfigurationNode::getString).collect(Collectors.toList()));
-		}
-		
-		return list;
-	}
+
 }

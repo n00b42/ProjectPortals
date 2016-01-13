@@ -29,18 +29,18 @@ import ninja.leaping.configurate.ConfigurationNode;
 public class PortalListener {
 
 	private static HashMap<Player, Builder> builders = new HashMap<>();
-	
+
 	@Listener
 	public void onConstructPortalEvent(ConstructPortalEvent event, @First Player player){
-		for(String locationName : event.getLocations()){
-			if(Portal.get(locationName).isPresent()){
+		for(Location<World> location : event.getLocations()){
+			if(Portal.get(location).isPresent()){
 	        	player.sendMessage(Text.of(TextColors.DARK_RED, "Portals cannot over lap over portals"));
 	        	event.setCancelled(true);
 	        	return;
 			}
 		}
 
-        List<String> locations = event.getLocations();
+        List<Location<World>> locations = event.getLocations();
         
         ConfigurationNode config = new ConfigManager().getConfig();
         
@@ -65,7 +65,7 @@ public class PortalListener {
 			for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 				Location<World> location = transaction.getFinal().getLocation().get();		
 
-				if(!Portal.listAllLocations().contains(location)){
+				if(!Portal.get(location).isPresent()){
 					continue;
 				}
 
@@ -78,22 +78,42 @@ public class PortalListener {
 		
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			Location<World> location = transaction.getFinal().getLocation().get();
-			builder.add(location);
-			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Added location to ", builder.getName()));
+			if(builder.isFill()){
+				builder.addFill(location);
+				player.sendMessage(Text.of(TextColors.DARK_GREEN, "Added center block to ", builder.getName()));
+			}else{
+				builder.addFrame(location);
+				player.sendMessage(Text.of(TextColors.DARK_GREEN, "Added frame block to ", builder.getName()));
+			}
 		}
 	}
 	
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Break event, @First Player player) {
 		if(!builders.containsKey(player)){
+			for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
+				Location<World> location = transaction.getFinal().getLocation().get();		
+
+				if(!Portal.get(location).isPresent()){
+					continue;
+				}
+
+				event.setCancelled(true);
+				break;
+			}
 			return;
 		}
 		PortalBuilder builder = (PortalBuilder) builders.get(player);
 		
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			Location<World> location = transaction.getFinal().getLocation().get();
-			builder.remove(location);
-			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Removed location from ", builder.getName()));
+			if(builder.isFill()){
+				builder.removeFill(location);
+				player.sendMessage(Text.of(TextColors.DARK_GREEN, "Removed center block from ", builder.getName()));
+			}else{
+				builder.removeFrame(location);
+				player.sendMessage(Text.of(TextColors.DARK_GREEN, "Removed frame block from ", builder.getName()));
+			}
 		}
 	}
 
@@ -105,12 +125,11 @@ public class PortalListener {
 		Player player = (Player) event.getTargetEntity();
 
 		Location<World> location = player.getLocation();		
-		String locationName = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 
-		if(!Portal.get(locationName).isPresent()){
+		if(!Portal.get(location).isPresent()){
 			return;
 		}
-		Portal portal = Portal.get(locationName).get();
+		Portal portal = Portal.get(location).get();
 
 		if(!player.hasPermission("pjp.cube.interact")){
 			player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to interact with portals"));

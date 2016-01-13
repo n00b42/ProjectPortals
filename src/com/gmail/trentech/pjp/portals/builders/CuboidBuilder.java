@@ -69,8 +69,7 @@ public class CuboidBuilder extends Builder{
 			regionList.add(location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ());
 		}
 
-		if(!Main.getGame().getEventManager().post(new ConstructCuboidEvent(regionList, Cause.of(this)))) {
-			Cuboid.save(new Cuboid(name, destination, regionList));
+		if(!Main.getGame().getEventManager().post(new ConstructCuboidEvent(region, Cause.of(this)))) {			
 			ConfigurationNode config = new ConfigManager().getConfig();
 			for(Location<World> location : region){
 	        	if(!config.getNode("Options", "Cube", "Replace-Frame").getBoolean()){	
@@ -88,6 +87,7 @@ public class CuboidBuilder extends Builder{
 	    			Resource.spawnParticles(location, 1.0, false);
 	    		}
 			}
+			Cuboid.save(new Cuboid(name, destination, regionList));
 			return true;
 		}
 		return false;

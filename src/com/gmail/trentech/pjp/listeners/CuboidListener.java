@@ -1,7 +1,6 @@
 package com.gmail.trentech.pjp.listeners;
 
 import java.util.HashMap;
-import java.util.List;
 
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.Transaction;
@@ -24,56 +23,49 @@ import com.gmail.trentech.pjp.portals.Cuboid;
 import com.gmail.trentech.pjp.portals.builders.Builder;
 import com.gmail.trentech.pjp.portals.builders.CuboidBuilder;
 import com.gmail.trentech.pjp.utils.ConfigManager;
+import com.gmail.trentech.pjp.utils.Region;
 
 import ninja.leaping.configurate.ConfigurationNode;
 
 public class CuboidListener {
 
-	//private static List<Player> creators = new ArrayList<>();
 	private static HashMap<Player, Builder> builders = new HashMap<>();
 	
 	@Listener
 	public void onConstructCuboidEvent(ConstructCuboidEvent event, @First Player player){
-		for(String locationName : event.getLocations()){
-			if(Cuboid.get(locationName).isPresent()){
+		for(Location<World> location : event.getRegion()){
+			if(Cuboid.get(location).isPresent()){
 	        	player.sendMessage(Text.of(TextColors.DARK_RED, "Cuboids cannot over lap over Cuboids"));
 	        	event.setCancelled(true);
 	        	return;
 			}
 		}
 
-        List<String> locations = event.getLocations();
+        Region region = event.getRegion();
         
         ConfigurationNode config = new ConfigManager().getConfig();
         
         int size = config.getNode("Options", "Cube", "Size").getInt();
-        if(locations.size() > size){
+        if(region.size() > size){
         	player.sendMessage(Text.of(TextColors.DARK_RED, "Cuboids cannot be larger than ", size, " blocks"));
         	event.setCancelled(true);
         	return;
         }
         
-        if(locations.size() == 1){
+        if(region.size() == 1){
         	player.sendMessage(Text.of(TextColors.DARK_RED, "Cuboid too small"));
         	player.setItemInHand(null);
         	event.setCancelled(true);        	
         	return;
         }
-
-        //creators.add(player);
 	}
 	
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Place event, @First Player player) {
-//		if(creators.contains(player)){
-//			creators.remove(player);
-//			return;
-//		}
-
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			Location<World> location = transaction.getFinal().getLocation().get();		
 
-			if(!Cuboid.listAllLocations().contains(location)){
+			if(!Cuboid.get(location).isPresent()){
 				continue;
 			}
 			
@@ -86,15 +78,10 @@ public class CuboidListener {
 	
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Break event, @First Player player) {
-//		if(creators.contains(player)){
-//			creators.remove(player);
-//			return;
-//		}
-
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			Location<World> location = transaction.getFinal().getLocation().get();		
 
-			if(!Cuboid.listAllLocations().contains(location)){
+			if(!Cuboid.get(location).isPresent()){
 				continue;
 			}
 			
@@ -113,12 +100,11 @@ public class CuboidListener {
 		Player player = (Player) event.getTargetEntity();
 
 		Location<World> location = player.getLocation();		
-		String locationName = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 
-		if(!Cuboid.get(locationName).isPresent()){
+		if(!Cuboid.get(location).isPresent()){
 			return;
 		}
-		Cuboid cuboid = Cuboid.get(locationName).get();
+		Cuboid cuboid = Cuboid.get(location).get();
 
 		if(!player.hasPermission("pjp.cube.interact")){
 			player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with button portals"));

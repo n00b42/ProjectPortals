@@ -23,7 +23,7 @@ import com.gmail.trentech.pjp.Main;
 public class Resource {
 
 	public final static String NAME = "Project Portals";
-	public final static String VERSION = "0.6.13";
+	public final static String VERSION = "0.6.15";
 	public final static String ID = "PJP";
 
 	public static void spawnParticles(Location<World> location, double range, boolean sub){		

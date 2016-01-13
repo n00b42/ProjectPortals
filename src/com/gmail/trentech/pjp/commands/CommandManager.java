@@ -105,7 +105,6 @@ public class CommandManager {
 	public CommandSpec cmdShow = CommandSpec.builder()
 		    .description(Text.of("Fills all cube portal regions to make them temporarly visible"))
 		    .permission("pjp.cmd.cube.show")
-		    .arguments(GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("name"))))
 		    .executor(new CMDShow())
 		    .build();
 	

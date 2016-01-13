@@ -1,21 +1,21 @@
 package com.gmail.trentech.pjp.events;
 
-import java.util.List;
-
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.impl.AbstractEvent;
+
+import com.gmail.trentech.pjp.utils.Region;
 
 public class ConstructCuboidEvent extends AbstractEvent implements Cancellable {
 
 	private boolean cancelled = false;
 
 	private final Cause cause;
-	private final List<String> locations;
+	private final Region region;
 	
-	public ConstructCuboidEvent(List<String> locations, Cause cause){
+	public ConstructCuboidEvent(Region region, Cause cause){
 		this.cause = cause;
-		this.locations = locations;
+		this.region = region;
 	}
 	
 	@Override
@@ -33,7 +33,7 @@ public class ConstructCuboidEvent extends AbstractEvent implements Cancellable {
 		return cause;
 	}
 
-	public List<String> getLocations() {
-		return locations;
+	public Region getRegion() {
+		return region;
 	}
 }

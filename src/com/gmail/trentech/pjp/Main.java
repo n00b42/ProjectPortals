@@ -18,6 +18,7 @@ import com.gmail.trentech.pjp.listeners.ButtonListener;
 import com.gmail.trentech.pjp.listeners.CuboidListener;
 import com.gmail.trentech.pjp.listeners.LeverListener;
 import com.gmail.trentech.pjp.listeners.PlateListener;
+import com.gmail.trentech.pjp.listeners.PortalListener;
 import com.gmail.trentech.pjp.listeners.SignListener;
 import com.gmail.trentech.pjp.listeners.TeleportListener;
 import com.gmail.trentech.pjp.utils.ConfigManager;
@@ -57,11 +58,11 @@ public class Main {
     		getGame().getCommandManager().register(this, new CommandManager().cmdCube, "cube", config.getNode("Options", "Command-Alias", "cube").getString());
     		getLog().info("Cube module activated");
     	}
-//    	if(modules.getNode("Portals").getBoolean()){  		
-//    		getGame().getEventManager().registerListeners(this, new PortalListener());
-//    		getGame().getCommandManager().register(this, new CommandManager().cmdPortal, "portal", config.getNode("Options", "Command-Alias", "portal").getString());
-//    		getLog().info("Portal module activated");
-//    	}
+    	if(modules.getNode("Portals").getBoolean()){  		
+    		getGame().getEventManager().registerListeners(this, new PortalListener());
+    		getGame().getCommandManager().register(this, new CommandManager().cmdPortal, "portal", config.getNode("Options", "Command-Alias", "portal").getString());
+    		getLog().info("Portal module activated");
+    	}
     	if(modules.getNode("Buttons").getBoolean()){
     		getGame().getEventManager().registerListeners(this, new ButtonListener());
     		getGame().getCommandManager().register(this, new CommandManager().cmdButton, "button", config.getNode("Options", "Command-Alias", "button").getString());

@@ -12,10 +12,11 @@ import org.spongepowered.api.service.pagination.PaginationBuilder;
 import org.spongepowered.api.service.pagination.PaginationService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.portals.Cuboid;
-import com.gmail.trentech.pjp.portals.Portal;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 
@@ -37,10 +38,12 @@ public class CMDList implements CommandExecutor {
 		
 		List<Text> list = new ArrayList<>();
 		
-		List<Portal> cubes = Cuboid.list();
+		List<Cuboid> cubes = Cuboid.list();
 
-		for(Portal cube : cubes){
-			list.add(Text.of(TextColors.AQUA, "Name: ", TextColors.GREEN, cube.getName(), TextColors.AQUA, " Location: ", cube.getRegion().get(0).replace(".", " ").replace(":", " ")));
+		for(Cuboid cube : cubes){
+			Location<World> location = cube.getRegion().get(0);
+			String worldName = location.getExtent().getName();
+			list.add(Text.of(TextColors.AQUA, "Name: ", TextColors.GREEN, cube.getName(), TextColors.AQUA, " Location: ", worldName, " ", location.getBlockX(), " ", location.getBlockY(), " ", location.getBlockZ()));
 		}
 
 		if(list.isEmpty()){

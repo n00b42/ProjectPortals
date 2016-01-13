@@ -78,7 +78,7 @@ public class CMDCreate implements CommandExecutor {
 		
 		PortalListener.getBuilders().put(player, new PortalBuilder(destination).name(name));
 		
-		player.sendMessage(Text.builder().color(TextColors.DARK_GREEN).append(Text.of("Begin placing blocks inside the portal. When complete, "))
+		player.sendMessage(Text.builder().color(TextColors.DARK_GREEN).append(Text.of("Begin building your portal frame. When complete, "))
 				.onClick(TextActions.runCommand("/pjp:portal save")).append(Text.of(TextColors.GOLD, TextStyles.UNDERLINE, "/portal save")).build());
 		
 		return CommandResult.success();
