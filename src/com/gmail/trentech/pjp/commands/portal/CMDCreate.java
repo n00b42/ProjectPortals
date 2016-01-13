@@ -23,7 +23,7 @@ public class CMDCreate implements CommandExecutor {
 	public CMDCreate(){
 		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "portal").getString();
 		
-		Help help = new Help("pcreate", " Create a portal to another dimension, or specified location");
+		Help help = new Help("pcreate", "create", " Create a portal to another dimension, or specified location");
 		help.setSyntax(" /portal create <name> <world> [x] [y] [z]\n /" + alias + " create <name> <world> [x] [y] [z]");
 		help.setExample(" /portal create MyPortal MyWorld\n /portal create MyPortal MyWorld -100 65 254\n /portal create MyPortal MyWorld random");
 		help.save();

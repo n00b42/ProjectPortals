@@ -21,7 +21,7 @@ public class CMDCreate implements CommandExecutor {
 	public CMDCreate(){
 		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "warp").getString();
 		
-		Help help = new Help("wcreate", " Create a new warp point");
+		Help help = new Help("wcreate", "create", " Create a new warp point");
 		help.setSyntax(" /warp create <name>\n /" + alias + " c <name>");
 		help.setExample(" /warp create Spawn");
 		help.save();

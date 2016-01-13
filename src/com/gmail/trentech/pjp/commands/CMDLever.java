@@ -20,7 +20,7 @@ public class CMDLever implements CommandExecutor {
 	public CMDLever(){
 		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "lever").getString();
 		
-		Help help = new Help("lever", " Use this command to create a lever that will teleport you to other worlds");
+		Help help = new Help("lever", "lever", " Use this command to create a lever that will teleport you to other worlds");
 		help.setSyntax(" /lever <world> [x] [y] [z]\n /" + alias + " <world> [x] [y] [z]");
 		help.setExample(" /lever MyWorld\n /lever MyWorld -100 65 254\n /lever MyWorld random");
 		help.save();

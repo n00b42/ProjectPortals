@@ -22,7 +22,7 @@ public class CMDShow implements CommandExecutor {
 	public CMDShow(){
 		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "cube").getString();
 		
-		Help help = new Help("show", " Fills all portal regions to make them temporarly visible");
+		Help help = new Help("show", "show", " Fills all portal regions to make them temporarly visible");
 		help.setSyntax(" /cube show\n /" + alias + " s");
 		help.save();
 	}

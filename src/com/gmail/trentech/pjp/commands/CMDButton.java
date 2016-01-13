@@ -20,7 +20,7 @@ public class CMDButton implements CommandExecutor {
 	public CMDButton(){
 		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "button").getString();
 		
-		Help help = new Help("button", " Use this command to create a button that will teleport you to other worlds");
+		Help help = new Help("button", "button", " Use this command to create a button that will teleport you to other worlds");
 		help.setSyntax(" /button <world> [x] [y] [z]\n /" + alias + " <world> [x] [y] [z]");
 		help.setExample(" /button MyWorld\n /button MyWorld -100 65 254\n /button MyWorld random");
 		help.save();

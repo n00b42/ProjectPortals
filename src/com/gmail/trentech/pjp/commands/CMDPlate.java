@@ -20,7 +20,7 @@ public class CMDPlate implements CommandExecutor {
 	public CMDPlate(){
 		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "plate").getString();
 		
-		Help help = new Help("plate", " Use this command to create a pressure plate that will teleport you to other worlds");
+		Help help = new Help("plate", "plate", " Use this command to create a pressure plate that will teleport you to other worlds");
 		help.setSyntax(" /plate <world> [x] [y] [z]\n /" + alias + " <world> [x] [y] [z]");
 		help.setExample(" /plate MyWorld\n /plate MyWorld -100 65 254\n /plate MyWorld random");
 		help.save();

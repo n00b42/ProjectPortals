@@ -29,7 +29,7 @@ public class CMDBack implements CommandExecutor {
 	public CMDBack(){
 		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "back").getString();
 		
-		Help help = new Help("back", " Use this command to teleport you to the location you previously came from");
+		Help help = new Help("back", "back", " Use this command to teleport you to the location you previously came from");
 		help.setSyntax(" /back\n /" + alias);
 		help.save();
 	}

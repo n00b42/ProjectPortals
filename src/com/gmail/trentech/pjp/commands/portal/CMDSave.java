@@ -20,7 +20,7 @@ public class CMDSave implements CommandExecutor {
 	public CMDSave(){
 		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "portal").getString();
 		
-		Help help = new Help("save", " Saves generated portal");
+		Help help = new Help("save", "save", " Saves generated portal");
 		help.setSyntax(" /portal save\n /" + alias + " s");
 		help.save();
 	}

@@ -21,7 +21,7 @@ public class CMDCreate implements CommandExecutor {
 	public CMDCreate(){
 		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "home").getString();
 		
-		Help help = new Help("hcreate", " Create a new home");
+		Help help = new Help("hcreate", "create", " Create a new home");
 		help.setSyntax(" /home create <name>\n /" + alias + " c <name>");
 		help.setExample(" /home create MyHome");
 		help.save();

@@ -29,7 +29,7 @@ public class CMDList implements CommandExecutor {
 	public CMDList(){
 		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "warp").getString();
 		
-		Help help = new Help("wlist", " List all warp points");
+		Help help = new Help("wlist", "list", " List all warp points");
 		help.setSyntax(" /warp list\n /" + alias + " l");
 		help.save();
 	}

@@ -19,7 +19,7 @@ public class CMDRemove implements CommandExecutor {
 	public CMDRemove(){
 		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "portal").getString();
 		
-		Help help = new Help("premove", " Remove an existing portal");
+		Help help = new Help("premove", "remove", " Remove an existing portal");
 		help.setSyntax(" /portal remove <name>\n /" + alias + " r <name>");
 		help.setExample(" /portal remove MyPortal");
 		help.save();

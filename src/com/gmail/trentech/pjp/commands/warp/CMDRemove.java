@@ -19,7 +19,7 @@ public class CMDRemove implements CommandExecutor {
 	public CMDRemove(){
 		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "warp").getString();
 		
-		Help help = new Help("wremove", " Remove an existing  warp point");
+		Help help = new Help("wremove", "remove", " Remove an existing  warp point");
 		help.setSyntax(" /warp remove <name>\n /" + alias + " r <name>");
 		help.setExample(" /warp remove OldSpawn");
 		help.save();

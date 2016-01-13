@@ -29,7 +29,7 @@ public class CMDList implements CommandExecutor {
 	public CMDList(){
 		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "home").getString();
 		
-		Help help = new Help("hlist", " List all homes");
+		Help help = new Help("hlist", "list", " List all homes");
 		help.setSyntax(" /home list\n /" + alias + " l");
 		help.save();
 	}

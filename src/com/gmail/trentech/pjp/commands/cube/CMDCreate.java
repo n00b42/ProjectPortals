@@ -21,7 +21,7 @@ public class CMDCreate implements CommandExecutor {
 	public CMDCreate(){
 		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "cube").getString();
 		
-		Help help = new Help("ccreate", " Create cuboid portal to another dimension, or specified location. No arguments allow for deleting portals");
+		Help help = new Help("ccreate", "create", "Create cuboid portal to another dimension, or specified location. No arguments allow for deleting portals");
 		help.setSyntax(" /cube <world> [x] [y] [z]\n /" + alias + " <world> [x] [y] [z]");
 		help.setExample(" /cube MyWorld\n /cube MyWorld -100 65 254\n /cube MyWorld random\n /cube show\n /cube remove");
 		help.save();

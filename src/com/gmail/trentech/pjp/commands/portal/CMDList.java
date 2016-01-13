@@ -25,7 +25,7 @@ public class CMDList implements CommandExecutor {
 	public CMDList(){
 		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "portal").getString();
 		
-		Help help = new Help("plist", " List all portals");
+		Help help = new Help("plist", "list", " List all portals");
 		help.setSyntax(" /portal list\n /" + alias + " l");
 		help.save();
 	}

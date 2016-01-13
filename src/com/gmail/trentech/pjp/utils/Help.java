@@ -15,6 +15,7 @@ import com.gmail.trentech.pjp.Main;
 
 public class Help {
 
+	private final String id;
 	private final String command;
 	private final String description;
 	private Optional<String> syntax = Optional.empty();
@@ -22,11 +23,16 @@ public class Help {
 	
 	private static List<Help> list = new ArrayList<>();
 	
-	public Help(String command, String description){
+	public Help(String id, String command, String description){
+		this.id = id;
 		this.command = command;
 		this.description = description;
 	}
 
+	public String getId() {
+		return id;
+	}
+	
 	public String getDescription() {
 		return description;
 	}
@@ -58,7 +64,7 @@ public class Help {
 	public static Consumer<CommandSource> getHelp(String input){
 		return (CommandSource src) -> {
 			for(Help help : list){
-				if(help.getCommand().equalsIgnoreCase(input)){
+				if(help.getId().equalsIgnoreCase(input)){
 					PaginationBuilder pages = Main.getGame().getServiceManager().provide(PaginationService.class).get().builder();
 					pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.AQUA, help.getCommand().toLowerCase())).build());
 					

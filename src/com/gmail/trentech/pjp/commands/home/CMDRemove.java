@@ -19,7 +19,7 @@ public class CMDRemove implements CommandExecutor {
 	public CMDRemove(){
 		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "home").getString();
 		
-		Help help = new Help("hremove", " Remove an existing home");
+		Help help = new Help("hremove", "remove", "Remove an existing home");
 		help.setSyntax(" /home remove <name>\n /" + alias + " r <name>");
 		help.setExample(" /home remove OldHome");
 		help.save();
