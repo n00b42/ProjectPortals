@@ -106,6 +106,9 @@ public class ConfigManager {
 			if(config.getNode("Options", "Command-Alias", "button").getString() == null) {
 				config.getNode("Options", "Command-Alias", "button").setValue("btn");
 			}
+			if(config.getNode("Options", "Command-Alias", "door").getString() == null) {
+				config.getNode("Options", "Command-Alias", "door").setValue("d");
+			}
 			if(config.getNode("Options", "Command-Alias", "plate").getString() == null) {
 				config.getNode("Options", "Command-Alias", "plate").setValue("pl");
 			}
@@ -129,6 +132,9 @@ public class ConfigManager {
 			}
 			if(config.getNode("Options", "Modules", "Buttons").getString() == null) {
 				config.getNode("Options", "Modules", "Buttons").setValue(true);
+			}
+			if(config.getNode("Options", "Modules", "Doors").getString() == null) {
+				config.getNode("Options", "Modules", "Doors").setValue(true);
 			}
 			if(config.getNode("Options", "Modules", "Plates").getString() == null) {
 				config.getNode("Options", "Modules", "Plates").setValue(true);

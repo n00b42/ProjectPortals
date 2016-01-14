@@ -58,7 +58,7 @@ public class CMDDoor implements CommandExecutor {
 					Integer.parseInt(testInt[1]);
 					Integer.parseInt(testInt[2]);
 				}catch(Exception e){
-					src.sendMessage(Text.of(TextColors.YELLOW, "/button <world> [x] [y] [z]"));
+					src.sendMessage(Text.of(TextColors.YELLOW, "/door <world> [x] [y] [z]"));
 					return CommandResult.empty();
 				}
 				destination = worldName + ":" + testInt[0] + "." + testInt[1] + "." + testInt[2];

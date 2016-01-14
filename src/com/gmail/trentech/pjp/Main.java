@@ -68,6 +68,11 @@ public class Main {
     		getGame().getCommandManager().register(this, new CommandManager().cmdButton, "button", config.getNode("Options", "Command-Alias", "button").getString());
     		getLog().info("Button module activated");
     	}
+    	if(modules.getNode("Doors").getBoolean()){
+    		getGame().getEventManager().registerListeners(this, new ButtonListener());
+    		getGame().getCommandManager().register(this, new CommandManager().cmdDoor, "door", config.getNode("Options", "Command-Alias", "door").getString());
+    		getLog().info("Door module activated");
+    	}
     	if(modules.getNode("Plates").getBoolean()){
     		getGame().getEventManager().registerListeners(this, new PlateListener());
     		getGame().getCommandManager().register(this, new CommandManager().cmdPlate, "plate", config.getNode("Options", "Command-Alias", "plate").getString());

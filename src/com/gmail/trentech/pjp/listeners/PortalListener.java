@@ -58,7 +58,7 @@ public class PortalListener {
         	return;
         }
 	}
-	
+
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Place event, @First Player player) {
 		if(!builders.containsKey(player)){
@@ -80,10 +80,8 @@ public class PortalListener {
 			Location<World> location = transaction.getFinal().getLocation().get();
 			if(builder.isFill()){
 				builder.addFill(location);
-				player.sendMessage(Text.of(TextColors.DARK_GREEN, "Added center block to ", builder.getName()));
 			}else{
 				builder.addFrame(location);
-				player.sendMessage(Text.of(TextColors.DARK_GREEN, "Added frame block to ", builder.getName()));
 			}
 		}
 	}
@@ -109,10 +107,8 @@ public class PortalListener {
 			Location<World> location = transaction.getFinal().getLocation().get();
 			if(builder.isFill()){
 				builder.removeFill(location);
-				player.sendMessage(Text.of(TextColors.DARK_GREEN, "Removed center block from ", builder.getName()));
 			}else{
 				builder.removeFrame(location);
-				player.sendMessage(Text.of(TextColors.DARK_GREEN, "Removed frame block from ", builder.getName()));
 			}
 		}
 	}

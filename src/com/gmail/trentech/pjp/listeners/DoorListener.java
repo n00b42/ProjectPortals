@@ -99,7 +99,7 @@ public class DoorListener {
 
 		Door door = Door.get(location).get();
 
-		if(!player.hasPermission("pjp.lever.interact")){
+		if(!player.hasPermission("pjp.door.interact")){
 			player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with door portals"));
 			event.setCancelled(true);
 			return;

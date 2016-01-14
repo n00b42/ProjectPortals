@@ -88,11 +88,13 @@ public class PortalBuilder extends Builder{
 		}
 
 		if(!Main.getGame().getEventManager().post(new ConstructPortalEvent(regionFrame.get(), Cause.of(this)))) {
-			BlockState block = BlockState.builder().blockType(BlockTypes.AIR).build();
+
 			
 			for(Location<World> location : regionFill.get()){
+				//AxisData axisData = Main.getGame().getDataManager().getManipulatorBuilder(AxisData.class).get().create();
+				//axisData.set(Keys.AXIS, Axis.Y);
+				BlockState block = BlockState.builder().blockType(BlockTypes.PORTAL).build();
 	    		location.setBlock(block);
-
 				if(new ConfigManager().getConfig().getNode("Options", "Show-Particles").getBoolean()){
 					Resource.spawnParticles(location, 1.0, false);
 				}
