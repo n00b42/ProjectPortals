@@ -23,7 +23,7 @@ import org.spongepowered.api.world.World;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.utils.ConfigManager;
-import com.gmail.trentech.pjp.utils.Resource;
+import com.gmail.trentech.pjp.utils.Utils;
 
 public class SignListener {
 	
@@ -39,8 +39,8 @@ public class SignListener {
 			return;
 		}
 
-		String worldName = Resource.getBaseName(lines.get(1).toPlain());
-		String prettyWorldName = Resource.getPrettyName(worldName);
+		String worldName = Utils.getBaseName(lines.get(1).toPlain());
+		String prettyWorldName = Utils.getPrettyName(worldName);
 		
 		if(!player.hasPermission("pjp.sign.place")) {
 			player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to place portal signs"));
@@ -60,7 +60,7 @@ public class SignListener {
 		event.getText().set(lines);
 		
 		if(new ConfigManager().getConfig().getNode("Options", "Show-Particles").getBoolean()){
-			Resource.spawnParticles(event.getTargetTile().getLocation(), 1.0, false);
+			Utils.spawnParticles(event.getTargetTile().getLocation(), 1.0, false);
 		}
 	}
 
@@ -86,8 +86,8 @@ public class SignListener {
         	return;
 		}
 
-		String worldName = Resource.getBaseName(lines.get(1).toPlain());
-		String prettyWorldName = Resource.getPrettyName(worldName);
+		String worldName = Utils.getBaseName(lines.get(1).toPlain());
+		String prettyWorldName = Utils.getPrettyName(worldName);
 		
 		if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
 			player.sendMessage(Text.of(TextColors.DARK_RED, prettyWorldName, " does not exist"));
@@ -111,9 +111,9 @@ public class SignListener {
 			String coords = lines.get(2).toPlain();
 
 			if(coords.equalsIgnoreCase("random")){	
-				spawnLocation = Resource.getRandomLocation(world);
+				spawnLocation = Utils.getRandomLocation(world);
 			}else{		
-				spawnLocation = Resource.getLocation(world, coords);
+				spawnLocation = Utils.getLocation(world, coords);
 			}
 		}
 		

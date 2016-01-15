@@ -12,7 +12,7 @@ import org.spongepowered.api.text.format.TextColors;
 import com.gmail.trentech.pjp.portals.Cuboid;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
-import com.gmail.trentech.pjp.utils.Resource;
+import com.gmail.trentech.pjp.utils.Utils;
 
 public class CMDRemove implements CommandExecutor {
 
@@ -37,7 +37,7 @@ public class CMDRemove implements CommandExecutor {
 			src.sendMessage(Text.of(TextColors.YELLOW, "/cube remove <name>"));
 			return CommandResult.empty();
 		}
-		String name = Resource.getBaseName(args.<String>getOne("name").get());
+		String name = Utils.getBaseName(args.<String>getOne("name").get());
 
 		if(!Cuboid.getByName(name).isPresent()){
 			src.sendMessage(Text.of(TextColors.DARK_RED, name, " does not exist"));

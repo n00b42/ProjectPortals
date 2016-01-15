@@ -7,7 +7,7 @@ import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.utils.ConfigManager;
-import com.gmail.trentech.pjp.utils.Resource;
+import com.gmail.trentech.pjp.utils.Utils;
 
 import ninja.leaping.configurate.ConfigurationNode;
 
@@ -34,7 +34,7 @@ public class Door {
 		World world = Main.getGame().getServer().getWorld(args[0]).get();
 		
 		if(args[1].equalsIgnoreCase("random")){
-			return Optional.of(Resource.getRandomLocation(world));
+			return Optional.of(Utils.getRandomLocation(world));
 		}else if(args[1].equalsIgnoreCase("spawn")){
 			return Optional.of(world.getSpawnLocation());
 		}else{

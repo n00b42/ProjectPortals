@@ -13,7 +13,7 @@ import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.listeners.PlateListener;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
-import com.gmail.trentech.pjp.utils.Resource;
+import com.gmail.trentech.pjp.utils.Utils;
 
 public class CMDPlate implements CommandExecutor {
 
@@ -38,10 +38,10 @@ public class CMDPlate implements CommandExecutor {
 			src.sendMessage(Text.of(TextColors.GOLD, "/plate <world> [x] [y] [z]"));
 			return CommandResult.empty();
 		}
-		String worldName = Resource.getBaseName(args.<String>getOne("name").get());
+		String worldName = Utils.getBaseName(args.<String>getOne("name").get());
 
-		if(!Main.getGame().getServer().getWorld(Resource.getBaseName(worldName)).isPresent()){
-			src.sendMessage(Text.of(TextColors.DARK_RED, Resource.getPrettyName(worldName), " does not exist"));
+		if(!Main.getGame().getServer().getWorld(Utils.getBaseName(worldName)).isPresent()){
+			src.sendMessage(Text.of(TextColors.DARK_RED, Utils.getPrettyName(worldName), " does not exist"));
 			return CommandResult.empty();
 		}
 

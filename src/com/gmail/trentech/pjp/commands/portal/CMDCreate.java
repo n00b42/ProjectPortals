@@ -16,7 +16,7 @@ import com.gmail.trentech.pjp.listeners.PortalListener;
 import com.gmail.trentech.pjp.portals.builders.PortalBuilder;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
-import com.gmail.trentech.pjp.utils.Resource;
+import com.gmail.trentech.pjp.utils.Utils;
 
 public class CMDCreate implements CommandExecutor {
 
@@ -41,16 +41,16 @@ public class CMDCreate implements CommandExecutor {
 			src.sendMessage(Text.of(TextColors.YELLOW, "/portal create <name> <world> [x] [y] [z]"));
 			return CommandResult.empty();
 		}
-		String name = Resource.getBaseName(args.<String>getOne("name").get());
+		String name = Utils.getBaseName(args.<String>getOne("name").get());
 		
 		if(!args.hasAny("world")) {
 			src.sendMessage(Text.of(TextColors.YELLOW, "/portal create <name> <world> [x] [y] [z]"));
 			return CommandResult.empty();
 		}
-		String worldName = Resource.getBaseName(args.<String>getOne("world").get());
+		String worldName = Utils.getBaseName(args.<String>getOne("world").get());
 
 		if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
-			src.sendMessage(Text.of(TextColors.DARK_RED, Resource.getPrettyName(worldName), " does not exist"));
+			src.sendMessage(Text.of(TextColors.DARK_RED, Utils.getPrettyName(worldName), " does not exist"));
 			return CommandResult.empty();
 		}
 		

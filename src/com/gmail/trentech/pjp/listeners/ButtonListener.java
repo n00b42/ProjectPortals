@@ -21,7 +21,7 @@ import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.portals.Button;
 import com.gmail.trentech.pjp.utils.ConfigManager;
-import com.gmail.trentech.pjp.utils.Resource;
+import com.gmail.trentech.pjp.utils.Utils;
 
 public class ButtonListener {
 
@@ -120,7 +120,7 @@ public class ButtonListener {
             Button.save(location, destination);
 
     		if(new ConfigManager().getConfig().getNode("Options", "Show-Particles").getBoolean()){
-    			Resource.spawnParticles(location, 1.0, false);
+    			Utils.spawnParticles(location, 1.0, false);
     		}
 
             player.sendMessage(Text.of(TextColors.DARK_GREEN, "New button portal created"));

@@ -16,7 +16,7 @@ import com.gmail.trentech.pjp.events.ConstructCuboidEvent;
 import com.gmail.trentech.pjp.portals.Cuboid;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Region;
-import com.gmail.trentech.pjp.utils.Resource;
+import com.gmail.trentech.pjp.utils.Utils;
 
 import ninja.leaping.configurate.ConfigurationNode;
 
@@ -84,7 +84,7 @@ public class CuboidBuilder extends Builder{
             	}
             	
 	    		if(config.getNode("Options", "Show-Particles").getBoolean()){
-	    			Resource.spawnParticles(location, 1.0, false);
+	    			Utils.spawnParticles(location, 1.0, false);
 	    		}
 			}
 			Cuboid.save(new Cuboid(name, destination, regionList));

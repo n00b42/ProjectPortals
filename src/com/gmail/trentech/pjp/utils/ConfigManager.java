@@ -23,13 +23,13 @@ public class ConfigManager {
 	private File file;
 	private CommentedConfigurationNode config;
 	private ConfigurationLoader<CommentedConfigurationNode> loader;
-	
+
 	public ConfigManager(String folder, String configName) {
-		folder = "config/projectportals/" + folder + "/";
+		folder = "config" + File.separator + "projectportals" + File.separator + folder;
         if (!new File(folder).isDirectory()) {
         	new File(folder).mkdirs();
         }
-		file = new File(folder + configName);
+		file = new File(folder, configName);
 		
 		create();
 		load();
@@ -37,11 +37,11 @@ public class ConfigManager {
 	}
 	
 	public ConfigManager(String configName) {
-		String folder = "config/projectportals/";
+		String folder = "config" + File.separator + "projectportals";
         if (!new File(folder).isDirectory()) {
         	new File(folder).mkdirs();
         }
-		file = new File(folder + configName);
+		file = new File(folder, configName);
 		
 		create();
 		load();
@@ -49,7 +49,7 @@ public class ConfigManager {
 	}
 	
 	public ConfigManager() {
-		String folder = "config/projectportals/";
+		String folder = "config" + File.separator + "projectportals";
         if (!new File(folder).isDirectory()) {
         	new File(folder).mkdirs();
         }

@@ -21,7 +21,7 @@ import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.commands.CMDBack;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.utils.ConfigManager;
-import com.gmail.trentech.pjp.utils.Resource;
+import com.gmail.trentech.pjp.utils.Utils;
 
 public class TeleportListener {
 
@@ -44,20 +44,20 @@ public class TeleportListener {
 
 		if(!optionalLocation.isPresent()){
 			player.sendMessage(Text.builder().color(TextColors.DARK_RED).append(Text.of("Unsafe spawn point detected. Teleport anyway? "))
-					.onClick(TextActions.executeCallback(Resource.unsafeTeleport(dest))).append(Text.of(TextColors.GOLD, TextStyles.UNDERLINE, "Click Here")).build());
+					.onClick(TextActions.executeCallback(Utils.unsafeTeleport(dest))).append(Text.of(TextColors.GOLD, TextStyles.UNDERLINE, "Click Here")).build());
 			event.setCancelled(true);
 			return;
 		}
 		
 		if(new ConfigManager().getConfig().getNode("Options", "Show-Particles").getBoolean()){
-			Resource.spawnParticles(src, 0.5, true);
-			Resource.spawnParticles(src.getRelative(Direction.UP), 0.5, true);
+			Utils.spawnParticles(src, 0.5, true);
+			Utils.spawnParticles(src.getRelative(Direction.UP), 0.5, true);
 			
-			Resource.spawnParticles(dest, 1.0, false);
-			Resource.spawnParticles(dest.getRelative(Direction.UP), 1.0, false);
+			Utils.spawnParticles(dest, 1.0, false);
+			Utils.spawnParticles(dest.getRelative(Direction.UP), 1.0, false);
 		}
 
-		player.sendTitle(Title.of(Text.of(TextColors.DARK_GREEN, Resource.getPrettyName(dest.getExtent().getName())), Text.of(TextColors.AQUA, "x: ", dest.getBlockX(), ", y: ", dest.getBlockY(),", z: ", dest.getBlockZ())));
+		player.sendTitle(Title.of(Text.of(TextColors.DARK_GREEN, Utils.getPrettyName(dest.getExtent().getName())), Text.of(TextColors.AQUA, "x: ", dest.getBlockX(), ", y: ", dest.getBlockY(),", z: ", dest.getBlockZ())));
 
 		if(player.hasPermission("pjp.cmd.back")){
 			CMDBack.players.put(player, src);
@@ -104,7 +104,7 @@ public class TeleportListener {
 			Player player = (Player)src;
 
 			player.setLocation(location);
-			player.sendTitle(Title.of(Text.of(TextColors.GOLD, Resource.getPrettyName(location.getExtent().getName())), Text.of(TextColors.DARK_PURPLE, "x: ", location.getBlockX(), ", y: ", location.getBlockY(),", z: ", location.getBlockZ())));
+			player.sendTitle(Title.of(Text.of(TextColors.GOLD, Utils.getPrettyName(location.getExtent().getName())), Text.of(TextColors.DARK_PURPLE, "x: ", location.getBlockX(), ", y: ", location.getBlockY(),", z: ", location.getBlockZ())));
 		};
 	}
 }

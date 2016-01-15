@@ -21,7 +21,7 @@ import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.portals.Plate;
 import com.gmail.trentech.pjp.utils.ConfigManager;
-import com.gmail.trentech.pjp.utils.Resource;
+import com.gmail.trentech.pjp.utils.Utils;
 
 public class PlateListener {
 
@@ -120,7 +120,7 @@ public class PlateListener {
             Plate.save(location, destination);
 
     		if(new ConfigManager().getConfig().getNode("Options", "Show-Particles").getBoolean()){
-    			Resource.spawnParticles(location, 1.0, false);
+    			Utils.spawnParticles(location, 1.0, false);
     		}
 
             player.sendMessage(Text.of(TextColors.DARK_GREEN, "New pressure plate portal created"));
