@@ -16,6 +16,7 @@ import com.gmail.trentech.pjp.commands.CMDBack;
 import com.gmail.trentech.pjp.commands.CommandManager;
 import com.gmail.trentech.pjp.listeners.ButtonListener;
 import com.gmail.trentech.pjp.listeners.CuboidListener;
+import com.gmail.trentech.pjp.listeners.DoorListener;
 import com.gmail.trentech.pjp.listeners.LeverListener;
 import com.gmail.trentech.pjp.listeners.PlateListener;
 import com.gmail.trentech.pjp.listeners.PortalListener;
@@ -69,7 +70,7 @@ public class Main {
     		getLog().info("Button module activated");
     	}
     	if(modules.getNode("Doors").getBoolean()){
-    		getGame().getEventManager().registerListeners(this, new ButtonListener());
+    		getGame().getEventManager().registerListeners(this, new DoorListener());
     		getGame().getCommandManager().register(this, new CommandManager().cmdDoor, "door", config.getNode("Options", "Command-Alias", "door").getString());
     		getLog().info("Door module activated");
     	}

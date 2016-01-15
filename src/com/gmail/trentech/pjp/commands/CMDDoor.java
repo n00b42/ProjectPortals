@@ -10,7 +10,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.listeners.ButtonListener;
+import com.gmail.trentech.pjp.listeners.DoorListener;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Utils;
@@ -67,9 +67,9 @@ public class CMDDoor implements CommandExecutor {
 			destination = worldName + ":spawn";
 		}
 		
-		ButtonListener.creators.put(player, destination);
+		DoorListener.creators.put(player, destination);
 		
-		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place button to create button portal"));
+		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place door to create door portal"));
 
 		return CommandResult.success();
 	}

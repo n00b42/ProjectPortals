@@ -7,7 +7,9 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.text.format.TextStyles;
 
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.listeners.PortalListener;
@@ -40,7 +42,9 @@ public class CMDSave implements CommandExecutor {
 
 		if(!builder.isFill()){
 			builder.fill(true);
-			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Begin filling in the frame with blocks"));
+			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Portal frame saved"));
+			player.sendMessage(Text.builder().color(TextColors.DARK_GREEN).append(Text.of("Begin filling in portal frame, followed by "))
+					.onClick(TextActions.runCommand("/pjp:portal save")).append(Text.of(TextColors.YELLOW, TextStyles.UNDERLINE, "/portal save")).build());
 			return CommandResult.success();
 		}
 		
