@@ -26,7 +26,7 @@ public class CMDPjp implements CommandExecutor {
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		PaginationBuilder pages = Main.getGame().getServiceManager().provide(PaginationService.class).get().builder();
 		
-		pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.AQUA, "Command List")).build());
+		pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, "Command List")).build());
 		
 		List<Text> list = new ArrayList<>();
 		
@@ -34,12 +34,12 @@ public class CMDPjp implements CommandExecutor {
 		
 		if(src.hasPermission("pjp.cmd.cube") && node.getNode("Cubes").getBoolean()) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
-					.onClick(TextActions.runCommand("/pjp:cube")).append(Text.of(" /cube")).build());
+					.onClick(TextActions.runCommand("/pjp:cube")).append(Text.of(" /cube ", TextColors.YELLOW, "[DEPRECATED]")).build());
 		}
-//		if(src.hasPermission("pjp.cmd.portals") && node.getNode("Portals").getBoolean()) {
-//			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
-//					.onClick(TextActions.runCommand("/pjp:portal")).append(Text.of(" /portal")).build());
-//		}
+		if(src.hasPermission("pjp.cmd.portals") && node.getNode("Portals").getBoolean()) {
+			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
+					.onClick(TextActions.runCommand("/pjp:portal")).append(Text.of(" /portal")).build());
+		}
 		if(src.hasPermission("pjp.cmd.plate") && node.getNode("Plates").getBoolean()) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
 					.onClick(TextActions.executeCallback(Help.getHelp("plate"))).append(Text.of(" /plate")).build());

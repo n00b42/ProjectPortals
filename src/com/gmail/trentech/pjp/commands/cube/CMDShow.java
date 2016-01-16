@@ -29,6 +29,8 @@ public class CMDShow implements CommandExecutor {
 	
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+		src.sendMessage(Text.of(TextColors.RED, "[DEPRECATED] ", TextColors.YELLOW, "/cube command will be removed in a future build in favor of /portal command"));
+		
 		if(!(src instanceof Player)){
 			src.sendMessage(Text.of(TextColors.DARK_RED, "Must be a player"));
 			return CommandResult.empty();

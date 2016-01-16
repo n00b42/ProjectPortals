@@ -45,7 +45,7 @@ public class CuboidListener {
         
         ConfigurationNode config = new ConfigManager().getConfig();
         
-        int size = config.getNode("Options", "Cube", "Size").getInt();
+        int size = config.getNode("Options", "Portal-Size").getInt();
         if(region.size() > size){
         	player.sendMessage(Text.of(TextColors.DARK_RED, "Cuboids cannot be larger than ", size, " blocks"));
         	event.setCancelled(true);
@@ -146,7 +146,7 @@ public class CuboidListener {
 		}
 		event.setCancelled(true);
 	}
-	
+
 //    @Listener
 //    public void onDamageEntityEvent(DamageEntityEvent event, @First BlockDamageSource damageSource) {
 //    	if(!(event.getTargetEntity() instanceof Player)) {

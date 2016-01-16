@@ -44,7 +44,7 @@ public class PortalListener {
         
         ConfigurationNode config = new ConfigManager().getConfig();
         
-        int size = config.getNode("Options", "Cube", "Size").getInt();
+        int size = config.getNode("Options", "Portal-Size").getInt();
         if(locations.size() > size){
         	player.sendMessage(Text.of(TextColors.DARK_RED, "Portals cannot be larger than ", size, " blocks"));
         	event.setCancelled(true);

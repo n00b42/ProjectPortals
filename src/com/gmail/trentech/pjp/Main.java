@@ -1,17 +1,26 @@
 package com.gmail.trentech.pjp;
 
 import java.io.File;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.effect.particle.ParticleEffect;
+import org.spongepowered.api.effect.particle.ParticleTypes;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.scheduler.Task;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
+import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.commands.CMDBack;
 import com.gmail.trentech.pjp.commands.CommandManager;
 import com.gmail.trentech.pjp.listeners.ButtonListener;
@@ -22,6 +31,7 @@ import com.gmail.trentech.pjp.listeners.PlateListener;
 import com.gmail.trentech.pjp.listeners.PortalListener;
 import com.gmail.trentech.pjp.listeners.SignListener;
 import com.gmail.trentech.pjp.listeners.TeleportListener;
+import com.gmail.trentech.pjp.portals.Portal;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Resource;
 
@@ -102,7 +112,11 @@ public class Main {
 
     @Listener
     public void onStartedServer(GameStartedServerEvent event) {
-    	
+		if(new ConfigManager().getConfig().getNode("Options", "Show-Particles").getBoolean()){
+	    	for(Portal portal : Portal.list()){
+	    		createTask(portal.getName(), portal.getFill());
+	    	}
+		}
     }
 
 	public static Logger getLog() {
@@ -115,6 +129,43 @@ public class Main {
 
 	public static PluginContainer getPlugin() {
 		return plugin;
+	}
+
+	public static void createTask(String name, List<Location<World>> locations){
+        Main.getGame().getScheduler().createTaskBuilder().interval(300, TimeUnit.MILLISECONDS).name(name).execute(new Runnable() {
+        	ThreadLocalRandom random = ThreadLocalRandom.current();
+        	
+			@Override
+            public void run() {
+				for(Location<World> location : locations){
+					double v1 = 0.0 + (1 - 0.0) * random.nextDouble();
+					double v2 = 0.0 + (1 - 0.0) * random.nextDouble();
+					double v3 = 0.0 + (1 - 0.0) * random.nextDouble();
+
+					if(random.nextDouble() < 0.5){
+						try{
+							location.getExtent().spawnParticles(Main.getGame().getRegistry().createBuilder(ParticleEffect.Builder.class)
+									.type(ParticleTypes.PORTAL).motion(Vector3d.ZERO).offset(Vector3d.ZERO).count(2).build(), location.getPosition().add(v1,v2,v3));
+							location.getExtent().spawnParticles(Main.getGame().getRegistry().createBuilder(ParticleEffect.Builder.class)
+									.type(ParticleTypes.PORTAL).motion(Vector3d.ZERO).offset(Vector3d.ZERO).count(2).build(), location.getPosition().add(v3,v1,v2));
+							location.getExtent().spawnParticles(Main.getGame().getRegistry().createBuilder(ParticleEffect.Builder.class)
+									.type(ParticleTypes.PORTAL).motion(Vector3d.ZERO).offset(Vector3d.ZERO).count(2).build(), location.getPosition().add(v2,v3,v1));
+						}catch(Exception e){
+							 cancel(name);
+						}
+					}
+				}
+
+            }
+        }).submit(getPlugin());
+	}
+	
+	private static void cancel(String name){
+		for(Task task : Main.getGame().getScheduler().getScheduledTasks()){
+			if(task.getName().contains(name)){
+				task.cancel();
+			}
+		}
 	}
 	
 	private void fixPath(){

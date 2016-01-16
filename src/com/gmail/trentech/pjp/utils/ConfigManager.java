@@ -79,14 +79,17 @@ public class ConfigManager {
 	
 	private void init() {
 		if(file.getName().equalsIgnoreCase("config.conf")){
-			if(config.getNode("Options", "Cube", "Size").getString() == null) {
-				config.getNode("Options", "Cube", "Size").setValue(100).setComment("Maximum portal region size");
-			}
+//			if(config.getNode("Options", "Cube", "Size").getString() == null) {
+//				config.getNode("Options", "Cube", "Size").setValue(100).setComment("Maximum portal region size");
+//			}
 			if(config.getNode("Options", "Cube", "Replace-Frame").getString() == null) {
 				config.getNode("Options", "Cube", "Replace-Frame").setValue(true);
 			}
-			if(config.getNode("Options", "Cube", "Fill").getString() == null) {
-				config.getNode("Options", "Cube", "Fill").setValue(false).setComment("Fill space in cube with water");
+//			if(config.getNode("Options", "Cube", "Fill").getString() == null) {
+//				config.getNode("Options", "Cube", "Fill").setValue(false).setComment("Fill space in cube with water");
+//			}
+			if(config.getNode("Options", "Portal-Size").getString() == null) {
+				config.getNode("Options", "Portal-Size").setValue(100).setComment("Maximum number of blocks a portal can use");
 			}
 			if(config.getNode("Options", "Homes").getString() == null) {
 				config.getNode("Options", "Homes").setValue(5).setComment("Default number of homes a player can have");

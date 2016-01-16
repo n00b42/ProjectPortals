@@ -80,27 +80,27 @@ public class PortalBuilder extends Builder{
 		if(!regionFrame.isPresent() || !regionFill.isPresent()){
 			return false;
 		}
-		regionFrame.get().addAll(regionFill.get());
-		List<String> regionList = new ArrayList<>();
-		
-		for(Location<World> location : regionFrame.get()){
-			regionList.add(location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ());
-		}
+		List<Location<World>> frame = new ArrayList<>(regionFrame.get());
+		List<Location<World>> fill = new ArrayList<>(regionFill.get());
 
-		if(!Main.getGame().getEventManager().post(new ConstructPortalEvent(regionFrame.get(), Cause.of(this)))) {
-
+		if(!Main.getGame().getEventManager().post(new ConstructPortalEvent(frame, fill, Cause.of(this)))) {
+			boolean particles = new ConfigManager().getConfig().getNode("Options", "Show-Particles").getBoolean();
 			
-			for(Location<World> location : regionFill.get()){
-				//AxisData axisData = Main.getGame().getDataManager().getManipulatorBuilder(AxisData.class).get().create();
-				//axisData.set(Keys.AXIS, Axis.Y);
-				BlockState block = BlockState.builder().blockType(BlockTypes.PORTAL).build();
+			BlockState block = BlockTypes.AIR.getDefaultState();
+
+			for(Location<World> location : fill){
 	    		location.setBlock(block);
-				if(new ConfigManager().getConfig().getNode("Options", "Show-Particles").getBoolean()){
+	    		
+				if(particles){
 					Utils.spawnParticles(location, 1.0, false);
 				}
 			}
 			
-			Portal.save(new Portal(name, destination, regionList));
+			if(particles){
+				Main.createTask(name, fill);
+			}
+			
+			Portal.save(new Portal(name, destination, frame, fill, null));
 			
 			return true;
 		}

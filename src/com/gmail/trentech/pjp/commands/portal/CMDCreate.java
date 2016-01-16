@@ -13,6 +13,7 @@ import org.spongepowered.api.text.format.TextStyles;
 
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.listeners.PortalListener;
+import com.gmail.trentech.pjp.portals.Portal;
 import com.gmail.trentech.pjp.portals.builders.PortalBuilder;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
@@ -41,7 +42,12 @@ public class CMDCreate implements CommandExecutor {
 			src.sendMessage(Text.of(TextColors.YELLOW, "/portal create <name> <world> [x] [y] [z]"));
 			return CommandResult.empty();
 		}
-		String name = Utils.getBaseName(args.<String>getOne("name").get());
+		String name = args.<String>getOne("name").get();
+		
+		if(Portal.getByName(name).isPresent()){
+			src.sendMessage(Text.of(TextColors.DARK_RED, name, " already exists"));
+			return CommandResult.empty();
+		}
 		
 		if(!args.hasAny("world")) {
 			src.sendMessage(Text.of(TextColors.YELLOW, "/portal create <name> <world> [x] [y] [z]"));

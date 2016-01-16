@@ -72,20 +72,21 @@ public class CuboidBuilder extends Builder{
 		if(!Main.getGame().getEventManager().post(new ConstructCuboidEvent(region, Cause.of(this)))) {			
 			ConfigurationNode config = new ConfigManager().getConfig();
 			for(Location<World> location : region){
+	    		if(config.getNode("Options", "Show-Particles").getBoolean()){
+	    			Utils.spawnParticles(location, 1.0, false);
+	    		}
+	    		
 	        	if(!config.getNode("Options", "Cube", "Replace-Frame").getBoolean()){	
 	        		continue;
 	        	}
 	        	
             	if(!location.getBlockType().equals(BlockTypes.AIR)){
             		location.setBlock(block);
-            	}else if(config.getNode("Options", "Cube", "Fill").getBoolean()){
+            	}
+//            	else if(config.getNode("Options", "Cube", "Fill").getBoolean()){
 //            		BlockState block = BlockState.builder().blockType(BlockTypes.FLOWING_WATER).build();
 //            		location.setBlock(block);
-            	}
-            	
-	    		if(config.getNode("Options", "Show-Particles").getBoolean()){
-	    			Utils.spawnParticles(location, 1.0, false);
-	    		}
+//            	}
 			}
 			Cuboid.save(new Cuboid(name, destination, regionList));
 			return true;

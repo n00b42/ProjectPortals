@@ -32,6 +32,8 @@ public class CMDList implements CommandExecutor {
 	
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+		src.sendMessage(Text.of(TextColors.RED, "[DEPRECATED] ", TextColors.YELLOW, "/cube command will be removed in a future build in favor of /portal command"));
+		
 		PaginationBuilder pages = Main.getGame().getServiceManager().provide(PaginationService.class).get().builder();
 		
 		pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.AQUA, "Cube Portals")).build());

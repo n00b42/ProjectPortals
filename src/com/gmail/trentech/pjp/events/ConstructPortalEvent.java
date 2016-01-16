@@ -15,9 +15,10 @@ public class ConstructPortalEvent extends AbstractEvent implements Cancellable {
 	private final Cause cause;
 	private final List<Location<World>> locations;
 	
-	public ConstructPortalEvent(List<Location<World>> region, Cause cause){
+	public ConstructPortalEvent(List<Location<World>> frame, List<Location<World>> fill, Cause cause){
 		this.cause = cause;
-		this.locations = region;
+		frame.addAll(fill);
+		this.locations = frame;
 	}
 	
 	@Override

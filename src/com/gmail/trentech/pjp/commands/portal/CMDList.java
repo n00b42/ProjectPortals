@@ -41,7 +41,7 @@ public class CMDList implements CommandExecutor {
 		List<Portal> portals = Portal.list();
 
 		for(Portal portal : portals){
-			Location<World> location = portal.getRegion().get(0);
+			Location<World> location = portal.getFrame().get(0);
 			String worldName = location.getExtent().getName();
 			list.add(Text.of(TextColors.AQUA, "Name: ", TextColors.GREEN, portal.getName(), TextColors.AQUA, " Location: ", worldName, " ", location.getBlockX(), " ", location.getBlockY(), " ", location.getBlockZ()));
 		}
