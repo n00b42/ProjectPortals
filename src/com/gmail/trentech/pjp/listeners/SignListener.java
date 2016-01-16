@@ -104,12 +104,11 @@ public class SignListener {
 		}
 		
 		Location<World> spawnLocation;
-
-		if(lines.size() < 3){
+		String coords = lines.get(2).toPlain();
+		
+		if(lines.get(2).toPlain().equalsIgnoreCase("")){
 			spawnLocation = world.getSpawnLocation();
 		}else{
-			String coords = lines.get(2).toPlain();
-
 			if(coords.equalsIgnoreCase("random")){	
 				spawnLocation = Utils.getRandomLocation(world);
 			}else{		

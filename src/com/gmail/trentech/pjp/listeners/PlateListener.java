@@ -102,7 +102,8 @@ public class PlateListener {
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			BlockType type = transaction.getFinal().getState().getType();
 			
-			if(!type.equals(BlockTypes.STONE_BUTTON) && !type.equals(BlockTypes.WOODEN_BUTTON)){
+			if(!type.equals(BlockTypes.HEAVY_WEIGHTED_PRESSURE_PLATE) && !type.equals(BlockTypes.LIGHT_WEIGHTED_PRESSURE_PLATE) 
+					&& !type.equals(BlockTypes.STONE_PRESSURE_PLATE) && !type.equals(BlockTypes.WOODEN_PRESSURE_PLATE)){
 				continue;
 			}
 

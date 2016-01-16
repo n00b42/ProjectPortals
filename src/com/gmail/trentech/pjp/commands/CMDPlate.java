@@ -69,7 +69,7 @@ public class CMDPlate implements CommandExecutor {
 		
 		PlateListener.creators.put(player, destination);
 		
-		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place button to create pressure plate portal"));
+		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place pressure plate to create pressure plate portal"));
 
 		return CommandResult.success();
 	}
