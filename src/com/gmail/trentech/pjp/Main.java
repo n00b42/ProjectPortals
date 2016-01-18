@@ -23,6 +23,9 @@ import org.spongepowered.api.world.World;
 import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.commands.CMDBack;
 import com.gmail.trentech.pjp.commands.CommandManager;
+import com.gmail.trentech.pjp.data.ImmutablePortalData;
+import com.gmail.trentech.pjp.data.PortalData;
+import com.gmail.trentech.pjp.data.PortalDataManipulatorBuilder;
 import com.gmail.trentech.pjp.listeners.ButtonListener;
 import com.gmail.trentech.pjp.listeners.CuboidListener;
 import com.gmail.trentech.pjp.listeners.DoorListener;
@@ -108,6 +111,8 @@ public class Main {
     		getGame().getCommandManager().register(this, new CommandManager().cmdWarp, "warp", config.getNode("Options", "Command-Alias", "warp").getString());
     		getLog().info("Warp module activated");
     	}
+    	
+    	getGame().getDataManager().register(PortalData.class, ImmutablePortalData.class, new PortalDataManipulatorBuilder());
     }
 
     @Listener
