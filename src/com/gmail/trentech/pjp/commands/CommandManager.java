@@ -191,6 +191,14 @@ public class CommandManager {
 		    .executor(new CMDDoor())
 		    .build();
 	
+	public CommandSpec cmdSign = CommandSpec.builder()
+		    .description(Text.of("Door base command"))
+		    .permission("pjp.cmd.door")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))),
+		    		GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("coords"))))
+		    .executor(new CMDSign())
+		    .build();
+	
 	public CommandSpec cmdPJP = CommandSpec.builder()
 		    .description(Text.of("Lists all Project Worlds commands"))
 		    .permission("pjp.cmd")

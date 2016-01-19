@@ -2,8 +2,8 @@ package com.gmail.trentech.pjp.commands.home;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -19,10 +19,9 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
 import com.gmail.trentech.pjp.Main;
+import com.gmail.trentech.pjp.data.home.HomeData;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
-
-import ninja.leaping.configurate.ConfigurationNode;
 
 public class CMDList implements CommandExecutor {
 
@@ -46,17 +45,31 @@ public class CMDList implements CommandExecutor {
 		
 		pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.AQUA, "Homes")).build());
 		
+		HomeData homeData;
+
+		Optional<HomeData> optionalHomeData = player.get(HomeData.class);
+		
+		if(optionalHomeData.isPresent()){
+			homeData = optionalHomeData.get();
+		}else{
+			homeData = new HomeData();
+		}
+		
 		List<Text> list = new ArrayList<>();
 
-		ConfigurationNode config = new ConfigManager("Players", player.getUniqueId().toString() + ".conf").getConfig();
-		
-		Map<Object, ? extends ConfigurationNode> homes = config.getNode("Homes").getChildrenMap();
-		for(Entry<Object, ? extends ConfigurationNode> home : homes.entrySet()){
+		for(Entry<String, String> home : homeData.homes().get().entrySet()){
 			String homeName = home.getKey().toString();
-			String worldName = config.getNode("Homes", homeName, "World").getString();
-			int x = config.getNode("Homes", homeName, "X").getInt();
-			int y = config.getNode("Homes", homeName, "Y").getInt();
-			int z = config.getNode("Homes", homeName, "Z").getInt();
+			home.getValue().split(":");
+			
+			String[] destination = home.getValue().split(":");
+			
+			String worldName = destination[0];
+
+			String[] coords = destination[1].split("\\.");
+			
+			int x = Integer.parseInt(coords[0]);
+			int y = Integer.parseInt(coords[1]);
+			int z = Integer.parseInt(coords[2]);
 
 			Builder builder = Text.builder().color(TextColors.AQUA).onHover(TextActions.showText(Text.of(TextColors.WHITE, "Click to remove home")));
 			builder.onClick(TextActions.runCommand("/home remove " + homeName)).append(Text.of(TextColors.AQUA, homeName, ": ", TextColors.GREEN, worldName,", ", x, ", ", y, ", ", z));

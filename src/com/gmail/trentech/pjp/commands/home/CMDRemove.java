@@ -1,5 +1,7 @@
 package com.gmail.trentech.pjp.commands.home;
 
+import java.util.Optional;
+
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -9,10 +11,9 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
+import com.gmail.trentech.pjp.data.home.HomeData;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
-
-import ninja.leaping.configurate.ConfigurationNode;
 
 public class CMDRemove implements CommandExecutor {
 
@@ -39,18 +40,24 @@ public class CMDRemove implements CommandExecutor {
 		}
 		String homeName = args.<String>getOne("name").get();
 		
-		ConfigManager configManager = new ConfigManager("Players", player.getUniqueId().toString() + ".conf");
-		ConfigurationNode config = configManager.getConfig();
+		HomeData homeData;
+
+		Optional<HomeData> optionalHomeData = player.get(HomeData.class);
 		
-		if(config.getNode("Homes", homeName).getString() == null){
+		if(optionalHomeData.isPresent()){
+			homeData = optionalHomeData.get();
+		}else{
+			homeData = new HomeData();
+		}
+
+		if(!homeData.getHome(homeName).isPresent()){
 			src.sendMessage(Text.of(TextColors.DARK_RED, homeName, " does not exist"));
 			return CommandResult.empty();
 		}
 		
-		config.getNode("Amount").setValue(config.getNode("Amount").getInt() - 1);
-		config.getNode("Homes").removeChild(homeName);
-
-		configManager.save();
+		homeData.removeHome(homeName);
+		
+		player.offer(homeData);
 		
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Home ", homeName, " removed"));
 

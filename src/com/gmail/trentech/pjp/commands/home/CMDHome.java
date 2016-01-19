@@ -2,6 +2,7 @@ package com.gmail.trentech.pjp.commands.home;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -19,11 +20,9 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
+import com.gmail.trentech.pjp.data.home.HomeData;
 import com.gmail.trentech.pjp.events.TeleportEvent;
-import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
-
-import ninja.leaping.configurate.ConfigurationNode;
 
 public class CMDHome implements CommandExecutor {
 
@@ -38,23 +37,21 @@ public class CMDHome implements CommandExecutor {
 		if(args.hasAny("name")) {
 			String homeName = args.<String>getOne("name").get();
 
-			ConfigurationNode config = new ConfigManager("Players", player.getUniqueId().toString() + ".conf").getConfig();
+			HomeData homeData;
 
-			if(config.getNode("Homes", homeName).getString() == null){
-				src.sendMessage(Text.of(TextColors.DARK_RED, homeName, " does not exist"));
+			Optional<HomeData> optionalHomeData = player.get(HomeData.class);
+			
+			if(optionalHomeData.isPresent()){
+				homeData = optionalHomeData.get();
+			}else{
+				homeData = new HomeData();
+			}
+
+			if(!homeData.getHome(homeName).isPresent()){
+				src.sendMessage(Text.of(TextColors.DARK_RED, homeName, " does not exist or is invalid"));
 				return CommandResult.empty();
 			}			
-			String worldName = config.getNode("Homes", homeName, "World").getString();
-			
-			if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
-				player.sendMessage(Text.of(TextColors.DARK_RED, worldName, " does not exist"));
-				return CommandResult.empty();
-			}
-			World world = Main.getGame().getServer().getWorld(worldName).get();
-			
-			int x = config.getNode("Homes", homeName, "X").getInt();
-			int y = config.getNode("Homes", homeName, "Y").getInt();
-			int z = config.getNode("Homes", homeName, "Z").getInt();
+			Location<World> location = homeData.getHome(homeName).get();
 
 			if(args.hasAny("player")) {
 				String playerName = args.<String>getOne("player").get();
@@ -71,14 +68,12 @@ public class CMDHome implements CommandExecutor {
 				
 				player = Main.getGame().getServer().getPlayer(playerName).get();
 			}
-			
-			Location<World> spawnLocation = world.getLocation(x, y, z);
-			
-			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of("home"));
+
+			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), location, Cause.of("home"));
 
 			if(!Main.getGame().getEventManager().post(teleportEvent)){
-				spawnLocation = teleportEvent.getDestination();
-				player.setLocation(spawnLocation);
+				location = teleportEvent.getDestination();
+				player.setLocation(location);
 			}
 
 			return CommandResult.success();
