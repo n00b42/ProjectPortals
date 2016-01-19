@@ -19,7 +19,7 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.data.home.HomeData;
+import com.gmail.trentech.pjp.data.mutable.HomeData;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 

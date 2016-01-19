@@ -1,4 +1,4 @@
-package com.gmail.trentech.pjp.data.home;
+package com.gmail.trentech.pjp.data.mutable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +15,7 @@ import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.PJPKeys;
+import com.gmail.trentech.pjp.data.immutable.ImmutableHomeData;
 import com.google.common.base.Objects;
 
 public class HomeData extends AbstractData<HomeData, ImmutableHomeData> {

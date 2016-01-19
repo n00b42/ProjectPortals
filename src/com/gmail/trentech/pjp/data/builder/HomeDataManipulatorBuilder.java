@@ -1,4 +1,4 @@
-package com.gmail.trentech.pjp.data.home;
+package com.gmail.trentech.pjp.data.builder;
 
 import java.util.Map;
 import java.util.Optional;
@@ -9,6 +9,8 @@ import org.spongepowered.api.data.manipulator.DataManipulatorBuilder;
 import org.spongepowered.api.util.persistence.InvalidDataException;
 
 import com.gmail.trentech.pjp.data.PJPKeys;
+import com.gmail.trentech.pjp.data.immutable.ImmutableHomeData;
+import com.gmail.trentech.pjp.data.mutable.HomeData;
 
 public class HomeDataManipulatorBuilder implements DataManipulatorBuilder<HomeData, ImmutableHomeData> {
 

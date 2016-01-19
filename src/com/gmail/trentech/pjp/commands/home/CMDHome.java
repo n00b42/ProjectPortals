@@ -20,7 +20,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.data.home.HomeData;
+import com.gmail.trentech.pjp.data.mutable.HomeData;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.utils.Help;
 

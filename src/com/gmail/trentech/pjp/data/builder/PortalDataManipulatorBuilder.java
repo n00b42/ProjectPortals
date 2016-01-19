@@ -1,4 +1,4 @@
-package com.gmail.trentech.pjp.data.portal;
+package com.gmail.trentech.pjp.data.builder;
 
 import java.util.Optional;
 
@@ -8,6 +8,8 @@ import org.spongepowered.api.data.manipulator.DataManipulatorBuilder;
 import org.spongepowered.api.util.persistence.InvalidDataException;
 
 import com.gmail.trentech.pjp.data.PJPKeys;
+import com.gmail.trentech.pjp.data.immutable.ImmutablePortalData;
+import com.gmail.trentech.pjp.data.mutable.PortalData;
 
 public class PortalDataManipulatorBuilder implements DataManipulatorBuilder<PortalData, ImmutablePortalData> {
 

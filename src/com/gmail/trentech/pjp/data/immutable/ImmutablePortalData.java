@@ -1,4 +1,4 @@
-package com.gmail.trentech.pjp.data.portal;
+package com.gmail.trentech.pjp.data.immutable;
 
 import java.util.Optional;
 
@@ -14,6 +14,7 @@ import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.PJPKeys;
+import com.gmail.trentech.pjp.data.mutable.PortalData;
 import com.gmail.trentech.pjp.utils.Utils;
 import com.google.common.collect.ComparisonChain;
 

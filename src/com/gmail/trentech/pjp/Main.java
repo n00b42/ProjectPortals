@@ -23,12 +23,12 @@ import org.spongepowered.api.world.World;
 import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.commands.CMDBack;
 import com.gmail.trentech.pjp.commands.CommandManager;
-import com.gmail.trentech.pjp.data.home.HomeData;
-import com.gmail.trentech.pjp.data.home.HomeDataManipulatorBuilder;
-import com.gmail.trentech.pjp.data.home.ImmutableHomeData;
-import com.gmail.trentech.pjp.data.portal.ImmutablePortalData;
-import com.gmail.trentech.pjp.data.portal.PortalData;
-import com.gmail.trentech.pjp.data.portal.PortalDataManipulatorBuilder;
+import com.gmail.trentech.pjp.data.builder.HomeDataManipulatorBuilder;
+import com.gmail.trentech.pjp.data.builder.PortalDataManipulatorBuilder;
+import com.gmail.trentech.pjp.data.immutable.ImmutableHomeData;
+import com.gmail.trentech.pjp.data.immutable.ImmutablePortalData;
+import com.gmail.trentech.pjp.data.mutable.HomeData;
+import com.gmail.trentech.pjp.data.mutable.PortalData;
 import com.gmail.trentech.pjp.listeners.ButtonListener;
 import com.gmail.trentech.pjp.listeners.CuboidListener;
 import com.gmail.trentech.pjp.listeners.DoorListener;
@@ -97,7 +97,7 @@ public class Main {
     	}
     	if(modules.getNode("Signs").getBoolean()){
     		getGame().getEventManager().registerListeners(this, new SignListener());
-    		getGame().getCommandManager().register(this, new CommandManager().cmdSign, "sign");
+    		getGame().getCommandManager().register(this, new CommandManager().cmdSign, "sign", config.getNode("Options", "Command-Alias", "sign").getString());
     		getLog().info("Sign module activated");
     	}
     	if(modules.getNode("Levers").getBoolean()){

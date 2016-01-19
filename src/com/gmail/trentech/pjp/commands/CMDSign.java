@@ -11,7 +11,7 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.data.portal.PortalData;
+import com.gmail.trentech.pjp.data.mutable.PortalData;
 import com.gmail.trentech.pjp.listeners.SignListener;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
