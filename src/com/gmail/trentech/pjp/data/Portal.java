@@ -2,13 +2,17 @@ package com.gmail.trentech.pjp.data;
 
 import java.util.Optional;
 
+import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataQuery;
+import org.spongepowered.api.data.DataSerializable;
+import org.spongepowered.api.data.MemoryDataContainer;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.utils.Utils;
 
-public class Portal {
+public class Portal implements DataSerializable {
 
 	private final String name;
 	private final String destination;
@@ -51,5 +55,15 @@ public class Portal {
 			
 			return Optional.of(world.getLocation(x, y, z));	
 		}
+	}
+
+	@Override
+	public int getContentVersion() {
+		return 0;
+	}
+
+	@Override
+	public DataContainer toContainer() {
+		return new MemoryDataContainer().set(DataQuery.of("name"), name).set(DataQuery.of("world"), destination);
 	}
 }

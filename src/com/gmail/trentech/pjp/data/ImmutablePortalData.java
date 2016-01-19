@@ -2,6 +2,7 @@ package com.gmail.trentech.pjp.data;
 
 import java.util.Optional;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.manipulator.immutable.common.AbstractImmutableSingleData;
 import org.spongepowered.api.data.value.BaseValue;
@@ -24,19 +25,17 @@ public class ImmutablePortalData extends AbstractImmutableSingleData<Portal, Imm
 
     @Override
     public int compareTo(ImmutablePortalData arg0) {
-        // TODO Auto-generated method stub
         return 0;
     }
 
     @Override
     public int getContentVersion() {
-        // TODO Auto-generated method stub
         return 0;
     }
 
     @Override
     protected ImmutableValue<?> getValueGetter() {
-        return null;
+        return Sponge.getRegistry().getValueFactory().createValue(PJPKeys.PORTAL, this.getValue()).asImmutable();
     }
 
     @Override

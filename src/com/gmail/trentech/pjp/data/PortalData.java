@@ -14,11 +14,8 @@ import com.google.common.base.Preconditions;
 
 public class PortalData extends AbstractSingleData<Portal, PortalData, ImmutablePortalData> {
 
-	private Portal portal;
-	
     public PortalData(Portal value) {
         super(value, PJPKeys.PORTAL);
-        this.portal = value;
     }
 
     @Override
@@ -42,7 +39,6 @@ public class PortalData extends AbstractSingleData<Portal, PortalData, Immutable
 
     @Override
     public int getContentVersion() {
-        // TODO Auto-generated method stub
         return 0;
     }
 
@@ -61,7 +57,8 @@ public class PortalData extends AbstractSingleData<Portal, PortalData, Immutable
     	return Sponge.getRegistry().getValueFactory().createValue(PJPKeys.PORTAL, this.getValue());
     }
     
-    public Portal portal(){
-    	return portal;
+    @Override
+    public DataContainer toContainer() {
+        return super.toContainer().set(PJPKeys.PORTAL, getValue());
     }
 }
