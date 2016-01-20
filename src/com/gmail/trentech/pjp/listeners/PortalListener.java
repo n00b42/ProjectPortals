@@ -2,6 +2,7 @@ package com.gmail.trentech.pjp.listeners;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.Transaction;
@@ -122,10 +123,12 @@ public class PortalListener {
 
 		Location<World> location = player.getLocation();		
 
-		if(!Portal.get(location).isPresent()){
+		Optional<Portal> optionalPortal = Portal.get(location);
+		
+		if(!optionalPortal.isPresent()){
 			return;
 		}
-		Portal portal = Portal.get(location).get();
+		Portal portal = optionalPortal.get();
 
 		if(!player.hasPermission("pjp.cube.interact")){
 			player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to interact with portals"));
@@ -133,11 +136,13 @@ public class PortalListener {
 			return;
 		}
 		
-		if(!portal.getDestination().isPresent()){
+		Optional<Location<World>> optionalSpawnLocation = portal.getDestination();
+		
+		if(!optionalSpawnLocation.isPresent()){
 			player.sendMessage(Text.of(TextColors.DARK_RED, "World does not exist"));
 			return;
 		}
-		Location<World> spawnLocation = portal.getDestination().get();
+		Location<World> spawnLocation = optionalSpawnLocation.get();
 
 		TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of("portal"));
 

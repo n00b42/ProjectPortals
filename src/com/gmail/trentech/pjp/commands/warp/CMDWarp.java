@@ -2,6 +2,7 @@ package com.gmail.trentech.pjp.commands.warp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -52,11 +53,13 @@ public class CMDWarp implements CommandExecutor {
 			
 			String worldName = config.getNode("Warps", warpName, "World").getString();
 			
-			if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
+			Optional<World> optionalWorld = Main.getGame().getServer().getWorld(worldName);
+			
+			if(!optionalWorld.isPresent()){
 				player.sendMessage(Text.of(TextColors.DARK_RED, worldName, " does not exist"));
 				return CommandResult.empty();
 			}
-			World world = Main.getGame().getServer().getWorld(worldName).get();
+			World world = optionalWorld.get();
 			
 			int x = config.getNode("Warps", warpName, "X").getInt();
 			int y = config.getNode("Warps", warpName, "Y").getInt();
@@ -70,12 +73,14 @@ public class CMDWarp implements CommandExecutor {
 					return CommandResult.empty();
 				}
 
-				if(!Main.getGame().getServer().getPlayer(playerName).isPresent()){
+				Optional<Player> optionalPlayer = Main.getGame().getServer().getPlayer(playerName);
+				
+				if(!optionalPlayer.isPresent()){
 					player.sendMessage(Text.of(TextColors.DARK_RED, playerName, " does not exist"));
 					return CommandResult.empty();
 				}
 				
-				player = Main.getGame().getServer().getPlayer(playerName).get();
+				player = optionalPlayer.get();
 			}
 			
 			Location<World> spawnLocation = world.getLocation(x, y, z);

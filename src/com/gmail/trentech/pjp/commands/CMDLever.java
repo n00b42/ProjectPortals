@@ -67,7 +67,7 @@ public class CMDLever implements CommandExecutor {
 			destination = worldName + ":spawn";
 		}
 		
-		LeverListener.creators.put(player, destination);
+		LeverListener.builders.put(player, destination);
 		
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place button to create button portal"));
 

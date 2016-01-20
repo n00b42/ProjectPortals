@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 
+import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.effect.particle.ParticleEffect;
@@ -70,20 +71,16 @@ public class Utils {
 	
 	public static Location<World> getLocation(World world, String coords){
 		String[] array = coords.split(" ");
-		
-		int x;
-		int y;
-		int z;
 
 		try{
-			x = Integer.parseInt(array[0]);
-			y = Integer.parseInt(array[1]);
-			z = Integer.parseInt(array[2]);
+			int x = Integer.parseInt(array[0]);
+			int y = Integer.parseInt(array[1]);
+			int z = Integer.parseInt(array[2]);
+			
+			return world.getLocation(x, y, z);
 		}catch(Exception e){
 			return null;
 		}
-		
-		return world.getLocation(x, y, z);
 	}
 	
 	private static Location<World> generate(World world, long radius){
@@ -105,16 +102,16 @@ public class Utils {
 			}
 			Location<World> unsafeLocation = optionalLocation.get();
 			
-			if(!unsafeLocation.getBlockType().equals(BlockTypes.AIR) || !unsafeLocation.getRelative(Direction.UP).getBlockType().equals(BlockTypes.AIR)){
+			BlockType blockType = unsafeLocation.getBlockType();
+			
+			if(!blockType.equals(BlockTypes.AIR) || !unsafeLocation.getRelative(Direction.UP).getBlockType().equals(BlockTypes.AIR)){
 				continue;
 			}
 			
-			Location<World> floor = unsafeLocation.getRelative(Direction.DOWN);
-			if(floor.getBlockType().equals(BlockTypes.WATER) 
-					|| floor.getBlockType().equals(BlockTypes.LAVA)
-					|| floor.getBlockType().equals(BlockTypes.FLOWING_WATER)
-					|| floor.getBlockType().equals(BlockTypes.FLOWING_LAVA)
-					|| floor.getBlockType().equals(BlockTypes.FIRE)){
+			BlockType floorBlockType = unsafeLocation.getRelative(Direction.DOWN).getBlockType();
+			
+			if(floorBlockType.equals(BlockTypes.WATER) || floorBlockType.equals(BlockTypes.LAVA) || floorBlockType.equals(BlockTypes.FLOWING_WATER) 
+					|| floorBlockType.equals(BlockTypes.FLOWING_LAVA) || floorBlockType.equals(BlockTypes.FIRE)){
 				continue;
 			}
 			

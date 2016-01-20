@@ -1,8 +1,10 @@
 package com.gmail.trentech.pjp.listeners;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.Transaction;
@@ -25,33 +27,37 @@ import com.gmail.trentech.pjp.utils.Utils;
 
 public class ButtonListener {
 
-	public static HashMap<Player, String> creators = new HashMap<>();
+	public static HashMap<Player, String> builders = new HashMap<>();
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Modify event, @First Player player) {
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
-			BlockSnapshot block = transaction.getFinal();
-			BlockType type = block.getState().getType();
+			BlockSnapshot snapshot = transaction.getFinal();
+			BlockState block = snapshot.getExtendedState();
+			BlockType blockType = block.getType();
 			
-			if(!type.equals(BlockTypes.STONE_BUTTON) && !type.equals(BlockTypes.WOODEN_BUTTON)){
+			if(!blockType.equals(BlockTypes.STONE_BUTTON) && !blockType.equals(BlockTypes.WOODEN_BUTTON)){
 				return;
 			}
 
-			if(!block.getExtendedState().get(Keys.POWERED).isPresent()){
+			
+			if(!block.get(Keys.POWERED).isPresent()){
 				return;
 			}
 
-			if(!block.getExtendedState().get(Keys.POWERED).get()){
+			if(!block.get(Keys.POWERED).get()){
 				return;
 			}
 
-			Location<World> location = block.getLocation().get();		
+			Location<World> location = snapshot.getLocation().get();		
 
-			if(!Button.get(location).isPresent()){
+			Optional<Button> optionalButton = Button.get(location);
+			
+			if(!optionalButton.isPresent()){
 				return;
 			}
 			
-			Button button = Button.get(location).get();
+			Button button = optionalButton.get();
 
 			if(!player.hasPermission("pjp.button.interact")){
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with button portals"));
@@ -59,11 +65,13 @@ public class ButtonListener {
 				return;
 			}
 
-			if(!button.getDestination().isPresent()){
+			Optional<Location<World>> optionalSpawnLocation = button.getDestination();
+			
+			if(!optionalSpawnLocation.isPresent()){
 				player.sendMessage(Text.of(TextColors.DARK_RED, "World does not exist"));
 				return;
 			}
-			Location<World> spawnLocation = button.getDestination().get();
+			Location<World> spawnLocation = optionalSpawnLocation.get();
 
 			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of("button"));
 
@@ -95,14 +103,14 @@ public class ButtonListener {
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Place event, @First Player player) {
-		if(!creators.containsKey(player)){
+		if(!builders.containsKey(player)){
 			return;
 		}
 
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
-			BlockType type = transaction.getFinal().getState().getType();
+			BlockType blockType = transaction.getFinal().getState().getType();
 			
-			if(!type.equals(BlockTypes.STONE_BUTTON) && !type.equals(BlockTypes.WOODEN_BUTTON)){
+			if(!blockType.equals(BlockTypes.STONE_BUTTON) && !blockType.equals(BlockTypes.WOODEN_BUTTON)){
 				continue;
 			}
 
@@ -110,12 +118,11 @@ public class ButtonListener {
 
 			if(!player.hasPermission("pjp.button.place")){
 	        	player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to place button portals"));
-	        	creators.remove(player);
-	        	event.setCancelled(true);
+	        	builders.remove(player);
 	        	return;
 			}
 
-            String destination = creators.get(player);
+            String destination = builders.get(player);
             
             Button.save(location, destination);
 
@@ -125,7 +132,7 @@ public class ButtonListener {
 
             player.sendMessage(Text.of(TextColors.DARK_GREEN, "New button portal created"));
             
-            creators.remove(player);
+            builders.remove(player);
 		}
 	}
 }

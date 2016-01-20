@@ -1,6 +1,7 @@
 package com.gmail.trentech.pjp.listeners;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockType;
@@ -24,25 +25,27 @@ import com.gmail.trentech.pjp.utils.Utils;
 
 public class LeverListener {
 
-	public static HashMap<Player, String> creators = new HashMap<>();
+	public static HashMap<Player, String> builders = new HashMap<>();
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Modify event, @First Player player) {
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
-			BlockSnapshot block = transaction.getFinal();
-			BlockType type = block.getState().getType();
+			BlockSnapshot snapshot = transaction.getFinal();
+			BlockType blockType = snapshot.getState().getType();
 			
-			if(!type.equals(BlockTypes.LEVER)){
+			if(!blockType.equals(BlockTypes.LEVER)){
 				return;
 			}
 
-			Location<World> location = block.getLocation().get();		
+			Location<World> location = snapshot.getLocation().get();		
 
-			if(!Lever.get(location).isPresent()){
+			Optional<Lever> optionalLever = Lever.get(location);
+			
+			if(!optionalLever.isPresent()){
 				return;
 			}
 			
-			Lever lever = Lever.get(location).get();
+			Lever lever = optionalLever.get();
 
 			if(!player.hasPermission("pjp.lever.interact")){
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with lever portals"));
@@ -50,11 +53,13 @@ public class LeverListener {
 				return;
 			}
 			
-			if(!lever.getDestination().isPresent()){
+			Optional<Location<World>> optionalSpawnLocation = lever.getDestination();
+			
+			if(!optionalSpawnLocation.isPresent()){
 				player.sendMessage(Text.of(TextColors.DARK_RED, "World does not exist"));
 				return;
 			}
-			Location<World> spawnLocation = lever.getDestination().get();
+			Location<World> spawnLocation = optionalSpawnLocation.get();
 
 			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of("lever"));
 
@@ -86,14 +91,14 @@ public class LeverListener {
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Place event, @First Player player) {
-		if(!creators.containsKey(player)){
+		if(!builders.containsKey(player)){
 			return;
 		}
 
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
-			BlockType type = transaction.getFinal().getState().getType();
+			BlockType blockType = transaction.getFinal().getState().getType();
 			
-			if(!type.equals(BlockTypes.LEVER)){
+			if(!blockType.equals(BlockTypes.LEVER)){
 				continue;
 			}
 
@@ -101,12 +106,12 @@ public class LeverListener {
 
 			if(!player.hasPermission("pjp.lever.place")){
 	        	player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to place lever portals"));
-	        	creators.remove(player);
+	        	builders.remove(player);
 	        	event.setCancelled(true);
 	        	return;
 			}
 
-            String destination = creators.get(player);
+            String destination = builders.get(player);
             
             Lever.save(location, destination);
 
@@ -116,7 +121,7 @@ public class LeverListener {
 
             player.sendMessage(Text.of(TextColors.DARK_GREEN, "New button lever created"));
             
-            creators.remove(player);
+            builders.remove(player);
 		}
 	}
 }

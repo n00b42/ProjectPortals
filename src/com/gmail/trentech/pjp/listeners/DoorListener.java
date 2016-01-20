@@ -1,6 +1,7 @@
 package com.gmail.trentech.pjp.listeners;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockType;
@@ -25,7 +26,7 @@ import com.gmail.trentech.pjp.utils.Utils;
 
 public class DoorListener {
 
-	public static HashMap<Player, String> creators = new HashMap<>();
+	public static HashMap<Player, String> builders = new HashMap<>();
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Break event, @First Player player) {
@@ -48,16 +49,16 @@ public class DoorListener {
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Place event, @First Player player) {
-		if(!creators.containsKey(player)){
+		if(!builders.containsKey(player)){
 			return;
 		}
 
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
-			BlockType type = transaction.getFinal().getState().getType();
+			BlockType blockType = transaction.getFinal().getState().getType();
 			
-			if(!type.equals(BlockTypes.ACACIA_DOOR) && !type.equals(BlockTypes.BIRCH_DOOR) && !type.equals(BlockTypes.DARK_OAK_DOOR)
-					 && !type.equals(BlockTypes.IRON_DOOR) && !type.equals(BlockTypes.JUNGLE_DOOR) && !type.equals(BlockTypes.SPRUCE_DOOR)
-					 && !type.equals(BlockTypes.TRAPDOOR) && !type.equals(BlockTypes.WOODEN_DOOR)){
+			if(!blockType.equals(BlockTypes.ACACIA_DOOR) && !blockType.equals(BlockTypes.BIRCH_DOOR) && !blockType.equals(BlockTypes.DARK_OAK_DOOR)
+					 && !blockType.equals(BlockTypes.IRON_DOOR) && !blockType.equals(BlockTypes.JUNGLE_DOOR) && !blockType.equals(BlockTypes.SPRUCE_DOOR)
+					 && !blockType.equals(BlockTypes.TRAPDOOR) && !blockType.equals(BlockTypes.WOODEN_DOOR)){
 				continue;
 			}
 
@@ -65,12 +66,12 @@ public class DoorListener {
 
 			if(!player.hasPermission("pjp.door.place")){
 	        	player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to place door portals"));
-	        	creators.remove(player);
+	        	builders.remove(player);
 	        	event.setCancelled(true);
 	        	return;
 			}
 
-            String destination = creators.get(player);
+            String destination = builders.get(player);
             
             Door.save(location, destination);
 
@@ -80,7 +81,7 @@ public class DoorListener {
 
             player.sendMessage(Text.of(TextColors.DARK_GREEN, "New door portal created"));
             
-            creators.remove(player);
+            builders.remove(player);
 		}
 	}
 	
@@ -93,11 +94,12 @@ public class DoorListener {
 
 		Location<World> location = player.getLocation();		
 
-		if(!Door.get(location).isPresent()){
+		Optional<Door> optionalDoor = Door.get(location);
+		
+		if(!optionalDoor.isPresent()){
 			return;
 		}
-
-		Door door = Door.get(location).get();
+		Door door = optionalDoor.get();
 
 		if(!player.hasPermission("pjp.door.interact")){
 			player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with door portals"));
@@ -105,11 +107,13 @@ public class DoorListener {
 			return;
 		}
 		
-		if(!door.getDestination().isPresent()){
+		Optional<Location<World>> optionalSpawnLocation = door.getDestination();
+		
+		if(!optionalSpawnLocation.isPresent()){
 			player.sendMessage(Text.of(TextColors.DARK_RED, "World does not exist"));
 			return;
 		}
-		Location<World> spawnLocation = door.getDestination().get();
+		Location<World> spawnLocation = optionalSpawnLocation.get();
 
 		TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of("door"));
 

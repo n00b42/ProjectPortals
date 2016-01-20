@@ -71,7 +71,7 @@ public class CMDSign implements CommandExecutor {
 			portalData = new PortalData("", world, false);
 		}
 		
-		SignListener.creators.put(player, portalData);
+		SignListener.builders.put(player, portalData);
 		
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place sign to create sign portal"));
 

@@ -47,11 +47,13 @@ public class CMDHome implements CommandExecutor {
 				homeData = new HomeData();
 			}
 
-			if(!homeData.getHome(homeName).isPresent()){
+			Optional<Location<World>> optionalSpawnLocation = homeData.getHome(homeName);
+			
+			if(!optionalSpawnLocation.isPresent()){
 				src.sendMessage(Text.of(TextColors.DARK_RED, homeName, " does not exist or is invalid"));
 				return CommandResult.empty();
 			}			
-			Location<World> location = homeData.getHome(homeName).get();
+			Location<World> spawnLocation = optionalSpawnLocation.get();
 
 			if(args.hasAny("player")) {
 				String playerName = args.<String>getOne("player").get();
@@ -61,19 +63,21 @@ public class CMDHome implements CommandExecutor {
 					return CommandResult.empty();
 				}
 				
-				if(!Main.getGame().getServer().getPlayer(playerName).isPresent()){
+				Optional<Player> optionalPlayer = Main.getGame().getServer().getPlayer(playerName);
+				
+				if(!optionalPlayer.isPresent()){
 					player.sendMessage(Text.of(TextColors.DARK_RED, playerName, " does not exist"));
 					return CommandResult.empty();
 				}
 				
-				player = Main.getGame().getServer().getPlayer(playerName).get();
+				player = optionalPlayer.get();
 			}
 
-			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), location, Cause.of("home"));
+			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of("home"));
 
 			if(!Main.getGame().getEventManager().post(teleportEvent)){
-				location = teleportEvent.getDestination();
-				player.setLocation(location);
+				spawnLocation = teleportEvent.getDestination();
+				player.setLocation(spawnLocation);
 			}
 
 			return CommandResult.success();

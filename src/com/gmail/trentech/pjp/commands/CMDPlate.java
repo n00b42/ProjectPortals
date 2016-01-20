@@ -67,7 +67,7 @@ public class CMDPlate implements CommandExecutor {
 			destination = worldName + ":spawn";
 		}
 		
-		PlateListener.creators.put(player, destination);
+		PlateListener.builders.put(player, destination);
 		
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place pressure plate to create pressure plate portal"));
 

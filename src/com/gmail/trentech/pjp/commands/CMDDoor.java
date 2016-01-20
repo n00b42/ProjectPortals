@@ -67,7 +67,7 @@ public class CMDDoor implements CommandExecutor {
 			destination = worldName + ":spawn";
 		}
 		
-		DoorListener.creators.put(player, destination);
+		DoorListener.builders.put(player, destination);
 		
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place door to create door portal"));
 

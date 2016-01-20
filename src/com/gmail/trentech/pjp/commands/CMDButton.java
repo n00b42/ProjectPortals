@@ -67,7 +67,7 @@ public class CMDButton implements CommandExecutor {
 			destination = worldName + ":spawn";
 		}
 		
-		ButtonListener.creators.put(player, destination);
+		ButtonListener.builders.put(player, destination);
 		
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place button to create button portal"));
 
