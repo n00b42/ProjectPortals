@@ -97,6 +97,7 @@ public class PlateListener {
 				player.sendMessage(Text.of(TextColors.DARK_GREEN, "Broke pressure plate portal"));
 			}
 		}
+		return;
 	}
 
 	@Listener

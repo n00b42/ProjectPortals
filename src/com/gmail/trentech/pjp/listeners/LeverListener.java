@@ -87,6 +87,7 @@ public class LeverListener {
 				player.sendMessage(Text.of(TextColors.DARK_GREEN, "Broke lever portal"));
 			}
 		}
+		return;
 	}
 
 	@Listener

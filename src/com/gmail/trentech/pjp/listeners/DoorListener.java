@@ -44,6 +44,7 @@ public class DoorListener {
 				Door.remove(location);
 				player.sendMessage(Text.of(TextColors.DARK_GREEN, "Broke door portal"));
 			}
+			return;
 		}
 	}
 

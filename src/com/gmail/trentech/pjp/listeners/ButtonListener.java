@@ -97,7 +97,9 @@ public class ButtonListener {
 			}else{
 				Button.remove(location);
 				player.sendMessage(Text.of(TextColors.DARK_GREEN, "Broke button portal"));
+				
 			}
+			return;
 		}
 	}
 
