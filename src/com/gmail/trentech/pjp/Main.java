@@ -37,6 +37,7 @@ import com.gmail.trentech.pjp.listeners.PlateListener;
 import com.gmail.trentech.pjp.listeners.PortalListener;
 import com.gmail.trentech.pjp.listeners.SignListener;
 import com.gmail.trentech.pjp.listeners.TeleportListener;
+import com.gmail.trentech.pjp.listeners.TempListener;
 import com.gmail.trentech.pjp.portals.Portal;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Resource;
@@ -107,7 +108,7 @@ public class Main {
     	}
     	if(modules.getNode("Homes").getBoolean()){
     		getGame().getDataManager().register(HomeData.class, ImmutableHomeData.class, new HomeDataManipulatorBuilder());
-    		getGame().getEventManager().registerListeners(this, new SignListener());
+    		getGame().getEventManager().registerListeners(this, new TempListener());
     		getGame().getCommandManager().register(this, new CommandManager().cmdHome, "home", config.getNode("Options", "Command-Alias", "home").getString());
     		getLog().info("Home module activated");
     	}

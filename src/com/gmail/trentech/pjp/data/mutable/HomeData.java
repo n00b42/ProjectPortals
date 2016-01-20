@@ -36,11 +36,24 @@ public class HomeData extends AbstractData<HomeData, ImmutableHomeData> {
 
 	public void addHome(String name, Location<World> location) {
 		String destination = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
-		homes.put(name, destination);
+		Map<String, String> newHomes = homes().get();
+		newHomes.put(name, destination);
+		
+		this.homes = newHomes;
+	}
+	
+	public void addHome(String name, String destination) {
+		Map<String, String> newHomes = homes().get();
+		newHomes.put(name, destination);
+		
+		this.homes = newHomes;
 	}
 	
 	public void removeHome(String name) {
-		homes.remove(name);
+		Map<String, String> newHomes = homes().get();
+		newHomes.remove(name);
+		
+		this.homes = newHomes;
 	}
 	
 	public Optional<Location<World>> getHome(String name) {
