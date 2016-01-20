@@ -35,7 +35,7 @@ public class PortalListener {
 	public void onConstructPortalEvent(ConstructPortalEvent event, @First Player player){
 		for(Location<World> location : event.getLocations()){
 			if(Portal.get(location).isPresent()){
-	        	player.sendMessage(Text.of(TextColors.DARK_RED, "Portals cannot over lap over portals"));
+	        	player.sendMessage(Text.of(TextColors.DARK_RED, "Portals cannot over lap other portals"));
 	        	event.setCancelled(true);
 	        	return;
 			}
@@ -52,9 +52,8 @@ public class PortalListener {
         	return;
         }
         
-        if(locations.size() == 1){
+        if(locations.size() < 5){
         	player.sendMessage(Text.of(TextColors.DARK_RED, "Portal too small"));
-        	player.setItemInHand(null);
         	event.setCancelled(true);        	
         	return;
         }
@@ -131,7 +130,7 @@ public class PortalListener {
 		Portal portal = optionalPortal.get();
 
 		if(!player.hasPermission("pjp.cube.interact")){
-			player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to interact with portals"));
+			player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use portals"));
 			event.setCancelled(true);
 			return;
 		}
@@ -139,7 +138,7 @@ public class PortalListener {
 		Optional<Location<World>> optionalSpawnLocation = portal.getDestination();
 		
 		if(!optionalSpawnLocation.isPresent()){
-			player.sendMessage(Text.of(TextColors.DARK_RED, "World does not exist"));
+			player.sendMessage(Text.of(TextColors.DARK_RED, portal.destination.split(":")[0], " does not exist"));
 			return;
 		}
 		Location<World> spawnLocation = optionalSpawnLocation.get();

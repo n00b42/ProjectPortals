@@ -19,7 +19,7 @@ import ninja.leaping.configurate.ConfigurationNode;
 public class Portal {
 
 	private final String name;
-	private final String destination;
+	public final String destination;
 	private final List<String> frame;
 	private final List<String> fill;
 

@@ -125,7 +125,7 @@ public class ConfigManager {
 				config.getNode("Options", "Command-Alias", "back").setValue("bk");
 			}
 			if(config.getNode("Options", "Modules", "Cubes").getString() == null) {
-				config.getNode("Options", "Modules", "Cubes").setValue(true);
+				config.getNode("Options", "Modules", "Cubes").setValue(false).setComment("[DEPRECATED]");
 			}
 			if(config.getNode("Options", "Modules", "Portals").getString() == null) {
 				config.getNode("Options", "Modules", "Portals").setValue(true);
