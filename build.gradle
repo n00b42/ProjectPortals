@@ -1,7 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
-version="0.7.24"
+version="0.7.26"
 group="com.gmail.trentech"
 archivesBaseName="ProjectPortals"
 

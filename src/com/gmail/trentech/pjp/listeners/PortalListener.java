@@ -129,7 +129,7 @@ public class PortalListener {
 		}
 		Portal portal = optionalPortal.get();
 
-		if(!player.hasPermission("pjp.cube.interact")){
+		if(!player.hasPermission("pjp.portal.interact")){
 			player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use portals"));
 			event.setCancelled(true);
 			return;

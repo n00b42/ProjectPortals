@@ -144,7 +144,7 @@ public class CommandManager {
 
 	public CommandSpec cmdSave = CommandSpec.builder()
 		    .description(Text.of("Saves generated portal"))
-		    .permission("pjp.cmd.portal.save")
+		    .permission("pjp.cmd.portal.create")
 		    .executor(new CMDSave())
 		    .build();
 	
