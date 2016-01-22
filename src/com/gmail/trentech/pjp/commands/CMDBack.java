@@ -1,6 +1,6 @@
 package com.gmail.trentech.pjp.commands;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -24,10 +24,10 @@ public class CMDBack implements CommandExecutor {
 
 	public CommandSpec cmdBack = CommandSpec.builder().description(Text.of("Send player to last place they were")).permission("pjp.cmd.back").executor(this).build();
 	
-	public static HashMap<Player, Location<World>> players = new HashMap<>();
+	public static ConcurrentHashMap<Player, Location<World>> players = new ConcurrentHashMap<>();
 	
 	public CMDBack(){
-		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "back").getString();
+		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "back").getString();
 		
 		Help help = new Help("back", "back", " Use this command to teleport you to the location you previously came from");
 		help.setSyntax(" /back\n /" + alias);

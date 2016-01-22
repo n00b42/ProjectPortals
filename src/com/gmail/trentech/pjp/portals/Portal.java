@@ -1,22 +1,23 @@
 package com.gmail.trentech.pjp.portals;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.utils.ConfigManager;
+import com.gmail.trentech.pjp.utils.SQLUtils;
 import com.gmail.trentech.pjp.utils.Utils;
 
-import ninja.leaping.configurate.ConfigurationNode;
-
-public class Portal {
+public class Portal extends SQLUtils{
 
 	private final String name;
 	public final String destination;
@@ -116,82 +117,155 @@ public class Portal {
 	}
 
 	public static Optional<Portal> get(Location<World> location){
-		String locationName = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
+		Optional<Portal> optionalPortal = Optional.empty();
 		
-		ConfigurationNode config = new ConfigManager("portals.conf").getConfig();
+		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 		
-		for(Entry<Object, ? extends ConfigurationNode> node : config.getNode("Portals").getChildrenMap().entrySet()){
-			String name = node.getKey().toString();
+		try {
+		    Connection connection = getDataSource().getConnection();
+		    
+		    PreparedStatement statement = connection.prepareStatement("SELECT * FROM Portals");
+		    
+			ResultSet result = statement.executeQuery();
+			
+			while (result.next()) {
+				String[] frameArray = result.getString("Frame").split(";");
+				List<String> frame = new ArrayList<String>(Arrays.asList(frameArray));
+				
+				String[] fillArray = result.getString("Fill").split(";");
+				List<String> fill = new ArrayList<String>(Arrays.asList(fillArray));
 
-	    	List<String> frame = config.getNode("Portals", name, "Frame").getChildrenList().stream().map(ConfigurationNode::getString).collect(Collectors.toList());
-	    	List<String> fill = config.getNode("Portals", name, "Fill").getChildrenList().stream().map(ConfigurationNode::getString).collect(Collectors.toList());
-	    	
-	    	if(!frame.contains(locationName) && !fill.contains(locationName)){
-	    		continue;
-	    	}
-	    	
-	    	String destination = config.getNode("Portals", name, "Destination").getString();
+		    	if(!frame.contains(name) && !fill.contains(name)){
+		    		continue;
+		    	}
+		    	
+		    	String destination = result.getString("Destination");
 
-	    	return Optional.of(new Portal(name, destination, frame, fill));
+		    	optionalPortal = Optional.of(new Portal(name, destination, frame, fill));
+				
+				break;
+			}
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
-		return Optional.empty();
+		
+		return optionalPortal;
 	}
 	
 	public static Optional<Portal> getByName(String name){
-		ConfigurationNode config = new ConfigManager("portals.conf").getConfig();
-		
-		if(config.getNode("Portals", name).getString() != null){
-			String destination = config.getNode("Portals", name, "Destination").getString();
-			
-			List<String> frame = config.getNode("Portals", name, "Frame").getChildrenList().stream().map(ConfigurationNode::getString).collect(Collectors.toList());
-			List<String> fill = config.getNode("Portals", name, "Fill").getChildrenList().stream().map(ConfigurationNode::getString).collect(Collectors.toList());
+		Optional<Portal> optionalPortal = Optional.empty();
 
-		    return Optional.of(new Portal(name, destination, frame, fill));
+		try {
+		    Connection connection = getDataSource().getConnection();
+		    
+		    PreparedStatement statement = connection.prepareStatement("SELECT * FROM Portals");
+		    
+			ResultSet result = statement.executeQuery();
+			
+			while (result.next()) {
+				if (result.getString("Name").equalsIgnoreCase(name)) {
+
+					String[] frameArray = result.getString("Frame").split(";");
+					List<String> frame = new ArrayList<String>(Arrays.asList(frameArray));
+					
+					String[] fillArray = result.getString("Fill").split(";");
+					List<String> fill = new ArrayList<String>(Arrays.asList(fillArray));
+					
+					String destination = result.getString("Destination");
+					
+					optionalPortal = Optional.of(new Portal(name, destination, frame, fill));
+					
+					break;
+				}
+			}
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
-		return Optional.empty();
+		
+		return optionalPortal;
 	}
 	
 	public static void remove(String name){
-		ConfigManager configManager = new ConfigManager("portals.conf");
-		ConfigurationNode config = configManager.getConfig();
-		
-		config.getNode("Portals").removeChild(name);
-		configManager.save();
-		
-		for(Task task : Main.getGame().getScheduler().getScheduledTasks()){
-			if(task.getName().contains(name)){
-				task.cancel();
+		try {
+		    Connection connection = getDataSource().getConnection();
+		    
+		    PreparedStatement statement = connection.prepareStatement("DELETE from Portals WHERE Name = ?");
+		    
+			statement.setString(1, name);
+			statement.executeUpdate();
+			
+			connection.close();
+			
+			for(Task task : Main.getGame().getScheduler().getScheduledTasks()){
+				if(task.getName().contains(name)){
+					task.cancel();
+				}
 			}
+		}catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 	
 	public static void save(Portal portal){	
-		ConfigManager configManager = new ConfigManager("portals.conf");
-		ConfigurationNode config = configManager.getConfig();
+		try {
+		    Connection connection = getDataSource().getConnection();
+		    
+		    PreparedStatement statement = connection.prepareStatement("INSERT into Portals (Name, Frame, Fill, Destination) VALUES (?, ?, ?, ?)");	
+			
+		    statement.setString(1, portal.name);
+		    
+		    StringBuilder stringBuilder = new StringBuilder();
+		    for (String string : portal.frame){
+		    	stringBuilder.append(string + ";");
+		    }
+		    statement.setString(2, stringBuilder.toString().substring(0, stringBuilder.length() - 1));
+		    
+		    stringBuilder = new StringBuilder();
+		    for (String string : portal.fill){
+		    	stringBuilder.append(string + ";");
+		    }	    
+		    statement.setString(3, stringBuilder.toString().substring(0, stringBuilder.length() - 1));
 
-		config.getNode("Portals", portal.getName(), "Destination").setValue(portal.destination);
-		config.getNode("Portals", portal.getName(), "Frame").setValue(portal.frame);
-		config.getNode("Portals", portal.getName(), "Fill").setValue(portal.fill);
-		
-		configManager.save();
+		    statement.setString(4, portal.destination);
+
+			statement.executeUpdate();
+			
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static List<Portal> list(){
-		ConfigurationNode config = new ConfigManager("portals.conf").getConfig();
-		
 		List<Portal> list = new ArrayList<>();
-		
-		for(Entry<Object, ? extends ConfigurationNode> node : config.getNode("Portals").getChildrenMap().entrySet()){
-			String name = node.getKey().toString();
 
-			String destination = config.getNode("Portals", name, "Destination").getString();
+		try {
+		    Connection connection = getDataSource().getConnection();
+		    
+		    PreparedStatement statement = connection.prepareStatement("SELECT * FROM Portals");
+		    
+			ResultSet result = statement.executeQuery();
 			
-			List<String> frame = config.getNode("Portals", name, "Frame").getChildrenList().stream().map(ConfigurationNode::getString).collect(Collectors.toList());
-			List<String> fill = config.getNode("Portals", name, "Fill").getChildrenList().stream().map(ConfigurationNode::getString).collect(Collectors.toList());
-			
-			list.add(new Portal(name, destination, frame, fill));
+			while (result.next()) {
+				String name = result.getString("Name");
+
+				String[] frameArray = result.getString("Frame").split(";");
+				List<String> frame = new ArrayList<String>(Arrays.asList(frameArray));
+				
+				String[] fillArray = result.getString("Fill").split(";");
+				List<String> fill = new ArrayList<String>(Arrays.asList(fillArray));
+		    	
+		    	String destination = result.getString("Destination");
+
+		    	list.add(new Portal(name, destination, frame, fill));
+			}
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
-
+		
 		return list;
 	}
 

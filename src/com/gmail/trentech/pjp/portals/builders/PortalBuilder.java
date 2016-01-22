@@ -84,7 +84,7 @@ public class PortalBuilder extends Builder{
 		List<Location<World>> fill = new ArrayList<>(regionFill.get());
 
 		if(!Main.getGame().getEventManager().post(new ConstructPortalEvent(frame, fill, Cause.of(this)))) {
-			boolean particles = new ConfigManager().getConfig().getNode("Options", "Show-Particles").getBoolean();
+			boolean particles = new ConfigManager().getConfig().getNode("options", "particles").getBoolean();
 			
 			BlockState block = BlockTypes.AIR.getDefaultState();
 

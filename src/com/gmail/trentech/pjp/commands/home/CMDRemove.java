@@ -18,7 +18,7 @@ import com.gmail.trentech.pjp.utils.Help;
 public class CMDRemove implements CommandExecutor {
 
 	public CMDRemove(){
-		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "home").getString();
+		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "home").getString();
 		
 		Help help = new Help("hremove", "remove", "Remove an existing home");
 		help.setSyntax(" /home remove <name>\n /" + alias + " r <name>");

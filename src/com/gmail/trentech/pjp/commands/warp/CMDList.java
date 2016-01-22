@@ -2,8 +2,7 @@ package com.gmail.trentech.pjp.commands.warp;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Optional;
 
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -17,17 +16,18 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Text.Builder;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
+import com.gmail.trentech.pjp.portals.Warp;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
-
-import ninja.leaping.configurate.ConfigurationNode;
 
 public class CMDList implements CommandExecutor {
 
 	public CMDList(){
-		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "warp").getString();
+		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "warp").getString();
 		
 		Help help = new Help("wlist", "list", " List all warp points");
 		help.setSyntax(" /warp list\n /" + alias + " l");
@@ -45,26 +45,27 @@ public class CMDList implements CommandExecutor {
 		PaginationBuilder pages = Main.getGame().getServiceManager().provide(PaginationService.class).get().builder();
 		
 		pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.AQUA, "Warps")).build());
-		
-		List<Text> list = new ArrayList<>();
 
-		ConfigurationNode config = new ConfigManager("warps.conf").getConfig();
+		List<Text> list = new ArrayList<>();
 		
-		Map<Object, ? extends ConfigurationNode> warps = config.getNode("Warps").getChildrenMap();
-		for(Entry<Object, ? extends ConfigurationNode> warp : warps.entrySet()){
-			String warpName = warp.getKey().toString();
-			
-			if(!player.hasPermission("pjp.warps." + warpName)){
+		List<Warp> warps = Warp.list();
+
+		for(Warp warp : warps){
+			if(!player.hasPermission("pjp.warps." + warp.getName())){
 				continue;
 			}
 			
-			String worldName = config.getNode("Warps", warpName, "World").getString();
-			int x = config.getNode("Warps", warpName, "X").getInt();
-			int y = config.getNode("Warps", warpName, "Y").getInt();
-			int z = config.getNode("Warps", warpName, "Z").getInt();
-
+			Optional<Location<World>> optionalLocation = warp.getDestination();
+			
+			if(!optionalLocation.isPresent()){
+				continue;
+			}
+			Location<World> location = optionalLocation.get();
+			
 			Builder builder = Text.builder().color(TextColors.AQUA).onHover(TextActions.showText(Text.of(TextColors.WHITE, "Click to remove warp point")));
-			builder.onClick(TextActions.runCommand("/warp remove " + warpName)).append(Text.of(TextColors.AQUA, warpName, ": ", TextColors.GREEN, worldName,", ", x, ", ", y, ", ", z));
+			builder.onClick(TextActions.runCommand("/warp remove " + warp.getName())).append(Text.of(TextColors.AQUA, warp.getName(), ": ", TextColors.GREEN,
+					location.getExtent().getName(),", ", location.getBlockX(), ", ", location.getBlockY(), ", ", location.getBlockZ()));
+			
 			list.add(builder.build());
 		}
 

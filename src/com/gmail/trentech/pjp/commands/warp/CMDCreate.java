@@ -1,5 +1,7 @@
 package com.gmail.trentech.pjp.commands.warp;
 
+import java.util.Optional;
+
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -11,15 +13,14 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import com.gmail.trentech.pjp.portals.Warp;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
-
-import ninja.leaping.configurate.ConfigurationNode;
 
 public class CMDCreate implements CommandExecutor {
 
 	public CMDCreate(){
-		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "warp").getString();
+		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "warp").getString();
 		
 		Help help = new Help("wcreate", "create", " Create a new warp point");
 		help.setSyntax(" /warp create <name>\n /" + alias + " c <name>");
@@ -41,29 +42,19 @@ public class CMDCreate implements CommandExecutor {
 		}
 		String warpName = args.<String>getOne("name").get();
 		
-		ConfigManager configManager = new ConfigManager("warps.conf");
-		ConfigurationNode config = configManager.getConfig();
+		Optional<Warp> optionalWarp = Warp.get(warpName);
 		
-		if(config.getNode("Warps", warpName).getString() != null){
+		if(optionalWarp.isPresent()){
 			src.sendMessage(Text.of(TextColors.DARK_RED, warpName, " already exists."));
 			return CommandResult.empty();
 		}
 		
-		String worldName = player.getWorld().getName();
-		
 		Location<World> location = player.getLocation();
 		
-		int x = location.getBlockX();
-		int y = location.getBlockY();
-		int z = location.getBlockZ();
+		String destination = player.getWorld().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
+		
+		Warp.save(warpName, destination);
 
-		config.getNode("Warps", warpName, "World").setValue(worldName);
-		config.getNode("Warps", warpName, "X").setValue(x);
-		config.getNode("Warps", warpName, "Y").setValue(y);
-		config.getNode("Warps", warpName, "Z").setValue(z);
-		
-		configManager.save();
-		
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Warp ", warpName, " create"));
 
 		return CommandResult.success();

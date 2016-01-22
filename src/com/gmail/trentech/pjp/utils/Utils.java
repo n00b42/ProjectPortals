@@ -82,14 +82,16 @@ public class Utils {
 			return null;
 		}
 	}
-	
-	private static Location<World> generate(World world, long radius){
+
+	public static Location<World> getRandomLocation(World world) {
 		TeleportHelper teleportHelper = Main.getGame().getTeleportHelper();
 		
 		ThreadLocalRandom random = ThreadLocalRandom.current();
 		
 		Location<World> location = world.getSpawnLocation();
 
+		long radius = new ConfigManager().getConfig().getNode("options", "random_spawn_radius").getLong();
+		
 		for(int i = 0; i < 49; i++){
 			int x = (int) (random.nextDouble() * ((radius*2) + 1) - radius);
 			int y = random.nextInt(64, 200 + 1);
@@ -119,10 +121,6 @@ public class Utils {
 			break;
 		}
 		return location;
-	}
-
-	public static Location<World> getRandomLocation(World world) {
-		return generate(world, new ConfigManager().getConfig().getNode("Options", "Random-Spawn-Radius").getLong());
 	}
 
 	public static Consumer<CommandSource> unsafeTeleport(Location<World> location){

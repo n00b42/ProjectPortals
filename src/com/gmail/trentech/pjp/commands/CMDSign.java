@@ -20,7 +20,7 @@ import com.gmail.trentech.pjp.utils.Utils;
 public class CMDSign implements CommandExecutor {
 
 	public CMDSign(){
-		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "sign").getString();
+		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "sign").getString();
 		
 		Help help = new Help("sign", "sign", " Use this command to create a sign that will teleport you to other worlds");
 		help.setSyntax(" /sign <world> [x] [y] [z]\n /" + alias + " <world> [x] [y] [z]");

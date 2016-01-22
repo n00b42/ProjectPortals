@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.spongepowered.api.world.Location;
@@ -13,12 +15,12 @@ import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.utils.SQLUtils;
 import com.gmail.trentech.pjp.utils.Utils;
 
-public class Button extends SQLUtils{
+public class Warp extends SQLUtils{
 
 	private final String name;
-	private final String destination;
+	public final String destination;
 
-	public Button(String name, String destination) {
+	public Warp(String name, String destination) {
 		this.name = name;
 		this.destination = destination;
 	}
@@ -49,21 +51,19 @@ public class Button extends SQLUtils{
 		}
 	}
 
-	public static Optional<Button> get(Location<World> location){
-		Optional<Button> optionalButton = Optional.empty();
-		
-		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
-		
+	public static Optional<Warp> get(String name){
+		Optional<Warp> optionalWarp = Optional.empty();
+
 		try {
 		    Connection connection = getDataSource().getConnection();
 		    
-		    PreparedStatement statement = connection.prepareStatement("SELECT * FROM Buttons");
+		    PreparedStatement statement = connection.prepareStatement("SELECT * FROM Warps");
 		    
 			ResultSet result = statement.executeQuery();
 			
 			while (result.next()) {
 				if (result.getString("Name").equalsIgnoreCase(name)) {
-					optionalButton = Optional.of(new Button(result.getString("Name"), result.getString("Destination")));
+					optionalWarp = Optional.of(new Warp(result.getString("Name"), result.getString("Destination")));
 					
 					break;
 				}
@@ -73,16 +73,14 @@ public class Button extends SQLUtils{
 			e.printStackTrace();
 		}
 		
-		return optionalButton;
+		return optionalWarp;
 	}
 	
-	public static void remove(Location<World> location){
-		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
-		
+	public static void remove(String name){
 		try {
 		    Connection connection = getDataSource().getConnection();
 		    
-		    PreparedStatement statement = connection.prepareStatement("DELETE from Buttons WHERE Name = ?");
+		    PreparedStatement statement = connection.prepareStatement("DELETE from Warps WHERE Name = ?");
 		    
 			statement.setString(1, name);
 			statement.executeUpdate();
@@ -93,13 +91,11 @@ public class Button extends SQLUtils{
 		}
 	}
 	
-	public static void save(Location<World> location, String destination){
-		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
-		
+	public static void save(String name, String destination){
 		try {
 		    Connection connection = getDataSource().getConnection();
 		    
-		    PreparedStatement statement = connection.prepareStatement("INSERT into Buttons (Name, Destination) VALUES (?, ?)");	
+		    PreparedStatement statement = connection.prepareStatement("INSERT into Warps (Name, Destination) VALUES (?, ?)");	
 			
 		    statement.setString(1, name);
 		    statement.setString(2, destination);
@@ -110,5 +106,30 @@ public class Button extends SQLUtils{
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static List<Warp> list(){
+		List<Warp> list = new ArrayList<>();
+
+		try {
+		    Connection connection = getDataSource().getConnection();
+		    
+		    PreparedStatement statement = connection.prepareStatement("SELECT * FROM Warps");
+		    
+			ResultSet result = statement.executeQuery();
+			
+			while (result.next()) {
+				String name = result.getString("Name");
+
+		    	String destination = result.getString("Destination");
+
+		    	list.add(new Warp(name, destination));
+			}
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return list;
 	}
 }

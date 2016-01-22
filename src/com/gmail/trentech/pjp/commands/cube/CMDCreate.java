@@ -19,7 +19,7 @@ import com.gmail.trentech.pjp.utils.Utils;
 public class CMDCreate implements CommandExecutor {
 
 	public CMDCreate(){
-		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "cube").getString();
+		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "cube").getString();
 		
 		Help help = new Help("ccreate", "create", "Create cuboid portal to another dimension, or specified location. No arguments allow for deleting portals");
 		help.setSyntax(" /cube <world> [x] [y] [z]\n /" + alias + " <world> [x] [y] [z]");

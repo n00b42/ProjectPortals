@@ -1,8 +1,8 @@
 package com.gmail.trentech.pjp.listeners;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.Transaction;
@@ -29,7 +29,7 @@ import ninja.leaping.configurate.ConfigurationNode;
 
 public class PortalListener {
 
-	private static HashMap<Player, Builder> builders = new HashMap<>();
+	public static ConcurrentHashMap<Player, Builder> builders = new ConcurrentHashMap<>();
 
 	@Listener
 	public void onConstructPortalEvent(ConstructPortalEvent event, @First Player player){
@@ -45,7 +45,7 @@ public class PortalListener {
         
         ConfigurationNode config = new ConfigManager().getConfig();
         
-        int size = config.getNode("Options", "Portal-Size").getInt();
+        int size = config.getNode("options", "portal_size").getInt();
         if(locations.size() > size){
         	player.sendMessage(Text.of(TextColors.DARK_RED, "Portals cannot be larger than ", size, " blocks"));
         	event.setCancelled(true);
@@ -149,9 +149,5 @@ public class PortalListener {
 			spawnLocation = teleportEvent.getDestination();
 			player.setLocation(spawnLocation);
 		}
-	}
-	
-	public static HashMap<Player, Builder> getBuilders() {
-		return builders;
 	}
 }

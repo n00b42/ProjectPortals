@@ -9,15 +9,14 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
+import com.gmail.trentech.pjp.portals.Warp;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
-
-import ninja.leaping.configurate.ConfigurationNode;
 
 public class CMDRemove implements CommandExecutor {
 
 	public CMDRemove(){
-		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "warp").getString();
+		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "warp").getString();
 		
 		Help help = new Help("wremove", "remove", " Remove an existing  warp point");
 		help.setSyntax(" /warp remove <name>\n /" + alias + " r <name>");
@@ -39,18 +38,13 @@ public class CMDRemove implements CommandExecutor {
 		}
 		String warpName = args.<String>getOne("name").get();
 		
-		ConfigManager configManager = new ConfigManager("warps.conf");
-		ConfigurationNode config = configManager.getConfig();
-		
-		if(config.getNode("Warps", warpName).getString() == null){
+		if(!Warp.get(warpName).isPresent()){
 			src.sendMessage(Text.of(TextColors.DARK_RED, warpName, " does not exist"));
 			return CommandResult.empty();
 		}
 		
-		config.getNode("Warps").removeChild(warpName);
+		Warp.remove(warpName);
 
-		configManager.save();
-		
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Warp ", warpName, " removed"));
 
 		return CommandResult.success();

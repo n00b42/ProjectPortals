@@ -26,7 +26,7 @@ import com.gmail.trentech.pjp.utils.Help;
 public class CMDList implements CommandExecutor {
 
 	public CMDList(){
-		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "home").getString();
+		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "home").getString();
 		
 		Help help = new Help("hlist", "list", " List all homes");
 		help.setSyntax(" /home list\n /" + alias + " l");

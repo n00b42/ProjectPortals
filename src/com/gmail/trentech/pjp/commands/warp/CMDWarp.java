@@ -21,10 +21,8 @@ import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.events.TeleportEvent;
-import com.gmail.trentech.pjp.utils.ConfigManager;
+import com.gmail.trentech.pjp.portals.Warp;
 import com.gmail.trentech.pjp.utils.Help;
-
-import ninja.leaping.configurate.ConfigurationNode;
 
 public class CMDWarp implements CommandExecutor {
 
@@ -39,32 +37,27 @@ public class CMDWarp implements CommandExecutor {
 		if(args.hasAny("name")) {
 			String warpName = args.<String>getOne("name").get();
 			
-			ConfigurationNode config = new ConfigManager("warps.conf").getConfig();
-
-			if(config.getNode("Warps", warpName).getString() == null){
+			Optional<Warp> optionalWarp = Warp.get(warpName);
+			
+			if(!optionalWarp.isPresent()){
 				src.sendMessage(Text.of(TextColors.DARK_RED, warpName, " does not exist"));
 				return CommandResult.empty();
 			}
+			Warp warp = optionalWarp.get();
 			
 			if(!player.hasPermission("pjp.warps." + warpName)){
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to warp here"));
 				return CommandResult.empty();
 			}
 			
-			String worldName = config.getNode("Warps", warpName, "World").getString();
+			Optional<Location<World>> optionalSpawnLocation = warp.getDestination();
 			
-			Optional<World> optionalWorld = Main.getGame().getServer().getWorld(worldName);
-			
-			if(!optionalWorld.isPresent()){
-				player.sendMessage(Text.of(TextColors.DARK_RED, worldName, " does not exist"));
+			if(!optionalSpawnLocation.isPresent()){
+				player.sendMessage(Text.of(TextColors.DARK_RED, warp.destination.split(":")[0], " does not exist"));
 				return CommandResult.empty();
-			}
-			World world = optionalWorld.get();
+			}			
+			Location<World> spawnLocation = optionalSpawnLocation.get();
 			
-			int x = config.getNode("Warps", warpName, "X").getInt();
-			int y = config.getNode("Warps", warpName, "Y").getInt();
-			int z = config.getNode("Warps", warpName, "Z").getInt();
-
 			if(args.hasAny("player")) {
 				String playerName = args.<String>getOne("player").get();
 				
@@ -82,9 +75,7 @@ public class CMDWarp implements CommandExecutor {
 				
 				player = optionalPlayer.get();
 			}
-			
-			Location<World> spawnLocation = world.getLocation(x, y, z);
-			
+
 			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of("warp"));
 
 			if(!Main.getGame().getEventManager().post(teleportEvent)){

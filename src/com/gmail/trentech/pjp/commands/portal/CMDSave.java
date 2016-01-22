@@ -20,7 +20,7 @@ import com.gmail.trentech.pjp.utils.Help;
 public class CMDSave implements CommandExecutor {
 
 	public CMDSave(){
-		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "portal").getString();
+		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "portal").getString();
 		
 		Help help = new Help("save", "save", " Saves generated portal");
 		help.setSyntax(" /portal save\n /" + alias + " s");
@@ -35,10 +35,10 @@ public class CMDSave implements CommandExecutor {
 		}
 		Player player = (Player) src;
 
-		if(!PortalListener.getBuilders().containsKey(player)){
+		if(!PortalListener.builders.containsKey(player)){
 			return CommandResult.empty();
 		}
-		PortalBuilder builder = (PortalBuilder) PortalListener.getBuilders().get(player);
+		PortalBuilder builder = (PortalBuilder) PortalListener.builders.get(player);
 
 		if(!builder.isFill()){
 			builder.fill(true);
@@ -53,7 +53,7 @@ public class CMDSave implements CommandExecutor {
 
 				@Override
 				public void run() {
-					PortalListener.getBuilders().remove(player);
+					PortalListener.builders.remove(player);
 				}
 				
 			}).submit(Main.getPlugin());

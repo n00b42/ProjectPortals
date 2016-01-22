@@ -1,7 +1,7 @@
 package com.gmail.trentech.pjp.listeners;
 
-import java.util.HashMap;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockType;
@@ -26,7 +26,7 @@ import com.gmail.trentech.pjp.utils.Utils;
 
 public class DoorListener {
 
-	public static HashMap<Player, String> builders = new HashMap<>();
+	public static ConcurrentHashMap<Player, String> builders = new ConcurrentHashMap<>();
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Break event, @First Player player) {
@@ -76,7 +76,7 @@ public class DoorListener {
             
             Door.save(location, destination);
 
-    		if(new ConfigManager().getConfig().getNode("Options", "Show-Particles").getBoolean()){
+    		if(new ConfigManager().getConfig().getNode("options", "particles").getBoolean()){
     			Utils.spawnParticles(location, 1.0, false);
     		}
 

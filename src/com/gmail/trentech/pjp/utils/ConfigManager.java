@@ -79,90 +79,77 @@ public class ConfigManager {
 	
 	private void init() {
 		if(file.getName().equalsIgnoreCase("config.conf")){
-			if(config.getNode("Options", "Cube", "Replace-Frame").getString() == null) {
-				config.getNode("Options", "Cube", "Replace-Frame").setValue(true);
+			if(config.getNode("options", "portal_size").getString() == null) {
+				config.getNode("options", "portal_size").setValue(100).setComment("Maximum number of blocks a portal can use");
 			}
-			if(config.getNode("Options", "Portal-Size").getString() == null) {
-				config.getNode("Options", "Portal-Size").setValue(100).setComment("Maximum number of blocks a portal can use");
+			if(config.getNode("options", "homes").getString() == null) {
+				config.getNode("options", "homes").setValue(5).setComment("Default number of homes a player can have");
 			}
-			if(config.getNode("Options", "Homes").getString() == null) {
-				config.getNode("Options", "Homes").setValue(5).setComment("Default number of homes a player can have");
+			if(config.getNode("options", "particles").getString() == null) {
+				config.getNode("options", "particles").setValue(true).setComment("Display particle effects on portal creation and teleporting");
 			}
-			if(config.getNode("Options", "Show-Particles").getString() == null) {
-				config.getNode("Options", "Show-Particles").setValue(true).setComment("Display particle effects on portal creation and teleporting");
+			if(config.getNode("options", "random_spawn_radius").getString() == null) {
+				config.getNode("options", "random_spawn_radius").setValue(5000).setComment("World radius for random spawn portals.");
 			}
-			if(config.getNode("Options", "Random-Spawn-Radius").getString() == null) {
-				config.getNode("Options", "Random-Spawn-Radius").setValue(5000).setComment("World radius for random spawn portals.");
+			if(config.getNode("settings", "commands").getString() == null){
+				config.getNode("settings", "commands").setComment("Allow to set custom command aliases");
 			}
-			if(config.getNode("Options", "Command-Alias", "cube").getString() == null) {
-				config.getNode("Options", "Command-Alias", "cube").setValue("cb");
+			if(config.getNode("settings", "commands", "portal").getString() == null) {
+				config.getNode("settings", "commands", "portal").setValue("p");
 			}
-			if(config.getNode("Options", "Command-Alias", "portal").getString() == null) {
-				config.getNode("Options", "Command-Alias", "portal").setValue("p");
+			if(config.getNode("settings", "commands", "button").getString() == null) {
+				config.getNode("settings", "commands", "button").setValue("btn");
 			}
-			if(config.getNode("Options", "Command-Alias", "button").getString() == null) {
-				config.getNode("Options", "Command-Alias", "button").setValue("btn");
+			if(config.getNode("settings", "commands", "door").getString() == null) {
+				config.getNode("settings", "commands", "door").setValue("d");
 			}
-			if(config.getNode("Options", "Command-Alias", "door").getString() == null) {
-				config.getNode("Options", "Command-Alias", "door").setValue("d");
+			if(config.getNode("settings", "commands", "plate").getString() == null) {
+				config.getNode("settings", "commands", "plate").setValue("pl");
 			}
-			if(config.getNode("Options", "Command-Alias", "plate").getString() == null) {
-				config.getNode("Options", "Command-Alias", "plate").setValue("pl");
+			if(config.getNode("settings", "commands", "sign").getString() == null) {
+				config.getNode("settings", "commands", "sign").setValue("s");
 			}
-			if(config.getNode("Options", "Command-Alias", "sign").getString() == null) {
-				config.getNode("Options", "Command-Alias", "sign").setValue("s");
+			if(config.getNode("settings", "commands", "lever").getString() == null) {
+				config.getNode("settings", "commands", "lever").setValue("l");
 			}
-			if(config.getNode("Options", "Command-Alias", "lever").getString() == null) {
-				config.getNode("Options", "Command-Alias", "lever").setValue("l");
+			if(config.getNode("settings", "commands", "home").getString() == null) {
+				config.getNode("settings", "commands", "home").setValue("h");
 			}
-			if(config.getNode("Options", "Command-Alias", "home").getString() == null) {
-				config.getNode("Options", "Command-Alias", "home").setValue("h");
+			if(config.getNode("settings", "commands", "warp").getString() == null) {
+				config.getNode("settings", "commands", "warp").setValue("wp");
 			}
-			if(config.getNode("Options", "Command-Alias", "warp").getString() == null) {
-				config.getNode("Options", "Command-Alias", "warp").setValue("wp");
+			if(config.getNode("settings", "commands", "back").getString() == null) {
+				config.getNode("settings", "commands", "back").setValue("bk");
 			}
-			if(config.getNode("Options", "Command-Alias", "back").getString() == null) {
-				config.getNode("Options", "Command-Alias", "back").setValue("bk");
+			if(config.getNode("settings", "modules").getString() == null) {
+				config.getNode("settings", "modules").setComment("Toggle on and off specific features");
 			}
-			if(config.getNode("Options", "Modules", "Cubes").getString() == null) {
-				config.getNode("Options", "Modules", "Cubes").setValue(false).setComment("[DEPRECATED]");
+			if(config.getNode("settings", "modules", "portals").getString() == null) {
+				config.getNode("settings", "modules", "portals").setValue(true);
 			}
-			if(config.getNode("Options", "Modules", "Portals").getString() == null) {
-				config.getNode("Options", "Modules", "Portals").setValue(true);
+			if(config.getNode("settings", "modules", "buttons").getString() == null) {
+				config.getNode("settings", "modules", "buttons").setValue(true);
 			}
-			if(config.getNode("Options", "Modules", "Buttons").getString() == null) {
-				config.getNode("Options", "Modules", "Buttons").setValue(true);
+			if(config.getNode("settings", "modules", "doors").getString() == null) {
+				config.getNode("settings", "modules", "doors").setValue(true);
 			}
-			if(config.getNode("Options", "Modules", "Doors").getString() == null) {
-				config.getNode("Options", "Modules", "Doors").setValue(true);
+			if(config.getNode("settings", "modules", "plates").getString() == null) {
+				config.getNode("settings", "modules", "plates").setValue(true);
 			}
-			if(config.getNode("Options", "Modules", "Plates").getString() == null) {
-				config.getNode("Options", "Modules", "Plates").setValue(true);
+			if(config.getNode("settings", "modules", "levers").getString() == null) {
+				config.getNode("settings", "modules", "levers").setValue(true);
 			}
-			if(config.getNode("Options", "Modules", "Levers").getString() == null) {
-				config.getNode("Options", "Modules", "Levers").setValue(true);
+			if(config.getNode("settings", "modules", "signs").getString() == null) {
+				config.getNode("settings", "modules", "signs").setValue(true);
 			}
-			if(config.getNode("Options", "Modules", "Signs").getString() == null) {
-				config.getNode("Options", "Modules", "Signs").setValue(true);
+			if(config.getNode("settings", "modules", "warps").getString() == null) {
+				config.getNode("settings", "modules", "warps").setValue(true);
 			}
-			if(config.getNode("Options", "Modules", "Warps").getString() == null) {
-				config.getNode("Options", "Modules", "Warps").setValue(true);
-			}
-			if(config.getNode("Options", "Modules", "Homes").getString() == null) {
-				config.getNode("Options", "Modules", "Homes").setValue(true);
+			if(config.getNode("settings", "modules", "homes").getString() == null) {
+				config.getNode("settings", "modules", "homes").setValue(true);
 			}
 			save();
-		}else if(file.getName().equalsIgnoreCase("portals.conf")){
-			if(config.getNode("Buttons").getString() == null) {
-				config.getNode("Buttons").setComment("DO NOT EDIT THIS FILE");
-				save();
-			}			
-		}else if(file.getName().equalsIgnoreCase("warps.conf")){
-			if(config.getNode("Warps").getString() == null) {
-				config.getNode("Warps").setComment("DO NOT EDIT THIS FILE");
-				save();
-			}
-		}	
+		}
 	}
 
 	private void create(){

@@ -49,7 +49,7 @@ public class TeleportListener {
 			return;
 		}
 		
-		if(new ConfigManager().getConfig().getNode("Options", "Show-Particles").getBoolean()){
+		if(new ConfigManager().getConfig().getNode("options", "particles").getBoolean()){
 			Utils.spawnParticles(src, 0.5, true);
 			Utils.spawnParticles(src.getRelative(Direction.UP), 0.5, true);
 			

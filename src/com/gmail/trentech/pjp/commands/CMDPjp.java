@@ -30,37 +30,37 @@ public class CMDPjp implements CommandExecutor {
 		
 		List<Text> list = new ArrayList<>();
 		
-		ConfigurationNode node = new ConfigManager().getConfig().getNode("Options", "Modules");
+		ConfigurationNode node = new ConfigManager().getConfig().getNode("settings", "modules");
 		
-		if(src.hasPermission("pjp.cmd.cube") && node.getNode("Cubes").getBoolean()) {
+		if(src.hasPermission("pjp.cmd.cube") && node.getNode("cubes").getBoolean()) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
 					.onClick(TextActions.runCommand("/pjp:cube")).append(Text.of(" /cube ", TextColors.YELLOW, "[DEPRECATED]")).build());
 		}
-		if(src.hasPermission("pjp.cmd.portals") && node.getNode("Portals").getBoolean()) {
+		if(src.hasPermission("pjp.cmd.portals") && node.getNode("portals").getBoolean()) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
 					.onClick(TextActions.runCommand("/pjp:portal")).append(Text.of(" /portal")).build());
 		}
-		if(src.hasPermission("pjp.cmd.plate") && node.getNode("Plates").getBoolean()) {
+		if(src.hasPermission("pjp.cmd.plate") && node.getNode("plates").getBoolean()) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
 					.onClick(TextActions.executeCallback(Help.getHelp("plate"))).append(Text.of(" /plate")).build());
 		}
-		if(src.hasPermission("pjp.cmd.lever") && node.getNode("Levers").getBoolean()) {
+		if(src.hasPermission("pjp.cmd.lever") && node.getNode("levers").getBoolean()) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
 					.onClick(TextActions.executeCallback(Help.getHelp("lever"))).append(Text.of(" /lever")).build());
 		}
-		if(src.hasPermission("pjp.cmd.sign") && node.getNode("Signs").getBoolean()) {
+		if(src.hasPermission("pjp.cmd.sign") && node.getNode("signs").getBoolean()) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
 					.onClick(TextActions.executeCallback(Help.getHelp("sign"))).append(Text.of(" /sign")).build());
 		}
-		if(src.hasPermission("pjp.cmd.button") && node.getNode("Buttons").getBoolean()) {
+		if(src.hasPermission("pjp.cmd.button") && node.getNode("buttons").getBoolean()) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
 					.onClick(TextActions.executeCallback(Help.getHelp("button"))).append(Text.of(" /button")).build());
 		}
-		if(src.hasPermission("pjp.cmd.home") && node.getNode("Homes").getBoolean()) {
+		if(src.hasPermission("pjp.cmd.home") && node.getNode("homes").getBoolean()) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
 					.onClick(TextActions.runCommand("/pjp:home")).append(Text.of(" /home")).build());
 		}
-		if(src.hasPermission("pjp.cmd.warp") && node.getNode("Warps").getBoolean()) {
+		if(src.hasPermission("pjp.cmd.warp") && node.getNode("warps").getBoolean()) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
 					.onClick(TextActions.runCommand("/pjp:warp")).append(Text.of(" /warp")).build());
 		}

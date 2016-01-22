@@ -19,6 +19,14 @@ public class TempListener {
 
 	@Listener
 	public void onPlayerJoin(ClientConnectionEvent.Join event, @First Player player){
+		String folder = "config" + File.separator + "projectportals" + File.separator + "Players";
+		
+        File configFile = new File(folder, player.getUniqueId().toString() + ".conf");
+        
+        if(!configFile.exists()){
+        	return;
+        }
+        
 		ConfigurationNode config = new ConfigManager("Players", player.getUniqueId().toString() + ".conf").getConfig();
 		
 		Map<Object, ? extends ConfigurationNode> homes = config.getNode("Homes").getChildrenMap();
@@ -45,14 +53,11 @@ public class TempListener {
 				String location = worldName + ":" + x + "." + y + "." + z;
 
 				homeData.addHome(name, location);
-				
-				String folder = "config" + File.separator + "projectportals" + File.separator + "Players";
-				
-		        new File(folder, player.getUniqueId().toString() + ".conf").delete();
 			}
 			
 			player.offer(homeData);
+			
+			configFile.delete();
 		}
-
 	}
 }

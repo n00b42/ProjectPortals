@@ -1,6 +1,5 @@
 package com.gmail.trentech.pjp;
 
-import java.io.File;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -16,7 +15,6 @@ import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -30,7 +28,6 @@ import com.gmail.trentech.pjp.data.immutable.ImmutablePortalData;
 import com.gmail.trentech.pjp.data.mutable.HomeData;
 import com.gmail.trentech.pjp.data.mutable.PortalData;
 import com.gmail.trentech.pjp.listeners.ButtonListener;
-import com.gmail.trentech.pjp.listeners.CuboidListener;
 import com.gmail.trentech.pjp.listeners.DoorListener;
 import com.gmail.trentech.pjp.listeners.LeverListener;
 import com.gmail.trentech.pjp.listeners.PlateListener;
@@ -41,6 +38,7 @@ import com.gmail.trentech.pjp.listeners.TempListener;
 import com.gmail.trentech.pjp.portals.Portal;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Resource;
+import com.gmail.trentech.pjp.utils.SQLUtils;
 
 import ninja.leaping.configurate.ConfigurationNode;
 
@@ -60,70 +58,65 @@ public class Main {
 
     @Listener
     public void onInitialization(GameInitializationEvent event) {
-    	getLog().info("Initializing...");
-    	fixPath();
-    	
     	ConfigurationNode config = new ConfigManager().getConfig();
+    	ConfigurationNode commands = config.getNode("settings", "commands");
+    	ConfigurationNode modules = config.getNode("settings", "modules");
     	
     	getGame().getEventManager().registerListeners(this, new TeleportListener());
-    	getGame().getCommandManager().register(this, new CMDBack().cmdBack, "back", config.getNode("Options", "Command-Alias", "back").getString());
+    	
+    	getGame().getCommandManager().register(this, new CMDBack().cmdBack, "back", commands.getNode("back").getString());
     	getGame().getCommandManager().register(this, new CommandManager().cmdPJP, "pjp");
     	
-    	ConfigurationNode modules = config.getNode("Options", "Modules");
+    	getGame().getDataManager().register(PortalData.class, ImmutablePortalData.class, new PortalDataManipulatorBuilder());
     	
-    	if(modules.getNode("Cubes").getBoolean()){  		
-    		getGame().getEventManager().registerListeners(this, new CuboidListener());
-    		getGame().getCommandManager().register(this, new CommandManager().cmdCube, "cube", config.getNode("Options", "Command-Alias", "cube").getString());
-    		getLog().info("Cube module activated");
-    	}
-    	if(modules.getNode("Portals").getBoolean()){  		
+    	if(modules.getNode("portals").getBoolean()){  		
     		getGame().getEventManager().registerListeners(this, new PortalListener());
-    		getGame().getCommandManager().register(this, new CommandManager().cmdPortal, "portal", config.getNode("Options", "Command-Alias", "portal").getString());
+    		getGame().getCommandManager().register(this, new CommandManager().cmdPortal, "portal", commands.getNode("portal").getString());
     		getLog().info("Portal module activated");
     	}
-    	if(modules.getNode("Buttons").getBoolean()){
+    	if(modules.getNode("buttons").getBoolean()){
     		getGame().getEventManager().registerListeners(this, new ButtonListener());
-    		getGame().getCommandManager().register(this, new CommandManager().cmdButton, "button", config.getNode("Options", "Command-Alias", "button").getString());
+    		getGame().getCommandManager().register(this, new CommandManager().cmdButton, "button", commands.getNode("button").getString());
     		getLog().info("Button module activated");
     	}
-    	if(modules.getNode("Doors").getBoolean()){
+    	if(modules.getNode("doors").getBoolean()){
     		getGame().getEventManager().registerListeners(this, new DoorListener());
-    		getGame().getCommandManager().register(this, new CommandManager().cmdDoor, "door", config.getNode("Options", "Command-Alias", "door").getString());
+    		getGame().getCommandManager().register(this, new CommandManager().cmdDoor, "door", commands.getNode("door").getString());
     		getLog().info("Door module activated");
     	}
-    	if(modules.getNode("Plates").getBoolean()){
+    	if(modules.getNode("plates").getBoolean()){
     		getGame().getEventManager().registerListeners(this, new PlateListener());
-    		getGame().getCommandManager().register(this, new CommandManager().cmdPlate, "plate", config.getNode("Options", "Command-Alias", "plate").getString());
+    		getGame().getCommandManager().register(this, new CommandManager().cmdPlate, "plate", commands.getNode("plate").getString());
     		getLog().info("Plate module activated");
     	}
-    	if(modules.getNode("Signs").getBoolean()){
+    	if(modules.getNode("signs").getBoolean()){
     		getGame().getEventManager().registerListeners(this, new SignListener());
-    		getGame().getCommandManager().register(this, new CommandManager().cmdSign, "sign", config.getNode("Options", "Command-Alias", "sign").getString());
+    		getGame().getCommandManager().register(this, new CommandManager().cmdSign, "sign", commands.getNode("sign").getString());
     		getLog().info("Sign module activated");
     	}
-    	if(modules.getNode("Levers").getBoolean()){
+    	if(modules.getNode("levers").getBoolean()){
     		getGame().getEventManager().registerListeners(this, new LeverListener());
-    		getGame().getCommandManager().register(this, new CommandManager().cmdLever, "lever", config.getNode("Options", "Command-Alias", "lever").getString());
+    		getGame().getCommandManager().register(this, new CommandManager().cmdLever, "lever", commands.getNode("lever").getString());
     		getLog().info("Lever module activated");
     	}
-    	if(modules.getNode("Homes").getBoolean()){
+    	if(modules.getNode("homes").getBoolean()){
     		getGame().getDataManager().register(HomeData.class, ImmutableHomeData.class, new HomeDataManipulatorBuilder());
     		getGame().getEventManager().registerListeners(this, new TempListener());
-    		getGame().getCommandManager().register(this, new CommandManager().cmdHome, "home", config.getNode("Options", "Command-Alias", "home").getString());
+    		getGame().getCommandManager().register(this, new CommandManager().cmdHome, "home", commands.getNode("home").getString());
     		getLog().info("Home module activated");
     	}
-    	if(modules.getNode("Warps").getBoolean()){
+    	if(modules.getNode("warps").getBoolean()){
     		getGame().getEventManager().registerListeners(this, new SignListener());
-    		getGame().getCommandManager().register(this, new CommandManager().cmdWarp, "warp", config.getNode("Options", "Command-Alias", "warp").getString());
+    		getGame().getCommandManager().register(this, new CommandManager().cmdWarp, "warp", commands.getNode("warp").getString());
     		getLog().info("Warp module activated");
     	}
     	
-    	getGame().getDataManager().register(PortalData.class, ImmutablePortalData.class, new PortalDataManipulatorBuilder());
+    	SQLUtils.createTables();
     }
 
     @Listener
     public void onStartedServer(GameStartedServerEvent event) {
-		if(new ConfigManager().getConfig().getNode("Options", "Show-Particles").getBoolean()){
+		if(new ConfigManager().getConfig().getNode("options", "particles").getBoolean()){
 	    	for(Portal portal : Portal.list()){
 	    		createTask(portal.getName(), portal.getFill());
 	    	}
@@ -154,36 +147,33 @@ public class Main {
 					double v3 = 0.0 + (1 - 0.0) * random.nextDouble();
 
 					if(random.nextDouble() < 0.5){
-						try{
-							location.getExtent().spawnParticles(Main.getGame().getRegistry().createBuilder(ParticleEffect.Builder.class)
-									.type(ParticleTypes.PORTAL).motion(Vector3d.ZERO).offset(Vector3d.ZERO).count(2).build(), location.getPosition().add(v1,v2,v3));
-							location.getExtent().spawnParticles(Main.getGame().getRegistry().createBuilder(ParticleEffect.Builder.class)
-									.type(ParticleTypes.PORTAL).motion(Vector3d.ZERO).offset(Vector3d.ZERO).count(2).build(), location.getPosition().add(v3,v1,v2));
-							location.getExtent().spawnParticles(Main.getGame().getRegistry().createBuilder(ParticleEffect.Builder.class)
-									.type(ParticleTypes.PORTAL).motion(Vector3d.ZERO).offset(Vector3d.ZERO).count(2).build(), location.getPosition().add(v2,v3,v1));
-						}catch(Exception e){
-							 cancel(name);
-						}
+						location.getExtent().spawnParticles(Main.getGame().getRegistry().createBuilder(ParticleEffect.Builder.class)
+								.type(ParticleTypes.PORTAL).motion(Vector3d.ZERO).offset(Vector3d.ZERO).count(3).build(), location.getPosition().add(v1,v2,v3));
+					}
+					if(random.nextDouble() < 0.5){
+						location.getExtent().spawnParticles(Main.getGame().getRegistry().createBuilder(ParticleEffect.Builder.class)
+								.type(ParticleTypes.PORTAL).motion(Vector3d.ZERO).offset(Vector3d.ZERO).count(3).build(), location.getPosition().add(v1,v3,v2));
+					}
+					if(random.nextDouble() < 0.5){
+						location.getExtent().spawnParticles(Main.getGame().getRegistry().createBuilder(ParticleEffect.Builder.class)
+								.type(ParticleTypes.PORTAL).motion(Vector3d.ZERO).offset(Vector3d.ZERO).count(3).build(), location.getPosition().add(v2,v3,v1));
+					}
+					if(random.nextDouble() < 0.5){
+						location.getExtent().spawnParticles(Main.getGame().getRegistry().createBuilder(ParticleEffect.Builder.class)
+								.type(ParticleTypes.PORTAL).motion(Vector3d.ZERO).offset(Vector3d.ZERO).count(3).build(), location.getPosition().add(v2,v1,v3));
+					}
+					if(random.nextDouble() < 0.5){
+						location.getExtent().spawnParticles(Main.getGame().getRegistry().createBuilder(ParticleEffect.Builder.class)
+								.type(ParticleTypes.PORTAL).motion(Vector3d.ZERO).offset(Vector3d.ZERO).count(3).build(), location.getPosition().add(v3,v1,v3));
+					}
+					if(random.nextDouble() < 0.5){
+						location.getExtent().spawnParticles(Main.getGame().getRegistry().createBuilder(ParticleEffect.Builder.class)
+								.type(ParticleTypes.PORTAL).motion(Vector3d.ZERO).offset(Vector3d.ZERO).count(3).build(), location.getPosition().add(v3,v2,v3));
 					}
 				}
 
             }
         }).submit(getPlugin());
 	}
-	
-	private static void cancel(String name){
-		for(Task task : Main.getGame().getScheduler().getScheduledTasks()){
-			if(task.getName().contains(name)){
-				task.cancel();
-			}
-		}
-	}
-	
-	private void fixPath(){
-		File directory = new File("config", "Project Portals");
-		if(directory.exists()){
-			File newDirectory = new File("config", "projectportals");
-			directory.renameTo(newDirectory);
-		}
-	}
+
 }

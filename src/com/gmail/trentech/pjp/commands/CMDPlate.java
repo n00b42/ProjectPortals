@@ -18,7 +18,7 @@ import com.gmail.trentech.pjp.utils.Utils;
 public class CMDPlate implements CommandExecutor {
 
 	public CMDPlate(){
-		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "plate").getString();
+		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "plate").getString();
 		
 		Help help = new Help("plate", "plate", " Use this command to create a pressure plate that will teleport you to other worlds");
 		help.setSyntax(" /plate <world> [x] [y] [z]\n /" + alias + " <world> [x] [y] [z]");

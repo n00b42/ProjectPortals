@@ -17,7 +17,7 @@ import com.gmail.trentech.pjp.utils.Utils;
 public class CMDRemove implements CommandExecutor {
 
 	public CMDRemove(){
-		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "portal").getString();
+		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "portal").getString();
 		
 		Help help = new Help("cremove", "remove", " Remove an existing portal");
 		help.setSyntax(" /portal remove <name>\n /" + alias + " r <name>");

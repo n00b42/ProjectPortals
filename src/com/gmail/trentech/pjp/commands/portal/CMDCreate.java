@@ -22,7 +22,7 @@ import com.gmail.trentech.pjp.utils.Utils;
 public class CMDCreate implements CommandExecutor {
 
 	public CMDCreate(){
-		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "portal").getString();
+		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "portal").getString();
 		
 		Help help = new Help("pcreate", "create", " Create a portal to another dimension, or specified location");
 		help.setSyntax(" /portal create <name> <world> [x] [y] [z]\n /" + alias + " create <name> <world> [x] [y] [z]");
@@ -82,7 +82,7 @@ public class CMDCreate implements CommandExecutor {
 			destination = destination + "spawn";
 		}
 		
-		PortalListener.getBuilders().put(player, new PortalBuilder(destination).name(name));
+		PortalListener.builders.put(player, new PortalBuilder(destination).name(name));
 		
 		player.sendMessage(Text.builder().color(TextColors.DARK_GREEN).append(Text.of("Begin building your portal frame, followed by "))
 				.onClick(TextActions.runCommand("/pjp:portal save")).append(Text.of(TextColors.YELLOW, TextStyles.UNDERLINE, "/portal save")).build());

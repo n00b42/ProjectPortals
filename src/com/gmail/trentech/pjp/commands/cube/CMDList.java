@@ -23,7 +23,7 @@ import com.gmail.trentech.pjp.utils.Help;
 public class CMDList implements CommandExecutor {
 
 	public CMDList(){
-		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "cube").getString();
+		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "cube").getString();
 		
 		Help help = new Help("clist", "list", " List all cubes");
 		help.setSyntax(" /cube list\n /" + alias + " l");

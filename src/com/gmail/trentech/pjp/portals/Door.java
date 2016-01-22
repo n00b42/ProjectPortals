@@ -1,17 +1,19 @@
 package com.gmail.trentech.pjp.portals;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Optional;
 
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.utils.ConfigManager;
+import com.gmail.trentech.pjp.utils.SQLUtils;
 import com.gmail.trentech.pjp.utils.Utils;
 
-import ninja.leaping.configurate.ConfigurationNode;
-
-public class Door {
+public class Door extends SQLUtils{
 
 	private final String name;
 	private final String destination;
@@ -48,37 +50,65 @@ public class Door {
 	}
 
 	public static Optional<Door> get(Location<World> location){
+		Optional<Door> optionalDoor = Optional.empty();
+		
 		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 		
-		ConfigurationNode config = new ConfigManager("portals.conf").getConfig();
-		
-		if(config.getNode("Doors", name).getString() == null){
-			return Optional.empty();
+		try {
+		    Connection connection = getDataSource().getConnection();
+		    
+		    PreparedStatement statement = connection.prepareStatement("SELECT * FROM Doors");
+		    
+			ResultSet result = statement.executeQuery();
+			
+			while (result.next()) {
+				if (result.getString("Name").equalsIgnoreCase(name)) {
+					optionalDoor = Optional.of(new Door(result.getString("Name"), result.getString("Destination")));
+					
+					break;
+				}
+			}
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 		
-		String destination = config.getNode("Doors", name).getString();
-		
-		return Optional.of(new Door(name, destination)); 
+		return optionalDoor;
 	}
 	
 	public static void remove(Location<World> location){
-		String locationName = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
+		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 		
-		ConfigManager configManager = new ConfigManager("portals.conf");
-		ConfigurationNode config = configManager.getConfig();
-
-		config.getNode("Doors").removeChild(locationName);
-		configManager.save();
+		try {
+		    Connection connection = getDataSource().getConnection();
+		    
+		    PreparedStatement statement = connection.prepareStatement("DELETE from Doors WHERE Name = ?");
+		    
+			statement.setString(1, name);
+			statement.executeUpdate();
+			
+			connection.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void save(Location<World> location, String destination){
-		String locationName = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
+		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 		
-		ConfigManager configManager = new ConfigManager("portals.conf");
-		ConfigurationNode config = configManager.getConfig();
+		try {
+		    Connection connection = getDataSource().getConnection();
+		    
+		    PreparedStatement statement = connection.prepareStatement("INSERT into Doors (Name, Destination) VALUES (?, ?)");	
+			
+		    statement.setString(1, name);
+		    statement.setString(2, destination);
 
-		config.getNode("Doors", locationName).setValue(destination);
-
-		configManager.save();
+			statement.executeUpdate();
+			
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -45,7 +45,7 @@ public class CuboidListener {
         
         ConfigurationNode config = new ConfigManager().getConfig();
         
-        int size = config.getNode("Options", "Portal-Size").getInt();
+        int size = config.getNode("options", "portal_size").getInt();
         if(region.size() > size){
         	player.sendMessage(Text.of(TextColors.DARK_RED, "Cuboids cannot be larger than ", size, " blocks"));
         	event.setCancelled(true);

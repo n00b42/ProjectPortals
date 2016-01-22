@@ -18,7 +18,7 @@ import com.gmail.trentech.pjp.utils.Utils;
 public class CMDDoor implements CommandExecutor {
 
 	public CMDDoor(){
-		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "door").getString();
+		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "door").getString();
 		
 		Help help = new Help("door", "door", " Use this command to create a door that will teleport you to other worlds");
 		help.setSyntax(" /door <world> [x] [y] [z]\n /" + alias + " <world> [x] [y] [z]");

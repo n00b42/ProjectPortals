@@ -20,7 +20,7 @@ import com.gmail.trentech.pjp.utils.Help;
 public class CMDCreate implements CommandExecutor {
 
 	public CMDCreate(){
-		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "home").getString();
+		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "home").getString();
 		
 		Help help = new Help("hcreate", "create", " Create a new home");
 		help.setSyntax(" /home create <name>\n /" + alias + " c <name>");
@@ -52,7 +52,7 @@ public class CMDCreate implements CommandExecutor {
 			homeData = new HomeData();
 		}
 
-		int defaultAmount = new ConfigManager().getConfig().getNode("Options", "Homes").getInt();
+		int defaultAmount = new ConfigManager().getConfig().getNode("options", "homes").getInt();
 
 		int amount = homeData.homes().get().size();
 

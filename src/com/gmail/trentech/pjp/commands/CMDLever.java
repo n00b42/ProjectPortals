@@ -18,7 +18,7 @@ import com.gmail.trentech.pjp.utils.Utils;
 public class CMDLever implements CommandExecutor {
 
 	public CMDLever(){
-		String alias = new ConfigManager().getConfig().getNode("Options", "Command-Alias", "lever").getString();
+		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "lever").getString();
 		
 		Help help = new Help("lever", "lever", " Use this command to create a lever that will teleport you to other worlds");
 		help.setSyntax(" /lever <world> [x] [y] [z]\n /" + alias + " <world> [x] [y] [z]");
