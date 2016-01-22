@@ -52,6 +52,10 @@ public class CMDPjp implements CommandExecutor {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for list of sub commands ")))
 					.onClick(TextActions.executeCallback(Help.getHelp("sign"))).append(Text.of(" /sign")).build());
 		}
+		if(src.hasPermission("pjp.cmd.door") && node.getNode("doors").getBoolean()) {
+			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for list of sub commands ")))
+					.onClick(TextActions.executeCallback(Help.getHelp("door"))).append(Text.of(" /door")).build());
+		}
 		if(src.hasPermission("pjp.cmd.button") && node.getNode("buttons").getBoolean()) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for list of sub commands ")))
 					.onClick(TextActions.executeCallback(Help.getHelp("button"))).append(Text.of(" /button")).build());
