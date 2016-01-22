@@ -28,7 +28,7 @@ public class CMDPortal implements CommandExecutor {
 		List<Text> list = new ArrayList<>();
 
 		if(src.hasPermission("pjp.cmd.portal.create")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("portal command for more information ")))
+			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
 					.onClick(TextActions.executeCallback(Help.getHelp("pcreate"))).append(Text.of(" /portal create")).build());
 		}
 		if(src.hasPermission("pjp.cmd.portal.remove")) {
