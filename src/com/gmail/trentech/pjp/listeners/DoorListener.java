@@ -59,7 +59,7 @@ public class DoorListener {
 			
 			if(!blockType.equals(BlockTypes.ACACIA_DOOR) && !blockType.equals(BlockTypes.BIRCH_DOOR) && !blockType.equals(BlockTypes.DARK_OAK_DOOR)
 					 && !blockType.equals(BlockTypes.IRON_DOOR) && !blockType.equals(BlockTypes.JUNGLE_DOOR) && !blockType.equals(BlockTypes.SPRUCE_DOOR)
-					 && !blockType.equals(BlockTypes.TRAPDOOR) && !blockType.equals(BlockTypes.WOODEN_DOOR)){
+					 && !blockType.equals(BlockTypes.WOODEN_DOOR)){
 				continue;
 			}
 

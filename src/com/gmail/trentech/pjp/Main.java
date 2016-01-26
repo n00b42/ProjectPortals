@@ -1,8 +1,12 @@
 package com.gmail.trentech.pjp;
 
+import java.io.File;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
@@ -35,7 +39,12 @@ import com.gmail.trentech.pjp.listeners.PortalListener;
 import com.gmail.trentech.pjp.listeners.SignListener;
 import com.gmail.trentech.pjp.listeners.TeleportListener;
 import com.gmail.trentech.pjp.listeners.TempListener;
+import com.gmail.trentech.pjp.portals.Button;
+import com.gmail.trentech.pjp.portals.Door;
+import com.gmail.trentech.pjp.portals.Lever;
+import com.gmail.trentech.pjp.portals.Plate;
 import com.gmail.trentech.pjp.portals.Portal;
+import com.gmail.trentech.pjp.portals.Warp;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Resource;
 import com.gmail.trentech.pjp.utils.SQLUtils;
@@ -112,6 +121,9 @@ public class Main {
     	}
     	
     	SQLUtils.createTables();
+    	
+    	convertWarps();
+    	convertPortals();
     }
 
     @Listener
@@ -176,4 +188,85 @@ public class Main {
         }).submit(getPlugin());
 	}
 
+	public void convertWarps(){
+		String folder = "config" + File.separator + "projectportals";
+		
+        File configFile = new File(folder, "warps.conf");
+        
+        if(!configFile.exists()){
+        	return;
+        }
+        
+		ConfigManager configManager = new ConfigManager("warps.conf");
+		ConfigurationNode config = configManager.getConfig();
+		
+		Map<Object, ? extends ConfigurationNode> warps = config.getNode("Warps").getChildrenMap();
+
+		if(!warps.isEmpty()){
+			for(Entry<Object, ? extends ConfigurationNode> warp : warps.entrySet()){
+				String name = warp.getKey().toString();
+				
+				String worldName = config.getNode("Warps", name, "World").getString();
+				
+				int x = config.getNode("Warps", name, "X").getInt();
+				int y = config.getNode("Warps", name, "Y").getInt();
+				int z = config.getNode("Warps", name, "Z").getInt();
+
+				String destination = worldName + ":" + x + "." + y + "." + z;
+				
+				Warp.save(name, destination);
+			}
+		}
+		configFile.delete();
+	}
+	
+	public void convertPortals(){
+		String folder = "config" + File.separator + "projectportals";
+		
+        File configFile = new File(folder, "portals.conf");
+        
+        if(!configFile.exists()){
+        	return;
+        }
+
+		String[] p = {"Buttons", "Doors", "Levers", "Plates"};
+
+		ConfigManager configManager = new ConfigManager("portals.conf");
+		ConfigurationNode config = configManager.getConfig();
+		
+		for(String portal : p){
+			Map<Object, ? extends ConfigurationNode> nodes = config.getNode(portal).getChildrenMap();
+
+			if(!nodes.isEmpty()){
+				for(Entry<Object, ? extends ConfigurationNode> node : nodes.entrySet()){
+					String name = node.getKey().toString();
+					
+					String destination = config.getNode(portal, name).getString();
+
+					switch(portal){
+					case "Buttons": Button.save(name, destination); break;
+					case "Doors": Door.save(name, destination); break;
+					case "Levers": Lever.save(name, destination); break;
+					case "Plates": Plate.save(name, destination); break;
+					}				
+				}
+			}
+		}
+		
+		Map<Object, ? extends ConfigurationNode> portals = config.getNode("Portals").getChildrenMap();
+
+		if(!portals.isEmpty()){
+			for(Entry<Object, ? extends ConfigurationNode> node : portals.entrySet()){
+				String name = node.getKey().toString();
+				
+				List<String> frame = config.getNode("Portal", name, "Frame").getChildrenList().stream().map(ConfigurationNode::getString).collect(Collectors.toList());
+				List<String> fill = config.getNode("Portal", name, "Fill").getChildrenList().stream().map(ConfigurationNode::getString).collect(Collectors.toList());
+				
+				String destination = config.getNode("Portals", name, "Destination").getString();
+
+				Portal.save(new Portal(destination, destination, frame, fill));
+			}
+		}
+		configFile.delete();
+	}
 }

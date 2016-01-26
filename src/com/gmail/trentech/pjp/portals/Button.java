@@ -111,4 +111,21 @@ public class Button extends SQLUtils{
 			e.printStackTrace();
 		}
 	}
+	
+	public static void save(String name, String destination){
+		try {
+		    Connection connection = getDataSource().getConnection();
+		    
+		    PreparedStatement statement = connection.prepareStatement("INSERT into Buttons (Name, Destination) VALUES (?, ?)");	
+			
+		    statement.setString(1, name);
+		    statement.setString(2, destination);
+
+			statement.executeUpdate();
+			
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }

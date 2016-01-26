@@ -56,8 +56,7 @@ public class TempListener {
 			}
 			
 			player.offer(homeData);
-			
-			configFile.delete();
 		}
+		configFile.delete();
 	}
 }
