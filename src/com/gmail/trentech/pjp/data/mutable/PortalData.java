@@ -11,9 +11,11 @@ import org.spongepowered.api.data.value.mutable.Value;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.PJPKeys;
 import com.gmail.trentech.pjp.data.immutable.ImmutablePortalData;
+import com.gmail.trentech.pjp.utils.Rotation;
 import com.gmail.trentech.pjp.utils.Utils;
 import com.google.common.base.Objects;
 
@@ -33,6 +35,16 @@ public class PortalData extends AbstractData<PortalData, ImmutablePortalData> {
 		}else{
 			this.destination = world.getName() + ":spawn";
 		}
+	}
+	
+	public PortalData(String name, World world, Rotation rotation) {
+		this.name = name;
+		this.destination = world.getName() + ":spawn:" + rotation.getName();
+	}
+	
+	public PortalData(String name, Location<World> destination, Rotation rotation) {
+		this.name = name;
+		this.destination = destination.getExtent().getName() + ":" + destination.getBlockX() + "." + destination.getBlockY() + "." + destination.getBlockZ() + ":" + rotation.getName();
 	}
 	
 	public PortalData(String name, Location<World> destination) {
@@ -73,6 +85,22 @@ public class PortalData extends AbstractData<PortalData, ImmutablePortalData> {
 			
 			return Optional.of(world.getLocation(x, y, z));	
 		}
+	}
+	
+	public Optional<Vector3d> getRotation(){
+		String[] args = destination.split(":");
+		
+		if(args.length != 3){
+			return Optional.empty();
+		}
+		
+		Optional<Rotation> optional = Rotation.get(args[2]);
+		
+		if(!optional.isPresent()){
+			return Optional.empty();
+		}
+		
+		return Optional.of(new Vector3d(0,optional.get().getValue(),0));
 	}
 	
 	@Override

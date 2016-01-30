@@ -1,5 +1,7 @@
 package com.gmail.trentech.pjp.commands;
 
+import java.util.Optional;
+
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -15,6 +17,7 @@ import com.gmail.trentech.pjp.data.mutable.PortalData;
 import com.gmail.trentech.pjp.listeners.SignListener;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
+import com.gmail.trentech.pjp.utils.Rotation;
 import com.gmail.trentech.pjp.utils.Utils;
 
 public class CMDSign implements CommandExecutor {
@@ -24,7 +27,7 @@ public class CMDSign implements CommandExecutor {
 		
 		Help help = new Help("sign", "sign", " Use this command to create a sign that will teleport you to other worlds");
 		help.setSyntax(" /sign <world> [x] [y] [z]\n /" + alias + " <world> [x] [y] [z]");
-		help.setExample(" /sign MyWorld\n /sign MyWorld -100 65 254\n /sign MyWorld random");
+		help.setExample(" /sign MyWorld\n /sign MyWorld -100 65 254\n /sign MyWorld random\n /sign MyWorld -100 65 254 east\n /sign MyWorld northeast");
 		help.save();
 	}
 	
@@ -51,20 +54,40 @@ public class CMDSign implements CommandExecutor {
 		PortalData portalData;
 		
 		if(args.hasAny("coords")) {
-			String coords = args.<String>getOne("coords").get();
-			if(coords.equalsIgnoreCase("random")){
+			String[] coords = args.<String>getOne("coords").get().split(" ");
+			Optional<Rotation> rotation = Rotation.get(coords[0]);
+			
+			if(rotation.isPresent()){
+				portalData = new PortalData("", world, rotation.get());
+			}else if(coords[0].equalsIgnoreCase("random")){
 				portalData = new PortalData("", world, true);
 			}else{
-				String[] testInt = coords.split(" ");
+				int x;
+				int y;
+				int z;
+				
 				try{
-					int x = Integer.parseInt(testInt[0]);
-					int y = Integer.parseInt(testInt[1]);
-					int z = Integer.parseInt(testInt[2]);
+					String[] vector = coords[1].split(".");
 					
-					portalData = new PortalData("", world.getLocation(x, y, z));
+					x = Integer.parseInt(vector[0]);
+					y = Integer.parseInt(vector[1]);
+					z = Integer.parseInt(vector[2]);				
 				}catch(Exception e){
-					src.sendMessage(Text.of(TextColors.YELLOW, "/sign <world> [x] [y] [z]"));
+					src.sendMessage(Text.of(TextColors.YELLOW, "/sign <world> [x] [y] [z] [direction]"));
 					return CommandResult.empty();
+				}
+				
+				if(coords.length == 3){
+					rotation = Rotation.get(coords[2]);
+					
+					if(rotation.isPresent()){
+						portalData = new PortalData("", world.getLocation(x, y, z), rotation.get());
+					}else{
+						src.sendMessage(Text.of(TextColors.YELLOW, "/sign <world> [x] [y] [z] [direction]"));
+						return CommandResult.empty();
+					}
+				}else{
+					portalData = new PortalData("", world.getLocation(x, y, z));
 				}
 			}
 		}else{

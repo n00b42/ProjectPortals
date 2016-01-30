@@ -9,7 +9,9 @@ import java.util.Optional;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
+import com.gmail.trentech.pjp.utils.Rotation;
 import com.gmail.trentech.pjp.utils.SQLUtils;
 import com.gmail.trentech.pjp.utils.Utils;
 
@@ -47,6 +49,22 @@ public class Button extends SQLUtils{
 			
 			return Optional.of(world.getLocation(x, y, z));	
 		}
+	}
+	
+	public Optional<Vector3d> getRotation(){
+		String[] args = destination.split(":");
+		
+		if(args.length != 3){
+			return Optional.empty();
+		}
+		
+		Optional<Rotation> optional = Rotation.get(args[2]);
+		
+		if(!optional.isPresent()){
+			return Optional.empty();
+		}
+		
+		return Optional.of(new Vector3d(0,optional.get().getValue(),0));
 	}
 
 	public static Optional<Button> get(Location<World> location){

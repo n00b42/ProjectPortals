@@ -16,6 +16,7 @@ import org.spongepowered.api.world.World;
 import com.gmail.trentech.pjp.portals.Warp;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
+import com.gmail.trentech.pjp.utils.Rotation;
 
 public class CMDCreate implements CommandExecutor {
 
@@ -51,7 +52,7 @@ public class CMDCreate implements CommandExecutor {
 		
 		Location<World> location = player.getLocation();
 		
-		String destination = player.getWorld().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
+		String destination = player.getWorld().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ() + ":" + Rotation.getClosest(player.getRotation().getFloorY());
 		
 		Warp.save(warpName, destination);
 

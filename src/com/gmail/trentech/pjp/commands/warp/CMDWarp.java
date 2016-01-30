@@ -19,6 +19,7 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.portals.Warp;
@@ -80,7 +81,14 @@ public class CMDWarp implements CommandExecutor {
 
 			if(!Main.getGame().getEventManager().post(teleportEvent)){
 				spawnLocation = teleportEvent.getDestination();
-				player.setLocation(spawnLocation);
+				
+				Optional<Vector3d> optionalRotation = warp.getRotation();
+				
+				if(optionalRotation.isPresent()){
+					player.setLocationAndRotation(spawnLocation, optionalRotation.get());
+				}else{
+					player.setLocation(spawnLocation);
+				}
 			}
 
 			return CommandResult.success();

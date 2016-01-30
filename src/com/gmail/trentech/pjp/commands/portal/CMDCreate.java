@@ -1,5 +1,7 @@
 package com.gmail.trentech.pjp.commands.portal;
 
+import java.util.Optional;
+
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -17,6 +19,7 @@ import com.gmail.trentech.pjp.portals.Portal;
 import com.gmail.trentech.pjp.portals.builders.PortalBuilder;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
+import com.gmail.trentech.pjp.utils.Rotation;
 import com.gmail.trentech.pjp.utils.Utils;
 
 public class CMDCreate implements CommandExecutor {
@@ -25,8 +28,8 @@ public class CMDCreate implements CommandExecutor {
 		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "portal").getString();
 		
 		Help help = new Help("pcreate", "create", " Create a portal to another dimension, or specified location");
-		help.setSyntax(" /portal create <name> <world> [x] [y] [z]\n /" + alias + " create <name> <world> [x] [y] [z]");
-		help.setExample(" /portal create MyPortal MyWorld\n /portal create MyPortal MyWorld -100 65 254\n /portal create MyPortal MyWorld random");
+		help.setSyntax(" /portal create <name> <world> [x] [y] [z] [direction]\n /" + alias + " create <name> <world> [x] [y] [z] [direction]");
+		help.setExample(" /portal create MyPortal MyWorld\n /portal create MyPortal MyWorld -100 65 254\n /portal create MyPortal MyWorld random\n /portal create MyPortal MyWorld -100 65 254 north");
 		help.save();
 	}
 	
@@ -39,7 +42,7 @@ public class CMDCreate implements CommandExecutor {
 		Player player = (Player) src;
 		
 		if(!args.hasAny("name")) {
-			src.sendMessage(Text.of(TextColors.YELLOW, "/portal create <name> <world> [x] [y] [z]"));
+			src.sendMessage(Text.of(TextColors.YELLOW, "/portal create <name> <world> [x] [y] [z] [direction]"));
 			return CommandResult.empty();
 		}
 		String name = args.<String>getOne("name").get();
@@ -50,7 +53,7 @@ public class CMDCreate implements CommandExecutor {
 		}
 		
 		if(!args.hasAny("world")) {
-			src.sendMessage(Text.of(TextColors.YELLOW, "/portal create <name> <world> [x] [y] [z]"));
+			src.sendMessage(Text.of(TextColors.YELLOW, "/portal create <name> <world> [x] [y] [z] [direction]"));
 			return CommandResult.empty();
 		}
 		String worldName = Utils.getBaseName(args.<String>getOne("world").get());
@@ -63,23 +66,44 @@ public class CMDCreate implements CommandExecutor {
 		String destination = worldName + ":";
 		
 		if(args.hasAny("coords")) {
-			String coords = args.<String>getOne("coords").get();
-			if(coords.equalsIgnoreCase("random")){
-				destination = destination + "random";
+			String[] coords = args.<String>getOne("coords").get().split(" ");
+			Optional<Rotation> rotation = Rotation.get(coords[0]);
+			
+			if(rotation.isPresent()){
+				destination = worldName + ":spawn:" + rotation.get().getName();
+			}else if(coords[0].equalsIgnoreCase("random")){
+				destination = worldName + ":random";
 			}else{
+				int x;
+				int y;
+				int z;
+				
 				try{
-					String[] testInt = coords.split(" ");
-					Integer.parseInt(testInt[0]);
-					Integer.parseInt(testInt[1]);
-					Integer.parseInt(testInt[2]);
+					String[] vector = coords[1].split(".");
+					
+					x = Integer.parseInt(vector[0]);
+					y = Integer.parseInt(vector[1]);
+					z = Integer.parseInt(vector[2]);				
 				}catch(Exception e){
-					src.sendMessage(Text.of(TextColors.YELLOW, "/portal <name> <world> [x] [y] [z]"));
+					src.sendMessage(Text.of(TextColors.YELLOW, "/portal create <world> [x] [y] [z] [direction]"));
 					return CommandResult.empty();
 				}
-				destination = destination + coords.replace(" ", ".");
+				
+				if(coords.length == 3){
+					rotation = Rotation.get(coords[2]);
+					
+					if(rotation.isPresent()){
+						destination = worldName + ":" + x + "." + y + "." + z + ":" + rotation.get().getName();
+					}else{
+						src.sendMessage(Text.of(TextColors.YELLOW, "/portal create <world> [x] [y] [z] [direction]"));
+						return CommandResult.empty();
+					}
+				}else{
+					destination = worldName + ":" + x + "." + y + "." + z;	
+				}
 			}
 		}else{
-			destination = destination + "spawn";
+			destination = worldName + ":spawn";
 		}
 		
 		PortalListener.builders.put(player, new PortalBuilder(destination).name(name));

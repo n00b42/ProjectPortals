@@ -14,9 +14,11 @@ import org.spongepowered.api.data.value.immutable.ImmutableMapValue;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.PJPKeys;
 import com.gmail.trentech.pjp.data.mutable.HomeData;
+import com.gmail.trentech.pjp.utils.Rotation;
 
 public class ImmutableHomeData extends AbstractImmutableData<ImmutableHomeData, HomeData> {
 
@@ -30,8 +32,8 @@ public class ImmutableHomeData extends AbstractImmutableData<ImmutableHomeData, 
 		this.homes = homes;
 	}
 	
-	public void addHome(String name, Location<World> location) {
-		String destination = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
+	public void addHome(String name, Location<World> location, Rotation rotation) {
+		String destination = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ() + ":" + rotation.getName();
 		Map<String, String> newHomes = homes().get();
 		newHomes.put(name, destination);
 		
@@ -56,7 +58,7 @@ public class ImmutableHomeData extends AbstractImmutableData<ImmutableHomeData, 
         return Sponge.getRegistry().getValueFactory().createMapValue(PJPKeys.HOME_LIST, this.homes).asImmutable();
     }
 
-	public Optional<Location<World>> getHome(String name) {
+	public Optional<Location<World>> getDestination(String name) {
 		if(!homes.containsKey(name)){
 			return Optional.empty();
 		}
@@ -74,6 +76,25 @@ public class ImmutableHomeData extends AbstractImmutableData<ImmutableHomeData, 
 		int z = Integer.parseInt(coords[2]);
 			
 		return Optional.of(world.getLocation(x, y, z));	
+	}
+	
+	public Optional<Vector3d> getRotation(String name){
+		if(!homes.containsKey(name)){
+			return Optional.empty();
+		}
+		String[] args = homes.get(name).split(":");
+		
+		if(args.length != 3){
+			return Optional.empty();
+		}
+		
+		Optional<Rotation> optional = Rotation.get(args[2]);
+		
+		if(!optional.isPresent()){
+			return Optional.empty();
+		}
+		
+		return Optional.of(new Vector3d(0,optional.get().getValue(),0));
 	}
 
     @Override

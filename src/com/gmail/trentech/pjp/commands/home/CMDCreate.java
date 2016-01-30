@@ -16,6 +16,7 @@ import org.spongepowered.api.world.World;
 import com.gmail.trentech.pjp.data.mutable.HomeData;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
+import com.gmail.trentech.pjp.utils.Rotation;
 
 public class CMDCreate implements CommandExecutor {
 
@@ -71,14 +72,14 @@ public class CMDCreate implements CommandExecutor {
 			}
 			amount++;
 		}
-		if(homeData.getHome(homeName).isPresent()){
+		if(homeData.getDestination(homeName).isPresent()){
 			src.sendMessage(Text.of(TextColors.DARK_RED, homeName, " already exists."));
 			return CommandResult.empty();
 		}
 
 		Location<World> location = player.getLocation();
-
-		homeData.addHome(homeName, location);
+		
+		homeData.addHome(homeName, location, Rotation.getClosest(player.getRotation().getFloorY()));
 		
 		player.offer(homeData);
 		

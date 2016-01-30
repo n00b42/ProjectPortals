@@ -79,73 +79,73 @@ public class ConfigManager {
 	
 	private void init() {
 		if(file.getName().equalsIgnoreCase("config.conf")){
-			if(config.getNode("options", "portal_size").getString() == null) {
+			if(config.getNode("options", "portal_size").isVirtual()) {
 				config.getNode("options", "portal_size").setValue(100).setComment("Maximum number of blocks a portal can use");
 			}
-			if(config.getNode("options", "homes").getString() == null) {
+			if(config.getNode("options", "homes").isVirtual()) {
 				config.getNode("options", "homes").setValue(5).setComment("Default number of homes a player can have");
 			}
-			if(config.getNode("options", "particles").getString() == null) {
+			if(config.getNode("options", "particles").isVirtual()) {
 				config.getNode("options", "particles").setValue(true).setComment("Display particle effects on portal creation and teleporting");
 			}
-			if(config.getNode("options", "random_spawn_radius").getString() == null) {
+			if(config.getNode("options", "random_spawn_radius").isVirtual()) {
 				config.getNode("options", "random_spawn_radius").setValue(5000).setComment("World radius for random spawn portals.");
 			}
-			if(config.getNode("settings", "commands").getString() == null){
+			if(config.getNode("settings", "commands").isVirtual()){
 				config.getNode("settings", "commands").setComment("Allow to set custom command aliases");
 			}
-			if(config.getNode("settings", "commands", "portal").getString() == null) {
+			if(config.getNode("settings", "commands", "portal").isVirtual()) {
 				config.getNode("settings", "commands", "portal").setValue("p");
 			}
-			if(config.getNode("settings", "commands", "button").getString() == null) {
+			if(config.getNode("settings", "commands", "button").isVirtual()) {
 				config.getNode("settings", "commands", "button").setValue("btn");
 			}
-			if(config.getNode("settings", "commands", "door").getString() == null) {
+			if(config.getNode("settings", "commands", "door").isVirtual()) {
 				config.getNode("settings", "commands", "door").setValue("d");
 			}
-			if(config.getNode("settings", "commands", "plate").getString() == null) {
+			if(config.getNode("settings", "commands", "plate").isVirtual()) {
 				config.getNode("settings", "commands", "plate").setValue("pl");
 			}
-			if(config.getNode("settings", "commands", "sign").getString() == null) {
+			if(config.getNode("settings", "commands", "sign").isVirtual()) {
 				config.getNode("settings", "commands", "sign").setValue("s");
 			}
-			if(config.getNode("settings", "commands", "lever").getString() == null) {
+			if(config.getNode("settings", "commands", "lever").isVirtual()) {
 				config.getNode("settings", "commands", "lever").setValue("l");
 			}
-			if(config.getNode("settings", "commands", "home").getString() == null) {
+			if(config.getNode("settings", "commands", "home").isVirtual()) {
 				config.getNode("settings", "commands", "home").setValue("h");
 			}
-			if(config.getNode("settings", "commands", "warp").getString() == null) {
+			if(config.getNode("settings", "commands", "warp").isVirtual()) {
 				config.getNode("settings", "commands", "warp").setValue("wp");
 			}
-			if(config.getNode("settings", "commands", "back").getString() == null) {
+			if(config.getNode("settings", "commands", "back").isVirtual()) {
 				config.getNode("settings", "commands", "back").setValue("bk");
 			}
-			if(config.getNode("settings", "modules").getString() == null) {
+			if(config.getNode("settings", "modules").isVirtual()) {
 				config.getNode("settings", "modules").setComment("Toggle on and off specific features");
 			}
-			if(config.getNode("settings", "modules", "portals").getString() == null) {
+			if(config.getNode("settings", "modules", "portals").isVirtual()) {
 				config.getNode("settings", "modules", "portals").setValue(true);
 			}
-			if(config.getNode("settings", "modules", "buttons").getString() == null) {
+			if(config.getNode("settings", "modules", "buttons").isVirtual()) {
 				config.getNode("settings", "modules", "buttons").setValue(true);
 			}
-			if(config.getNode("settings", "modules", "doors").getString() == null) {
+			if(config.getNode("settings", "modules", "doors").isVirtual()) {
 				config.getNode("settings", "modules", "doors").setValue(true);
 			}
-			if(config.getNode("settings", "modules", "plates").getString() == null) {
+			if(config.getNode("settings", "modules", "plates").isVirtual()) {
 				config.getNode("settings", "modules", "plates").setValue(true);
 			}
-			if(config.getNode("settings", "modules", "levers").getString() == null) {
+			if(config.getNode("settings", "modules", "levers").isVirtual()) {
 				config.getNode("settings", "modules", "levers").setValue(true);
 			}
-			if(config.getNode("settings", "modules", "signs").getString() == null) {
+			if(config.getNode("settings", "modules", "signs").isVirtual()) {
 				config.getNode("settings", "modules", "signs").setValue(true);
 			}
-			if(config.getNode("settings", "modules", "warps").getString() == null) {
+			if(config.getNode("settings", "modules", "warps").isVirtual()) {
 				config.getNode("settings", "modules", "warps").setValue(true);
 			}
-			if(config.getNode("settings", "modules", "homes").getString() == null) {
+			if(config.getNode("settings", "modules", "homes").isVirtual()) {
 				config.getNode("settings", "modules", "homes").setValue(true);
 			}
 			save();

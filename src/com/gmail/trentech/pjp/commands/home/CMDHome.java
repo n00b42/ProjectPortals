@@ -19,6 +19,7 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.mutable.HomeData;
 import com.gmail.trentech.pjp.events.TeleportEvent;
@@ -47,7 +48,7 @@ public class CMDHome implements CommandExecutor {
 				homeData = new HomeData();
 			}
 
-			Optional<Location<World>> optionalSpawnLocation = homeData.getHome(homeName);
+			Optional<Location<World>> optionalSpawnLocation = homeData.getDestination(homeName);
 			
 			if(!optionalSpawnLocation.isPresent()){
 				src.sendMessage(Text.of(TextColors.DARK_RED, homeName, " does not exist or is invalid"));
@@ -77,7 +78,14 @@ public class CMDHome implements CommandExecutor {
 
 			if(!Main.getGame().getEventManager().post(teleportEvent)){
 				spawnLocation = teleportEvent.getDestination();
-				player.setLocation(spawnLocation);
+				
+				Optional<Vector3d> optionalRotation = homeData.getRotation(homeName);
+				
+				if(optionalRotation.isPresent()){
+					player.setLocationAndRotation(spawnLocation, optionalRotation.get());
+				}else{
+					player.setLocation(spawnLocation);
+				}
 			}
 
 			return CommandResult.success();

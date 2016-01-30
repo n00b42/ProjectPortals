@@ -50,7 +50,7 @@ public class CMDRemove implements CommandExecutor {
 			homeData = new HomeData();
 		}
 
-		if(!homeData.getHome(homeName).isPresent()){
+		if(!homeData.getDestination(homeName).isPresent()){
 			src.sendMessage(Text.of(TextColors.DARK_RED, homeName, " does not exist"));
 			return CommandResult.empty();
 		}

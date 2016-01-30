@@ -1,5 +1,7 @@
 package com.gmail.trentech.pjp.commands;
 
+import java.util.Optional;
+
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -13,6 +15,7 @@ import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.listeners.PlateListener;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
+import com.gmail.trentech.pjp.utils.Rotation;
 import com.gmail.trentech.pjp.utils.Utils;
 
 public class CMDPlate implements CommandExecutor {
@@ -21,8 +24,8 @@ public class CMDPlate implements CommandExecutor {
 		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "plate").getString();
 		
 		Help help = new Help("plate", "plate", " Use this command to create a pressure plate that will teleport you to other worlds");
-		help.setSyntax(" /plate <world> [x] [y] [z]\n /" + alias + " <world> [x] [y] [z]");
-		help.setExample(" /plate MyWorld\n /plate MyWorld -100 65 254\n /plate MyWorld random");
+		help.setSyntax(" /plate <world> [x] [y] [z] [direction]\n /" + alias + " <world> [x] [y] [z] [direction]");
+		help.setExample(" /plate MyWorld\n /plate MyWorld -100 65 254\n /plate MyWorld random\n /plate MyWorld -100 65 254 northeast\n /plate MyWorld south");
 		help.save();
 	}
 	
@@ -35,7 +38,7 @@ public class CMDPlate implements CommandExecutor {
 		Player player = (Player) src;
 		
 		if(!args.hasAny("name")) {
-			src.sendMessage(Text.of(TextColors.GOLD, "/plate <world> [x] [y] [z]"));
+			src.sendMessage(Text.of(TextColors.GOLD, "/plate <world> [x] [y] [z] [direction]"));
 			return CommandResult.empty();
 		}
 		String worldName = Utils.getBaseName(args.<String>getOne("name").get());
@@ -48,20 +51,41 @@ public class CMDPlate implements CommandExecutor {
 		String destination;
 		
 		if(args.hasAny("coords")) {
-			String coords = args.<String>getOne("coords").get();
-			if(coords.equalsIgnoreCase("random")){
+			String[] coords = args.<String>getOne("coords").get().split(" ");
+			Optional<Rotation> rotation = Rotation.get(coords[0]);
+			
+			if(rotation.isPresent()){
+				destination = worldName + ":spawn:" + rotation.get().getName();
+			}else if(coords[0].equalsIgnoreCase("random")){
 				destination = worldName + ":random";
 			}else{
-				String[] testInt = coords.split(" ");
+				int x;
+				int y;
+				int z;
+				
 				try{
-					Integer.parseInt(testInt[0]);
-					Integer.parseInt(testInt[1]);
-					Integer.parseInt(testInt[2]);
+					String[] vector = coords[1].split(".");
+					
+					x = Integer.parseInt(vector[0]);
+					y = Integer.parseInt(vector[1]);
+					z = Integer.parseInt(vector[2]);				
 				}catch(Exception e){
-					src.sendMessage(Text.of(TextColors.YELLOW, "/plate <world> [x] [y] [z]"));
+					src.sendMessage(Text.of(TextColors.YELLOW, "/plate <world> [x] [y] [z] [direction]"));
 					return CommandResult.empty();
 				}
-				destination = worldName + ":" + testInt[0] + "." + testInt[1] + "." + testInt[2];
+				
+				if(coords.length == 3){
+					rotation = Rotation.get(coords[2]);
+					
+					if(rotation.isPresent()){
+						destination = worldName + ":" + x + "." + y + "." + z + ":" + rotation.get().getName();
+					}else{
+						src.sendMessage(Text.of(TextColors.YELLOW, "/plate <world> [x] [y] [z] [direction]"));
+						return CommandResult.empty();
+					}
+				}else{
+					destination = worldName + ":" + x + "." + y + "." + z;	
+				}
 			}
 		}else{
 			destination = worldName + ":spawn";
