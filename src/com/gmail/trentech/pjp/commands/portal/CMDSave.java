@@ -5,6 +5,7 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
+import org.spongepowered.api.effect.sound.SoundTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
@@ -58,6 +59,7 @@ public class CMDSave implements CommandExecutor {
 				
 			}).submit(Main.getPlugin());
 			
+			player.playSound(SoundTypes.AMBIENCE_THUNDER, player.getLocation().getPosition(), 1);
 			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Portal ", builder.getName(), " created successfully"));
 		}
 		

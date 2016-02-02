@@ -5,11 +5,15 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.entity.damage.DamageTypes;
+import org.spongepowered.api.event.cause.entity.damage.source.DamageSource;
+import org.spongepowered.api.event.entity.DamageEntityEvent;
 import org.spongepowered.api.event.entity.DisplaceEntityEvent;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.text.Text;
@@ -78,7 +82,13 @@ public class PortalListener {
 		PortalBuilder builder = (PortalBuilder) builders.get(player);
 		
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
+			if(transaction.getFinal().getState().getType().equals(BlockTypes.FIRE)){
+				event.setCancelled(true);
+				break;
+			}
+			
 			Location<World> location = transaction.getFinal().getLocation().get();
+			
 			if(builder.isFill()){
 				builder.addFill(location);
 			}else{
@@ -158,4 +168,27 @@ public class PortalListener {
 			}
 		}
 	}
+	
+    @Listener
+    public void onDamageEntityEvent(DamageEntityEvent event) {
+    	if(!(event.getTargetEntity() instanceof Player)) {
+    		return;
+    	}
+    	Player player = (Player) event.getTargetEntity();
+
+		if(!builders.containsKey(player)){
+			return;
+		}
+
+		if(!event.getCause().first(DamageSource.class).isPresent()){
+			return;
+		}
+		DamageSource damageSource = event.getCause().first(DamageSource.class).get();
+
+		if(!damageSource.getType().equals(DamageTypes.PROJECTILE)){
+			return;
+		}
+		event.setCancelled(true);
+	}
+    
 }
