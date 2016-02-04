@@ -2,18 +2,9 @@ package com.gmail.trentech.pjp.utils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-
-import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.block.BlockTypes;
-import org.spongepowered.api.world.Location;
-import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
 
-import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
@@ -68,15 +59,6 @@ public class ConfigManager {
 		return config;
 	}
 
-	public void save(){
-		try {
-			loader.save(config);
-		} catch (IOException e) {
-			Main.getLog().error("Failed to save config");
-			e.printStackTrace();
-		}
-	}
-	
 	private void init() {
 		if(file.getName().equalsIgnoreCase("config.conf")){
 			if(config.getNode("options", "portal_size").isVirtual()) {
@@ -90,6 +72,9 @@ public class ConfigManager {
 			}
 			if(config.getNode("options", "random_spawn_radius").isVirtual()) {
 				config.getNode("options", "random_spawn_radius").setValue(5000).setComment("World radius for random spawn portals.");
+			}
+			if(config.getNode("options", "portal_permissions").isVirtual()) {
+				config.getNode("options", "portal_permissions").setValue(false).setComment("Require permission node for each portal. ex. 'pjp.portal.<name>', 'pjp.button.<world_x_y_z>'. If false use 'pjp.portal.interact' instead");
 			}
 			if(config.getNode("settings", "commands").isVirtual()){
 				config.getNode("settings", "commands").setComment("Allow to set custom command aliases");
@@ -173,48 +158,13 @@ public class ConfigManager {
 			e.printStackTrace();
 		}
 	}
-
-	public boolean removeCuboidLocation(String locationName){
-		for(Entry<Object, ? extends ConfigurationNode> node : config.getNode("Cuboids").getChildrenMap().entrySet()){
-			String uuid = node.getKey().toString();
-			
-			List<String> list = config.getNode("Cuboids", uuid, "Locations").getChildrenList().stream().map(ConfigurationNode::getString).collect(Collectors.toList());
-
-	    	if(!list.contains(locationName)){
-	    		continue;
-	    	}
-
-			for(String loc : list){
-	        	String[] info = loc.split("\\.");
-
-	        	Location<World> location = Main.getGame().getServer().getWorld(info[0]).get().getLocation(Integer.parseInt(info[1]), Integer.parseInt(info[2]), Integer.parseInt(info[3]));
-
-            	if(location.getBlockType().equals(BlockTypes.FLOWING_WATER)){
-            		BlockState block = BlockState.builder().blockType(BlockTypes.AIR).build();
-            		location.setBlock(block);
-            	}
-			}
-			
-			config.getNode("Cuboids").removeChild(uuid);
-			save();
-			
-			return true;
+	
+	public void save(){
+		try {
+			loader.save(config);
+		} catch (IOException e) {
+			Main.getLog().error("Failed to save config");
+			e.printStackTrace();
 		}
-		return false;
 	}
-
-	public ConfigurationNode getCuboid(String locationName){
-		for(Entry<Object, ? extends ConfigurationNode> node : config.getNode("Cuboids").getChildrenMap().entrySet()){
-			String uuid = node.getKey().toString();
-
-	    	List<String> list = config.getNode("Cuboids", uuid, "Locations").getChildrenList().stream().map(ConfigurationNode::getString).collect(Collectors.toList());
-
-	    	if(!list.contains(locationName)){
-	    		continue;
-	    	}
-	    	return config.getNode("Cuboids", uuid);
-		}
-		return null;
-	}
-
 }

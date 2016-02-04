@@ -59,6 +59,20 @@ public class PlateListener {
 			}
 			Plate plate = optionalPlate.get();
 			
+			if(new ConfigManager().getConfig().getNode("options", "portal_permissions").getBoolean()){
+				if(!player.hasPermission("pjp.plate." + location.getExtent().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ())){
+					player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use this pressure plate portal"));
+					event.setCancelled(true);
+					return;
+				}
+			}else{
+				if(!player.hasPermission("pjp.plate.interact")){
+					player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with pressure plate portals"));
+					event.setCancelled(true);
+					return;
+				}
+			}
+			
 			Optional<Location<World>> optionalSpawnLocation = plate.getDestination();
 			
 			if(!optionalSpawnLocation.isPresent()){

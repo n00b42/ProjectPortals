@@ -60,10 +60,18 @@ public class ButtonListener {
 			
 			Button button = optionalButton.get();
 
-			if(!player.hasPermission("pjp.button.interact")){
-				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with button portals"));
-				event.setCancelled(true);
-				return;
+			if(new ConfigManager().getConfig().getNode("options", "portal_permissions").getBoolean()){
+				if(!player.hasPermission("pjp.button." + location.getExtent().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ())){
+					player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use this button portal"));
+					event.setCancelled(true);
+					return;
+				}
+			}else{
+				if(!player.hasPermission("pjp.button.interact")){
+					player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with button portals"));
+					event.setCancelled(true);
+					return;
+				}
 			}
 
 			Optional<Location<World>> optionalSpawnLocation = button.getDestination();

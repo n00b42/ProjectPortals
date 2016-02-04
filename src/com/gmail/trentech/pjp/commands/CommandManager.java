@@ -4,8 +4,6 @@ import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.text.Text;
 
-import com.gmail.trentech.pjp.commands.cube.CMDCube;
-import com.gmail.trentech.pjp.commands.cube.CMDShow;
 import com.gmail.trentech.pjp.commands.home.CMDHome;
 import com.gmail.trentech.pjp.commands.portal.CMDPortal;
 import com.gmail.trentech.pjp.commands.portal.CMDSave;
@@ -76,46 +74,6 @@ public class CommandManager {
 		    .child(cmdHomeRemove, "remove", "r")
 		    .child(cmdHomeList, "list", "l")
 		    .executor(new CMDHome())
-		    .build();
-	
-	
-	public CommandSpec cmdCubeCreate = CommandSpec.builder()
-		    .description(Text.of("Create a new cube portal"))
-		    .permission("pjp.cmd.cube.create")
-		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))),
-		    		GenericArguments.optional(GenericArguments.string(Text.of("world"))),
-		    		GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("coords"))))
-		    .executor(new com.gmail.trentech.pjp.commands.cube.CMDCreate())
-		    .build();
-	
-	public CommandSpec cmdCubeRemove = CommandSpec.builder()
-		    .description(Text.of("Remove an existing cube portal"))
-		    .permission("pjp.cmd.cube.remove")
-		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))))
-		    .executor(new com.gmail.trentech.pjp.commands.cube.CMDRemove())
-		    .build();
-	
-	public CommandSpec cmdCubeList = CommandSpec.builder()
-		    .description(Text.of("List all cube portal"))
-		    .permission("pjp.cmd.cube.list")
-		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))))
-		    .executor(new com.gmail.trentech.pjp.commands.cube.CMDList())
-		    .build();
-	
-	public CommandSpec cmdShow = CommandSpec.builder()
-		    .description(Text.of("Fills all cube portal regions to make them temporarly visible"))
-		    .permission("pjp.cmd.cube.show")
-		    .executor(new CMDShow())
-		    .build();
-	
-	public CommandSpec cmdCube = CommandSpec.builder()
-		    .description(Text.of("Warp base command"))
-		    .permission("pjp.cmd.cube")
-		    .child(cmdCubeCreate, "create", "c")
-		    .child(cmdCubeRemove, "remove", "r")
-		    .child(cmdCubeList, "list", "l")
-		    .child(cmdShow, "show", "s")
-		    .executor(new CMDCube())
 		    .build();
 
 	

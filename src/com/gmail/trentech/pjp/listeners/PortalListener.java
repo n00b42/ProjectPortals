@@ -26,7 +26,6 @@ import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.events.ConstructPortalEvent;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.portals.Portal;
-import com.gmail.trentech.pjp.portals.builders.Builder;
 import com.gmail.trentech.pjp.portals.builders.PortalBuilder;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 
@@ -34,7 +33,7 @@ import ninja.leaping.configurate.ConfigurationNode;
 
 public class PortalListener {
 
-	public static ConcurrentHashMap<Player, Builder> builders = new ConcurrentHashMap<>();
+	public static ConcurrentHashMap<Player, PortalBuilder> builders = new ConcurrentHashMap<>();
 
 	@Listener
 	public void onConstructPortalEvent(ConstructPortalEvent event, @First Player player){
@@ -139,13 +138,19 @@ public class PortalListener {
 			return;
 		}
 		Portal portal = optionalPortal.get();
-
-		if(!player.hasPermission("pjp.portal.interact")){
-			player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use portals"));
-			event.setCancelled(true);
-			return;
-		}
 		
+		if(new ConfigManager().getConfig().getNode("options", "portal_permissions").getBoolean()){
+			if(!player.hasPermission("pjp.portal." + portal.getName())){
+				player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use this portal"));
+				return;
+			}
+		}else{
+			if(!player.hasPermission("pjp.portal.interact")){
+				player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use portals"));
+				return;
+			}
+		}
+
 		Optional<Location<World>> optionalSpawnLocation = portal.getDestination();
 		
 		if(!optionalSpawnLocation.isPresent()){

@@ -20,18 +20,21 @@ import com.gmail.trentech.pjp.portals.Portal;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Utils;
 
-public class PortalBuilder extends Builder{
+public class PortalBuilder {
 
+	private final String destination;
 	private String name = UUID.randomUUID().toString();
 	private boolean fill = false;
 	private Optional<List<Location<World>>> regionFrame = Optional.empty();
 	private Optional<List<Location<World>>> regionFill = Optional.empty();
 	
 	public PortalBuilder(String destination) {
-		super(destination);
+		this.destination = destination;
 	}
 
-	public PortalBuilder(){}
+	public PortalBuilder(){
+		destination = null;
+	}
 
 	public Optional<List<Location<World>>> getRegionFill() {
 		return regionFill;

@@ -147,6 +147,7 @@ public class Portal extends SQLUtils{
 			ResultSet result = statement.executeQuery();
 			
 			while (result.next()) {
+				
 				String[] frameArray = result.getString("Frame").split(";");
 				List<String> frame = new ArrayList<String>(Arrays.asList(frameArray));
 				
@@ -157,9 +158,10 @@ public class Portal extends SQLUtils{
 		    		continue;
 		    	}
 		    	
+		    	String portalName = result.getString("Name");
 		    	String destination = result.getString("Destination");
 
-		    	optionalPortal = Optional.of(new Portal(name, destination, frame, fill));
+		    	optionalPortal = Optional.of(new Portal(portalName, destination, frame, fill));
 				
 				break;
 			}

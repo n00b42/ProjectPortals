@@ -103,12 +103,18 @@ public class DoorListener {
 		}
 		Door door = optionalDoor.get();
 
-		if(!player.hasPermission("pjp.door.interact")){
-			player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with door portals"));
-			event.setCancelled(true);
-			return;
+		if(new ConfigManager().getConfig().getNode("options", "portal_permissions").getBoolean()){
+			if(!player.hasPermission("pjp.door." + location.getExtent().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ())){
+				player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use this door portal"));
+				return;
+			}
+		}else{
+			if(!player.hasPermission("pjp.door.interact")){
+				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with door portals"));
+				return;
+			}
 		}
-		
+
 		Optional<Location<World>> optionalSpawnLocation = door.getDestination();
 		
 		if(!optionalSpawnLocation.isPresent()){
