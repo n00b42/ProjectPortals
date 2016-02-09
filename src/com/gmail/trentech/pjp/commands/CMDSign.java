@@ -67,18 +67,16 @@ public class CMDSign implements CommandExecutor {
 				int z;
 				
 				try{
-					String[] vector = coords[1].split(".");
-					
-					x = Integer.parseInt(vector[0]);
-					y = Integer.parseInt(vector[1]);
-					z = Integer.parseInt(vector[2]);				
+					x = Integer.parseInt(coords[0]);
+					y = Integer.parseInt(coords[1]);
+					z = Integer.parseInt(coords[2]);				
 				}catch(Exception e){
 					src.sendMessage(Text.of(TextColors.YELLOW, "/sign <world> [x] [y] [z] [direction]"));
 					return CommandResult.empty();
 				}
-				
-				if(coords.length == 3){
-					rotation = Rotation.get(coords[2]);
+
+				if(coords.length == 4){
+					rotation = Rotation.get(coords[3]);
 					
 					if(rotation.isPresent()){
 						portalData = new PortalData("", world.getLocation(x, y, z), rotation.get());
