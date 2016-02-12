@@ -9,7 +9,11 @@ import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.effect.particle.ParticleEffect;
 import org.spongepowered.api.effect.particle.ParticleTypes;
+import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.SpongeEventFactory;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.entity.DisplaceEntityEvent.TargetPlayer;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.title.Title;
@@ -126,9 +130,14 @@ public class Utils {
 	public static Consumer<CommandSource> unsafeTeleport(Location<World> location){
 		return (CommandSource src) -> {
 			Player player = (Player)src;
+			
+			Location<World> currentLocation = player.getLocation();
 
 			player.setLocation(location);
 			player.sendTitle(Title.of(Text.of(TextColors.GOLD, getPrettyName(location.getExtent().getName())), Text.of(TextColors.DARK_PURPLE, "x: ", location.getBlockX(), ", y: ", location.getBlockY(),", z: ", location.getBlockZ())));
+		
+			TargetPlayer displaceEvent = SpongeEventFactory.createDisplaceEntityEventTargetPlayer(Cause.of(player), new Transform<World>(currentLocation), new Transform<World>(location), player);
+			Main.getGame().getEventManager().post(displaceEvent);
 		};
 	}
 }

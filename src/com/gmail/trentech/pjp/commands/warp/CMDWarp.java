@@ -9,8 +9,11 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
+import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.entity.DisplaceEntityEvent.TargetPlayer;
 import org.spongepowered.api.service.pagination.PaginationBuilder;
 import org.spongepowered.api.service.pagination.PaginationService;
 import org.spongepowered.api.text.Text;
@@ -80,6 +83,7 @@ public class CMDWarp implements CommandExecutor {
 			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of("warp"));
 
 			if(!Main.getGame().getEventManager().post(teleportEvent)){
+				Location<World> currentLocation = player.getLocation();
 				spawnLocation = teleportEvent.getDestination();
 				
 				Optional<Vector3d> optionalRotation = warp.getRotation();
@@ -89,6 +93,9 @@ public class CMDWarp implements CommandExecutor {
 				}else{
 					player.setLocation(spawnLocation);
 				}
+				
+				TargetPlayer displaceEvent = SpongeEventFactory.createDisplaceEntityEventTargetPlayer(Cause.of(this), new Transform<World>(currentLocation), new Transform<World>(spawnLocation), player);
+				Main.getGame().getEventManager().post(displaceEvent);
 			}
 
 			return CommandResult.success();

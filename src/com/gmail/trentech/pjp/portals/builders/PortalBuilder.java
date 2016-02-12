@@ -105,8 +105,8 @@ public class PortalBuilder {
 					
 					Utils.spawnParticles(location, 1.0, false);
 				}
-				
-				location.setBlock(block);
+				location.getExtent().setBlock(location.getBlockX(), location.getBlockY(), location.getBlockZ(), block, false, Cause.of(PortalBuilder.class));
+				//location.setBlock(block);
 			}
 			
 			if(particles){

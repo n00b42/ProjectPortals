@@ -9,10 +9,13 @@ import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.entity.DisplaceEntityEvent.TargetPlayer;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
@@ -39,15 +42,15 @@ public class PlateListener {
 			
 			if(!blockType.equals(BlockTypes.HEAVY_WEIGHTED_PRESSURE_PLATE) && !blockType.equals(BlockTypes.LIGHT_WEIGHTED_PRESSURE_PLATE) 
 					&& !blockType.equals(BlockTypes.STONE_PRESSURE_PLATE) && !blockType.equals(BlockTypes.WOODEN_PRESSURE_PLATE)){
-				return;
+				continue;
 			}
 
 			if(!block.get(Keys.POWERED).isPresent()){
-				return;
+				continue;
 			}
 
 			if(!block.get(Keys.POWERED).get()){
-				return;
+				continue;
 			}
 
 			Location<World> location = snapshot.getLocation().get();		
@@ -55,7 +58,7 @@ public class PlateListener {
 			Optional<Plate> optionalPlate = Plate.get(location);
 			
 			if(!optionalPlate.isPresent()){
-				return;
+				continue;
 			}
 			Plate plate = optionalPlate.get();
 			
@@ -77,13 +80,14 @@ public class PlateListener {
 			
 			if(!optionalSpawnLocation.isPresent()){
 				player.sendMessage(Text.of(TextColors.DARK_RED, "World does not exist"));
-				return;
+				continue;
 			}
 			Location<World> spawnLocation = optionalSpawnLocation.get();
 
-			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of("plate"));
+			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of(plate));
 
 			if(!Main.getGame().getEventManager().post(teleportEvent)){
+				Location<World> currentLocation = player.getLocation();
 				spawnLocation = teleportEvent.getDestination();
 				
 				Optional<Vector3d> optionalRotation = plate.getRotation();
@@ -93,6 +97,9 @@ public class PlateListener {
 				}else{
 					player.setLocation(spawnLocation);
 				}
+				
+				TargetPlayer displaceEvent = SpongeEventFactory.createDisplaceEntityEventTargetPlayer(Cause.of(this), new Transform<World>(currentLocation), new Transform<World>(spawnLocation), player);
+				Main.getGame().getEventManager().post(displaceEvent);
 			}
 		}
 	}
