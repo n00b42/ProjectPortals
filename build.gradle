@@ -1,10 +1,6 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
-version="0.7.26"
-group="com.gmail.trentech"
-archivesBaseName="ProjectPortals"
-
 repositories {
     mavenCentral()
     maven {
@@ -17,7 +13,18 @@ repositories {
     }
 }
 
+configurations {
+    shade
+    compile.extendsFrom shade
+}
+
 dependencies {
     compile "org.spongepowered:spongeapi:3.1.0-SNAPSHOT"
-	compile "com.github.Flibio:Updatifier:v1.2.0"
+	shade "com.github.Flibio:Updatifier:-SNAPSHOT:api"
+}
+
+jar {
+    configurations.shade.copyRecursive().setTransitive(false).each { artifact ->
+      from (zipTree(artifact))
+    }
 }

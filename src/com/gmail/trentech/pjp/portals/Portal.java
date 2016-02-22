@@ -15,25 +15,33 @@ import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
+import com.gmail.trentech.pjp.utils.ConfigManager;
+import com.gmail.trentech.pjp.utils.Particles;
 import com.gmail.trentech.pjp.utils.Rotation;
 import com.gmail.trentech.pjp.utils.SQLUtils;
 import com.gmail.trentech.pjp.utils.Utils;
 
-public class Portal extends SQLUtils{
+public class Portal extends SQLUtils {
 
 	private final String name;
 	public final String destination;
 	private final List<String> frame;
 	private final List<String> fill;
+	private String particle;
 
-	public Portal(String uuid, String destination, List<String> frame, List<String> fill) {
+	public Portal(String uuid, String destination, List<String> frame, List<String> fill, String particle) {
 		this.name = uuid;
 		this.destination = destination;
 		this.frame = frame;
 		this.fill = fill;
+		
+		this.particle = particle;
+		if(this.particle == null){
+			this.particle = new ConfigManager().getConfig().getNode("options", "particles", "type", "portal").getString().toUpperCase();
+		}
 	}
 	
-	public Portal(String uuid, String destination, List<Location<World>> frame, List<Location<World>> fill, String dummy) {
+	public Portal(String uuid, String destination, List<Location<World>> frame, List<Location<World>> fill, String particle, String dummy) {
 		this.name = uuid;
 		this.destination = destination;
 		
@@ -46,12 +54,45 @@ public class Portal extends SQLUtils{
 		for(Location<World> location : fill){
 			this.fill.add(location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ());
 		}
+		
+		this.particle = particle;
+		if(this.particle == null){
+			this.particle = new ConfigManager().getConfig().getNode("options", "particles", "type", "portal").getString().toUpperCase();
+		}
 	}
 
 	public String getName() {
 		return name;
 	}
+	
+	public String getParticle(){
+		return particle;
+	}
 
+	public void setParticle(String particle){
+		this.particle = particle;
+		try {
+		    Connection connection = getDataSource().getConnection();
+		    PreparedStatement statement = connection.prepareStatement("UPDATE Portals SET Particle = ? WHERE Name = ?");
+
+		    statement.setString(1, particle);
+			statement.setString(2, this.name);
+			
+			statement.executeUpdate();
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		for(Task task : Main.getGame().getScheduler().getScheduledTasks()){
+			if(task.getName().equals(this.name)){
+				task.cancel();
+			}
+		}
+		
+		Particles.createTask(this);
+	}
+	
 	public Optional<Location<World>> getDestination() {
 		String[] args = destination.split(":");
 		
@@ -160,8 +201,9 @@ public class Portal extends SQLUtils{
 		    	
 		    	String portalName = result.getString("Name");
 		    	String destination = result.getString("Destination");
-
-		    	optionalPortal = Optional.of(new Portal(portalName, destination, frame, fill));
+		    	String particle = result.getString("Particle");
+		    	
+		    	optionalPortal = Optional.of(new Portal(portalName, destination, frame, fill, particle));
 				
 				break;
 			}
@@ -172,7 +214,7 @@ public class Portal extends SQLUtils{
 		
 		return optionalPortal;
 	}
-	
+
 	public static Optional<Portal> getByName(String name){
 		Optional<Portal> optionalPortal = Optional.empty();
 
@@ -193,8 +235,9 @@ public class Portal extends SQLUtils{
 					List<String> fill = new ArrayList<String>(Arrays.asList(fillArray));
 					
 					String destination = result.getString("Destination");
+					String particle = result.getString("Particle");
 					
-					optionalPortal = Optional.of(new Portal(name, destination, frame, fill));
+					optionalPortal = Optional.of(new Portal(name, destination, frame, fill, particle));
 					
 					break;
 				}
@@ -219,7 +262,7 @@ public class Portal extends SQLUtils{
 			connection.close();
 			
 			for(Task task : Main.getGame().getScheduler().getScheduledTasks()){
-				if(task.getName().contains(name)){
+				if(task.getName().equals(name)){
 					task.cancel();
 				}
 			}
@@ -232,7 +275,7 @@ public class Portal extends SQLUtils{
 		try {
 		    Connection connection = getDataSource().getConnection();
 		    
-		    PreparedStatement statement = connection.prepareStatement("INSERT into Portals (Name, Frame, Fill, Destination) VALUES (?, ?, ?, ?)");	
+		    PreparedStatement statement = connection.prepareStatement("INSERT into Portals (Name, Frame, Fill, Destination, Particle) VALUES (?, ?, ?, ?, ?)");	
 			
 		    statement.setString(1, portal.name);
 		    
@@ -249,10 +292,13 @@ public class Portal extends SQLUtils{
 		    statement.setString(3, stringBuilder.toString().substring(0, stringBuilder.length() - 1));
 
 		    statement.setString(4, portal.destination);
-
+		    statement.setString(5, portal.particle);
+		    
 			statement.executeUpdate();
 			
 			connection.close();
+			
+			Particles.createTask(portal);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -278,8 +324,9 @@ public class Portal extends SQLUtils{
 				List<String> fill = new ArrayList<String>(Arrays.asList(fillArray));
 		    	
 		    	String destination = result.getString("Destination");
-
-		    	list.add(new Portal(name, destination, frame, fill));
+		    	String particle = result.getString("Particle");
+		    	
+		    	list.add(new Portal(name, destination, frame, fill, particle));
 			}
 			connection.close();
 		} catch (SQLException e) {
@@ -288,5 +335,4 @@ public class Portal extends SQLUtils{
 		
 		return list;
 	}
-
 }

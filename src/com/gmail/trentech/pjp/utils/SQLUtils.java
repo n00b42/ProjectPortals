@@ -26,7 +26,7 @@ public abstract class SQLUtils {
 		try {
 			Connection connection = getDataSource().getConnection();
 
-			PreparedStatement statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS Portals (Name TEXT, Frame TEXT, Fill TEXT, Destination TEXT)");
+			PreparedStatement statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS Portals (Name TEXT, Frame TEXT, Fill TEXT, Destination TEXT, Particle TEXT)");
 			statement.executeUpdate();
 			
 			statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS Buttons (Name TEXT, Destination TEXT)");

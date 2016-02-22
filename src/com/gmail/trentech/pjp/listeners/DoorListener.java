@@ -26,7 +26,7 @@ import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.portals.Door;
 import com.gmail.trentech.pjp.utils.ConfigManager;
-import com.gmail.trentech.pjp.utils.Utils;
+import com.gmail.trentech.pjp.utils.Particles;
 
 public class DoorListener {
 
@@ -79,10 +79,9 @@ public class DoorListener {
             String destination = builders.get(player);
             
             Door.save(location, destination);
-
-    		if(new ConfigManager().getConfig().getNode("options", "particles").getBoolean()){
-    			Utils.spawnParticles(location, 1.0, false);
-    		}
+            
+    		Particles.spawnParticle(location, new ConfigManager().getConfig().getNode("options", "particles", "type", "creation").getString());
+    			//Utils.spawnParticles(location, 1.0, false);
 
             player.sendMessage(Text.of(TextColors.DARK_GREEN, "New door portal created"));
             

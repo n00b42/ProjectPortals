@@ -93,6 +93,14 @@ public class CommandManager {
 		    .executor(new com.gmail.trentech.pjp.commands.portal.CMDRemove())
 		    .build();
 	
+	public CommandSpec cmdPortalParticle = CommandSpec.builder()
+		    .description(Text.of("Change portal particles"))
+		    .permission("pjp.cmd.portal.particle")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))), GenericArguments.optional(GenericArguments.string(Text.of("type")))
+		    		, GenericArguments.optional(GenericArguments.string(Text.of("color"))))
+		    .executor(new com.gmail.trentech.pjp.commands.portal.CMDParticle())
+		    .build();
+	
 	public CommandSpec cmdPortalList = CommandSpec.builder()
 		    .description(Text.of("List all portals"))
 		    .permission("pjp.cmd.portal.list")
@@ -111,6 +119,7 @@ public class CommandManager {
 		    .permission("pjp.cmd.portal")
 		    .child(cmdPortalCreate, "create", "c")
 		    .child(cmdPortalRemove, "remove", "r")
+		    .child(cmdPortalParticle, "particle", "p")
 		    .child(cmdPortalList, "list", "l")
 		    .child(cmdSave, "save", "s")
 		    .executor(new CMDPortal())

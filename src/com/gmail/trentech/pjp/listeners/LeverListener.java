@@ -25,7 +25,7 @@ import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.portals.Lever;
 import com.gmail.trentech.pjp.utils.ConfigManager;
-import com.gmail.trentech.pjp.utils.Utils;
+import com.gmail.trentech.pjp.utils.Particles;
 
 public class LeverListener {
 
@@ -139,9 +139,8 @@ public class LeverListener {
             
             Lever.save(location, destination);
 
-    		if(new ConfigManager().getConfig().getNode("options", "particles").getBoolean()){
-    			Utils.spawnParticles(location, 1.0, false);
-    		}
+    		Particles.spawnParticle(location, new ConfigManager().getConfig().getNode("options", "particles", "type", "creation").getString());
+    			//Utils.spawnParticles(location, 1.0, false);
 
             player.sendMessage(Text.of(TextColors.DARK_GREEN, "New button lever created"));
             

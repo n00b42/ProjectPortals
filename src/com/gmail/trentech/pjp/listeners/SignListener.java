@@ -28,7 +28,7 @@ import com.gmail.trentech.pjp.data.immutable.ImmutablePortalData;
 import com.gmail.trentech.pjp.data.mutable.PortalData;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.utils.ConfigManager;
-import com.gmail.trentech.pjp.utils.Utils;
+import com.gmail.trentech.pjp.utils.Particles;
 
 public class SignListener {
 	
@@ -49,9 +49,8 @@ public class SignListener {
 
 		event.getTargetTile().offer(portalData);
 
-		if(new ConfigManager().getConfig().getNode("options", "particles").getBoolean()){
-			Utils.spawnParticles(event.getTargetTile().getLocation(), 1.0, false);
-		}
+		Particles.spawnParticle(event.getTargetTile().getLocation(), new ConfigManager().getConfig().getNode("options", "particles", "type", "creation").getString());
+			//Utils.spawnParticles(event.getTargetTile().getLocation(), 1.0, false);
 		
         player.sendMessage(Text.of(TextColors.DARK_GREEN, "New sign portal created"));
         

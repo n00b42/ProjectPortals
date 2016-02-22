@@ -21,6 +21,7 @@ import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.commands.CMDBack;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.utils.ConfigManager;
+import com.gmail.trentech.pjp.utils.Particles;
 import com.gmail.trentech.pjp.utils.Utils;
 
 public class TeleportListener {
@@ -30,6 +31,7 @@ public class TeleportListener {
 		Player player = event.getTarget();
 		
 		Location<World> src = event.getSource();
+		src = src.getExtent().getLocation(src.getBlockX(), src.getBlockY(), src.getBlockZ());
 		Location<World> dest = event.getDestination();
 
 		if(!player.hasPermission("pjp.worlds." + dest.getExtent().getName()) && !player.hasPermission("pjw.worlds." + dest.getExtent().getName())){
@@ -48,14 +50,10 @@ public class TeleportListener {
 			event.setCancelled(true);
 			return;
 		}
-		
-		if(new ConfigManager().getConfig().getNode("options", "particles").getBoolean()){
-			Utils.spawnParticles(src, 0.5, true);
-			Utils.spawnParticles(src.getRelative(Direction.UP), 0.5, true);
-			
-			Utils.spawnParticles(dest, 1.0, false);
-			Utils.spawnParticles(dest.getRelative(Direction.UP), 1.0, false);
-		}
+
+		String particle = new ConfigManager().getConfig().getNode("options", "particles", "type", "teleport").getString();
+		Particles.spawnParticle(src, particle);
+		Particles.spawnParticle(src.getRelative(Direction.UP), particle);
 
 		player.sendTitle(Title.of(Text.of(TextColors.DARK_GREEN, Utils.getPrettyName(dest.getExtent().getName())), Text.of(TextColors.AQUA, "x: ", dest.getBlockX(), ", y: ", dest.getBlockY(),", z: ", dest.getBlockZ())));
 

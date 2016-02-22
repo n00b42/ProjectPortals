@@ -7,9 +7,6 @@ import java.util.UUID;
 
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
-import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.EntityTypes;
-import org.spongepowered.api.entity.weather.Lightning;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -18,7 +15,7 @@ import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.events.ConstructPortalEvent;
 import com.gmail.trentech.pjp.portals.Portal;
 import com.gmail.trentech.pjp.utils.ConfigManager;
-import com.gmail.trentech.pjp.utils.Utils;
+import com.gmail.trentech.pjp.utils.Particles;
 
 public class PortalBuilder {
 
@@ -90,31 +87,16 @@ public class PortalBuilder {
 		List<Location<World>> fill = new ArrayList<>(regionFill.get());
 
 		if(!Main.getGame().getEventManager().post(new ConstructPortalEvent(frame, fill, Cause.of(this)))) {
-			boolean particles = new ConfigManager().getConfig().getNode("options", "particles").getBoolean();
-			
 			BlockState block = BlockTypes.AIR.getDefaultState();
 
 			for(Location<World> location : fill){
-				if(particles){
-					Optional<Entity> optionalEntity = location.getExtent().createEntity(EntityTypes.LIGHTNING, location.getPosition());
-					
-					if (optionalEntity.isPresent()) {
-						Lightning lightning = (Lightning) optionalEntity.get();
-						location.getExtent().spawnEntity(lightning, Cause.of(this));
-					}
-					
-					Utils.spawnParticles(location, 1.0, false);
-				}
+				Particles.spawnParticle(location, new ConfigManager().getConfig().getNode("options", "particles", "type", "creation").getString());
 				location.getExtent().setBlock(location.getBlockX(), location.getBlockY(), location.getBlockZ(), block, false, Cause.of(Main.getPlugin()));
-				//location.setBlock(block);
 			}
-			
-			if(particles){
-				Main.createTask(name, fill);
-			}
-			
-			Portal.save(new Portal(name, destination, frame, fill, null));
-			
+
+			Portal portal = new Portal(name, destination, frame, fill, null, null);
+			Portal.save(portal);
+
 			return true;
 		}
 		return false;
