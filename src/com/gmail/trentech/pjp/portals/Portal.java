@@ -16,7 +16,7 @@ import org.spongepowered.api.world.World;
 import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.utils.ConfigManager;
-import com.gmail.trentech.pjp.utils.Particles;
+import com.gmail.trentech.pjp.utils.Particle;
 import com.gmail.trentech.pjp.utils.Rotation;
 import com.gmail.trentech.pjp.utils.SQLUtils;
 import com.gmail.trentech.pjp.utils.Utils;
@@ -90,7 +90,7 @@ public class Portal extends SQLUtils {
 			}
 		}
 		
-		Particles.createTask(this);
+		Particle.createTask(this);
 	}
 	
 	public Optional<Location<World>> getDestination() {
@@ -298,7 +298,7 @@ public class Portal extends SQLUtils {
 			
 			connection.close();
 			
-			Particles.createTask(portal);
+			Particle.createTask(portal);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

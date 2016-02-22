@@ -27,7 +27,7 @@ import com.gmail.trentech.pjp.listeners.SignListener;
 import com.gmail.trentech.pjp.listeners.TeleportListener;
 import com.gmail.trentech.pjp.portals.Portal;
 import com.gmail.trentech.pjp.utils.ConfigManager;
-import com.gmail.trentech.pjp.utils.Particles;
+import com.gmail.trentech.pjp.utils.Particle;
 import com.gmail.trentech.pjp.utils.Resource;
 import com.gmail.trentech.pjp.utils.SQLUtils;
 
@@ -109,7 +109,7 @@ public class Main {
     @Listener
     public void onStartedServer(GameStartedServerEvent event) {
     	for(Portal portal : Portal.list()){
-    		Particles.createTask(portal);
+    		Particle.createTask(portal);
     	}
     }
 

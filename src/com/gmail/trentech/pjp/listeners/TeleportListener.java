@@ -21,7 +21,7 @@ import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.commands.CMDBack;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.utils.ConfigManager;
-import com.gmail.trentech.pjp.utils.Particles;
+import com.gmail.trentech.pjp.utils.Particle;
 import com.gmail.trentech.pjp.utils.Utils;
 
 public class TeleportListener {
@@ -52,8 +52,8 @@ public class TeleportListener {
 		}
 
 		String particle = new ConfigManager().getConfig().getNode("options", "particles", "type", "teleport").getString();
-		Particles.spawnParticle(src, particle);
-		Particles.spawnParticle(src.getRelative(Direction.UP), particle);
+		Particle.spawnParticle(src, particle);
+		Particle.spawnParticle(src.getRelative(Direction.UP), particle);
 
 		player.sendTitle(Title.of(Text.of(TextColors.DARK_GREEN, Utils.getPrettyName(dest.getExtent().getName())), Text.of(TextColors.AQUA, "x: ", dest.getBlockX(), ", y: ", dest.getBlockY(),", z: ", dest.getBlockZ())));
 

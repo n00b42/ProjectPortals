@@ -15,7 +15,7 @@ import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.events.ConstructPortalEvent;
 import com.gmail.trentech.pjp.portals.Portal;
 import com.gmail.trentech.pjp.utils.ConfigManager;
-import com.gmail.trentech.pjp.utils.Particles;
+import com.gmail.trentech.pjp.utils.Particle;
 
 public class PortalBuilder {
 
@@ -90,7 +90,7 @@ public class PortalBuilder {
 			BlockState block = BlockTypes.AIR.getDefaultState();
 
 			for(Location<World> location : fill){
-				Particles.spawnParticle(location, new ConfigManager().getConfig().getNode("options", "particles", "type", "creation").getString());
+				Particle.spawnParticle(location, new ConfigManager().getConfig().getNode("options", "particles", "type", "creation").getString());
 				location.getExtent().setBlock(location.getBlockX(), location.getBlockY(), location.getBlockZ(), block, false, Cause.of(Main.getPlugin()));
 			}
 
