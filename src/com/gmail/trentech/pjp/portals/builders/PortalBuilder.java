@@ -12,10 +12,12 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
+import com.gmail.trentech.pjp.effects.Particle;
+import com.gmail.trentech.pjp.effects.ParticleColor;
+import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.events.ConstructPortalEvent;
 import com.gmail.trentech.pjp.portals.Portal;
 import com.gmail.trentech.pjp.utils.ConfigManager;
-import com.gmail.trentech.pjp.utils.Particle;
 
 public class PortalBuilder {
 
@@ -90,7 +92,26 @@ public class PortalBuilder {
 			BlockState block = BlockTypes.AIR.getDefaultState();
 
 			for(Location<World> location : fill){
-				Particle.spawnParticle(location, new ConfigManager().getConfig().getNode("options", "particles", "type", "creation").getString());
+				String[] split = new ConfigManager().getConfig().getNode("options", "particles", "type", "creation").getString().split(":");
+				
+				Optional<Particle> optionalParticle = Particles.get(split[0]);
+				
+				if(optionalParticle.isPresent()){
+					Particle particle = optionalParticle.get();
+					
+					if(split.length == 2 && particle.isColorable()){
+						Optional<ParticleColor> optionalColors = ParticleColor.get(split[1]);
+						
+						if(optionalColors.isPresent()){
+							particle.spawnParticle(location, optionalColors.get());
+						}else{
+							particle.spawnParticle(location);
+						}
+					}else{
+						particle.spawnParticle(location);
+					}
+				}
+				
 				location.getExtent().setBlock(location.getBlockX(), location.getBlockY(), location.getBlockZ(), block, false, Cause.of(Main.getPlugin()));
 			}
 

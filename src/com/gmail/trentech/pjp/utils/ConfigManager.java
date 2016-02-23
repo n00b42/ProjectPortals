@@ -72,16 +72,16 @@ public class ConfigManager {
 				config.getNode("options", "particles", "enable").setValue(true).setComment("Enable particle effects");
 				config.getNode("options", "particles", "type").setComment("Default particle types");
 				config.getNode("options", "particles", "type", "portal").setValue("PORTAL").setComment("Default particle type for portals");
-				config.getNode("options", "particles", "type", "teleport").setValue("SPELL_WITCH").setComment("Default particle type when teleporting");
-				config.getNode("options", "particles", "type", "creation").setValue("REDSTONE:RAINBOW").setComment("Default particle type when creating any kind of portal");
+				config.getNode("options", "particles", "type", "teleport").setValue("REDSTONE:RAINBOW").setComment("Default particle type when teleporting");
+				config.getNode("options", "particles", "type", "creation").setValue("SPELL_WITCH").setComment("Default particle type when creating any kind of portal");
 			}else{
 				if(config.getNode("options", "particles", "enable").isVirtual()){
 					config.getNode("options").removeChild("particles");
 					config.getNode("options", "particles", "enable").setValue(true).setComment("Enable particle effects");
 					config.getNode("options", "particles", "type").setComment("Default particle types");
 					config.getNode("options", "particles", "type", "portal").setValue("PORTAL").setComment("Default particle type for portals");
-					config.getNode("options", "particles", "type", "teleport").setValue("SPELL_WITCH").setComment("Default particle type when teleporting");
-					config.getNode("options", "particles", "type", "creation").setValue("REDSTONE:RAINBOW").setComment("Default particle type when creating any kind of portal");
+					config.getNode("options", "particles", "type", "teleport").setValue("REDSTONE:RAINBOW").setComment("Default particle type when teleporting");
+					config.getNode("options", "particles", "type", "creation").setValue("SPELL_WITCH").setComment("Default particle type when creating any kind of portal");
 				}
 			}
 			if(config.getNode("options", "random_spawn_radius").isVirtual()) {

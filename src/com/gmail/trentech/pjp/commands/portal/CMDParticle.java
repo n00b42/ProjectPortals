@@ -13,11 +13,12 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
+import com.gmail.trentech.pjp.effects.Particle;
+import com.gmail.trentech.pjp.effects.ParticleColor;
+import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.portals.Portal;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
-import com.gmail.trentech.pjp.utils.Particle;
-import com.gmail.trentech.pjp.utils.Particles;
 
 public class CMDParticle implements CommandExecutor {
 
@@ -55,19 +56,19 @@ public class CMDParticle implements CommandExecutor {
 		}
 		String type = args.<String>getOne("type").get().toUpperCase();
 		
-		Optional<Particles> optionalParticle = Particles.get(type);
+		Optional<Particle> optionalParticle = Particles.get(type);
 		
 		if(!optionalParticle.isPresent()) {
 			src.sendMessage(Text.of(TextColors.DARK_RED, "Invalid particle"));
 			src.sendMessage(invalidArg());
 			return CommandResult.empty();
 		}
-		Particles particle = optionalParticle.get();
+		Particle particle = optionalParticle.get();
 		
 		if(args.hasAny("color")) {
 			if(particle.getType() instanceof Colorable){
 				String color = args.<String>getOne("color").get().toUpperCase();
-	    		if(Particle.getColor(color).isPresent()){
+	    		if(ParticleColor.get(color).isPresent()){
 	    			type = type + ":" + color;
 	    		}else{
 	    			src.sendMessage(Text.of(TextColors.DARK_RED, "Invalid color"));

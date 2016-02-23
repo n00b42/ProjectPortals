@@ -19,9 +19,11 @@ import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.commands.CMDBack;
+import com.gmail.trentech.pjp.effects.Particle;
+import com.gmail.trentech.pjp.effects.ParticleColor;
+import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.utils.ConfigManager;
-import com.gmail.trentech.pjp.utils.Particle;
 import com.gmail.trentech.pjp.utils.Utils;
 
 public class TeleportListener {
@@ -51,9 +53,28 @@ public class TeleportListener {
 			return;
 		}
 
-		String particle = new ConfigManager().getConfig().getNode("options", "particles", "type", "teleport").getString();
-		Particle.spawnParticle(src, particle);
-		Particle.spawnParticle(src.getRelative(Direction.UP), particle);
+		String[] split = new ConfigManager().getConfig().getNode("options", "particles", "type", "teleport").getString().split(":");
+		
+		Optional<Particle> optionalParticle = Particles.get(split[0]);
+		
+		if(optionalParticle.isPresent()){
+			Particle particle = optionalParticle.get();
+			
+			if(split.length == 2 && particle.isColorable()){
+				Optional<ParticleColor> optionalColors = ParticleColor.get(split[1]);
+				
+				if(optionalColors.isPresent()){
+					particle.spawnParticle(src, optionalColors.get());
+					particle.spawnParticle(src.getRelative(Direction.UP), optionalColors.get());
+				}else{
+					particle.spawnParticle(src);
+					particle.spawnParticle(src.getRelative(Direction.UP), optionalColors.get());
+				}
+			}else{
+				particle.spawnParticle(src);
+				particle.spawnParticle(src.getRelative(Direction.UP));
+			}
+		}
 
 		player.sendTitle(Title.of(Text.of(TextColors.DARK_GREEN, Utils.getPrettyName(dest.getExtent().getName())), Text.of(TextColors.AQUA, "x: ", dest.getBlockX(), ", y: ", dest.getBlockY(),", z: ", dest.getBlockZ())));
 

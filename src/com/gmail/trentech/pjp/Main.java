@@ -18,6 +18,8 @@ import com.gmail.trentech.pjp.data.immutable.ImmutableHomeData;
 import com.gmail.trentech.pjp.data.immutable.ImmutablePortalData;
 import com.gmail.trentech.pjp.data.mutable.HomeData;
 import com.gmail.trentech.pjp.data.mutable.PortalData;
+import com.gmail.trentech.pjp.effects.ParticleColor;
+import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.listeners.ButtonListener;
 import com.gmail.trentech.pjp.listeners.DoorListener;
 import com.gmail.trentech.pjp.listeners.LeverListener;
@@ -27,7 +29,6 @@ import com.gmail.trentech.pjp.listeners.SignListener;
 import com.gmail.trentech.pjp.listeners.TeleportListener;
 import com.gmail.trentech.pjp.portals.Portal;
 import com.gmail.trentech.pjp.utils.ConfigManager;
-import com.gmail.trentech.pjp.utils.Particle;
 import com.gmail.trentech.pjp.utils.Resource;
 import com.gmail.trentech.pjp.utils.SQLUtils;
 
@@ -109,7 +110,14 @@ public class Main {
     @Listener
     public void onStartedServer(GameStartedServerEvent event) {
     	for(Portal portal : Portal.list()){
-    		Particle.createTask(portal);
+    		//Particle.createTask(portal);
+  	
+    		String[] split = portal.getParticle().split(":");
+    		if(split.length == 2){
+    			Particles.get(split[0]).get().createTask(portal.getName(), portal.getFill(), ParticleColor.get(split[1]).get());
+    		}else{
+    			Particles.get(split[0]).get().createTask(portal.getName(), portal.getFill());
+    		}
     	}
     }
 

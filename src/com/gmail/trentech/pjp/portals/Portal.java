@@ -15,8 +15,9 @@ import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
+import com.gmail.trentech.pjp.effects.ParticleColor;
+import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.utils.ConfigManager;
-import com.gmail.trentech.pjp.utils.Particle;
 import com.gmail.trentech.pjp.utils.Rotation;
 import com.gmail.trentech.pjp.utils.SQLUtils;
 import com.gmail.trentech.pjp.utils.Utils;
@@ -89,8 +90,13 @@ public class Portal extends SQLUtils {
 				task.cancel();
 			}
 		}
-		
-		Particle.createTask(this);
+
+		String[] split = particle.split(":");
+		if(split.length == 2){
+			Particles.get(split[0]).get().createTask(getName(), getFill(), ParticleColor.get(split[1]).get());			
+		}else{
+			Particles.get(split[0]).get().createTask(getName(), getFill());
+		}
 	}
 	
 	public Optional<Location<World>> getDestination() {
@@ -297,8 +303,13 @@ public class Portal extends SQLUtils {
 			statement.executeUpdate();
 			
 			connection.close();
-			
-			Particle.createTask(portal);
+
+			String[] split = portal.getParticle().split(":");
+			if(split.length == 2){
+				Particles.get(split[0]).get().createTask(portal.getName(), portal.getFill(), ParticleColor.get(split[1]).get());			
+			}else{
+				Particles.get(split[0]).get().createTask(portal.getName(), portal.getFill());
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

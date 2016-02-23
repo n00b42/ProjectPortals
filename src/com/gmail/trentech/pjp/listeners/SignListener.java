@@ -26,9 +26,11 @@ import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.immutable.ImmutablePortalData;
 import com.gmail.trentech.pjp.data.mutable.PortalData;
+import com.gmail.trentech.pjp.effects.Particle;
+import com.gmail.trentech.pjp.effects.ParticleColor;
+import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.utils.ConfigManager;
-import com.gmail.trentech.pjp.utils.Particle;
 
 public class SignListener {
 	
@@ -49,7 +51,25 @@ public class SignListener {
 
 		event.getTargetTile().offer(portalData);
 
-		Particle.spawnParticle(event.getTargetTile().getLocation(), new ConfigManager().getConfig().getNode("options", "particles", "type", "creation").getString());
+		String[] split = new ConfigManager().getConfig().getNode("options", "particles", "type", "creation").getString().split(":");
+		
+		Optional<Particle> optionalParticle = Particles.get(split[0]);
+		
+		if(optionalParticle.isPresent()){
+			Particle particle = optionalParticle.get();
+			
+			if(split.length == 2 && particle.isColorable()){
+				Optional<ParticleColor> optionalColors = ParticleColor.get(split[1]);
+				
+				if(optionalColors.isPresent()){
+					particle.spawnParticle(event.getTargetTile().getLocation(), optionalColors.get());
+				}else{
+					particle.spawnParticle(event.getTargetTile().getLocation());
+				}
+			}else{
+				particle.spawnParticle(event.getTargetTile().getLocation());
+			}
+		}
 
         player.sendMessage(Text.of(TextColors.DARK_GREEN, "New sign portal created"));
         

@@ -24,10 +24,12 @@ import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
+import com.gmail.trentech.pjp.effects.Particle;
+import com.gmail.trentech.pjp.effects.ParticleColor;
+import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.portals.Plate;
 import com.gmail.trentech.pjp.utils.ConfigManager;
-import com.gmail.trentech.pjp.utils.Particle;
 
 public class PlateListener {
 
@@ -155,7 +157,25 @@ public class PlateListener {
             
             Plate.save(location, destination);
 
-    		Particle.spawnParticle(location, new ConfigManager().getConfig().getNode("options", "particles", "type", "creation").getString());
+			String[] split = new ConfigManager().getConfig().getNode("options", "particles", "type", "creation").getString().split(":");
+			
+			Optional<Particle> optionalParticle = Particles.get(split[0]);
+			
+			if(optionalParticle.isPresent()){
+				Particle particle = optionalParticle.get();
+				
+				if(split.length == 2 && particle.isColorable()){
+					Optional<ParticleColor> optionalColors = ParticleColor.get(split[1]);
+					
+					if(optionalColors.isPresent()){
+						particle.spawnParticle(location, optionalColors.get());
+					}else{
+						particle.spawnParticle(location);
+					}
+				}else{
+					particle.spawnParticle(location);
+				}
+			}
 
             player.sendMessage(Text.of(TextColors.DARK_GREEN, "New pressure plate portal created"));
             
