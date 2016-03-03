@@ -64,7 +64,7 @@ public class PlateListener {
 			}
 			Plate plate = optionalPlate.get();
 			
-			if(new ConfigManager().getConfig().getNode("options", "portal_permissions").getBoolean()){
+			if(new ConfigManager().getConfig().getNode("options", "advanced_permissions").getBoolean()){
 				if(!player.hasPermission("pjp.plate." + location.getExtent().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ())){
 					player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use this pressure plate portal"));
 					event.setCancelled(true);

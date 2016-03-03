@@ -61,8 +61,19 @@ public class ConfigManager {
 
 	private void init() {
 		if(file.getName().equalsIgnoreCase("config.conf")){
-			if(config.getNode("options", "portal_size").isVirtual()) {
-				config.getNode("options", "portal_size").setValue(100).setComment("Maximum number of blocks a portal can use");
+			//UPDATE CONFIG
+			if(!config.getNode("options", "portal_size").isVirtual()){
+				config.getNode("options", "portal", "size").setValue(config.getNode("options", "portal_size").getInt()).setComment("Maximum number of blocks a portal can use");
+				config.getNode("options").removeChild("portal_size");
+			}
+			if(config.getNode("options", "portal", "size").isVirtual()) {
+				config.getNode("options", "portal", "size").setValue(100).setComment("Maximum number of blocks a portal can use");
+			}
+			if(config.getNode("options", "portal", "teleport_item").isVirtual()) {
+				config.getNode("options", "portal", "teleport_item").setValue(true).setComment("Toggle if portals can teleport items");
+			}
+			if(config.getNode("options", "portal", "teleport_mob").isVirtual()) {
+				config.getNode("options", "portal", "teleport_mob").setValue(true).setComment("Toggle if portals can teleport mobs");
 			}
 			if(config.getNode("options", "homes").isVirtual()) {
 				config.getNode("options", "homes").setValue(5).setComment("Default number of homes a player can have");
@@ -75,6 +86,7 @@ public class ConfigManager {
 				config.getNode("options", "particles", "type", "teleport").setValue("REDSTONE:RAINBOW").setComment("Default particle type when teleporting");
 				config.getNode("options", "particles", "type", "creation").setValue("SPELL_WITCH").setComment("Default particle type when creating any kind of portal");
 			}else{
+				// UPDATE CONFIG
 				if(config.getNode("options", "particles", "enable").isVirtual()){
 					config.getNode("options").removeChild("particles");
 					config.getNode("options", "particles", "enable").setValue(true).setComment("Enable particle effects");
@@ -87,8 +99,13 @@ public class ConfigManager {
 			if(config.getNode("options", "random_spawn_radius").isVirtual()) {
 				config.getNode("options", "random_spawn_radius").setValue(5000).setComment("World radius for random spawn portals.");
 			}
-			if(config.getNode("options", "portal_permissions").isVirtual()) {
-				config.getNode("options", "portal_permissions").setValue(false).setComment("Require permission node for each portal. ex. 'pjp.portal.<name>', 'pjp.button.<world_x_y_z>'. If false use 'pjp.portal.interact' instead");
+			// UPDATE CONFIG
+			if(!config.getNode("options", "portal_permissions").isVirtual()) {
+				config.getNode("options", "advanced_permissions").setValue(config.getNode("options", "portal_permissions").getBoolean()).setComment("Require permission node for each portal. ex. 'pjp.portal.<name>', 'pjp.button.<world_x_y_z>'. If false use 'pjp.portal.interact' instead");
+				config.getNode("options").removeChild("portal_permissions");
+			}
+			if(config.getNode("options", "advanced_permissions").isVirtual()) {
+				config.getNode("options", "advanced_permissions").setValue(false).setComment("Require permission node for each portal. ex. 'pjp.portal.<name>', 'pjp.button.<world_x_y_z>'. If false use 'pjp.portal.interact' instead");
 			}
 			if(config.getNode("settings", "commands").isVirtual()){
 				config.getNode("settings", "commands").setComment("Allow to set custom command aliases");

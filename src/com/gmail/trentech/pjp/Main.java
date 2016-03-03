@@ -109,9 +109,12 @@ public class Main {
 
     @Listener
     public void onStartedServer(GameStartedServerEvent event) {
+//		if(!Portal.tableUpToDate()){
+//			getLog().info("Updating Database");
+//			Portal.updateTable();
+//		}
+		
     	for(Portal portal : Portal.list()){
-    		//Particle.createTask(portal);
-  	
     		String[] split = portal.getParticle().split(":");
     		if(split.length == 2){
     			Particles.get(split[0]).get().createTask(portal.getName(), portal.getFill(), ParticleColor.get(split[1]).get());

@@ -1,6 +1,7 @@
 package com.gmail.trentech.pjp.portals;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -68,6 +69,35 @@ public class Portal extends SQLUtils {
 	
 	public String getParticle(){
 		return particle;
+	}
+
+	public static void updateTable(){
+		try {
+		    Connection connection = getDataSource().getConnection();
+		    PreparedStatement statement = connection.prepareStatement("ALTER Table Portals Add Particle TEXT");
+
+			statement.executeUpdate();
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+    
+	public static boolean tableUpToDate(){
+		boolean b = false;
+		try {
+		    Connection connection = getDataSource().getConnection();
+		    DatabaseMetaData metaData = connection.getMetaData();
+		    ResultSet rs = metaData.getColumns(null, null, "Portals", "Particle");
+		    if (rs.next()) {
+		    	b = true;
+		    }
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return b;
 	}
 
 	public void setParticle(String particle){

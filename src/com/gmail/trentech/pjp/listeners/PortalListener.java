@@ -7,7 +7,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.Transaction;
+import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.Transform;
+import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.SpongeEventFactory;
@@ -52,7 +55,7 @@ public class PortalListener {
         
         ConfigurationNode config = new ConfigManager().getConfig();
         
-        int size = config.getNode("options", "portal_size").getInt();
+        int size = config.getNode("options", "portal", "size").getInt();
         if(locations.size() > size){
         	player.sendMessage(Text.of(TextColors.DARK_RED, "Portals cannot be larger than ", size, " blocks"));
         	event.setCancelled(true);
@@ -127,6 +130,44 @@ public class PortalListener {
 	}
 
 	@Listener
+	public void onDisplaceEntityEvent(DisplaceEntityEvent.Move event){
+		Entity entity = event.getTargetEntity();
+		
+		if (entity instanceof Player || !(entity instanceof Living || entity instanceof Item)){
+			return;
+		}
+
+		Location<World> location = entity.getLocation();		
+
+		Optional<Portal> optionalPortal = Portal.get(location);
+		
+		if(!optionalPortal.isPresent()){
+			return;
+		}
+		Portal portal = optionalPortal.get();
+		
+		if(entity instanceof Item){
+			if(!new ConfigManager().getConfig().getNode("options", "portal", "teleport_item").getBoolean()){
+				return;
+			}
+		}
+		if(entity instanceof Living){
+			if(!new ConfigManager().getConfig().getNode("options", "portal", "teleport_mob").getBoolean()){
+				return;
+			}
+		}
+
+		Optional<Location<World>> optionalSpawnLocation = portal.getDestination();
+		
+		if(!optionalSpawnLocation.isPresent()){
+			return;
+		}
+		Location<World> spawnLocation = optionalSpawnLocation.get();
+		
+		entity.setLocation(spawnLocation);
+	}
+	
+	@Listener
 	public void onDisplaceEntityEvent(DisplaceEntityEvent.TargetPlayer event){
 		if (!(event.getTargetEntity() instanceof Player)){
 			return;
@@ -142,7 +183,7 @@ public class PortalListener {
 		}
 		Portal portal = optionalPortal.get();
 		
-		if(new ConfigManager().getConfig().getNode("options", "portal_permissions").getBoolean()){
+		if(new ConfigManager().getConfig().getNode("options", "advanced_permissions").getBoolean()){
 			if(!player.hasPermission("pjp.portal." + portal.getName())){
 				player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use this portal"));
 				return;

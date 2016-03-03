@@ -76,6 +76,8 @@ public class TeleportListener {
 			}
 		}
 
+		//player.playSound(SoundTypes.PORTAL_TRIGGER, player.getLocation().getPosition(), 1);
+		
 		player.sendTitle(Title.of(Text.of(TextColors.DARK_GREEN, Utils.getPrettyName(dest.getExtent().getName())), Text.of(TextColors.AQUA, "x: ", dest.getBlockX(), ", y: ", dest.getBlockY(),", z: ", dest.getBlockZ())));
 
 		if(player.hasPermission("pjp.cmd.back")){
