@@ -4,7 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -20,6 +23,8 @@ public class Lever extends SQLUtils{
 	private final String name;
 	private final String destination;
 
+	private static ConcurrentHashMap<String, Lever> cache = new ConcurrentHashMap<>();
+	
 	public Lever(String name, String destination) {
 		this.name = name;
 		this.destination = destination;
@@ -32,10 +37,12 @@ public class Lever extends SQLUtils{
 	public Optional<Location<World>> getDestination() {
 		String[] args = destination.split(":");
 		
-		if(!Main.getGame().getServer().getWorld(args[0]).isPresent()){
+		Optional<World> optional = Main.getGame().getServer().getWorld(args[0]);
+		
+		if(!optional.isPresent()){
 			return Optional.empty();
 		}
-		World world = Main.getGame().getServer().getWorld(args[0]).get();
+		World world = optional.get();
 		
 		if(args[1].equalsIgnoreCase("random")){
 			return Optional.of(Utils.getRandomLocation(world));
@@ -66,32 +73,17 @@ public class Lever extends SQLUtils{
 		
 		return Optional.of(new Vector3d(0,optional.get().getValue(),0));
 	}
-	
+
 	public static Optional<Lever> get(Location<World> location){
-		Optional<Lever> optionalLever = Optional.empty();
-		
 		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 		
-		try {
-		    Connection connection = getDataSource().getConnection();
-		    
-		    PreparedStatement statement = connection.prepareStatement("SELECT * FROM Levers");
-		    
-			ResultSet result = statement.executeQuery();
-			
-			while (result.next()) {
-				if (result.getString("Name").equalsIgnoreCase(name)) {
-					optionalLever = Optional.of(new Lever(result.getString("Name"), result.getString("Destination")));
-					
-					break;
-				}
-			}
-			connection.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		Optional<Lever> optional = Optional.empty();
+		
+		if(cache.containsKey(name)){
+			optional = Optional.of(cache.get(name));
 		}
 		
-		return optionalLever;
+		return optional;
 	}
 	
 	public static void remove(Location<World> location){
@@ -106,6 +98,8 @@ public class Lever extends SQLUtils{
 			statement.executeUpdate();
 			
 			connection.close();
+			
+			cache.remove(name);
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -125,6 +119,8 @@ public class Lever extends SQLUtils{
 			statement.executeUpdate();
 			
 			connection.close();
+			
+			cache.put(name, new Lever(name, destination));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -142,8 +138,38 @@ public class Lever extends SQLUtils{
 			statement.executeUpdate();
 			
 			connection.close();
+			
+			cache.put(name, new Lever(name, destination));
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public static List<Lever> list(){
+		List<Lever> list = new ArrayList<>();
+
+		try {
+		    Connection connection = getDataSource().getConnection();
+		    
+		    PreparedStatement statement = connection.prepareStatement("SELECT * FROM Levers");
+		    
+			ResultSet result = statement.executeQuery();
+
+			while (result.next()) {
+				list.add(new Lever(result.getString("Name"), result.getString("Destination")));
+			}
+			
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return list;
+	}
+	
+	public static void init(){
+		for(Lever lever : Lever.list()){
+			cache.put(lever.getName(), lever);
 		}
 	}
 }

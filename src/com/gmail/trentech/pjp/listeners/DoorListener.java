@@ -105,6 +105,7 @@ public class DoorListener {
             player.sendMessage(Text.of(TextColors.DARK_GREEN, "New door portal created"));
             
             builders.remove(player);
+            break;
 		}
 	}
 	

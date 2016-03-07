@@ -1,14 +1,15 @@
 package com.gmail.trentech.pjp.portals;
 
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.world.Location;
@@ -30,9 +31,11 @@ public class Portal extends SQLUtils {
 	private final List<String> frame;
 	private final List<String> fill;
 	private String particle;
+	
+	private static ConcurrentHashMap<String, String> cache = new ConcurrentHashMap<>();
 
-	public Portal(String uuid, String destination, List<String> frame, List<String> fill, String particle) {
-		this.name = uuid;
+	public Portal(String name, String destination, List<String> frame, List<String> fill, String particle) {
+		this.name = name;
 		this.destination = destination;
 		this.frame = frame;
 		this.fill = fill;
@@ -43,18 +46,22 @@ public class Portal extends SQLUtils {
 		}
 	}
 	
-	public Portal(String uuid, String destination, List<Location<World>> frame, List<Location<World>> fill, String particle, String dummy) {
-		this.name = uuid;
+	public Portal(String name, String destination, List<Location<World>> frame, List<Location<World>> fill, String particle, String dummy) {
+		this.name = name;
 		this.destination = destination;
 		
 		this.frame = new ArrayList<>();
 		this.fill = new ArrayList<>();
 		
 		for(Location<World> location : frame){
-			this.frame.add(location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ());
+			String loc = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
+			cache.put(loc, name);
+			this.frame.add(loc);
 		}
 		for(Location<World> location : fill){
-			this.fill.add(location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ());
+			String loc = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
+			cache.put(loc, name);
+			this.fill.add(loc);
 		}
 		
 		this.particle = particle;
@@ -69,35 +76,6 @@ public class Portal extends SQLUtils {
 	
 	public String getParticle(){
 		return particle;
-	}
-
-	public static void updateTable(){
-		try {
-		    Connection connection = getDataSource().getConnection();
-		    PreparedStatement statement = connection.prepareStatement("ALTER Table Portals Add Particle TEXT");
-
-			statement.executeUpdate();
-			connection.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-    
-	public static boolean tableUpToDate(){
-		boolean b = false;
-		try {
-		    Connection connection = getDataSource().getConnection();
-		    DatabaseMetaData metaData = connection.getMetaData();
-		    ResultSet rs = metaData.getColumns(null, null, "Portals", "Particle");
-		    if (rs.next()) {
-		    	b = true;
-		    }
-			connection.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		return b;
 	}
 
 	public void setParticle(String particle){
@@ -132,10 +110,12 @@ public class Portal extends SQLUtils {
 	public Optional<Location<World>> getDestination() {
 		String[] args = destination.split(":");
 		
-		if(!Main.getGame().getServer().getWorld(args[0]).isPresent()){
+		Optional<World> optional = Main.getGame().getServer().getWorld(args[0]);
+		
+		if(!optional.isPresent()){
 			return Optional.empty();
 		}
-		World world = Main.getGame().getServer().getWorld(args[0]).get();
+		World world = optional.get();
 		
 		if(args[1].equalsIgnoreCase("random")){
 			return Optional.of(Utils.getRandomLocation(world));
@@ -212,77 +192,85 @@ public class Portal extends SQLUtils {
 	}
 
 	public static Optional<Portal> get(Location<World> location){
-		Optional<Portal> optionalPortal = Optional.empty();
-		
 		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 		
-		try {
-		    Connection connection = getDataSource().getConnection();
-		    
-		    PreparedStatement statement = connection.prepareStatement("SELECT * FROM Portals");
-		    
-			ResultSet result = statement.executeQuery();
-			
-			while (result.next()) {
-				
-				String[] frameArray = result.getString("Frame").split(";");
-				List<String> frame = new ArrayList<String>(Arrays.asList(frameArray));
-				
-				String[] fillArray = result.getString("Fill").split(";");
-				List<String> fill = new ArrayList<String>(Arrays.asList(fillArray));
-
-		    	if(!frame.contains(name) && !fill.contains(name)){
-		    		continue;
-		    	}
-		    	
-		    	String portalName = result.getString("Name");
-		    	String destination = result.getString("Destination");
-		    	String particle = result.getString("Particle");
-		    	
-		    	optionalPortal = Optional.of(new Portal(portalName, destination, frame, fill, particle));
-				
-				break;
-			}
-			connection.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		return optionalPortal;
-	}
-
-	public static Optional<Portal> getByName(String name){
 		Optional<Portal> optionalPortal = Optional.empty();
-
-		try {
-		    Connection connection = getDataSource().getConnection();
-		    
-		    PreparedStatement statement = connection.prepareStatement("SELECT * FROM Portals");
-		    
-			ResultSet result = statement.executeQuery();
-			
-			while (result.next()) {
-				if (result.getString("Name").equalsIgnoreCase(name)) {
-
+		
+		if(cache.containsKey(name)){
+			try {
+			    Connection connection = getDataSource().getConnection();
+			    
+			    PreparedStatement statement = connection.prepareStatement("SELECT * FROM Portals");
+			    
+				ResultSet result = statement.executeQuery();
+				
+				while (result.next()) {
+					
 					String[] frameArray = result.getString("Frame").split(";");
 					List<String> frame = new ArrayList<String>(Arrays.asList(frameArray));
 					
 					String[] fillArray = result.getString("Fill").split(";");
 					List<String> fill = new ArrayList<String>(Arrays.asList(fillArray));
-					
-					String destination = result.getString("Destination");
-					String particle = result.getString("Particle");
-					
-					optionalPortal = Optional.of(new Portal(name, destination, frame, fill, particle));
+
+			    	if(!frame.contains(name) && !fill.contains(name)){
+			    		continue;
+			    	}
+			    	
+			    	String portalName = result.getString("Name");
+			    	String destination = result.getString("Destination");
+			    	String particle = result.getString("Particle");
+			    	
+			    	optionalPortal = Optional.of(new Portal(portalName, destination, frame, fill, particle));
 					
 					break;
 				}
+				connection.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
-			connection.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
 		}
+		return optionalPortal;
+	}
+
+	public static Optional<Portal> getByName(String name){
+		Optional<Portal> optionalPortal = Optional.empty();
 		
+		for(Entry<String, String> entry : cache.entrySet()){
+			if(!entry.getValue().equalsIgnoreCase(name)){
+				continue;
+			}
+			
+			try {
+			    Connection connection = getDataSource().getConnection();
+			    
+			    PreparedStatement statement = connection.prepareStatement("SELECT * FROM Portals");
+			    
+				ResultSet result = statement.executeQuery();
+				
+				while (result.next()) {
+					if (result.getString("Name").equalsIgnoreCase(name)) {
+
+						String[] frameArray = result.getString("Frame").split(";");
+						List<String> frame = new ArrayList<String>(Arrays.asList(frameArray));
+						
+						String[] fillArray = result.getString("Fill").split(";");
+						List<String> fill = new ArrayList<String>(Arrays.asList(fillArray));
+						
+						String destination = result.getString("Destination");
+						String particle = result.getString("Particle");
+						
+						optionalPortal = Optional.of(new Portal(name, destination, frame, fill, particle));
+						
+						break;
+					}
+				}
+				connection.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+			break;
+		}
 		return optionalPortal;
 	}
 	
@@ -300,6 +288,12 @@ public class Portal extends SQLUtils {
 			for(Task task : Main.getGame().getScheduler().getScheduledTasks()){
 				if(task.getName().equals(name)){
 					task.cancel();
+				}
+			}
+			
+			for(Entry<String, String> entry : cache.entrySet()){
+				if(entry.getValue().equalsIgnoreCase(name)){
+					cache.remove(entry.getKey());
 				}
 			}
 		}catch (SQLException e) {
@@ -375,5 +369,25 @@ public class Portal extends SQLUtils {
 		}
 		
 		return list;
+	}
+	
+	public static void init(){
+		for(Portal portal : Portal.list()){
+			String name = portal.getName();
+			
+			for(String loc : portal.fill){
+				cache.put(loc, name);
+			}
+			for(String loc : portal.frame){
+				cache.put(loc, name);
+			}
+			
+    		String[] split = portal.getParticle().split(":");
+    		if(split.length == 2){
+    			Particles.get(split[0]).get().createTask(portal.getName(), portal.getFill(), ParticleColor.get(split[1]).get());
+    		}else{
+    			Particles.get(split[0]).get().createTask(portal.getName(), portal.getFill());
+    		}
+		}
 	}
 }

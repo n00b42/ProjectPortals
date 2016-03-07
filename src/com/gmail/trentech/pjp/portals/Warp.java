@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -22,6 +23,8 @@ public class Warp extends SQLUtils{
 	private final String name;
 	public final String destination;
 
+	private static ConcurrentHashMap<String, Warp> cache = new ConcurrentHashMap<>();
+	
 	public Warp(String name, String destination) {
 		this.name = name;
 		this.destination = destination;
@@ -34,10 +37,12 @@ public class Warp extends SQLUtils{
 	public Optional<Location<World>> getDestination() {
 		String[] args = destination.split(":");
 		
-		if(!Main.getGame().getServer().getWorld(args[0]).isPresent()){
+		Optional<World> optional = Main.getGame().getServer().getWorld(args[0]);
+		
+		if(!optional.isPresent()){
 			return Optional.empty();
 		}
-		World world = Main.getGame().getServer().getWorld(args[0]).get();
+		World world = optional.get();
 		
 		if(args[1].equalsIgnoreCase("random")){
 			return Optional.of(Utils.getRandomLocation(world));
@@ -70,28 +75,13 @@ public class Warp extends SQLUtils{
 	}
 
 	public static Optional<Warp> get(String name){
-		Optional<Warp> optionalWarp = Optional.empty();
-
-		try {
-		    Connection connection = getDataSource().getConnection();
-		    
-		    PreparedStatement statement = connection.prepareStatement("SELECT * FROM Warps");
-		    
-			ResultSet result = statement.executeQuery();
-			
-			while (result.next()) {
-				if (result.getString("Name").equalsIgnoreCase(name)) {
-					optionalWarp = Optional.of(new Warp(result.getString("Name"), result.getString("Destination")));
-					
-					break;
-				}
-			}
-			connection.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		Optional<Warp> optional = Optional.empty();
+		
+		if(cache.containsKey(name)){
+			optional = Optional.of(cache.get(name));
 		}
 		
-		return optionalWarp;
+		return optional;
 	}
 	
 	public static void remove(String name){
@@ -104,6 +94,8 @@ public class Warp extends SQLUtils{
 			statement.executeUpdate();
 			
 			connection.close();
+			
+			cache.remove(name);
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -121,6 +113,8 @@ public class Warp extends SQLUtils{
 			statement.executeUpdate();
 			
 			connection.close();
+			
+			cache.put(name, new Warp(name, destination));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -149,5 +143,11 @@ public class Warp extends SQLUtils{
 		}
 		
 		return list;
+	}
+	
+	public static void init(){
+		for(Warp warp : Warp.list()){
+			cache.put(warp.getName(), warp);
+		}
 	}
 }
