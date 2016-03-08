@@ -11,6 +11,7 @@ import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.event.entity.DisplaceEntityEvent.TargetPlayer;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
@@ -107,7 +108,7 @@ public class Utils {
 			player.setLocation(location);
 			player.sendTitle(Title.of(Text.of(TextColors.GOLD, getPrettyName(location.getExtent().getName())), Text.of(TextColors.DARK_PURPLE, "x: ", location.getBlockX(), ", y: ", location.getBlockY(),", z: ", location.getBlockZ())));
 		
-			TargetPlayer displaceEvent = SpongeEventFactory.createDisplaceEntityEventTargetPlayer(Cause.of(player), new Transform<World>(currentLocation), new Transform<World>(location), player);
+			TargetPlayer displaceEvent = SpongeEventFactory.createDisplaceEntityEventTargetPlayer(Cause.of(NamedCause.source(player)), new Transform<World>(currentLocation), new Transform<World>(location), player);
 			Main.getGame().getEventManager().post(displaceEvent);
 		};
 	}

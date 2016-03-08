@@ -13,6 +13,7 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.event.entity.DisplaceEntityEvent;
 import org.spongepowered.api.event.entity.DisplaceEntityEvent.TargetPlayer;
 import org.spongepowered.api.event.filter.cause.First;
@@ -145,7 +146,7 @@ public class DoorListener {
 		}
 		Location<World> spawnLocation = optionalSpawnLocation.get();
 
-		TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of(door));
+		TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of(NamedCause.source(door)));
 
 		if(!Main.getGame().getEventManager().post(teleportEvent)){
 			Location<World> currentLocation = player.getLocation();
@@ -159,7 +160,7 @@ public class DoorListener {
 				player.setLocation(spawnLocation);
 			}
 			
-			TargetPlayer displaceEvent = SpongeEventFactory.createDisplaceEntityEventTargetPlayer(Cause.of(this), new Transform<World>(currentLocation), new Transform<World>(spawnLocation), player);
+			TargetPlayer displaceEvent = SpongeEventFactory.createDisplaceEntityEventTargetPlayer(Cause.of(NamedCause.source(this)), new Transform<World>(currentLocation), new Transform<World>(spawnLocation), player);
 			Main.getGame().getEventManager().post(displaceEvent);
 		}
 	}

@@ -10,6 +10,7 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
@@ -48,7 +49,7 @@ public class CMDBack implements CommandExecutor {
 		}
 		Location<World> spawnLocation = players.get(player);
 
-		TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of("back"));
+		TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of(NamedCause.source("back")));
 
 		if(!Main.getGame().getEventManager().post(teleportEvent)){
 			spawnLocation = teleportEvent.getDestination();

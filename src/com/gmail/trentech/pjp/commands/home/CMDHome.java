@@ -13,8 +13,9 @@ import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.event.entity.DisplaceEntityEvent.TargetPlayer;
-import org.spongepowered.api.service.pagination.PaginationBuilder;
+import org.spongepowered.api.service.pagination.PaginationList.Builder;
 import org.spongepowered.api.service.pagination.PaginationService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
@@ -77,7 +78,7 @@ public class CMDHome implements CommandExecutor {
 				player = optionalPlayer.get();
 			}
 
-			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of("home"));
+			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of(NamedCause.source("home")));
 
 			if(!Main.getGame().getEventManager().post(teleportEvent)){
 				Location<World> currentLocation = player.getLocation();
@@ -91,14 +92,14 @@ public class CMDHome implements CommandExecutor {
 					player.setLocation(spawnLocation);
 				}
 				
-				TargetPlayer displaceEvent = SpongeEventFactory.createDisplaceEntityEventTargetPlayer(Cause.of(this), new Transform<World>(currentLocation), new Transform<World>(spawnLocation), player);
+				TargetPlayer displaceEvent = SpongeEventFactory.createDisplaceEntityEventTargetPlayer(Cause.of(NamedCause.source(this)), new Transform<World>(currentLocation), new Transform<World>(spawnLocation), player);
 				Main.getGame().getEventManager().post(displaceEvent);
 			}
 
 			return CommandResult.success();
 		}
 
-		PaginationBuilder pages = Main.getGame().getServiceManager().provide(PaginationService.class).get().builder();
+		Builder pages = Main.getGame().getServiceManager().provide(PaginationService.class).get().builder();
 		
 		pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, "Command List")).build());
 		

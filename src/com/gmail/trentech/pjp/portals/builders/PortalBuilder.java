@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -88,7 +89,7 @@ public class PortalBuilder {
 		List<Location<World>> frame = new ArrayList<>(regionFrame.get());
 		List<Location<World>> fill = new ArrayList<>(regionFill.get());
 
-		if(!Main.getGame().getEventManager().post(new ConstructPortalEvent(frame, fill, Cause.of(this)))) {
+		if(!Main.getGame().getEventManager().post(new ConstructPortalEvent(frame, fill, Cause.of(NamedCause.source(this))))) {
 			BlockState block = BlockTypes.AIR.getDefaultState();
 
 			for(Location<World> location : fill){
@@ -112,7 +113,7 @@ public class PortalBuilder {
 					}
 				}
 				
-				location.getExtent().setBlock(location.getBlockX(), location.getBlockY(), location.getBlockZ(), block, false, Cause.of(Main.getPlugin()));
+				location.getExtent().setBlock(location.getBlockX(), location.getBlockY(), location.getBlockZ(), block, false, Cause.of(NamedCause.source(Main.getPlugin())));
 			}
 
 			Portal portal = new Portal(name, destination, frame, fill, null, null);
