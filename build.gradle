@@ -1,5 +1,13 @@
-apply plugin: 'java'
-apply plugin: 'eclipse'
+plugins {
+  id 'java'
+  id 'eclipse'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+version = "0.10.43"
+group = "com.gmail.trentech"
 
 repositories {
     mavenCentral()
@@ -18,6 +26,14 @@ configurations {
     compile.extendsFrom shade
 }
 
+sourceSets {
+  api.java.srcDir 'api'
+  main {
+    java.srcDir 'src'
+    compileClasspath += api.output
+  }
+}
+
 dependencies {
     compile "org.spongepowered:spongeapi:4.1.0-SNAPSHOT"
 	shade "com.github.Flibio:Updatifier:-SNAPSHOT:api"
@@ -27,4 +43,5 @@ jar {
     configurations.shade.copyRecursive().setTransitive(false).each { artifact ->
       from (zipTree(artifact))
     }
+    baseName = 'projectportals-4.1.0'
 }
