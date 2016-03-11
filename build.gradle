@@ -26,20 +26,13 @@ configurations {
     compile.extendsFrom shade
 }
 
-sourceSets {
-  api.java.srcDir 'api'
-  main {
-    java.srcDir 'src'
-    compileClasspath += api.output
-  }
-}
-
 dependencies {
     compile "org.spongepowered:spongeapi:4.1.0-SNAPSHOT"
 	shade "com.github.Flibio:Updatifier:-SNAPSHOT:api"
 }
 
 jar {
+	sourceSets.main.output
     configurations.shade.copyRecursive().setTransitive(false).each { artifact ->
       from (zipTree(artifact))
     }
