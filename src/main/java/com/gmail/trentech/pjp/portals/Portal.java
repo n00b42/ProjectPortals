@@ -373,8 +373,11 @@ public class Portal extends SQLUtils {
 	
 	public static void init(){
 		for(Portal portal : Portal.list()){
-			String name = portal.getName();
-			
+			if(!portal.getName().equals(portal.getName().toLowerCase())){
+				portal.fixName();
+			}
+			String name = portal.getName().toLowerCase();
+
 			for(String loc : portal.fill){
 				cache.put(loc, name);
 			}
@@ -384,10 +387,25 @@ public class Portal extends SQLUtils {
 			
     		String[] split = portal.getParticle().split(":");
     		if(split.length == 2){
-    			Particles.get(split[0]).get().createTask(portal.getName(), portal.getFill(), ParticleColor.get(split[1]).get());
+    			Particles.get(split[0]).get().createTask(name, portal.getFill(), ParticleColor.get(split[1]).get());
     		}else{
-    			Particles.get(split[0]).get().createTask(portal.getName(), portal.getFill());
+    			Particles.get(split[0]).get().createTask(name, portal.getFill());
     		}
+		}
+	}
+	
+	private void fixName(){
+		try {
+		    Connection connection = getDataSource().getConnection();
+		    PreparedStatement statement = connection.prepareStatement("UPDATE Portals SET Name = ? WHERE Name = ?");
+
+		    statement.setString(1, this.name.toLowerCase());
+			statement.setString(2, this.name);
+			
+			statement.executeUpdate();
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 }

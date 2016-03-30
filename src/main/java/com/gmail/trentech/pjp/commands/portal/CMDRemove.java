@@ -36,7 +36,7 @@ public class CMDRemove implements CommandExecutor {
 			src.sendMessage(Text.of(TextColors.YELLOW, "/portal remove <name>"));
 			return CommandResult.empty();
 		}
-		String name = args.<String>getOne("name").get();
+		String name = args.<String>getOne("name").get().toLowerCase();
 
 		if(!Portal.getByName(name).isPresent()){
 			src.sendMessage(Text.of(TextColors.DARK_RED, name, " does not exist"));

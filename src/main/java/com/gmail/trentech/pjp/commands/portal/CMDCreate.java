@@ -45,7 +45,7 @@ public class CMDCreate implements CommandExecutor {
 			src.sendMessage(Text.of(TextColors.YELLOW, "/portal create <name> <world> [x] [y] [z] [direction]"));
 			return CommandResult.empty();
 		}
-		String name = args.<String>getOne("name").get();
+		String name = args.<String>getOne("name").get().toLowerCase();
 		
 		if(Portal.getByName(name).isPresent()){
 			src.sendMessage(Text.of(TextColors.DARK_RED, name, " already exists"));
