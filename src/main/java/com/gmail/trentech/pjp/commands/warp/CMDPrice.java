@@ -1,4 +1,4 @@
-package com.gmail.trentech.pjp.commands.portal;
+package com.gmail.trentech.pjp.commands.warp;
 
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -10,18 +10,18 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
-import com.gmail.trentech.pjp.portals.Portal;
+import com.gmail.trentech.pjp.portals.Warp;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDPrice implements CommandExecutor {
 
 	public CMDPrice(){
-		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "portal").getString();
+		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "warp").getString();
 		
-		Help help = new Help("pprice", "price", " Charge players for using portals. 0 to disable");
-		help.setSyntax(" /portal price <name> <price>\n /" + alias + " pr <name> <price>");
-		help.setExample(" /portal price MyPortal 50\n /portal price MyPortal 0");
+		Help help = new Help("wprice", "price", " Charge players for using warps. 0 to disable");
+		help.setSyntax(" /warp price <name> <price>\n /" + alias + " p <name> <price>");
+		help.setExample(" /warp price Lobby 50\n /warp price Lobby 0");
 		help.save();
 	}
 	
@@ -38,11 +38,11 @@ public class CMDPrice implements CommandExecutor {
 		}
 		String name = args.<String>getOne("name").get();
 
-		if(!Portal.getByName(name).isPresent()){
+		if(!Warp.get(name).isPresent()){
 			src.sendMessage(Text.of(TextColors.DARK_RED, name, " does not exist"));
 			return CommandResult.empty();
 		}	
-		Portal portal = Portal.getByName(name).get();
+		Warp warp = Warp.get(name).get();
 		
 		if(!args.hasAny("price")) {
 			src.sendMessage(invalidArg());
@@ -57,15 +57,15 @@ public class CMDPrice implements CommandExecutor {
 			return CommandResult.empty();
 		}
 
-		portal.setPrice(price);
+		warp.setPrice(price);
 
-		src.sendMessage(Text.of(TextColors.DARK_GREEN, "Set price of portal ", portal.getName(), " to $", price));
+		src.sendMessage(Text.of(TextColors.DARK_GREEN, "Set price of warp ", warp.getName(), " to $", price));
 		
 		return CommandResult.success();
 	}
 	
 	private Text invalidArg(){
-		Text t1 = Text.of(TextColors.YELLOW, "/portal price <name> ");
+		Text t1 = Text.of(TextColors.YELLOW, "/warp price <name> ");
 		Text t2 = Text.builder().color(TextColors.YELLOW).onHover(TextActions.showText(Text.of("Enter a number amount or 0 to disable"))).append(Text.of("<price>")).build();
 		return Text.of(t1,t2);
 	}

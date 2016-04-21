@@ -81,7 +81,7 @@ public class CMDWarp implements CommandExecutor {
 				player = optionalPlayer.get();
 			}
 
-			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, 0, Cause.of(NamedCause.source("warp")));
+			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, warp.getPrice(), Cause.of(NamedCause.source("warp")));
 
 			if(!Main.getGame().getEventManager().post(teleportEvent)){
 				Location<World> currentLocation = player.getLocation();
@@ -122,6 +122,10 @@ public class CMDWarp implements CommandExecutor {
 		if(src.hasPermission("pjp.cmd.warp.list")) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
 					.onClick(TextActions.executeCallback(Help.getHelp("wlist"))).append(Text.of(" /warp list")).build());
+		}
+		if(src.hasPermission("pjp.cmd.warp.price")) {
+			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
+					.onClick(TextActions.executeCallback(Help.getHelp("wprice"))).append(Text.of(" /warp price")).build());
 		}
 		pages.contents(list);
 		

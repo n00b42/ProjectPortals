@@ -25,6 +25,13 @@ public class CommandManager {
 		    .executor(new com.gmail.trentech.pjp.commands.warp.CMDRemove())
 		    .build();
 	
+	public CommandSpec cmdWarpPrice = CommandSpec.builder()
+		    .description(Text.of("Remove an existing warp point"))
+		    .permission("pjp.cmd.warp.price")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))), GenericArguments.optional(GenericArguments.string(Text.of("price"))))
+		    .executor(new com.gmail.trentech.pjp.commands.warp.CMDPrice())
+		    .build();
+	
 	public CommandSpec cmdWarpList = CommandSpec.builder()
 		    .description(Text.of("List all available warp points"))
 		    .permission("pjp.cmd.warp.list")
@@ -40,6 +47,7 @@ public class CommandManager {
 		    .child(cmdWarpCreate, "create", "c")
 		    .child(cmdWarpRemove, "remove", "r")
 		    .child(cmdWarpList, "list", "l")
+		    .child(cmdWarpPrice, "price", "p")
 		    .executor(new CMDWarp())
 		    .build();
 	

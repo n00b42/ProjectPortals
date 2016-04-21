@@ -76,7 +76,7 @@ public class LeverListener {
 			}
 			Location<World> spawnLocation = optionalSpawnLocation.get();
 
-			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, 0, Cause.of(NamedCause.source(lever)));
+			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, lever.getPrice(), Cause.of(NamedCause.source(lever)));
 
 			if(!Main.getGame().getEventManager().post(teleportEvent)){
 				Location<World> currentLocation = player.getLocation();
