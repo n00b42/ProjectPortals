@@ -79,7 +79,8 @@ public class CMDCreate implements CommandExecutor {
 					y = Integer.parseInt(coords[1]);
 					z = Integer.parseInt(coords[2]);				
 				}catch(Exception e){
-					src.sendMessage(Text.of(TextColors.YELLOW, "Coordinates format: x,y,z"));
+					src.sendMessage(Text.of(TextColors.RED, "Incorrect coordinates"));
+					src.sendMessage(Text.of(TextColors.RED, "Usage: /portal create [<name>] [<world>] [-c <x,y,z>]"));
 					return CommandResult.empty();
 				}
 				destination = destination.replace("spawn", x + "." + y + "." + z);
@@ -94,7 +95,8 @@ public class CMDCreate implements CommandExecutor {
 			Optional<Rotation> optionalRotation = Rotation.get(direction);
 			
 			if(!optionalRotation.isPresent()){
-				src.sendMessage(Text.of(TextColors.YELLOW, "Direction examples NORTH, SOUTH, NORTHEAST, SOUTHWEST...etc"));
+				src.sendMessage(Text.of(TextColors.RED, "Incorrect direction"));
+				src.sendMessage(Text.of(TextColors.RED, "Usage: /portal create [<world>] [-d <direction>]"));
 				return CommandResult.empty();
 			}
 
@@ -104,7 +106,13 @@ public class CMDCreate implements CommandExecutor {
 		double price = 0;
 		
 		if(args.hasAny("price")){
-			price = args.<Double>getOne("price").get();
+			try{
+				price = Double.parseDouble(args.<String>getOne("price").get());
+			}catch(Exception e){
+				src.sendMessage(Text.of(TextColors.RED, "Incorrect price"));
+				src.sendMessage(Text.of(TextColors.RED, "Usage: /portal create [<world>] [-p <price>]"));
+				return CommandResult.empty();
+			}
 		}
 		
 		PortalListener.builders.put(player, new PortalBuilder(destination, rotation, price).name(name));

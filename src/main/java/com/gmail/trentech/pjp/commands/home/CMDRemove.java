@@ -35,7 +35,7 @@ public class CMDRemove implements CommandExecutor {
 		Player player = (Player) src;
 		
 		if(!args.hasAny("name")) {
-			src.sendMessage(Text.of(TextColors.YELLOW, "/home remove <name>"));
+			src.sendMessage(Text.of(TextColors.RED, "Usage: /home remove <name>"));
 			return CommandResult.empty();
 		}
 		String homeName = args.<String>getOne("name").get();

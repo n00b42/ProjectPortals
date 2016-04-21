@@ -18,7 +18,7 @@ public class CommandManager {
 		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))), GenericArguments.optional(GenericArguments.string(Text.of("world"))), GenericArguments.flags()
     				.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
     				.valueFlag(GenericArguments.string(Text.of("direction")), "d")
-    				.valueFlag(GenericArguments.doubleNum(Text.of("price")), "p").buildWith(GenericArguments.none()))
+    				.valueFlag(GenericArguments.string(Text.of("price")), "p").buildWith(GenericArguments.none()))
 		    .executor(new com.gmail.trentech.pjp.commands.warp.CMDCreate())
 		    .build();
 	
@@ -95,7 +95,7 @@ public class CommandManager {
 		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))), GenericArguments.optional(GenericArguments.string(Text.of("world"))), GenericArguments.flags()
     				.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
     				.valueFlag(GenericArguments.string(Text.of("direction")), "d")
-    				.valueFlag(GenericArguments.doubleNum(Text.of("price")), "p").buildWith(GenericArguments.none()))
+    				.valueFlag(GenericArguments.string(Text.of("price")), "p").buildWith(GenericArguments.none()))
 		    .executor(new com.gmail.trentech.pjp.commands.portal.CMDCreate())
 		    .build();
 
@@ -154,7 +154,7 @@ public class CommandManager {
 		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("world"))), GenericArguments.flags()
 		    				.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
 		    				.valueFlag(GenericArguments.string(Text.of("direction")), "d")
-		    				.valueFlag(GenericArguments.doubleNum(Text.of("price")), "p").buildWith(GenericArguments.none()))
+		    				.valueFlag(GenericArguments.string(Text.of("price")), "p").buildWith(GenericArguments.none()))
 		    .executor(new CMDButton())
 		    .build();
 
@@ -165,7 +165,7 @@ public class CommandManager {
 		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("world"))), GenericArguments.flags()
 		    				.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
 		    				.valueFlag(GenericArguments.string(Text.of("direction")), "d")
-		    				.valueFlag(GenericArguments.doubleNum(Text.of("price")), "p").buildWith(GenericArguments.none()))
+		    				.valueFlag(GenericArguments.string(Text.of("price")), "p").buildWith(GenericArguments.none()))
 		    .executor(new CMDDoor())
 		    .build();
 	
@@ -176,7 +176,7 @@ public class CommandManager {
 		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("world"))), GenericArguments.flags()
 		    				.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
 		    				.valueFlag(GenericArguments.string(Text.of("direction")), "d")
-		    				.valueFlag(GenericArguments.doubleNum(Text.of("price")), "p").buildWith(GenericArguments.none()))
+		    				.valueFlag(GenericArguments.string(Text.of("price")), "p").buildWith(GenericArguments.none()))
 		    .executor(new CMDLever())
 		    .build();
 	
@@ -187,7 +187,7 @@ public class CommandManager {
 		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("world"))), GenericArguments.flags()
 		    				.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
 		    				.valueFlag(GenericArguments.string(Text.of("direction")), "d")
-		    				.valueFlag(GenericArguments.doubleNum(Text.of("price")), "p").buildWith(GenericArguments.none()))
+		    				.valueFlag(GenericArguments.string(Text.of("price")), "p").buildWith(GenericArguments.none()))
 		    .executor(new CMDPlate())
 		    .build();
 
@@ -198,7 +198,7 @@ public class CommandManager {
 		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("world"))), GenericArguments.flags()
 		    				.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
 		    				.valueFlag(GenericArguments.string(Text.of("direction")), "d")
-		    				.valueFlag(GenericArguments.doubleNum(Text.of("price")), "p").buildWith(GenericArguments.none()))
+		    				.valueFlag(GenericArguments.string(Text.of("price")), "p").buildWith(GenericArguments.none()))
 		    .executor(new CMDSign())
 		    .build();
 	

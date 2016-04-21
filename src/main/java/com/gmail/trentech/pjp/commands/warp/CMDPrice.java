@@ -53,6 +53,7 @@ public class CMDPrice implements CommandExecutor {
 		try{
 			price = Double.parseDouble(args.<String>getOne("price").get());
 		}catch(Exception e){
+			src.sendMessage(Text.of(TextColors.RED, "Incorrect price"));
 			src.sendMessage(invalidArg());
 			return CommandResult.empty();
 		}
@@ -65,8 +66,8 @@ public class CMDPrice implements CommandExecutor {
 	}
 	
 	private Text invalidArg(){
-		Text t1 = Text.of(TextColors.YELLOW, "/warp price <name> ");
-		Text t2 = Text.builder().color(TextColors.YELLOW).onHover(TextActions.showText(Text.of("Enter a number amount or 0 to disable"))).append(Text.of("<price>")).build();
+		Text t1 = Text.of(TextColors.RED, "Usage: /warp price <name> ");
+		Text t2 = Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("Enter a number amount or 0 to disable"))).append(Text.of("<price>")).build();
 		return Text.of(t1,t2);
 	}
 }

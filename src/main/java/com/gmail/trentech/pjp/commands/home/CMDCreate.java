@@ -38,7 +38,7 @@ public class CMDCreate implements CommandExecutor {
 		Player player = (Player) src;
 		
 		if(!args.hasAny("name")) {
-			src.sendMessage(Text.of(TextColors.YELLOW, "/home create <name>"));
+			src.sendMessage(Text.of(TextColors.RED, "Usage: /home create <name>"));
 			return CommandResult.empty();
 		}
 		String homeName = args.<String>getOne("name").get();

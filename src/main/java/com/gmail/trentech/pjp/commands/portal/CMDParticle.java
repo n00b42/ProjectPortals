@@ -59,7 +59,7 @@ public class CMDParticle implements CommandExecutor {
 		Optional<Particle> optionalParticle = Particles.get(type);
 		
 		if(!optionalParticle.isPresent()) {
-			src.sendMessage(Text.of(TextColors.DARK_RED, "Invalid particle"));
+			src.sendMessage(Text.of(TextColors.DARK_RED, "Incorrect particle"));
 			src.sendMessage(invalidArg());
 			return CommandResult.empty();
 		}
@@ -71,7 +71,7 @@ public class CMDParticle implements CommandExecutor {
 	    		if(ParticleColor.get(color).isPresent()){
 	    			type = type + ":" + color;
 	    		}else{
-	    			src.sendMessage(Text.of(TextColors.DARK_RED, "Invalid color"));
+	    			src.sendMessage(Text.of(TextColors.RED, "Incorrect color"));
 	    			src.sendMessage(invalidArg());
 	    			return CommandResult.empty();
 	    		}
@@ -86,10 +86,10 @@ public class CMDParticle implements CommandExecutor {
 	}
 	
 	private Text invalidArg(){
-		Text t1 = Text.of(TextColors.YELLOW, "/portal particle <name> ");
-		Text t2 = Text.builder().color(TextColors.YELLOW).onHover(TextActions.showText(Text.of("CLOUD\nCRIT\nCRIT_MAGIC\nENCHANTMENT_TABLE\nFLAME\nHEART\nNOTE\nPORTAL"
+		Text t1 = Text.of(TextColors.RED, "Usage: /portal particle <name> ");
+		Text t2 = Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("CLOUD\nCRIT\nCRIT_MAGIC\nENCHANTMENT_TABLE\nFLAME\nHEART\nNOTE\nPORTAL"
 				+ "\nREDSTONE\nSLIME\nSNOWBALL\nSNOW_SHOVEL\nSMOKE_LARGE\nSPELL\nSPELL_WITCH\nSUSPENDED_DEPTH\nVILLAGER_HAPPY\nWATER_BUBBLE\nWATER_DROP\nWATER_SPLASH\nWATER_WAKE"))).append(Text.of("<type> ")).build();
-		Text t3 = Text.builder().color(TextColors.YELLOW).onHover(TextActions.showText(Text.of("REDSTONE ONLY\n", TextColors.DARK_GRAY, "BLACK\n", TextColors.GRAY, "GRAY\n", TextColors.WHITE, "WHITE\n",
+		Text t3 = Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("REDSTONE ONLY\n", TextColors.DARK_GRAY, "BLACK\n", TextColors.GRAY, "GRAY\n", TextColors.WHITE, "WHITE\n",
 				TextColors.BLUE, "BLUE\n", TextColors.GREEN, "GREEN\n", TextColors.GREEN, "LIME\n", TextColors.RED, "RED\n", TextColors.YELLOW, "YELLOW\n", TextColors.LIGHT_PURPLE, "MAGENTA\n",
 				TextColors.DARK_PURPLE, "PURPLE\n", TextColors.DARK_AQUA, "DARK_CYAN\n", TextColors.DARK_GREEN, "DARK_GREEN\n", TextColors.DARK_PURPLE, "DARK_MAGENTA\n",
 				TextColors.AQUA, "CYAN\n", TextColors.DARK_BLUE, "NAVY\n", TextColors.LIGHT_PURPLE, "PINK\n",
