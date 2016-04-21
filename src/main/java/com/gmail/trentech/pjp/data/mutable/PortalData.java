@@ -23,9 +23,10 @@ public class PortalData extends AbstractData<PortalData, ImmutablePortalData> {
 
 	private String name;
 	private String destination;
-
+	private double price;
+	
 	public PortalData() {
-		this("","");
+		this("","", 0);
 	}
 	
 	public PortalData(String name, World world, boolean random) {
@@ -52,9 +53,10 @@ public class PortalData extends AbstractData<PortalData, ImmutablePortalData> {
 		this.destination = destination.getExtent().getName() + ":" + destination.getBlockX() + "." + destination.getBlockY() + "." + destination.getBlockZ();
 	}
 	
-	public PortalData(String name, String destination) {
+	public PortalData(String name, String destination, double price) {
 		this.name = name;
 		this.destination = destination;
+		this.price = price;
 	}
 
 	public Value<String> name() {
@@ -62,8 +64,12 @@ public class PortalData extends AbstractData<PortalData, ImmutablePortalData> {
     }
 	
 	public Value<String> destination() {
-        return Sponge.getRegistry().getValueFactory().createValue(PJPKeys.PORTAL_NAME, this.destination);
+        return Sponge.getRegistry().getValueFactory().createValue(PJPKeys.DESTINATION, this.destination);
     }
+	
+	public Value<Double> price() {
+		return Sponge.getRegistry().getValueFactory().createValue(PJPKeys.PRICE, this.price);
+	}
 	
 	public Optional<Location<World>> getDestination() {
 		String[] args = destination.split(":");
@@ -112,6 +118,10 @@ public class PortalData extends AbstractData<PortalData, ImmutablePortalData> {
         registerFieldGetter(PJPKeys.DESTINATION, () -> this.destination);
         registerFieldSetter(PJPKeys.DESTINATION, value -> this.destination = value);
         registerKeyValue(PJPKeys.DESTINATION, this::destination);
+        
+        registerFieldGetter(PJPKeys.PRICE, () -> this.price);
+        registerFieldSetter(PJPKeys.PRICE, value -> this.price = value);
+        registerKeyValue(PJPKeys.PRICE, this::price);
     }
 	
 	@Override
@@ -121,23 +131,24 @@ public class PortalData extends AbstractData<PortalData, ImmutablePortalData> {
 
     @Override
     public Optional<PortalData> from(DataContainer container) {
-        if (!container.contains(PJPKeys.PORTAL_NAME.getQuery(), PJPKeys.DESTINATION.getQuery())) {
+        if (!container.contains(PJPKeys.PORTAL_NAME.getQuery(), PJPKeys.DESTINATION.getQuery(), PJPKeys.PRICE.getQuery())) {
             return Optional.empty();
         }
         name = container.getString(PJPKeys.PORTAL_NAME.getQuery()).get();
         destination = container.getString(PJPKeys.DESTINATION.getQuery()).get();
+        price = container.getDouble(PJPKeys.PRICE.getQuery()).get();
         
         return Optional.of(this);
     }
 
     @Override
     public PortalData copy() {
-        return new PortalData(this.name, this.destination);
+        return new PortalData(this.name, this.destination, this.price);
     }
 
     @Override
     public ImmutablePortalData asImmutable() {
-        return new ImmutablePortalData(this.name, this.destination);
+        return new ImmutablePortalData(this.name, this.destination, this.price);
     }
 
     @Override
@@ -152,11 +163,11 @@ public class PortalData extends AbstractData<PortalData, ImmutablePortalData> {
 
     @Override
     public DataContainer toContainer() {
-        return super.toContainer().set(PJPKeys.PORTAL_NAME, this.name).set(PJPKeys.DESTINATION, this.destination);
+        return super.toContainer().set(PJPKeys.PORTAL_NAME, this.name).set(PJPKeys.DESTINATION, this.destination).set(PJPKeys.PRICE, this.price);
     }
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("name", this.name).add("destination", this.destination).toString();
+        return Objects.toStringHelper(this).add("name", this.name).add("destination", this.destination).add("price", this.price).toString();
     }
 }

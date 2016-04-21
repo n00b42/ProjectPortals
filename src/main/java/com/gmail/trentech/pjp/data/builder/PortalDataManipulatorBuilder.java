@@ -25,11 +25,12 @@ public class PortalDataManipulatorBuilder implements DataManipulatorBuilder<Port
 
     @Override
     public Optional<PortalData> build(DataView container) throws InvalidDataException {
-        if (container.contains(PJPKeys.PORTAL_NAME, PJPKeys.DESTINATION)) {
+        if (container.contains(PJPKeys.PORTAL_NAME, PJPKeys.DESTINATION, PJPKeys.PRICE)) {
             final String name = container.getString(PJPKeys.PORTAL_NAME.getQuery()).get();
             final String destination = container.getString(PJPKeys.DESTINATION.getQuery()).get();
-
-            return Optional.of(new PortalData(name, destination));
+            final double price = container.getDouble(PJPKeys.PRICE.getQuery()).get();
+            
+            return Optional.of(new PortalData(name, destination, price));
         }
         return Optional.empty();
     }

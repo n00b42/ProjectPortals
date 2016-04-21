@@ -2,6 +2,8 @@ package com.gmail.trentech.pjp.utils;
 
 import java.util.Optional;
 
+import com.flowpowered.math.vector.Vector3d;
+
 public enum Rotation {
 	
 	SOUTH_EAST("southeast", -45), EAST("east", -90), NORTH_EAST("northeast", -135), NORTH("north", -180), 
@@ -23,13 +25,17 @@ public enum Rotation {
         return value;
     }
     
+    public Vector3d toVector3d(){
+    	return new Vector3d(0,getValue(),0);
+    }
+    
     public static Optional<Rotation> get(String name){
     	Optional<Rotation> optional = Optional.empty();
     	
     	Rotation[] rotations = Rotation.values();
     	
         for (Rotation rotation : rotations){
-        	if(rotation.getName().equals(name)){
+        	if(rotation.getName().equals(name.toLowerCase())){
         		optional = Optional.of(rotation);
         		break;
         	}    		

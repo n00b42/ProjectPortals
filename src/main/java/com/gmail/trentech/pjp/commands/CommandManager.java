@@ -145,11 +145,14 @@ public class CommandManager {
 	public CommandSpec cmdButton = CommandSpec.builder()
 		    .description(Text.of("Button base command"))
 		    .permission("pjp.cmd.button")
-		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))),
-		    		GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("coords"))))
+		    .arguments()
+		    .arguments(GenericArguments.optional(GenericArguments.world(Text.of("world"))), GenericArguments.flags()
+		    				.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
+		    				.valueFlag(GenericArguments.string(Text.of("direction")), "d")
+		    				.valueFlag(GenericArguments.doubleNum(Text.of("price")), "p").buildWith(GenericArguments.none()))
 		    .executor(new CMDButton())
 		    .build();
-	
+
 	public CommandSpec cmdPlate = CommandSpec.builder()
 		    .description(Text.of("Plate base command"))
 		    .permission("pjp.cmd.plate")

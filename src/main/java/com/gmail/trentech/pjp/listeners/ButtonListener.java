@@ -34,7 +34,7 @@ import com.gmail.trentech.pjp.utils.ConfigManager;
 
 public class ButtonListener {
 
-	public static ConcurrentHashMap<Player, String> builders = new ConcurrentHashMap<>();
+	public static ConcurrentHashMap<Player, Button> builders = new ConcurrentHashMap<>();
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Modify event, @First Player player) {
@@ -94,14 +94,10 @@ public class ButtonListener {
 				Location<World> currentLocation = player.getLocation();
 				spawnLocation = teleportEvent.getDestination();
 				
-				Optional<Vector3d> optionalRotation = button.getRotation();
-				
-				if(optionalRotation.isPresent()){
-					player.setLocationAndRotation(spawnLocation, optionalRotation.get());
-				}else{
-					player.setLocation(spawnLocation);
-				}
-				
+				Vector3d rotation = button.getRotation().toVector3d();
+
+				player.setLocationAndRotation(spawnLocation, rotation);
+
 				TargetPlayer displaceEvent = SpongeEventFactory.createDisplaceEntityEventTargetPlayer(Cause.of(NamedCause.source(this)), new Transform<World>(currentLocation), new Transform<World>(spawnLocation), player);
 				Main.getGame().getEventManager().post(displaceEvent);
 			}
@@ -150,9 +146,7 @@ public class ButtonListener {
 	        	return;
 			}
 
-            String destination = builders.get(player);
-            
-            Button.save(location, destination, 0);
+            builders.get(player).save(location);
 
 			String[] split = new ConfigManager().getConfig().getNode("options", "particles", "type", "creation").getString().split(":");
 			

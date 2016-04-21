@@ -26,22 +26,22 @@ public abstract class SQLUtils {
 		try {
 			Connection connection = getDataSource().getConnection();
 
-			PreparedStatement statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS Portals (Name TEXT, Frame TEXT, Fill TEXT, Destination TEXT, Particle TEXT, Price DOUBLE)");
+			PreparedStatement statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS Portals (Name TEXT, Frame TEXT, Fill TEXT, Destination TEXT, Rotation TEXT, Particle TEXT, Price DOUBLE)");
 			statement.executeUpdate();
 			
-			statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS Buttons (Name TEXT, Destination TEXT, Price DOUBLE)");
+			statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS Buttons (Name TEXT, Destination TEXT, Rotation TEXT, Price DOUBLE)");
 			statement.executeUpdate();
 			
-			statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS Doors (Name TEXT, Destination TEXT, Price DOUBLE)");
+			statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS Doors (Name TEXT, Destination TEXT, Rotation TEXT, Price DOUBLE)");
 			statement.executeUpdate();
 			
-			statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS Levers (Name TEXT, Destination TEXT, Price DOUBLE)");
+			statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS Levers (Name TEXT, Destination TEXT, Rotation TEXT, Price DOUBLE)");
 			statement.executeUpdate();
 			
-			statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS Plates (Name TEXT, Destination TEXT, Price DOUBLE)");
+			statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS Plates (Name TEXT, Destination TEXT, Rotation TEXT, Price DOUBLE)");
 			statement.executeUpdate();
 			
-			statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS Warps (Name TEXT, Destination TEXT, Price DOUBLE)");
+			statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS Warps (Name TEXT, Destination TEXT, Rotation TEXT, Price DOUBLE)");
 			statement.executeUpdate();
 			
 			connection.close();

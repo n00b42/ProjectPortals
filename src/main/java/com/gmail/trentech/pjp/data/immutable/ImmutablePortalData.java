@@ -24,14 +24,16 @@ public class ImmutablePortalData extends AbstractImmutableData<ImmutablePortalDa
 
 	private String name;
 	private String destination;
+	private double price;
 
 	public ImmutablePortalData() {
-		this("","");
+		this("","", 0);
 	}
 	
-	public ImmutablePortalData(String name, String destination) {
+	public ImmutablePortalData(String name, String destination, double price) {
 		this.name = name;
 		this.destination = destination;
+		this.price = price;
 	}
 
 	public ImmutableValue<String> name() {
@@ -39,9 +41,13 @@ public class ImmutablePortalData extends AbstractImmutableData<ImmutablePortalDa
     }
 	
 	public ImmutableValue<String> destination() {
-        return Sponge.getRegistry().getValueFactory().createValue(PJPKeys.PORTAL_NAME, this.destination).asImmutable();
+        return Sponge.getRegistry().getValueFactory().createValue(PJPKeys.DESTINATION, this.destination).asImmutable();
     }
 
+	public ImmutableValue<Double> price() {
+        return Sponge.getRegistry().getValueFactory().createValue(PJPKeys.PRICE, this.price).asImmutable();
+    }
+	
     @Override
     protected void registerGetters() {
         registerFieldGetter(PJPKeys.PORTAL_NAME, this::getName);
@@ -49,6 +55,9 @@ public class ImmutablePortalData extends AbstractImmutableData<ImmutablePortalDa
 
         registerFieldGetter(PJPKeys.DESTINATION, this::getDest);
         registerKeyValue(PJPKeys.DESTINATION, this::destination);
+        
+        registerFieldGetter(PJPKeys.PRICE, this::getPrice);
+        registerKeyValue(PJPKeys.PRICE, this::price);
     }
 
     @Override
@@ -58,12 +67,12 @@ public class ImmutablePortalData extends AbstractImmutableData<ImmutablePortalDa
 
     @Override
     public PortalData asMutable() {
-        return new PortalData(this.name, this.destination);
+        return new PortalData(this.name, this.destination, this.price);
     }
 
     @Override
     public int compareTo(ImmutablePortalData o) {
-        return ComparisonChain.start().compare(o.name, this.name).compare(o.destination, this.destination).result();
+        return ComparisonChain.start().compare(o.name, this.name).compare(o.destination, this.destination).compare(o.price, this.price).result();
     }
 
     @Override
@@ -73,7 +82,7 @@ public class ImmutablePortalData extends AbstractImmutableData<ImmutablePortalDa
 
     @Override
     public DataContainer toContainer() {
-        return new MemoryDataContainer().set(PJPKeys.PORTAL_NAME, this.name).set(PJPKeys.DESTINATION, this.destination);
+        return new MemoryDataContainer().set(PJPKeys.PORTAL_NAME, this.name).set(PJPKeys.DESTINATION, this.destination).set(PJPKeys.PRICE, this.price);
     }
     
     public String getName() {
@@ -82,6 +91,10 @@ public class ImmutablePortalData extends AbstractImmutableData<ImmutablePortalDa
     
     private String getDest() {
         return this.destination;
+    }
+    
+    private double getPrice() {
+        return this.price;
     }
     
 	public Optional<Location<World>> getDestination() {

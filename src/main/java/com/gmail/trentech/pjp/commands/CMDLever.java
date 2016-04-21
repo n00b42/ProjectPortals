@@ -91,7 +91,7 @@ public class CMDLever implements CommandExecutor {
 		
 		LeverListener.builders.put(player, destination);
 		
-		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place button to create button portal"));
+		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place button to create lever portal"));
 
 		return CommandResult.success();
 	}
