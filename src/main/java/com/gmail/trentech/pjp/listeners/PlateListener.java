@@ -87,7 +87,7 @@ public class PlateListener {
 			}
 			Location<World> spawnLocation = optionalSpawnLocation.get();
 
-			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of(NamedCause.source(plate)));
+			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, 0, Cause.of(NamedCause.source(plate)));
 
 			if(!Main.getGame().getEventManager().post(teleportEvent)){
 				Location<World> currentLocation = player.getLocation();
@@ -156,7 +156,7 @@ public class PlateListener {
 
             String destination = builders.get(player);
             
-            Plate.save(location, destination);
+            Plate.save(location, destination, 0);
 
 			String[] split = new ConfigManager().getConfig().getNode("options", "particles", "type", "creation").getString().split(":");
 			

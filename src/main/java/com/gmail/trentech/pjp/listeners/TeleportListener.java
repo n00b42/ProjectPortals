@@ -1,12 +1,19 @@
 package com.gmail.trentech.pjp.listeners;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.event.entity.DisplaceEntityEvent;
+import org.spongepowered.api.service.economy.EconomyService;
+import org.spongepowered.api.service.economy.account.UniqueAccount;
+import org.spongepowered.api.service.economy.transaction.ResultType;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
@@ -53,6 +60,22 @@ public class TeleportListener {
 			return;
 		}
 
+		double price = event.getPrice();
+		Optional<EconomyService> optionalEconomy = Main.getGame().getServiceManager().provide(EconomyService.class);
+		if(price != 0 && optionalEconomy.isPresent()){
+			EconomyService economy = optionalEconomy.get();
+
+			UniqueAccount account = economy.getOrCreateAccount(player.getUniqueId()).get();
+
+			if(account.withdraw(economy.getDefaultCurrency(), new BigDecimal(price), Cause.of(NamedCause.source(Main.getPlugin()))).getResult() != ResultType.SUCCESS){
+				player.sendMessage(Text.of(TextColors.DARK_RED, "Not enough money. Entry price is ", price));
+				event.setCancelled(true);
+				return;
+			}
+			
+			player.sendMessage(Text.of(TextColors.GREEN, new DecimalFormat("#,###,##0.00").format(price)));
+		}
+		
 		String[] split = new ConfigManager().getConfig().getNode("options", "particles", "type", "teleport").getString().split(":");
 		
 		Optional<Particle> optionalParticle = Particles.get(split[0]);
@@ -76,8 +99,6 @@ public class TeleportListener {
 			}
 		}
 
-		//player.playSound(SoundTypes.PORTAL_TRIGGER, player.getLocation().getPosition(), 1);
-		
 		player.sendTitle(Title.of(Text.of(TextColors.DARK_GREEN, Utils.getPrettyName(dest.getExtent().getName())), Text.of(TextColors.AQUA, "x: ", dest.getBlockX(), ", y: ", dest.getBlockY(),", z: ", dest.getBlockZ())));
 
 		if(player.hasPermission("pjp.cmd.back")){

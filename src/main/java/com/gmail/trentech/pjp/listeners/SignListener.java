@@ -115,7 +115,7 @@ public class SignListener {
 			}
 		}
 
-		TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of(NamedCause.source(portalData)));
+		TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, 0, Cause.of(NamedCause.source(portalData)));
 
 		if(!Main.getGame().getEventManager().post(teleportEvent)){
 			Location<World> currentLocation = player.getLocation();

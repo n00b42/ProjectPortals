@@ -22,18 +22,41 @@ public class Plate extends SQLUtils{
 
 	private final String name;
 	private final String destination;
+	private double price;
 
 	private static ConcurrentHashMap<String, Plate> cache = new ConcurrentHashMap<>();
 	
-	public Plate(String name, String destination) {
+	public Plate(String name, String destination, double price) {
 		this.name = name;
 		this.destination = destination;
+		this.price = price;
 	}
 	
 	public String getName() {
 		return name;
 	}
 
+	public double getPrice() {
+		return price;
+	}
+	
+	public void setPrice(double price){
+		this.price = price;
+		
+		try {
+		    Connection connection = getDataSource().getConnection();
+		    PreparedStatement statement = connection.prepareStatement("UPDATE Plates SET Price = ? WHERE Name = ?");
+
+		    statement.setDouble(1, price);
+			statement.setString(2, this.name);
+			
+			statement.executeUpdate();
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public Optional<Location<World>> getDestination() {
 		String[] args = destination.split(":");
 		
@@ -105,41 +128,43 @@ public class Plate extends SQLUtils{
 		}
 	}
 	
-	public static void save(Location<World> location, String destination){
+	public static void save(Location<World> location, String destination, double price){
 		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 		
 		try {
 		    Connection connection = getDataSource().getConnection();
 		    
-		    PreparedStatement statement = connection.prepareStatement("INSERT into Plates (Name, Destination) VALUES (?, ?)");	
+		    PreparedStatement statement = connection.prepareStatement("INSERT into Plates (Name, Destination, Price) VALUES (?, ?, ?)");	
 			
 		    statement.setString(1, name);
 		    statement.setString(2, destination);
+		    statement.setDouble(3, price);
 
 			statement.executeUpdate();
 			
 			connection.close();
 			
-			cache.put(name, new Plate(name, destination));
+			cache.put(name, new Plate(name, destination, price));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public static void save(String name, String destination){
+	public static void save(String name, String destination, double price){
 		try {
 		    Connection connection = getDataSource().getConnection();
 		    
-		    PreparedStatement statement = connection.prepareStatement("INSERT into Plates (Name, Destination) VALUES (?, ?)");	
+		    PreparedStatement statement = connection.prepareStatement("INSERT into Plates (Name, Destination, Price) VALUES (?, ?, ?)");	
 			
 		    statement.setString(1, name);
 		    statement.setString(2, destination);
+		    statement.setDouble(3, price);
 
 			statement.executeUpdate();
 			
 			connection.close();
 			
-			cache.put(name, new Plate(name, destination));
+			cache.put(name, new Plate(name, destination, price));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -156,7 +181,7 @@ public class Plate extends SQLUtils{
 			ResultSet result = statement.executeQuery();
 
 			while (result.next()) {
-				list.add(new Plate(result.getString("Name"), result.getString("Destination")));
+				list.add(new Plate(result.getString("Name"), result.getString("Destination"), result.getDouble("Price")));
 			}
 			
 			connection.close();

@@ -78,7 +78,7 @@ public class CMDHome implements CommandExecutor {
 				player = optionalPlayer.get();
 			}
 
-			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of(NamedCause.source("home")));
+			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, 0, Cause.of(NamedCause.source("home")));
 
 			if(!Main.getGame().getEventManager().post(teleportEvent)){
 				Location<World> currentLocation = player.getLocation();

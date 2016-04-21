@@ -35,14 +35,19 @@ import com.gmail.trentech.pjp.portals.Warp;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Resource;
 import com.gmail.trentech.pjp.utils.SQLUtils;
+import com.google.inject.Inject;
 
 import me.flibio.updatifier.Updatifier;
+import net.minecrell.mcstats.SpongeStatsLite;
 import ninja.leaping.configurate.ConfigurationNode;
 
 @Updatifier(repoName = "ProjectPortals", repoOwner = "TrenTech", version = Resource.VERSION)
 @Plugin(id = Resource.ID, name = Resource.NAME, version = Resource.VERSION, authors = Resource.AUTHOR, url = Resource.URL, description = Resource.DESCRIPTION, dependencies = {@Dependency(id = "Updatifier", optional = true)})
 public class Main {
 
+    @Inject
+    private SpongeStatsLite stats;
+    
 	private static Game game;
 	private static Logger log;	
 	private static PluginContainer plugin;
@@ -52,6 +57,12 @@ public class Main {
 		game = Sponge.getGame();
 		plugin = getGame().getPluginManager().getPlugin(Resource.ID).get();
 		log = getPlugin().getLogger();
+		
+		if(this.stats.start()){
+			getLog().info("MCStats started.");
+		}else{
+			getLog().warn("Could not start MCStats. This could be due to server opt-out, or error.");
+		}
     }
 
     @Listener

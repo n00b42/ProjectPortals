@@ -54,7 +54,7 @@ public class CMDCreate implements CommandExecutor {
 		
 		String destination = player.getWorld().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ() + ":" + Rotation.getClosest(player.getRotation().getFloorY());
 		
-		Warp.save(warpName, destination);
+		Warp.save(warpName, destination, 0);
 
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Warp ", warpName, " create"));
 

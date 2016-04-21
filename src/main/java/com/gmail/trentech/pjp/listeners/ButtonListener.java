@@ -88,7 +88,7 @@ public class ButtonListener {
 			}
 			Location<World> spawnLocation = optionalSpawnLocation.get();
 
-			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of(NamedCause.source(button)));
+			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, 0, Cause.of(NamedCause.source(button)));
 
 			if(!Main.getGame().getEventManager().post(teleportEvent)){
 				Location<World> currentLocation = player.getLocation();
@@ -152,7 +152,7 @@ public class ButtonListener {
 
             String destination = builders.get(player);
             
-            Button.save(location, destination);
+            Button.save(location, destination, 0);
 
 			String[] split = new ConfigManager().getConfig().getNode("options", "particles", "type", "creation").getString().split(":");
 			

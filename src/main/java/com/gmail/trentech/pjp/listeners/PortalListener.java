@@ -157,7 +157,7 @@ public class PortalListener {
 				return;
 			}
 		}
-
+		
 		Optional<Location<World>> optionalSpawnLocation = portal.getDestination();
 		
 		if(!optionalSpawnLocation.isPresent()){
@@ -204,7 +204,7 @@ public class PortalListener {
 		}
 		Location<World> spawnLocation = optionalSpawnLocation.get();
 
-		TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of(NamedCause.source(portal)));
+		TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, portal.getPrice(), Cause.of(NamedCause.source(portal)));
 
 		if(!Main.getGame().getEventManager().post(teleportEvent)){
 			Location<World> currentLocation = player.getLocation();

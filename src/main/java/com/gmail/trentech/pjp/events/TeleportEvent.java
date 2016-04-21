@@ -14,11 +14,13 @@ public class TeleportEvent extends AbstractEvent implements Cancellable {
 	private final Cause cause;
 	private final Location<World> source;
 	private Location<World> destination;
+	private double price;
 	
-	public TeleportEvent(Player target, Location<World> source, Location<World> destination, Cause cause){
+	public TeleportEvent(Player target, Location<World> source, Location<World> destination, double price, Cause cause){
 		this.target = target;
 		this.source = source;
 		this.setDestination(destination);
+		this.price = price;
 		this.cause = cause;
 	}
 	
@@ -45,6 +47,10 @@ public class TeleportEvent extends AbstractEvent implements Cancellable {
 		this.destination = destination;
 	}
 
+	public double getPrice() {
+		return price;
+	}
+	
 	public Location<World> getSource() {
 		return source;
 	}

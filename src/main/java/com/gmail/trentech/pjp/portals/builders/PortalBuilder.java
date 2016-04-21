@@ -116,7 +116,7 @@ public class PortalBuilder {
 				location.getExtent().setBlock(location.getBlockX(), location.getBlockY(), location.getBlockZ(), block, false, Cause.of(NamedCause.source(Main.getPlugin())));
 			}
 
-			Portal portal = new Portal(name, destination, frame, fill, null, null);
+			Portal portal = new Portal(name, destination, frame, fill, null, 0, null);
 			Portal.save(portal);
 
 			return true;

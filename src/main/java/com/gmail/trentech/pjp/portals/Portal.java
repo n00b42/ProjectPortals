@@ -31,10 +31,11 @@ public class Portal extends SQLUtils {
 	private final List<String> frame;
 	private final List<String> fill;
 	private String particle;
+	private double price;
 	
 	private static ConcurrentHashMap<String, String> cache = new ConcurrentHashMap<>();
 
-	public Portal(String name, String destination, List<String> frame, List<String> fill, String particle) {
+	public Portal(String name, String destination, List<String> frame, List<String> fill, String particle, double price) {
 		this.name = name;
 		this.destination = destination;
 		this.frame = frame;
@@ -44,9 +45,10 @@ public class Portal extends SQLUtils {
 		if(this.particle == null){
 			this.particle = new ConfigManager().getConfig().getNode("options", "particles", "type", "portal").getString().toUpperCase();
 		}
+		this.price = price;
 	}
 	
-	public Portal(String name, String destination, List<Location<World>> frame, List<Location<World>> fill, String particle, String dummy) {
+	public Portal(String name, String destination, List<Location<World>> frame, List<Location<World>> fill, String particle, double price, String dummy) {
 		this.name = name;
 		this.destination = destination;
 		
@@ -78,6 +80,10 @@ public class Portal extends SQLUtils {
 		return particle;
 	}
 
+	public double getPrice(){
+		return price;
+	}
+	
 	public void setParticle(String particle){
 		this.particle = particle;
 		try {
@@ -104,6 +110,23 @@ public class Portal extends SQLUtils {
 			Particles.get(split[0]).get().createTask(getName(), getFill(), ParticleColor.get(split[1]).get());			
 		}else{
 			Particles.get(split[0]).get().createTask(getName(), getFill());
+		}
+	}
+	
+	public void setPrice(double price){
+		this.price = price;
+		
+		try {
+		    Connection connection = getDataSource().getConnection();
+		    PreparedStatement statement = connection.prepareStatement("UPDATE Portals SET Price = ? WHERE Name = ?");
+
+		    statement.setDouble(1, price);
+			statement.setString(2, this.name);
+			
+			statement.executeUpdate();
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -219,8 +242,9 @@ public class Portal extends SQLUtils {
 			    	String portalName = result.getString("Name");
 			    	String destination = result.getString("Destination");
 			    	String particle = result.getString("Particle");
+			    	double price = result.getDouble("Price");
 			    	
-			    	optionalPortal = Optional.of(new Portal(portalName, destination, frame, fill, particle));
+			    	optionalPortal = Optional.of(new Portal(portalName, destination, frame, fill, particle, price));
 					
 					break;
 				}
@@ -258,8 +282,9 @@ public class Portal extends SQLUtils {
 						
 						String destination = result.getString("Destination");
 						String particle = result.getString("Particle");
+						double price = result.getDouble("Price");
 						
-						optionalPortal = Optional.of(new Portal(name, destination, frame, fill, particle));
+						optionalPortal = Optional.of(new Portal(name, destination, frame, fill, particle, price));
 						
 						break;
 					}
@@ -305,7 +330,7 @@ public class Portal extends SQLUtils {
 		try {
 		    Connection connection = getDataSource().getConnection();
 		    
-		    PreparedStatement statement = connection.prepareStatement("INSERT into Portals (Name, Frame, Fill, Destination, Particle) VALUES (?, ?, ?, ?, ?)");	
+		    PreparedStatement statement = connection.prepareStatement("INSERT into Portals (Name, Frame, Fill, Destination, Particle, Price) VALUES (?, ?, ?, ?, ?, ?)");	
 			
 		    statement.setString(1, portal.name);
 		    
@@ -323,6 +348,7 @@ public class Portal extends SQLUtils {
 
 		    statement.setString(4, portal.destination);
 		    statement.setString(5, portal.particle);
+		    statement.setDouble(6, portal.price);
 		    
 			statement.executeUpdate();
 			
@@ -360,8 +386,9 @@ public class Portal extends SQLUtils {
 		    	
 		    	String destination = result.getString("Destination");
 		    	String particle = result.getString("Particle");
+		    	double price = result.getDouble("Price");
 		    	
-		    	list.add(new Portal(name, destination, frame, fill, particle));
+		    	list.add(new Portal(name, destination, frame, fill, particle, price));
 			}
 			connection.close();
 		} catch (SQLException e) {

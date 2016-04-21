@@ -22,18 +22,41 @@ public class Warp extends SQLUtils{
 
 	private final String name;
 	public final String destination;
+	private double price;
 
 	private static ConcurrentHashMap<String, Warp> cache = new ConcurrentHashMap<>();
 	
-	public Warp(String name, String destination) {
+	public Warp(String name, String destination, double price) {
 		this.name = name;
 		this.destination = destination;
+		this.price = price;
 	}
 	
 	public String getName() {
 		return name;
 	}
 
+	public double getPrice() {
+		return price;
+	}
+	
+	public void setPrice(double price){
+		this.price = price;
+		
+		try {
+		    Connection connection = getDataSource().getConnection();
+		    PreparedStatement statement = connection.prepareStatement("UPDATE Warps SET Price = ? WHERE Name = ?");
+
+		    statement.setDouble(1, price);
+			statement.setString(2, this.name);
+			
+			statement.executeUpdate();
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public Optional<Location<World>> getDestination() {
 		String[] args = destination.split(":");
 		
@@ -101,20 +124,21 @@ public class Warp extends SQLUtils{
 		}
 	}
 	
-	public static void save(String name, String destination){
+	public static void save(String name, String destination, double price){
 		try {
 		    Connection connection = getDataSource().getConnection();
 		    
-		    PreparedStatement statement = connection.prepareStatement("INSERT into Warps (Name, Destination) VALUES (?, ?)");	
+		    PreparedStatement statement = connection.prepareStatement("INSERT into Warps (Name, Destination, Price) VALUES (?, ?, ?)");	
 			
 		    statement.setString(1, name);
 		    statement.setString(2, destination);
+		    statement.setDouble(3, price);
 
 			statement.executeUpdate();
 			
 			connection.close();
 			
-			cache.put(name, new Warp(name, destination));
+			cache.put(name, new Warp(name, destination, price));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -131,12 +155,9 @@ public class Warp extends SQLUtils{
 			ResultSet result = statement.executeQuery();
 			
 			while (result.next()) {
-				String name = result.getString("Name");
-
-		    	String destination = result.getString("Destination");
-
-		    	list.add(new Warp(name, destination));
+		    	list.add(new Warp(result.getString("Name"), result.getString("Destination"), result.getDouble("Price")));
 			}
+			
 			connection.close();
 		} catch (SQLException e) {
 			e.printStackTrace();

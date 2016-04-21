@@ -101,6 +101,13 @@ public class CommandManager {
 		    .executor(new com.gmail.trentech.pjp.commands.portal.CMDParticle())
 		    .build();
 	
+	public CommandSpec cmdPortalPrice = CommandSpec.builder()
+		    .description(Text.of("Change portal price"))
+		    .permission("pjp.cmd.portal.price")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))), GenericArguments.optional(GenericArguments.string(Text.of("price"))))
+		    .executor(new com.gmail.trentech.pjp.commands.portal.CMDPrice())
+		    .build();
+	
 	public CommandSpec cmdPortalList = CommandSpec.builder()
 		    .description(Text.of("List all portals"))
 		    .permission("pjp.cmd.portal.list")
@@ -120,6 +127,7 @@ public class CommandManager {
 		    .child(cmdPortalCreate, "create", "c")
 		    .child(cmdPortalRemove, "remove", "r")
 		    .child(cmdPortalParticle, "particle", "p")
+		    .child(cmdPortalPrice, "price", "pr")
 		    .child(cmdPortalList, "list", "l")
 		    .child(cmdSave, "save", "s")
 		    .executor(new CMDPortal())

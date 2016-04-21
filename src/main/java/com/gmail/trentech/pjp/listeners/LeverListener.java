@@ -76,7 +76,7 @@ public class LeverListener {
 			}
 			Location<World> spawnLocation = optionalSpawnLocation.get();
 
-			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, Cause.of(NamedCause.source(lever)));
+			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, 0, Cause.of(NamedCause.source(lever)));
 
 			if(!Main.getGame().getEventManager().post(teleportEvent)){
 				Location<World> currentLocation = player.getLocation();
@@ -140,7 +140,7 @@ public class LeverListener {
 
             String destination = builders.get(player);
             
-            Lever.save(location, destination);
+            Lever.save(location, destination, 0);
 
 			String[] split = new ConfigManager().getConfig().getNode("options", "particles", "type", "creation").getString().split(":");
 			

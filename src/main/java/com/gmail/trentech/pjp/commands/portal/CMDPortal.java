@@ -47,6 +47,10 @@ public class CMDPortal implements CommandExecutor {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
 					.onClick(TextActions.executeCallback(Help.getHelp("particle"))).append(Text.of(" /portal particle")).build());
 		}
+		if(src.hasPermission("pjp.cmd.portal.price")) {
+			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
+					.onClick(TextActions.executeCallback(Help.getHelp("price"))).append(Text.of(" /portal price")).build());
+		}
 		pages.contents(list);
 		
 		pages.sendTo(src);
