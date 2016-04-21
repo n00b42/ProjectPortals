@@ -32,7 +32,7 @@ import com.gmail.trentech.pjp.utils.ConfigManager;
 
 public class LeverListener {
 
-	public static ConcurrentHashMap<Player, String> builders = new ConcurrentHashMap<>();
+	public static ConcurrentHashMap<Player, Lever> builders = new ConcurrentHashMap<>();
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Modify event, @First Player player) {
@@ -82,13 +82,9 @@ public class LeverListener {
 				Location<World> currentLocation = player.getLocation();
 				spawnLocation = teleportEvent.getDestination();
 				
-				Optional<Vector3d> optionalRotation = lever.getRotation();
-				
-				if(optionalRotation.isPresent()){
-					player.setLocationAndRotation(spawnLocation, optionalRotation.get());
-				}else{
-					player.setLocation(spawnLocation);
-				}
+				Vector3d rotation = lever.getRotation().toVector3d();
+
+				player.setLocationAndRotation(spawnLocation, rotation);
 				
 				TargetPlayer displaceEvent = SpongeEventFactory.createDisplaceEntityEventTargetPlayer(Cause.of(NamedCause.source(this)), new Transform<World>(currentLocation), new Transform<World>(spawnLocation), player);
 				Main.getGame().getEventManager().post(displaceEvent);
@@ -138,9 +134,7 @@ public class LeverListener {
 	        	return;
 			}
 
-            String destination = builders.get(player);
-            
-            Lever.save(location, destination, 0);
+            builders.get(player).save(location);
 
 			String[] split = new ConfigManager().getConfig().getNode("options", "particles", "type", "creation").getString().split(":");
 			

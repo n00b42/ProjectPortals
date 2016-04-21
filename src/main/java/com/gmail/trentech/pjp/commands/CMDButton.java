@@ -10,7 +10,6 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.world.storage.WorldProperties;
 
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.listeners.ButtonListener;
@@ -39,17 +38,17 @@ public class CMDButton implements CommandExecutor {
 		Player player = (Player) src;
 
 		if(!args.hasAny("world")) {
-			src.sendMessage(Text.of(TextColors.RED, "Usage: /button [<world>] [-c <coordinates…>] [-d <direction>] [-p <price>]"));
+			src.sendMessage(Text.of(TextColors.RED, "Usage: /button [<world>] [-c <x,y,z>] [-d <direction>] [-p <price>]"));
 			return CommandResult.empty();
 		}
-		WorldProperties properties = args.<WorldProperties>getOne("world").get();
+		String worldName = args.<String>getOne("world").get();
 
-		if(!Main.getGame().getServer().getWorld(properties.getUniqueId()).isPresent()){
-			src.sendMessage(Text.of(TextColors.DARK_RED, properties.getWorldName(), " is not loaded"));
+		if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
+			src.sendMessage(Text.of(TextColors.DARK_RED, worldName, " is not loaded or does not exist"));
 			return CommandResult.empty();
 		}
 
-		String destination = properties.getWorldName() + ":spawn";
+		String destination = worldName + ":spawn";
 		
 		if(args.hasAny("x,y,z")){
 			String[] coords = args.<String>getOne("x,y,z").get().split(",");

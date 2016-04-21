@@ -20,16 +20,15 @@ import com.gmail.trentech.pjp.portals.builders.PortalBuilder;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Rotation;
-import com.gmail.trentech.pjp.utils.Utils;
 
 public class CMDCreate implements CommandExecutor {
 
 	public CMDCreate(){
 		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "portal").getString();
 		
-		Help help = new Help("pcreate", "create", " Create a portal to another dimension, or specified location");
-		help.setSyntax(" /portal create <name> <world> [x] [y] [z] [direction]\n /" + alias + " create <name> <world> [x] [y] [z] [direction]");
-		help.setExample(" /portal create MyPortal MyWorld\n /portal create MyPortal MyWorld -100 65 254\n /portal create MyPortal MyWorld random\n /portal create MyPortal MyWorld -100 65 254 north");
+		Help help = new Help("pcreate", "create", " Use this command to create a portal that will teleport you to other worlds");
+		help.setSyntax(" /portal create [<name>] [<world>] [-c <x,y,z>] [-d <direction>] [-p <price>]\n /" + alias + " portal [<name>] [<world>] [-c <x,y,z>] [-d <direction>] [-p <price>]");
+		help.setExample(" /portal create MyPortal MyWorld\n /portal create MyPortal MyWorld -c -100,65,254\n /portal create MyPortal MyWorld -c random\n /portal create MyPortal MyWorld -c -100 65 254 -d south\n /portal create MyPortal MyWorld -d southeast\n /portal create MyPortal MyWorld -p 50");
 		help.save();
 	}
 	
@@ -40,12 +39,12 @@ public class CMDCreate implements CommandExecutor {
 			return CommandResult.empty();
 		}
 		Player player = (Player) src;
-		
+
 		if(!args.hasAny("name")) {
-			src.sendMessage(Text.of(TextColors.YELLOW, "/portal create <name> <world> [x] [y] [z] [direction]"));
+			src.sendMessage(Text.of(TextColors.RED, "Usage: /portal create [<name>] [<world>] [-c <x,y,z>] [-d <direction>] [-p <price>]"));
 			return CommandResult.empty();
 		}
-		String name = args.<String>getOne("name").get().toLowerCase();
+		String name = args.<String>getOne("name").get();
 		
 		if(Portal.getByName(name).isPresent()){
 			src.sendMessage(Text.of(TextColors.DARK_RED, name, " already exists"));
@@ -53,26 +52,23 @@ public class CMDCreate implements CommandExecutor {
 		}
 		
 		if(!args.hasAny("world")) {
-			src.sendMessage(Text.of(TextColors.YELLOW, "/portal create <name> <world> [x] [y] [z] [direction]"));
+			src.sendMessage(Text.of(TextColors.RED, "Usage: /portal create [<name>] [<world>] [-c <x,y,z>] [-d <direction>] [-p <price>]"));
 			return CommandResult.empty();
 		}
-		String worldName = Utils.getBaseName(args.<String>getOne("world").get());
+		String worldName = args.<String>getOne("world").get();
 
 		if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
-			src.sendMessage(Text.of(TextColors.DARK_RED, Utils.getPrettyName(worldName), " does not exist"));
+			src.sendMessage(Text.of(TextColors.DARK_RED, worldName, " is not loaded or does not exist"));
 			return CommandResult.empty();
 		}
+
+		String destination = worldName + ":spawn";
 		
-		String destination = worldName + ":";
-		
-		if(args.hasAny("coords")) {
-			String[] coords = args.<String>getOne("coords").get().split(" ");
-			Optional<Rotation> rotation = Rotation.get(coords[0]);
-			
-			if(rotation.isPresent()){
-				destination = worldName + ":spawn:" + rotation.get().getName();
-			}else if(coords[0].equalsIgnoreCase("random")){
-				destination = worldName + ":random";
+		if(args.hasAny("x,y,z")){
+			String[] coords = args.<String>getOne("x,y,z").get().split(",");
+
+			if(coords[0].equalsIgnoreCase("random")){
+				destination = destination.replace("spawn", "random");
 			}else{
 				int x;
 				int y;
@@ -83,28 +79,35 @@ public class CMDCreate implements CommandExecutor {
 					y = Integer.parseInt(coords[1]);
 					z = Integer.parseInt(coords[2]);				
 				}catch(Exception e){
-					src.sendMessage(Text.of(TextColors.YELLOW, "/portal create <world> [x] [y] [z] [direction]"));
+					src.sendMessage(Text.of(TextColors.YELLOW, "Coordinates format: x,y,z"));
 					return CommandResult.empty();
 				}
-
-				if(coords.length == 4){
-					rotation = Rotation.get(coords[3]);
-					
-					if(rotation.isPresent()){
-						destination = worldName + ":" + x + "." + y + "." + z + ":" + rotation.get().getName();
-					}else{
-						src.sendMessage(Text.of(TextColors.YELLOW, "/portal create <world> [x] [y] [z] [direction]"));
-						return CommandResult.empty();
-					}
-				}else{
-					destination = worldName + ":" + x + "." + y + "." + z;	
-				}
+				destination = destination.replace("spawn", x + "." + y + "." + z);
 			}
-		}else{
-			destination = worldName + ":spawn";
 		}
 		
-		PortalListener.builders.put(player, new PortalBuilder(destination).name(name));
+		Rotation rotation = Rotation.EAST;
+		
+		if(args.hasAny("direction")){
+			String direction = args.<String>getOne("direction").get();
+			
+			Optional<Rotation> optionalRotation = Rotation.get(direction);
+			
+			if(!optionalRotation.isPresent()){
+				src.sendMessage(Text.of(TextColors.YELLOW, "Direction examples NORTH, SOUTH, NORTHEAST, SOUTHWEST...etc"));
+				return CommandResult.empty();
+			}
+
+			rotation = optionalRotation.get();
+		}
+		
+		double price = 0;
+		
+		if(args.hasAny("price")){
+			price = args.<Double>getOne("price").get();
+		}
+		
+		PortalListener.builders.put(player, new PortalBuilder(destination, rotation, price).name(name));
 		
 		player.sendMessage(Text.builder().color(TextColors.DARK_GREEN).append(Text.of("Begin building your portal frame, followed by "))
 				.onClick(TextActions.runCommand("/pjp:portal save")).append(Text.of(TextColors.YELLOW, TextStyles.UNDERLINE, "/portal save")).build());

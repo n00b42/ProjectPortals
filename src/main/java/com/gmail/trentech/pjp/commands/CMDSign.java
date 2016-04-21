@@ -10,15 +10,13 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.data.mutable.PortalData;
+import com.gmail.trentech.pjp.data.mutable.SignPortalData;
 import com.gmail.trentech.pjp.listeners.SignListener;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Rotation;
-import com.gmail.trentech.pjp.utils.Utils;
 
 public class CMDSign implements CommandExecutor {
 
@@ -26,8 +24,8 @@ public class CMDSign implements CommandExecutor {
 		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "sign").getString();
 		
 		Help help = new Help("sign", "sign", " Use this command to create a sign that will teleport you to other worlds");
-		help.setSyntax(" /sign <world> [x] [y] [z]\n /" + alias + " <world> [x] [y] [z]");
-		help.setExample(" /sign MyWorld\n /sign MyWorld -100 65 254\n /sign MyWorld random\n /sign MyWorld -100 65 254 east\n /sign MyWorld northeast");
+		help.setSyntax(" /sign [<world>] [-c <x,y,z>] [-d <direction>] [-p <price>]\n /" + alias + " sign [<world>] [-c <x,y,z>] [-d <direction>] [-p <price>]");
+		help.setExample(" /sign MyWorld\n /sign MyWorld -c -100,65,254\n /sign MyWorld -c random\n /sign MyWorld -c -100 65 254 -d south\n /sign MyWorld -d southeast\n /sign MyWorld -p 50");
 		help.save();
 	}
 	
@@ -38,29 +36,25 @@ public class CMDSign implements CommandExecutor {
 			return CommandResult.empty();
 		}
 		Player player = (Player) src;
-		
-		if(!args.hasAny("name")) {
-			src.sendMessage(Text.of(TextColors.YELLOW, "/sign <world> [x] [y] [z]"));
+
+		if(!args.hasAny("world")) {
+			src.sendMessage(Text.of(TextColors.RED, "Usage: /sign [<world>] [-c <x,y,z>] [-d <direction>] [-p <price>]"));
 			return CommandResult.empty();
 		}
-		String worldName = Utils.getBaseName(args.<String>getOne("name").get());
+		String worldName = args.<String>getOne("world").get();
 
 		if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
-			src.sendMessage(Text.of(TextColors.DARK_RED, Utils.getPrettyName(worldName), " does not exist"));
+			src.sendMessage(Text.of(TextColors.DARK_RED, worldName, " is not loaded or does not exist"));
 			return CommandResult.empty();
 		}
-		World world = Main.getGame().getServer().getWorld(worldName).get();
+
+		String destination = worldName + ":spawn";
 		
-		PortalData portalData;
-		
-		if(args.hasAny("coords")) {
-			String[] coords = args.<String>getOne("coords").get().split(" ");
-			Optional<Rotation> rotation = Rotation.get(coords[0]);
-			
-			if(rotation.isPresent()){
-				portalData = new PortalData("", world, rotation.get());
-			}else if(coords[0].equalsIgnoreCase("random")){
-				portalData = new PortalData("", world, true);
+		if(args.hasAny("x,y,z")){
+			String[] coords = args.<String>getOne("x,y,z").get().split(",");
+
+			if(coords[0].equalsIgnoreCase("random")){
+				destination = destination.replace("spawn", "random");
 			}else{
 				int x;
 				int y;
@@ -71,29 +65,36 @@ public class CMDSign implements CommandExecutor {
 					y = Integer.parseInt(coords[1]);
 					z = Integer.parseInt(coords[2]);				
 				}catch(Exception e){
-					src.sendMessage(Text.of(TextColors.YELLOW, "/sign <world> [x] [y] [z] [direction]"));
+					src.sendMessage(Text.of(TextColors.YELLOW, "Coordinates format: x,y,z"));
 					return CommandResult.empty();
 				}
-
-				if(coords.length == 4){
-					rotation = Rotation.get(coords[3]);
-					
-					if(rotation.isPresent()){
-						portalData = new PortalData("", world.getLocation(x, y, z), rotation.get());
-					}else{
-						src.sendMessage(Text.of(TextColors.YELLOW, "/sign <world> [x] [y] [z] [direction]"));
-						return CommandResult.empty();
-					}
-				}else{
-					portalData = new PortalData("", world.getLocation(x, y, z));
-				}
+				destination = destination.replace("spawn", x + "." + y + "." + z);
 			}
-		}else{
-			portalData = new PortalData("", world, false);
 		}
 		
-		SignListener.builders.put(player, portalData);
+		Rotation rotation = Rotation.EAST;
 		
+		if(args.hasAny("direction")){
+			String direction = args.<String>getOne("direction").get();
+			
+			Optional<Rotation> optionalRotation = Rotation.get(direction);
+			
+			if(!optionalRotation.isPresent()){
+				src.sendMessage(Text.of(TextColors.YELLOW, "Direction examples NORTH, SOUTH, NORTHEAST, SOUTHWEST...etc"));
+				return CommandResult.empty();
+			}
+
+			rotation = optionalRotation.get();
+		}
+		
+		double price = 0;
+		
+		if(args.hasAny("price")){
+			price = args.<Double>getOne("price").get();
+		}
+		
+		SignListener.builders.put(player, new SignPortalData(destination, rotation, price));
+
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place sign to create sign portal"));
 
 		return CommandResult.success();

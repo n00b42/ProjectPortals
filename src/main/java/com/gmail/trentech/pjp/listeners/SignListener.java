@@ -25,8 +25,8 @@ import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.data.immutable.ImmutablePortalData;
-import com.gmail.trentech.pjp.data.mutable.PortalData;
+import com.gmail.trentech.pjp.data.immutable.ImmutableSignPortalData;
+import com.gmail.trentech.pjp.data.mutable.SignPortalData;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
@@ -35,14 +35,14 @@ import com.gmail.trentech.pjp.utils.ConfigManager;
 
 public class SignListener {
 	
-	public static ConcurrentHashMap<Player, PortalData> builders = new ConcurrentHashMap<>();
+	public static ConcurrentHashMap<Player, SignPortalData> builders = new ConcurrentHashMap<>();
 	
 	@Listener
 	public void onSignCreateEvent(ChangeSignEvent event, @First Player player) {
 		if(!builders.containsKey(player)){
 			return;
 		}
-		PortalData portalData = builders.get(player);
+		SignPortalData portalData = builders.get(player);
 
 		if(!player.hasPermission("pjp.sign.place")) {
 			player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to place sign portals"));
@@ -86,12 +86,12 @@ public class SignListener {
 
 		Location<World> location = snapshot.getLocation().get();
 
-		Optional<PortalData> optionalPortalData = location.get(PortalData.class);
+		Optional<SignPortalData> optionalSignPortalData = location.get(SignPortalData.class);
 		
-		if(!optionalPortalData.isPresent()){
+		if(!optionalSignPortalData.isPresent()){
 			return;
 		}
-		PortalData portalData = optionalPortalData.get();
+		SignPortalData portalData = optionalSignPortalData.get();
 
 		Optional<Location<World>> optionalSpawnLocation = portalData.getDestination();
 		
@@ -121,14 +121,10 @@ public class SignListener {
 			Location<World> currentLocation = player.getLocation();
 			spawnLocation = teleportEvent.getDestination();
 			
-			Optional<Vector3d> optionalRotation = portalData.getRotation();
-			
-			if(optionalRotation.isPresent()){
-				player.setLocationAndRotation(spawnLocation, optionalRotation.get());
-			}else{
-				player.setLocation(spawnLocation);
-			}
-			
+			Vector3d rotation = portalData.getRotation().toVector3d();
+
+			player.setLocationAndRotation(spawnLocation, rotation);
+
 			TargetPlayer displaceEvent = SpongeEventFactory.createDisplaceEntityEventTargetPlayer(Cause.of(NamedCause.source(this)), new Transform<World>(currentLocation), new Transform<World>(spawnLocation), player);
 			Main.getGame().getEventManager().post(displaceEvent);
 		}
@@ -145,9 +141,9 @@ public class SignListener {
     			continue;
     		}
 
-    		Optional<ImmutablePortalData> optionalPortalData = snapshot.get(ImmutablePortalData.class);
+    		Optional<ImmutableSignPortalData> optionalSignPortalData = snapshot.get(ImmutableSignPortalData.class);
     		
-			if(!optionalPortalData.isPresent()){
+			if(!optionalSignPortalData.isPresent()){
 				continue;
 			}
 

@@ -210,13 +210,9 @@ public class PortalListener {
 			Location<World> currentLocation = player.getLocation();
 			spawnLocation = teleportEvent.getDestination();
 			
-			Optional<Vector3d> optionalRotation = portal.getRotation();
-			
-			if(optionalRotation.isPresent()){
-				player.setLocationAndRotation(spawnLocation, optionalRotation.get());
-			}else{
-				player.setLocation(spawnLocation);
-			}
+			Vector3d rotation = portal.getRotation().toVector3d();
+
+			player.setLocationAndRotation(spawnLocation, rotation);
 			
 			TargetPlayer displaceEvent = SpongeEventFactory.createDisplaceEntityEventTargetPlayer(Cause.of(NamedCause.source(this)), new Transform<World>(currentLocation), new Transform<World>(spawnLocation), player);
 			Main.getGame().getEventManager().post(displaceEvent);

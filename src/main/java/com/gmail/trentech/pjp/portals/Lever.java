@@ -12,7 +12,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.utils.Rotation;
 import com.gmail.trentech.pjp.utils.SQLUtils;
@@ -20,15 +19,23 @@ import com.gmail.trentech.pjp.utils.Utils;
 
 public class Lever extends SQLUtils{
 
-	private final String name;
-	private final String destination;
+	private String name;
+	private String destination;
+	private Rotation rotation;
 	private double price;
 
 	private static ConcurrentHashMap<String, Lever> cache = new ConcurrentHashMap<>();
 	
-	public Lever(String name, String destination, double price) {
+	private Lever(String name, String destination, Rotation rotation, double price) {
 		this.name = name;
 		this.destination = destination;
+		this.rotation = rotation;
+		this.price = price;
+	}
+	
+	public Lever(String destination, Rotation rotation, double price) {
+		this.destination = destination;
+		this.rotation = rotation;
 		this.price = price;
 	}
 	
@@ -48,6 +55,27 @@ public class Lever extends SQLUtils{
 		    PreparedStatement statement = connection.prepareStatement("UPDATE Levers SET Price = ? WHERE Name = ?");
 
 		    statement.setDouble(1, price);
+			statement.setString(2, this.name);
+			
+			statement.executeUpdate();
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public Rotation getRotation() {
+		return rotation;
+	}
+
+	public void setRotation(Rotation rotation) {
+		this.rotation = rotation;
+		
+		try {
+		    Connection connection = getDataSource().getConnection();
+		    PreparedStatement statement = connection.prepareStatement("UPDATE Levers SET Rotation = ? WHERE Name = ?");
+
+		    statement.setString(1, rotation.getName());
 			statement.setString(2, this.name);
 			
 			statement.executeUpdate();
@@ -81,22 +109,6 @@ public class Lever extends SQLUtils{
 		}
 	}
 
-	public Optional<Vector3d> getRotation(){
-		String[] args = destination.split(":");
-		
-		if(args.length != 3){
-			return Optional.empty();
-		}
-		
-		Optional<Rotation> optional = Rotation.get(args[2]);
-		
-		if(!optional.isPresent()){
-			return Optional.empty();
-		}
-		
-		return Optional.of(new Vector3d(0,optional.get().getValue(),0));
-	}
-
 	public static Optional<Lever> get(Location<World> location){
 		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 		
@@ -128,48 +140,29 @@ public class Lever extends SQLUtils{
 		}
 	}
 	
-	public static void save(Location<World> location, String destination, double price){
-		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
+	public void save(Location<World> location){
+		name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 		
 		try {
 		    Connection connection = getDataSource().getConnection();
 		    
-		    PreparedStatement statement = connection.prepareStatement("INSERT into Levers (Name, Destination, Price) VALUES (?, ?, ?)");	
+		    PreparedStatement statement = connection.prepareStatement("INSERT into Levers (Name, Destination, Rotation, Price) VALUES (?, ?, ?, ?)");	
 			
 		    statement.setString(1, name);
 		    statement.setString(2, destination);
-		    statement.setDouble(3, price);
+		    statement.setString(3, rotation.getName());
+		    statement.setDouble(4, price);
 
 			statement.executeUpdate();
 			
 			connection.close();
 			
-			cache.put(name, new Lever(name, destination, price));
+			cache.put(name, this);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	public static void save(String name, String destination, double price){
-		try {
-		    Connection connection = getDataSource().getConnection();
-		    
-		    PreparedStatement statement = connection.prepareStatement("INSERT into Levers (Name, Destination, Price) VALUES (?, ?, ?)");	
-			
-		    statement.setString(1, name);
-		    statement.setString(2, destination);
-		    statement.setDouble(3, price);
 
-			statement.executeUpdate();
-			
-			connection.close();
-			
-			cache.put(name, new Lever(name, destination, price));
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
 	public static List<Lever> list(){
 		List<Lever> list = new ArrayList<>();
 
@@ -181,7 +174,7 @@ public class Lever extends SQLUtils{
 			ResultSet result = statement.executeQuery();
 
 			while (result.next()) {
-				list.add(new Lever(result.getString("Name"), result.getString("Destination"), result.getDouble("Price")));
+				list.add(new Lever(result.getString("Name"), result.getString("Destination"), Rotation.get(result.getString("Rotation")).get(), result.getDouble("Price")));
 			}
 			
 			connection.close();

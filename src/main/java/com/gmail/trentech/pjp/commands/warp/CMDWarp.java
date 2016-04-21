@@ -87,13 +87,9 @@ public class CMDWarp implements CommandExecutor {
 				Location<World> currentLocation = player.getLocation();
 				spawnLocation = teleportEvent.getDestination();
 				
-				Optional<Vector3d> optionalRotation = warp.getRotation();
-				
-				if(optionalRotation.isPresent()){
-					player.setLocationAndRotation(spawnLocation, optionalRotation.get());
-				}else{
-					player.setLocation(spawnLocation);
-				}
+				Vector3d rotation = warp.getRotation().toVector3d();
+
+				player.setLocationAndRotation(spawnLocation, rotation);
 				
 				TargetPlayer displaceEvent = SpongeEventFactory.createDisplaceEntityEventTargetPlayer(Cause.of(NamedCause.source(this)), new Transform<World>(currentLocation), new Transform<World>(spawnLocation), player);
 				Main.getGame().getEventManager().post(displaceEvent);

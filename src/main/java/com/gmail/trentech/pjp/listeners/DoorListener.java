@@ -33,7 +33,7 @@ import com.gmail.trentech.pjp.utils.ConfigManager;
 
 public class DoorListener {
 
-	public static ConcurrentHashMap<Player, String> builders = new ConcurrentHashMap<>();
+	public static ConcurrentHashMap<Player, Door> builders = new ConcurrentHashMap<>();
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Break event, @First Player player) {
@@ -79,10 +79,8 @@ public class DoorListener {
 	        	return;
 			}
 
-            String destination = builders.get(player);
-            
-            Door.save(location, destination, 0);
-            
+            builders.get(player).save(location);
+
 			String[] split = new ConfigManager().getConfig().getNode("options", "particles", "type", "creation").getString().split(":");
 			
 			Optional<Particle> optionalParticle = Particles.get(split[0]);
@@ -152,14 +150,10 @@ public class DoorListener {
 			Location<World> currentLocation = player.getLocation();
 			spawnLocation = teleportEvent.getDestination();
 			
-			Optional<Vector3d> optionalRotation = door.getRotation();
-			
-			if(optionalRotation.isPresent()){
-				player.setLocationAndRotation(spawnLocation, optionalRotation.get());
-			}else{
-				player.setLocation(spawnLocation);
-			}
-			
+			Vector3d rotation = door.getRotation().toVector3d();
+
+			player.setLocationAndRotation(spawnLocation, rotation);
+
 			TargetPlayer displaceEvent = SpongeEventFactory.createDisplaceEntityEventTargetPlayer(Cause.of(NamedCause.source(this)), new Transform<World>(currentLocation), new Transform<World>(spawnLocation), player);
 			Main.getGame().getEventManager().post(displaceEvent);
 		}

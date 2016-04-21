@@ -73,7 +73,7 @@ public class Button extends SQLUtils{
 		
 		try {
 		    Connection connection = getDataSource().getConnection();
-		    PreparedStatement statement = connection.prepareStatement("UPDATE Buttons SET Price = ? WHERE Name = ?");
+		    PreparedStatement statement = connection.prepareStatement("UPDATE Buttons SET Rotation = ? WHERE Name = ?");
 
 		    statement.setString(1, rotation.getName());
 			statement.setString(2, this.name);
@@ -142,6 +142,7 @@ public class Button extends SQLUtils{
 	
 	public void save(Location<World> location){
 		name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
+		
 		try {
 		    Connection connection = getDataSource().getConnection();
 		    

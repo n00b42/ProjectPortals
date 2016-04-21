@@ -10,11 +10,15 @@ import com.gmail.trentech.pjp.commands.portal.CMDSave;
 import com.gmail.trentech.pjp.commands.warp.CMDWarp;
 
 public class CommandManager {
-
+	
 	public CommandSpec cmdWarpCreate = CommandSpec.builder()
 		    .description(Text.of("Create a new warp point"))
 		    .permission("pjp.cmd.warp.create")
-		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))))
+		    .arguments()
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))), GenericArguments.optional(GenericArguments.string(Text.of("world"))), GenericArguments.flags()
+    				.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
+    				.valueFlag(GenericArguments.string(Text.of("direction")), "d")
+    				.valueFlag(GenericArguments.doubleNum(Text.of("price")), "p").buildWith(GenericArguments.none()))
 		    .executor(new com.gmail.trentech.pjp.commands.warp.CMDCreate())
 		    .build();
 	
@@ -84,16 +88,17 @@ public class CommandManager {
 		    .executor(new CMDHome())
 		    .build();
 
-	
 	public CommandSpec cmdPortalCreate = CommandSpec.builder()
 		    .description(Text.of("Create a new portal"))
 		    .permission("pjp.cmd.portal.create")
-		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))),
-		    		GenericArguments.optional(GenericArguments.string(Text.of("world"))),
-		    		GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("coords"))))
+		    .arguments()
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))), GenericArguments.optional(GenericArguments.string(Text.of("world"))), GenericArguments.flags()
+    				.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
+    				.valueFlag(GenericArguments.string(Text.of("direction")), "d")
+    				.valueFlag(GenericArguments.doubleNum(Text.of("price")), "p").buildWith(GenericArguments.none()))
 		    .executor(new com.gmail.trentech.pjp.commands.portal.CMDCreate())
 		    .build();
-	
+
 	public CommandSpec cmdPortalRemove = CommandSpec.builder()
 		    .description(Text.of("Remove an portal"))
 		    .permission("pjp.cmd.portal.remove")
@@ -146,42 +151,54 @@ public class CommandManager {
 		    .description(Text.of("Button base command"))
 		    .permission("pjp.cmd.button")
 		    .arguments()
-		    .arguments(GenericArguments.optional(GenericArguments.world(Text.of("world"))), GenericArguments.flags()
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("world"))), GenericArguments.flags()
 		    				.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
 		    				.valueFlag(GenericArguments.string(Text.of("direction")), "d")
 		    				.valueFlag(GenericArguments.doubleNum(Text.of("price")), "p").buildWith(GenericArguments.none()))
 		    .executor(new CMDButton())
 		    .build();
 
-	public CommandSpec cmdPlate = CommandSpec.builder()
-		    .description(Text.of("Plate base command"))
-		    .permission("pjp.cmd.plate")
-		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))),
-		    		GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("coords"))))
-		    .executor(new CMDPlate())
-		    .build();
-
-	public CommandSpec cmdLever = CommandSpec.builder()
-		    .description(Text.of("Lever base command"))
-		    .permission("pjp.cmd.lever")
-		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))),
-		    		GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("coords"))))
-		    .executor(new CMDLever())
-		    .build();
-	
 	public CommandSpec cmdDoor = CommandSpec.builder()
 		    .description(Text.of("Door base command"))
 		    .permission("pjp.cmd.door")
-		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))),
-		    		GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("coords"))))
+		    .arguments()
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("world"))), GenericArguments.flags()
+		    				.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
+		    				.valueFlag(GenericArguments.string(Text.of("direction")), "d")
+		    				.valueFlag(GenericArguments.doubleNum(Text.of("price")), "p").buildWith(GenericArguments.none()))
 		    .executor(new CMDDoor())
 		    .build();
 	
+	public CommandSpec cmdLever = CommandSpec.builder()
+		    .description(Text.of("Lever base command"))
+		    .permission("pjp.cmd.lever")
+		    .arguments()
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("world"))), GenericArguments.flags()
+		    				.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
+		    				.valueFlag(GenericArguments.string(Text.of("direction")), "d")
+		    				.valueFlag(GenericArguments.doubleNum(Text.of("price")), "p").buildWith(GenericArguments.none()))
+		    .executor(new CMDLever())
+		    .build();
+	
+	public CommandSpec cmdPlate = CommandSpec.builder()
+		    .description(Text.of("Plate base command"))
+		    .permission("pjp.cmd.plate")
+		    .arguments()
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("world"))), GenericArguments.flags()
+		    				.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
+		    				.valueFlag(GenericArguments.string(Text.of("direction")), "d")
+		    				.valueFlag(GenericArguments.doubleNum(Text.of("price")), "p").buildWith(GenericArguments.none()))
+		    .executor(new CMDPlate())
+		    .build();
+
 	public CommandSpec cmdSign = CommandSpec.builder()
-		    .description(Text.of("Door base command"))
-		    .permission("pjp.cmd.door")
-		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))),
-		    		GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("coords"))))
+		    .description(Text.of("Sign base command"))
+		    .permission("pjp.cmd.sign")
+		    .arguments()
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("world"))), GenericArguments.flags()
+		    				.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
+		    				.valueFlag(GenericArguments.string(Text.of("direction")), "d")
+		    				.valueFlag(GenericArguments.doubleNum(Text.of("price")), "p").buildWith(GenericArguments.none()))
 		    .executor(new CMDSign())
 		    .build();
 	

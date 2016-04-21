@@ -12,67 +12,67 @@ import org.spongepowered.api.data.value.immutable.ImmutableValue;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.PJPKeys;
-import com.gmail.trentech.pjp.data.mutable.PortalData;
+import com.gmail.trentech.pjp.data.mutable.SignPortalData;
 import com.gmail.trentech.pjp.utils.Rotation;
 import com.gmail.trentech.pjp.utils.Utils;
 import com.google.common.collect.ComparisonChain;
 
-public class ImmutablePortalData extends AbstractImmutableData<ImmutablePortalData, PortalData> {
+public class ImmutableSignPortalData extends AbstractImmutableData<ImmutableSignPortalData, SignPortalData> {
 
 	private String name;
 	private String destination;
+	private String rotation;
 	private double price;
 
-	public ImmutablePortalData() {
-		this("","", 0);
+	public ImmutableSignPortalData() {
+		this("", Rotation.EAST, 0);
 	}
 	
-	public ImmutablePortalData(String name, String destination, double price) {
-		this.name = name;
+	public ImmutableSignPortalData(String destination, Rotation rotation, double price) {
 		this.destination = destination;
+		this.rotation = rotation.getName();
 		this.price = price;
 	}
 
-	public ImmutableValue<String> name() {
-        return Sponge.getRegistry().getValueFactory().createValue(PJPKeys.PORTAL_NAME, this.name).asImmutable();
-    }
-	
 	public ImmutableValue<String> destination() {
         return Sponge.getRegistry().getValueFactory().createValue(PJPKeys.DESTINATION, this.destination).asImmutable();
     }
 
+	public ImmutableValue<String> rotation() {
+        return Sponge.getRegistry().getValueFactory().createValue(PJPKeys.ROTATION, this.rotation).asImmutable();
+    }
+	
 	public ImmutableValue<Double> price() {
         return Sponge.getRegistry().getValueFactory().createValue(PJPKeys.PRICE, this.price).asImmutable();
     }
 	
     @Override
     protected void registerGetters() {
-        registerFieldGetter(PJPKeys.PORTAL_NAME, this::getName);
-        registerKeyValue(PJPKeys.PORTAL_NAME, this::name);
-
         registerFieldGetter(PJPKeys.DESTINATION, this::getDest);
         registerKeyValue(PJPKeys.DESTINATION, this::destination);
+      
+        registerFieldGetter(PJPKeys.ROTATION, this::getRot);
+        registerKeyValue(PJPKeys.ROTATION, this::rotation);
         
         registerFieldGetter(PJPKeys.PRICE, this::getPrice);
         registerKeyValue(PJPKeys.PRICE, this::price);
     }
 
     @Override
-    public <E> Optional<ImmutablePortalData> with(Key<? extends BaseValue<E>> key, E value) {
+    public <E> Optional<ImmutableSignPortalData> with(Key<? extends BaseValue<E>> key, E value) {
         return Optional.empty();
     }
 
     @Override
-    public PortalData asMutable() {
-        return new PortalData(this.name, this.destination, this.price);
+    public SignPortalData asMutable() {
+        return new SignPortalData(this.destination, Rotation.get(this.rotation).get(), this.price);
     }
 
     @Override
-    public int compareTo(ImmutablePortalData o) {
-        return ComparisonChain.start().compare(o.name, this.name).compare(o.destination, this.destination).compare(o.price, this.price).result();
+    public int compareTo(ImmutableSignPortalData o) {
+        return ComparisonChain.start().compare(o.destination, this.destination).compare(o.rotation, this.rotation).compare(o.price, this.price).result();
     }
 
     @Override
@@ -82,7 +82,7 @@ public class ImmutablePortalData extends AbstractImmutableData<ImmutablePortalDa
 
     @Override
     public DataContainer toContainer() {
-        return new MemoryDataContainer().set(PJPKeys.PORTAL_NAME, this.name).set(PJPKeys.DESTINATION, this.destination).set(PJPKeys.PRICE, this.price);
+        return new MemoryDataContainer().set(PJPKeys.DESTINATION, this.destination).set(PJPKeys.ROTATION, this.rotation).set(PJPKeys.PRICE, this.price);
     }
     
     public String getName() {
@@ -91,6 +91,10 @@ public class ImmutablePortalData extends AbstractImmutableData<ImmutablePortalDa
     
     private String getDest() {
         return this.destination;
+    }
+    
+    private String getRot() {
+        return this.rotation;
     }
     
     private double getPrice() {
@@ -119,19 +123,7 @@ public class ImmutablePortalData extends AbstractImmutableData<ImmutablePortalDa
 		}
 	}
 	
-	public Optional<Vector3d> getRotation(){
-		String[] args = destination.split(":");
-		
-		if(args.length != 3){
-			return Optional.empty();
-		}
-		
-		Optional<Rotation> optional = Rotation.get(args[2]);
-		
-		if(!optional.isPresent()){
-			return Optional.empty();
-		}
-		
-		return Optional.of(new Vector3d(0,optional.get().getValue(),0));
+	public Rotation getRotation(){
+		return Rotation.get(rotation).get();
 	}
 }

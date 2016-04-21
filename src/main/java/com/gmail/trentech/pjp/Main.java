@@ -14,11 +14,11 @@ import org.spongepowered.api.plugin.PluginContainer;
 import com.gmail.trentech.pjp.commands.CMDBack;
 import com.gmail.trentech.pjp.commands.CommandManager;
 import com.gmail.trentech.pjp.data.builder.HomeDataManipulatorBuilder;
-import com.gmail.trentech.pjp.data.builder.PortalDataManipulatorBuilder;
+import com.gmail.trentech.pjp.data.builder.SignPortalDataManipulatorBuilder;
 import com.gmail.trentech.pjp.data.immutable.ImmutableHomeData;
-import com.gmail.trentech.pjp.data.immutable.ImmutablePortalData;
+import com.gmail.trentech.pjp.data.immutable.ImmutableSignPortalData;
 import com.gmail.trentech.pjp.data.mutable.HomeData;
-import com.gmail.trentech.pjp.data.mutable.PortalData;
+import com.gmail.trentech.pjp.data.mutable.SignPortalData;
 import com.gmail.trentech.pjp.listeners.ButtonListener;
 import com.gmail.trentech.pjp.listeners.DoorListener;
 import com.gmail.trentech.pjp.listeners.LeverListener;
@@ -76,7 +76,7 @@ public class Main {
     	getGame().getCommandManager().register(this, new CMDBack().cmdBack, "back", commands.getNode("back").getString());
     	getGame().getCommandManager().register(this, new CommandManager().cmdPJP, "pjp");
     	
-    	getGame().getDataManager().register(PortalData.class, ImmutablePortalData.class, new PortalDataManipulatorBuilder());
+    	getGame().getDataManager().register(SignPortalData.class, ImmutableSignPortalData.class, new SignPortalDataManipulatorBuilder());
 
     	if(modules.getNode("portals").getBoolean()){  		
     		getGame().getEventManager().registerListeners(this, new PortalListener());
@@ -119,7 +119,7 @@ public class Main {
     		getLog().info("Warp module activated");
     	}
     	
-    	SQLUtils.createTables();
+    	SQLUtils.createTables(modules);
     }
 
     @Listener

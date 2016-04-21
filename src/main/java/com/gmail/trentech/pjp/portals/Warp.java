@@ -12,7 +12,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.utils.Rotation;
 import com.gmail.trentech.pjp.utils.SQLUtils;
@@ -22,16 +21,18 @@ public class Warp extends SQLUtils{
 
 	private final String name;
 	public final String destination;
+	private Rotation rotation;
 	private double price;
 
 	private static ConcurrentHashMap<String, Warp> cache = new ConcurrentHashMap<>();
 	
-	public Warp(String name, String destination, double price) {
+	public Warp(String name, String destination, Rotation rotation, double price) {
 		this.name = name;
 		this.destination = destination;
+		this.rotation = rotation;
 		this.price = price;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
@@ -48,6 +49,27 @@ public class Warp extends SQLUtils{
 		    PreparedStatement statement = connection.prepareStatement("UPDATE Warps SET Price = ? WHERE Name = ?");
 
 		    statement.setDouble(1, price);
+			statement.setString(2, this.name);
+			
+			statement.executeUpdate();
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public Rotation getRotation() {
+		return rotation;
+	}
+
+	public void setRotation(Rotation rotation) {
+		this.rotation = rotation;
+		
+		try {
+		    Connection connection = getDataSource().getConnection();
+		    PreparedStatement statement = connection.prepareStatement("UPDATE Warps SET Rotation = ? WHERE Name = ?");
+
+		    statement.setString(1, rotation.getName());
 			statement.setString(2, this.name);
 			
 			statement.executeUpdate();
@@ -80,22 +102,6 @@ public class Warp extends SQLUtils{
 			return Optional.of(world.getLocation(x, y, z));	
 		}
 	}
-	
-	public Optional<Vector3d> getRotation(){
-		String[] args = destination.split(":");
-		
-		if(args.length != 3){
-			return Optional.empty();
-		}
-		
-		Optional<Rotation> optional = Rotation.get(args[2]);
-		
-		if(!optional.isPresent()){
-			return Optional.empty();
-		}
-		
-		return Optional.of(new Vector3d(0,optional.get().getValue(),0));
-	}
 
 	public static Optional<Warp> get(String name){
 		Optional<Warp> optional = Optional.empty();
@@ -124,7 +130,7 @@ public class Warp extends SQLUtils{
 		}
 	}
 	
-	public static void save(String name, String destination, double price){
+	public void save(){
 		try {
 		    Connection connection = getDataSource().getConnection();
 		    
@@ -138,7 +144,7 @@ public class Warp extends SQLUtils{
 			
 			connection.close();
 			
-			cache.put(name, new Warp(name, destination, price));
+			cache.put(name, this);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -155,7 +161,7 @@ public class Warp extends SQLUtils{
 			ResultSet result = statement.executeQuery();
 			
 			while (result.next()) {
-		    	list.add(new Warp(result.getString("Name"), result.getString("Destination"), result.getDouble("Price")));
+		    	list.add(new Warp(result.getString("Name"), result.getString("Destination"), Rotation.get(result.getString("Rotation")).get(), result.getDouble("Price")));
 			}
 			
 			connection.close();

@@ -19,21 +19,28 @@ import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.events.ConstructPortalEvent;
 import com.gmail.trentech.pjp.portals.Portal;
 import com.gmail.trentech.pjp.utils.ConfigManager;
+import com.gmail.trentech.pjp.utils.Rotation;
 
 public class PortalBuilder {
 
 	private final String destination;
+	private final Rotation rotation;
+	private final double price;
 	private String name = UUID.randomUUID().toString();
 	private boolean fill = false;
 	private Optional<List<Location<World>>> regionFrame = Optional.empty();
 	private Optional<List<Location<World>>> regionFill = Optional.empty();
 	
-	public PortalBuilder(String destination) {
+	public PortalBuilder(String destination, Rotation rotation, double price) {
 		this.destination = destination;
+		this.rotation = rotation;
+		this.price = price;
 	}
 
 	public PortalBuilder(){
 		destination = null;
+		rotation = Rotation.EAST;
+		price = 0;
 	}
 
 	public Optional<List<Location<World>>> getRegionFill() {
@@ -116,7 +123,7 @@ public class PortalBuilder {
 				location.getExtent().setBlock(location.getBlockX(), location.getBlockY(), location.getBlockZ(), block, false, Cause.of(NamedCause.source(Main.getPlugin())));
 			}
 
-			Portal portal = new Portal(name, destination, frame, fill, null, 0, null);
+			Portal portal = new Portal(name, destination, rotation, frame, fill, null, price, null);
 			Portal.save(portal);
 
 			return true;
