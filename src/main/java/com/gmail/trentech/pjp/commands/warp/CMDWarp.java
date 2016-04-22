@@ -40,7 +40,7 @@ public class CMDWarp implements CommandExecutor {
 		Player player = (Player) src;
 		
 		if(args.hasAny("name")) {
-			String warpName = args.<String>getOne("name").get();
+			String warpName = args.<String>getOne("name").get().toLowerCase();
 			
 			Optional<Warp> optionalWarp = Warp.get(warpName);
 			

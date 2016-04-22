@@ -40,7 +40,7 @@ public class CMDHome implements CommandExecutor {
 		Player player = (Player) src;
 		
 		if(args.hasAny("name")) {
-			String homeName = args.<String>getOne("name").get();
+			String homeName = args.<String>getOne("name").get().toLowerCase();
 
 			HomeData homeData;
 

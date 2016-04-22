@@ -36,7 +36,7 @@ public class CMDRemove implements CommandExecutor {
 			src.sendMessage(Text.of(TextColors.YELLOW, "/home remove <name>"));
 			return CommandResult.empty();
 		}
-		String warpName = args.<String>getOne("name").get();
+		String warpName = args.<String>getOne("name").get().toLowerCase();
 		
 		if(!Warp.get(warpName).isPresent()){
 			src.sendMessage(Text.of(TextColors.DARK_RED, warpName, " does not exist"));

@@ -41,7 +41,7 @@ public class CMDCreate implements CommandExecutor {
 			src.sendMessage(Text.of(TextColors.RED, "Usage: /home create <name>"));
 			return CommandResult.empty();
 		}
-		String homeName = args.<String>getOne("name").get();
+		String homeName = args.<String>getOne("name").get().toLowerCase();
 		
 		HomeData homeData;
 

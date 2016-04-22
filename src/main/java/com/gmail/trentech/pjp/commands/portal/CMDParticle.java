@@ -42,7 +42,7 @@ public class CMDParticle implements CommandExecutor {
 			src.sendMessage(invalidArg());
 			return CommandResult.empty();
 		}
-		String name = args.<String>getOne("name").get();
+		String name = args.<String>getOne("name").get().toLowerCase();
 
 		if(!Portal.getByName(name).isPresent()){
 			src.sendMessage(Text.of(TextColors.DARK_RED, name, " does not exist"));

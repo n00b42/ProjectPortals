@@ -38,7 +38,7 @@ public class CMDRemove implements CommandExecutor {
 			src.sendMessage(Text.of(TextColors.RED, "Usage: /home remove <name>"));
 			return CommandResult.empty();
 		}
-		String homeName = args.<String>getOne("name").get();
+		String homeName = args.<String>getOne("name").get().toLowerCase();
 		
 		HomeData homeData;
 

@@ -43,7 +43,7 @@ public class CMDCreate implements CommandExecutor {
 			src.sendMessage(invalidArg());
 			return CommandResult.empty();
 		}
-		String name = args.<String>getOne("name").get();
+		String name = args.<String>getOne("name").get().toLowerCase();
 
 		if(name.equalsIgnoreCase("-c") || name.equalsIgnoreCase("-d") || name.equalsIgnoreCase("-p")){
 			src.sendMessage(invalidArg());
