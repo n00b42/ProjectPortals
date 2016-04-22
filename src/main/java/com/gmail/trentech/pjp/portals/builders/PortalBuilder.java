@@ -25,22 +25,25 @@ public class PortalBuilder {
 
 	private final String destination;
 	private final Rotation rotation;
+	private final String particle;
 	private final double price;
 	private String name = UUID.randomUUID().toString();
 	private boolean fill = false;
 	private Optional<List<Location<World>>> regionFrame = Optional.empty();
 	private Optional<List<Location<World>>> regionFill = Optional.empty();
 	
-	public PortalBuilder(String destination, Rotation rotation, double price) {
+	public PortalBuilder(String destination, Rotation rotation, String particle, double price) {
 		this.destination = destination;
 		this.rotation = rotation;
 		this.price = price;
+		this.particle = particle;
 	}
 
 	public PortalBuilder(){
 		destination = null;
 		rotation = Rotation.EAST;
 		price = 0;
+		particle = new ConfigManager().getConfig().getNode("options", "particles", "type", "portal").getString().toUpperCase();
 	}
 
 	public Optional<List<Location<World>>> getRegionFill() {
@@ -100,9 +103,9 @@ public class PortalBuilder {
 			BlockState block = BlockTypes.AIR.getDefaultState();
 
 			for(Location<World> location : fill){
-				String[] split = new ConfigManager().getConfig().getNode("options", "particles", "type", "creation").getString().split(":");
+				Optional<Particle> optionalParticle = Particles.get(this.particle);
 				
-				Optional<Particle> optionalParticle = Particles.get(split[0]);
+				String[] split = this.particle.split(":");
 				
 				if(optionalParticle.isPresent()){
 					Particle particle = optionalParticle.get();
@@ -123,7 +126,7 @@ public class PortalBuilder {
 				location.getExtent().setBlock(location.getBlockX(), location.getBlockY(), location.getBlockZ(), block, false, Cause.of(NamedCause.source(Main.getPlugin())));
 			}
 
-			Portal portal = new Portal(name, destination, rotation, frame, fill, null, price, null);
+			Portal portal = new Portal(name, destination, rotation, frame, fill, particle, price, null);
 			Portal.save(portal);
 
 			return true;

@@ -95,7 +95,8 @@ public class CommandManager {
 		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))), GenericArguments.optional(GenericArguments.string(Text.of("world"))), GenericArguments.flags()
     				.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
     				.valueFlag(GenericArguments.string(Text.of("direction")), "d")
-    				.valueFlag(GenericArguments.string(Text.of("price")), "p").buildWith(GenericArguments.none()))
+    				.valueFlag(GenericArguments.string(Text.of("price")), "p")
+		    		.valueFlag(GenericArguments.string(Text.of("particle[:color]")), "e").buildWith(GenericArguments.none()))
 		    .executor(new com.gmail.trentech.pjp.commands.portal.CMDCreate())
 		    .build();
 
