@@ -109,6 +109,23 @@ public class Lever extends SQLUtils{
 		}
 	}
 
+	public void setDestination(String destination){
+		this.destination = destination;
+		
+		try {
+		    Connection connection = getDataSource().getConnection();
+		    PreparedStatement statement = connection.prepareStatement("UPDATE Levers SET Destination = ? WHERE Name = ?");
+
+		    statement.setString(1, destination);
+			statement.setString(2, this.name);
+			
+			statement.executeUpdate();
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public static Optional<Lever> get(Location<World> location){
 		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 		
@@ -173,8 +190,18 @@ public class Lever extends SQLUtils{
 		    
 			ResultSet result = statement.executeQuery();
 
-			while (result.next()) {
-				list.add(new Lever(result.getString("Name"), result.getString("Destination"), Rotation.get(result.getString("Rotation")).get(), result.getDouble("Price")));
+			while (result.next()) {				
+				String name = result.getString("Name");
+		    	String destination = result.getString("Destination");
+		    	String rotation = result.getString("Rotation");
+		    	
+		    	if(rotation == null){
+		    		rotation = Rotation.EAST.getName();
+		    	}
+
+	    		double price = result.getDouble("Price");
+
+				list.add(new Lever(name, destination, Rotation.get(rotation).get(), price));
 			}
 			
 			connection.close();
@@ -186,8 +213,37 @@ public class Lever extends SQLUtils{
 	}
 	
 	public static void init(){
+		update();
+		
 		for(Lever lever : Lever.list()){
+			Rotation rotation = lever.getRotation();
+			String[] args = lever.destination.split(":");
+			
+			if(args.length == 3){
+				rotation = Rotation.get(args[2]).get();
+				lever.setDestination(args[0] + ":" + args[1]);
+			}
+			
+			lever.setRotation(rotation);
+			lever.setPrice(lever.getPrice());
+			
 			cache.put(lever.getName(), lever);
 		}
+	}
+	
+	public static void update(){
+		try {
+			Connection connection = getDataSource().getConnection();
+			
+		    PreparedStatement statement = connection.prepareStatement("ALTER TABLE Levers ADD IF NOT EXISTS Rotation TEXT");
+		    statement.executeUpdate();
+		    
+		    statement = connection.prepareStatement("ALTER TABLE Levers ADD IF NOT EXISTS Price DOUBLE");
+		    statement.executeUpdate();
+		    
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}	  
 	}
 }

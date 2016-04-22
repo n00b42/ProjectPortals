@@ -20,7 +20,7 @@ import com.gmail.trentech.pjp.utils.Utils;
 public class Warp extends SQLUtils{
 
 	private final String name;
-	public final String destination;
+	public String destination;
 	private Rotation rotation;
 	private double price;
 
@@ -103,6 +103,23 @@ public class Warp extends SQLUtils{
 		}
 	}
 
+	public void setDestination(String destination){
+		this.destination = destination;
+		
+		try {
+		    Connection connection = getDataSource().getConnection();
+		    PreparedStatement statement = connection.prepareStatement("UPDATE Warps SET Destination = ? WHERE Name = ?");
+
+		    statement.setString(1, destination);
+			statement.setString(2, this.name);
+			
+			statement.executeUpdate();
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public static Optional<Warp> get(String name){
 		Optional<Warp> optional = Optional.empty();
 		
@@ -160,8 +177,18 @@ public class Warp extends SQLUtils{
 		    
 			ResultSet result = statement.executeQuery();
 			
-			while (result.next()) {
-		    	list.add(new Warp(result.getString("Name"), result.getString("Destination"), Rotation.get(result.getString("Rotation")).get(), result.getDouble("Price")));
+			while (result.next()) {				
+				String name = result.getString("Name");
+		    	String destination = result.getString("Destination");
+		    	String rotation = result.getString("Rotation");
+		    	
+		    	if(rotation == null){
+		    		rotation = Rotation.EAST.getName();
+		    	}
+
+	    		double price = result.getDouble("Price");
+
+				list.add(new Warp(name, destination, Rotation.get(rotation).get(), price));
 			}
 			
 			connection.close();
@@ -173,8 +200,37 @@ public class Warp extends SQLUtils{
 	}
 	
 	public static void init(){
+		update();
+		
 		for(Warp warp : Warp.list()){
+			Rotation rotation = warp.getRotation();
+			String[] args = warp.destination.split(":");
+			
+			if(args.length == 3){
+				rotation = Rotation.get(args[2]).get();
+				warp.setDestination(args[0] + ":" + args[1]);
+			}
+			
+			warp.setRotation(rotation);
+			warp.setPrice(warp.getPrice());
+			
 			cache.put(warp.getName(), warp);
 		}
+	}
+	
+	public static void update(){
+		try {
+			Connection connection = getDataSource().getConnection();
+			
+		    PreparedStatement statement = connection.prepareStatement("ALTER TABLE Warps ADD IF NOT EXISTS Rotation TEXT");
+		    statement.executeUpdate();
+		    
+		    statement = connection.prepareStatement("ALTER TABLE Warps ADD IF NOT EXISTS Price DOUBLE");
+		    statement.executeUpdate();
+		    
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}	  
 	}
 }

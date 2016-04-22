@@ -178,6 +178,23 @@ public class Portal extends SQLUtils {
 		}
 	}
 
+	public void setDestination(String destination){
+		this.destination = destination;
+		
+		try {
+		    Connection connection = getDataSource().getConnection();
+		    PreparedStatement statement = connection.prepareStatement("UPDATE Portals SET Destination = ? WHERE Name = ?");
+
+		    statement.setString(1, destination);
+			statement.setString(2, this.name);
+			
+			statement.executeUpdate();
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public List<Location<World>> getFrame() {
 		List<Location<World>> list = new ArrayList<>();
 		
@@ -397,6 +414,11 @@ public class Portal extends SQLUtils {
 		    	
 		    	String destination = result.getString("Destination");
 		    	String rotation = result.getString("Rotation");
+		    	
+		    	if(rotation == null){
+		    		rotation = Rotation.EAST.getName();
+		    	}
+		    	
 		    	String particle = result.getString("Particle");
 		    	double price = result.getDouble("Price");
 		    	
@@ -411,9 +433,22 @@ public class Portal extends SQLUtils {
 	}
 	
 	public static void init(){
+		update();
+
 		for(Portal portal : Portal.list()){
 			String name = portal.getName().toLowerCase();
 
+			Rotation rotation = portal.getRotation();
+			String[] args = portal.destination.split(":");
+			
+			if(args.length == 3){
+				rotation = Rotation.get(args[2]).get();
+				portal.setDestination(args[0] + ":" + args[1]);
+			}
+			
+			portal.setRotation(rotation);
+			portal.setPrice(portal.getPrice());
+			
 			for(String loc : portal.fill){
 				cache.put(loc, name);
 			}
@@ -430,4 +465,19 @@ public class Portal extends SQLUtils {
 		}
 	}
 
+	public static void update(){
+		try {
+			Connection connection = getDataSource().getConnection();
+			
+		    PreparedStatement statement = connection.prepareStatement("ALTER TABLE Portals ADD IF NOT EXISTS Rotation TEXT");
+		    statement.executeUpdate();
+		    
+		    statement = connection.prepareStatement("ALTER TABLE Portals ADD IF NOT EXISTS Price DOUBLE");
+		    statement.executeUpdate();
+		    
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}	  
+	}
 }

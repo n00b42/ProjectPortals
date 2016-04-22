@@ -109,6 +109,23 @@ public class Door extends SQLUtils{
 		}
 	}
 
+	public void setDestination(String destination){
+		this.destination = destination;
+		
+		try {
+		    Connection connection = getDataSource().getConnection();
+		    PreparedStatement statement = connection.prepareStatement("UPDATE Doors SET Destination = ? WHERE Name = ?");
+
+		    statement.setString(1, destination);
+			statement.setString(2, this.name);
+			
+			statement.executeUpdate();
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public static Optional<Door> get(Location<World> location){
 		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 		
@@ -173,8 +190,18 @@ public class Door extends SQLUtils{
 		    
 			ResultSet result = statement.executeQuery();
 
-			while (result.next()) {
-				list.add(new Door(result.getString("Name"), result.getString("Destination"), Rotation.get(result.getString("Rotation")).get(), result.getDouble("Price")));
+			while (result.next()) {				
+				String name = result.getString("Name");
+		    	String destination = result.getString("Destination");
+		    	String rotation = result.getString("Rotation");
+		    	
+		    	if(rotation == null){
+		    		rotation = Rotation.EAST.getName();
+		    	}
+
+	    		double price = result.getDouble("Price");
+
+				list.add(new Door(name, destination, Rotation.get(rotation).get(), price));
 			}
 			
 			connection.close();
@@ -186,8 +213,40 @@ public class Door extends SQLUtils{
 	}
 	
 	public static void init(){
+		update();
+		
 		for(Door door : Door.list()){
+			Rotation rotation = door.getRotation();
+			String[] args = door.destination.split(":");
+			
+			if(args.length == 3){
+				rotation = Rotation.get(args[2]).get();
+				door.setDestination(args[0] + ":" + args[1]);
+			}
+			
+			door.setRotation(rotation);
+			door.setPrice(door.getPrice());
+			
+			door.setRotation(rotation);
+			door.setPrice(0);
+			
 			cache.put(door.getName(), door);
 		}
+	}
+	
+	public static void update(){
+		try {
+			Connection connection = getDataSource().getConnection();
+			
+		    PreparedStatement statement = connection.prepareStatement("ALTER TABLE Doors ADD IF NOT EXISTS Rotation TEXT");
+		    statement.executeUpdate();
+		    
+		    statement = connection.prepareStatement("ALTER TABLE Doors ADD IF NOT EXISTS Price DOUBLE");
+		    statement.executeUpdate();
+		    
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}	  
 	}
 }

@@ -109,6 +109,23 @@ public class Button extends SQLUtils{
 		}
 	}
 	
+	public void setDestination(String destination){
+		this.destination = destination;
+		
+		try {
+		    Connection connection = getDataSource().getConnection();
+		    PreparedStatement statement = connection.prepareStatement("UPDATE Buttons SET Destination = ? WHERE Name = ?");
+
+		    statement.setString(1, destination);
+			statement.setString(2, this.name);
+			
+			statement.executeUpdate();
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public static Optional<Button> get(Location<World> location) {
 		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 		
@@ -173,8 +190,18 @@ public class Button extends SQLUtils{
 		    
 			ResultSet result = statement.executeQuery();
 
-			while (result.next()) {
-				list.add(new Button(result.getString("Name"), result.getString("Destination"), Rotation.get(result.getString("Rotation")).get(), result.getDouble("Price")));
+			while (result.next()) {				
+				String name = result.getString("Name");
+		    	String destination = result.getString("Destination");
+		    	String rotation = result.getString("Rotation");
+		    	
+		    	if(rotation == null){
+		    		rotation = Rotation.EAST.getName();
+		    	}
+
+	    		double price = result.getDouble("Price");
+
+				list.add(new Button(name, destination, Rotation.get(rotation).get(), price));
 			}
 			
 			connection.close();
@@ -186,8 +213,40 @@ public class Button extends SQLUtils{
 	}
 	
 	public static void init(){
+		update();
+		
 		for(Button button : Button.list()){
+			Rotation rotation = button.getRotation();
+			String[] args = button.destination.split(":");
+			
+			if(args.length == 3){
+				rotation = Rotation.get(args[2]).get();
+				button.setDestination(args[0] + ":" + args[1]);
+			}
+			
+			button.setRotation(rotation);
+			button.setPrice(button.getPrice());
+			
+			button.setRotation(rotation);
+			button.setPrice(0);
+			
 			cache.put(button.getName(), button);
 		}
+	}
+	
+	public static void update(){
+		try {
+			Connection connection = getDataSource().getConnection();
+			
+		    PreparedStatement statement = connection.prepareStatement("ALTER TABLE Buttons ADD IF NOT EXISTS Rotation TEXT");
+		    statement.executeUpdate();
+		    
+		    statement = connection.prepareStatement("ALTER TABLE Buttons ADD IF NOT EXISTS Price DOUBLE");
+		    statement.executeUpdate();
+		    
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}	  
 	}
 }

@@ -34,7 +34,7 @@ public class CMDList implements CommandExecutor {
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		Builder pages = Main.getGame().getServiceManager().provide(PaginationService.class).get().builder();
 		
-		pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.AQUA, "Portals")).build());
+		pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, "Portals")).build());
 		
 		List<Text> list = new ArrayList<>();
 		
@@ -43,7 +43,13 @@ public class CMDList implements CommandExecutor {
 		for(Portal portal : portals){
 			Location<World> location = portal.getFrame().get(0);
 			String worldName = location.getExtent().getName();
-			list.add(Text.of(TextColors.AQUA, "Name: ", TextColors.GREEN, portal.getName(), TextColors.AQUA, " Location: ", worldName, " ", location.getBlockX(), " ", location.getBlockY(), " ", location.getBlockZ()));
+			double price = portal.getPrice();
+			if(price == 0){
+				list.add(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, portal.getName(), TextColors.GREEN, " Location: ", TextColors.WHITE, worldName, " ", location.getBlockX(), " ", location.getBlockY(), " ", location.getBlockZ()));
+			}else{
+				list.add(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, portal.getName(), TextColors.GREEN, " Location: ", TextColors.WHITE, worldName, " ", location.getBlockX(), " ", location.getBlockY(), " ", location.getBlockZ(),
+						TextColors.GREEN, " Price: ", TextColors.WHITE, "$", portal.getPrice()));
+			}
 		}
 
 		if(list.isEmpty()){
