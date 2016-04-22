@@ -32,7 +32,7 @@ public class CMDPjp implements CommandExecutor {
 		
 		ConfigurationNode node = new ConfigManager().getConfig().getNode("settings", "modules");
 
-		if(src.hasPermission("pjp.cmd.portals") && node.getNode("portals").getBoolean()) {
+		if(src.hasPermission("pjp.cmd.portal") && node.getNode("portals").getBoolean()) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for list of sub commands ")))
 					.onClick(TextActions.runCommand("/pjp:portal")).append(Text.of(" /portal")).build());
 		}

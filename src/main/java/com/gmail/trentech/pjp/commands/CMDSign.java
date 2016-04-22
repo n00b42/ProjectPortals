@@ -9,6 +9,7 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
 import com.gmail.trentech.pjp.Main;
@@ -25,7 +26,7 @@ public class CMDSign implements CommandExecutor {
 		
 		Help help = new Help("sign", "sign", " Use this command to create a sign that will teleport you to other worlds");
 		help.setSyntax(" /sign [<world>] [-c <x,y,z>] [-d <direction>] [-p <price>]\n /" + alias + " sign [<world>] [-c <x,y,z>] [-d <direction>] [-p <price>]");
-		help.setExample(" /sign MyWorld\n /sign MyWorld -c -100,65,254\n /sign MyWorld -c random\n /sign MyWorld -c -100 65 254 -d south\n /sign MyWorld -d southeast\n /sign MyWorld -p 50");
+		help.setExample(" /sign MyWorld\n /sign MyWorld -c -100,65,254\n /sign MyWorld -c random\n /sign MyWorld -c -100,65,254 -d south\n /sign MyWorld -d southeast\n /sign MyWorld -p 50");
 		help.save();
 	}
 	
@@ -38,7 +39,7 @@ public class CMDSign implements CommandExecutor {
 		Player player = (Player) src;
 
 		if(!args.hasAny("world")) {
-			src.sendMessage(Text.of(TextColors.RED, "Usage: /sign [<world>] [-c <x,y,z>] [-d <direction>] [-p <price>]"));
+			src.sendMessage(invalidArg());
 			return CommandResult.empty();
 		}
 		String worldName = args.<String>getOne("world").get();
@@ -66,7 +67,7 @@ public class CMDSign implements CommandExecutor {
 					z = Integer.parseInt(coords[2]);				
 				}catch(Exception e){
 					src.sendMessage(Text.of(TextColors.RED, "Incorrect coordinates"));
-					src.sendMessage(Text.of(TextColors.RED, "Usage: /sign [<world>] [-c <x,y,z>]"));
+					src.sendMessage(invalidArg());
 					return CommandResult.empty();
 				}
 				destination = destination.replace("spawn", x + "." + y + "." + z);
@@ -82,7 +83,7 @@ public class CMDSign implements CommandExecutor {
 			
 			if(!optionalRotation.isPresent()){
 				src.sendMessage(Text.of(TextColors.RED, "Incorrect direction"));
-				src.sendMessage(Text.of(TextColors.RED, "Usage: /sign [<world>] [-d <direction>]"));
+				src.sendMessage(invalidArg());
 				return CommandResult.empty();
 			}
 
@@ -96,7 +97,7 @@ public class CMDSign implements CommandExecutor {
 				price = Double.parseDouble(args.<String>getOne("price").get());
 			}catch(Exception e){
 				src.sendMessage(Text.of(TextColors.RED, "Incorrect price"));
-				src.sendMessage(Text.of(TextColors.RED, "Usage: /sign [<world>] [-p <price>]"));
+				src.sendMessage(invalidArg());
 				return CommandResult.empty();
 			}
 		}
@@ -106,5 +107,12 @@ public class CMDSign implements CommandExecutor {
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place sign to create sign portal"));
 
 		return CommandResult.success();
+	}
+	
+	private Text invalidArg(){
+		Text t1 = Text.of(TextColors.RED, "Usage: /sign [<world>] [-c <x,y,z>] ");
+		Text t2 = Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("NORTH\nNORTHEAST\nEAST\nSOUTHEAST\nSOUTH\nSOUTHWEST\nWEST\nNORTHWEST"))).append(Text.of("[-d <direction>] ")).build();
+		Text t3 = Text.of(TextColors.RED, "[-p <price>]");
+		return Text.of(t1,t2,t3);
 	}
 }
