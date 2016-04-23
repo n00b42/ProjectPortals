@@ -31,7 +31,7 @@ public class CMDCreate implements CommandExecutor {
 		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "portal").getString();
 		
 		Help help = new Help("pcreate", "create", " Use this command to create a portal that will teleport you to other worlds");
-		help.setSyntax(" /portal create [<name>] [<world>] [-c <x,y,z>] [-d <direction>] [-p <price>] [-e <particle[:color]>]\n /" + alias + " portal [<name>] [<world>] [-c <x,y,z>] [-d <direction>] [-p <price>] [-e <particle[:color]>]");
+		help.setSyntax(" /portal create <name> <world> [-c <x,y,z>] [-d <direction>] [-p <price>] [-e <particle[:color]>]\n /" + alias + " portal <name> <world> [-c <x,y,z>] [-d <direction>] [-p <price>] [-e <particle[:color]>]");
 		help.setExample(" /portal create MyPortal MyWorld\n /portal create MyPortal MyWorld -c -100,65,254\n /portal create MyPortal MyWorld -c random\n /portal create MyPortal MyWorld -c -100,65,254 -d south\n /portal create MyPortal MyWorld -d southeast\n /portal create MyPortal MyWorld -p 50\n /portal create MyPortal MyWorld -e REDSTONE:BLUE");
 		help.save();
 	}
@@ -50,8 +50,8 @@ public class CMDCreate implements CommandExecutor {
 		}
 		String name = args.<String>getOne("name").get().toLowerCase();
 		
-		if(Portal.getByName(name).isPresent()){
-			src.sendMessage(Text.of(TextColors.DARK_RED, name, " already exists"));
+		if(name.equalsIgnoreCase("-c") || name.equalsIgnoreCase("-d") || name.equalsIgnoreCase("-p") || name.equalsIgnoreCase("-e")){
+			src.sendMessage(invalidArg());
 			return CommandResult.empty();
 		}
 		
@@ -60,6 +60,16 @@ public class CMDCreate implements CommandExecutor {
 			return CommandResult.empty();
 		}
 		String worldName = args.<String>getOne("world").get();
+		
+		if(worldName.equalsIgnoreCase("-c") || worldName.equalsIgnoreCase("-d") || worldName.equalsIgnoreCase("-p") || worldName.equalsIgnoreCase("-e")){
+			src.sendMessage(invalidArg());
+			return CommandResult.empty();
+		}
+		
+		if(Portal.getByName(name).isPresent()){
+			src.sendMessage(Text.of(TextColors.DARK_RED, name, " already exists"));
+			return CommandResult.empty();
+		}
 
 		if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
 			src.sendMessage(Text.of(TextColors.DARK_RED, worldName, " is not loaded or does not exist"));
@@ -157,7 +167,7 @@ public class CMDCreate implements CommandExecutor {
 	}
 	
 	private Text invalidArg(){
-		Text t1 = Text.of(TextColors.RED, "Usage: /portal create <name> [<world>] [-c <x,y,z>] ");
+		Text t1 = Text.of(TextColors.RED, "Usage: /portal create <name> <world> [-c <x,y,z>] ");
 		Text t2 = Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("NORTH\nNORTHEAST\nEAST\nSOUTHEAST\nSOUTH\nSOUTHWEST\nWEST\nNORTHWEST"))).append(Text.of("[-d <direction>] ")).build();
 		Text t3 = Text.of(TextColors.RED, "[-p <price>] ");
 		Text t4 = Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("CLOUD\nCRIT\nCRIT_MAGIC\nENCHANTMENT_TABLE\nFLAME\nHEART\nNOTE\nPORTAL"

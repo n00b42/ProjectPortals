@@ -26,7 +26,7 @@ public class CMDCreate implements CommandExecutor {
 		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "warp").getString();
 		
 		Help help = new Help("wcreate", "create", " Use this command to create a warp that will teleport you to other worlds");
-		help.setSyntax(" /warp create [<name>] [<world>] [-c <x,y,z>] [-d <direction>] [-p <price>]\n /" + alias + " warp [<world>] [-c <x,y,z>] [-d <direction>] [-p <price>]");
+		help.setSyntax(" /warp create <name> [<world> [-c <x,y,z>] [-d <direction>]] [-p <price>]\n /" + alias + " warp <name> [<world> [-c <x,y,z>] [-d <direction>]] [-p <price>]");
 		help.setExample(" /warp create Lobby\n /warp create Lobby MyWorld\n /warp create Lobby MyWorld -c -100,65,254\n /warp create Random MyWorld -c random\n /warp create Lobby MyWorld -c -100,65,254 -d south\n /warp create Lobby MyWorld -d southeast\n /warp Lobby MyWorld -p 50\n /warp Lobby -p 50");
 		help.save();
 	}
@@ -62,6 +62,11 @@ public class CMDCreate implements CommandExecutor {
 		if(args.hasAny("world")) {
 			worldName = args.<String>getOne("world").get();
 
+			if(worldName.equalsIgnoreCase("-c") || worldName.equalsIgnoreCase("-d") || worldName.equalsIgnoreCase("-p")){
+				src.sendMessage(invalidArg());
+				return CommandResult.empty();
+			}
+			
 			if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
 				src.sendMessage(Text.of(TextColors.DARK_RED, worldName, " is not loaded or does not exist"));
 				return CommandResult.empty();
@@ -130,8 +135,8 @@ public class CMDCreate implements CommandExecutor {
 	}
 	
 	private Text invalidArg(){
-		Text t1 = Text.of(TextColors.RED, "Usage: /warp create <name> [<world>] [-c <x,y,z>] ");
-		Text t2 = Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("NORTH\nNORTHEAST\nEAST\nSOUTHEAST\nSOUTH\nSOUTHWEST\nWEST\nNORTHWEST"))).append(Text.of("[-d <direction>] ")).build();
+		Text t1 = Text.of(TextColors.RED, "Usage: /warp create <name> [<world> [-c <x,y,z>] ");
+		Text t2 = Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("NORTH\nNORTHEAST\nEAST\nSOUTHEAST\nSOUTH\nSOUTHWEST\nWEST\nNORTHWEST"))).append(Text.of("[-d <direction>]] ")).build();
 		Text t3 = Text.of(TextColors.RED, "[-p <price>]");
 		return Text.of(t1,t2,t3);
 	}

@@ -25,7 +25,7 @@ public class CMDDoor implements CommandExecutor {
 		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "door").getString();
 		
 		Help help = new Help("door", "door", " Use this command to create a door that will teleport you to other worlds");
-		help.setSyntax(" /door [<world>] [-c <x,y,z>] [-d <direction>] [-p <price>]\n /" + alias + " door [<world>] [-c <x,y,z>] [-d <direction>] [-p <price>]");
+		help.setSyntax(" /door <world> [-c <x,y,z>] [-d <direction>] [-p <price>]\n /" + alias + " door <world> [-c <x,y,z>] [-d <direction>] [-p <price>]");
 		help.setExample(" /door MyWorld\n /door MyWorld -c -100,65,254\n /door MyWorld -c random\n /door MyWorld -c -100,65,254 -d south\n /door MyWorld -d southeast\n /door MyWorld -p 50");
 		help.save();
 	}
@@ -44,6 +44,11 @@ public class CMDDoor implements CommandExecutor {
 		}
 		String worldName = args.<String>getOne("world").get();
 
+		if(worldName.equalsIgnoreCase("-c") || worldName.equalsIgnoreCase("-d") || worldName.equalsIgnoreCase("-p")){
+			src.sendMessage(invalidArg());
+			return CommandResult.empty();
+		}
+		
 		if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
 			src.sendMessage(Text.of(TextColors.DARK_RED, worldName, " is not loaded or does not exist"));
 			return CommandResult.empty();
@@ -110,7 +115,7 @@ public class CMDDoor implements CommandExecutor {
 	}
 	
 	private Text invalidArg(){
-		Text t1 = Text.of(TextColors.RED, "Usage: /door [<world>] [-c <x,y,z>] ");
+		Text t1 = Text.of(TextColors.RED, "Usage: /door <world> [-c <x,y,z>] ");
 		Text t2 = Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("NORTH\nNORTHEAST\nEAST\nSOUTHEAST\nSOUTH\nSOUTHWEST\nWEST\nNORTHWEST"))).append(Text.of("[-d <direction>] ")).build();
 		Text t3 = Text.of(TextColors.RED, "[-p <price>]");
 		return Text.of(t1,t2,t3);
