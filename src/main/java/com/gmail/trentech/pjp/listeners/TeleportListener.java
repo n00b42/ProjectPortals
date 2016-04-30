@@ -126,19 +126,7 @@ public class TeleportListener {
 			return;
 		}
 
-		int srcX = src.getBlockX();
-		int srcY = src.getBlockY();
-		int srcZ = src.getBlockZ();
-		
-		int destX = dest.getBlockX();
-		int destY = dest.getBlockY();
-		int destZ = dest.getBlockZ();
-		
-		int distX = srcX - destX;
-		int distY = srcY - destY;
-		int distZ = srcZ - destZ;
-		
-		double distance = Math.sqrt(distX * distX + distY * distY + distZ * distZ);
+		double distance = dest.getPosition().distance(src.getBlockX(), src.getBlockY(), src.getBlockZ());
 		
 		if(distance > 5){
 			if(player.hasPermission("pjp.cmd.back")){

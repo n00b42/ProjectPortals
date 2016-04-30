@@ -22,40 +22,6 @@ import com.gmail.trentech.pjp.Main;
 
 public class Utils {
 
-	public static String getPrettyName(String worldName){
-		if(worldName.equalsIgnoreCase("DIM-1")){
-			return "nether";
-		}else if(worldName.equalsIgnoreCase("DIM1")){
-			return "end";
-		}else{
-			return worldName;
-		}
-	}
-	
-	public static String getBaseName(String prettyWorldName){
-		if(prettyWorldName.equalsIgnoreCase("nether")){
-			return "DIM-1";
-		}else if(prettyWorldName.equalsIgnoreCase("end")){
-			return "DIM1";
-		}else{
-			return prettyWorldName;
-		}
-	}
-	
-	public static Location<World> getLocation(World world, String coords){
-		String[] array = coords.split(" ");
-
-		try{
-			int x = Integer.parseInt(array[0]);
-			int y = Integer.parseInt(array[1]);
-			int z = Integer.parseInt(array[2]);
-			
-			return world.getLocation(x, y, z);
-		}catch(Exception e){
-			return null;
-		}
-	}
-
 	public static Location<World> getRandomLocation(World world) {
 		TeleportHelper teleportHelper = Main.getGame().getTeleportHelper();
 		
