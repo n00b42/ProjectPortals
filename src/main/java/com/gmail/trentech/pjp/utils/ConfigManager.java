@@ -99,6 +99,11 @@ public class ConfigManager {
 			if(config.getNode("options", "random_spawn_radius").isVirtual()) {
 				config.getNode("options", "random_spawn_radius").setValue(5000).setComment("World radius for random spawn portals.");
 			}
+			if(config.getNode("options", "teleport_message").isVirtual()) {
+				config.getNode("options", "teleport_message").setComment("Set message that displays when player teleports.");
+				config.getNode("options", "teleport_message", "title").setValue("&2%WORLD%");
+				config.getNode("options", "teleport_message", "sub_title").setValue("&bx: %X%, y: %Y%, z: %Z%");
+			}
 			// UPDATE CONFIG
 			if(!config.getNode("options", "portal_permissions").isVirtual()) {
 				config.getNode("options", "advanced_permissions").setValue(config.getNode("options", "portal_permissions").getBoolean()).setComment("Require permission node for each portal. ex. 'pjp.portal.<name>', 'pjp.button.<world_x_y_z>'. If false use 'pjp.portal.interact' instead");

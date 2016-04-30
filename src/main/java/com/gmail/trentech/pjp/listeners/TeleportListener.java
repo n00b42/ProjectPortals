@@ -18,6 +18,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
+import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.text.title.Title;
 import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Location;
@@ -32,6 +33,8 @@ import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Utils;
+
+import ninja.leaping.configurate.ConfigurationNode;
 
 public class TeleportListener {
 
@@ -76,7 +79,9 @@ public class TeleportListener {
 			player.sendMessage(Text.of(TextColors.GREEN, "Charged $",new DecimalFormat("#,###,##0.00").format(price)));
 		}
 		
-		String[] split = new ConfigManager().getConfig().getNode("options", "particles", "type", "teleport").getString().split(":");
+		ConfigurationNode config = new ConfigManager().getConfig();
+		
+		String[] split = config.getNode("options", "particles", "type", "teleport").getString().split(":");
 		
 		Optional<Particle> optionalParticle = Particles.get(split[0]);
 		
@@ -99,7 +104,10 @@ public class TeleportListener {
 			}
 		}
 
-		player.sendTitle(Title.of(Text.of(TextColors.DARK_GREEN, Utils.getPrettyName(dest.getExtent().getName())), Text.of(TextColors.AQUA, "x: ", dest.getBlockX(), ", y: ", dest.getBlockY(),", z: ", dest.getBlockZ())));
+		Text title = TextSerializers.FORMATTING_CODE.deserialize(config.getNode("options", "teleport_message", "title").getString().replaceAll("%WORLD%", dest.getExtent().getName()).replaceAll("\\%X%", Integer.toString(dest.getBlockX())).replaceAll("\\%Y%", Integer.toString(dest.getBlockY())).replaceAll("\\%Z%", Integer.toString(dest.getBlockZ())));
+		Text subTitle = TextSerializers.FORMATTING_CODE.deserialize(config.getNode("options", "teleport_message", "sub_title").getString().replaceAll("%WORLD%", dest.getExtent().getName()).replaceAll("\\%X%", Integer.toString(dest.getBlockX())).replaceAll("\\%Y%", Integer.toString(dest.getBlockY())).replaceAll("\\%Z%", Integer.toString(dest.getBlockZ())));
+		
+		player.sendTitle(Title.of(title, subTitle));
 
 		if(player.hasPermission("pjp.cmd.back")){
 			CMDBack.players.put(player, src);
