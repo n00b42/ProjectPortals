@@ -3,9 +3,7 @@ package com.gmail.trentech.pjp.listeners;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Optional;
-import java.util.function.Consumer;
 
-import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.cause.Cause;
@@ -147,14 +145,5 @@ public class TeleportListener {
 				CMDBack.players.put(player, src);
 			}
 		}
-	}
-
-	public static Consumer<CommandSource> unsafeTeleport(Location<World> location){
-		return (CommandSource src) -> {
-			Player player = (Player)src;
-
-			player.setLocation(location);
-			player.sendTitle(Title.of(Text.of(TextColors.GOLD, Utils.getPrettyName(location.getExtent().getName())), Text.of(TextColors.DARK_PURPLE, "x: ", location.getBlockX(), ", y: ", location.getBlockY(),", z: ", location.getBlockZ())));
-		};
 	}
 }
