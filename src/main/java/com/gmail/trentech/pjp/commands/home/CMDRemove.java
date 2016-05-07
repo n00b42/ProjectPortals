@@ -1,5 +1,7 @@
 package com.gmail.trentech.pjp.commands.home;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.spongepowered.api.command.CommandException;
@@ -7,11 +9,14 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
+import org.spongepowered.api.data.DataTransactionResult;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-import com.gmail.trentech.pjp.data.mutable.HomeData;
+import com.gmail.trentech.pjp.data.Keys;
+import com.gmail.trentech.pjp.data.home.HomeData;
+import com.gmail.trentech.pjp.portals.Home;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 
@@ -40,26 +45,27 @@ public class CMDRemove implements CommandExecutor {
 		}
 		String homeName = args.<String>getOne("name").get().toLowerCase();
 		
-		HomeData homeData;
+		Map<String, Home> homeList = new HashMap<>();
 
-		Optional<HomeData> optionalHomeData = player.get(HomeData.class);
+		Optional<Map<String, Home>> optionalHomeList = player.get(Keys.HOME_LIST);
 		
-		if(optionalHomeData.isPresent()){
-			homeData = optionalHomeData.get();
-		}else{
-			homeData = new HomeData();
+		if(optionalHomeList.isPresent()){
+			homeList = optionalHomeList.get();
 		}
 
-		if(!homeData.getDestination(homeName).isPresent()){
+		if(!homeList.containsKey(homeName)){
 			src.sendMessage(Text.of(TextColors.DARK_RED, homeName, " does not exist"));
 			return CommandResult.empty();
 		}
 		
-		homeData.removeHome(homeName);
+		homeList.remove(homeName);
 		
-		player.offer(homeData);
-		
-		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Home ", homeName, " removed"));
+		DataTransactionResult result = player.offer(new HomeData(homeList));
+		if(!result.isSuccessful()){
+			System.out.println("FAILED");
+		}else{
+			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Home ", homeName, " removed"));
+		}
 
 		return CommandResult.success();
 	}

@@ -18,6 +18,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.TeleportHelper;
 import org.spongepowered.api.world.World;
 
+import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
 
 public class Utils {
@@ -74,5 +75,44 @@ public class Utils {
 			Main.getGame().getEventManager().post(displaceEvent);
 		};
 	}
-
+	
+	public static Optional<Location<World>> getDestination(String destination) {
+		String[] args = destination.split(":");
+		
+		Optional<World> optional = Main.getGame().getServer().getWorld(args[0]);
+		
+		if(!optional.isPresent()){
+			return Optional.empty();
+		}
+		World world = optional.get();
+		
+		if(args[1].equalsIgnoreCase("random")){
+			return Optional.of(Utils.getRandomLocation(world));
+		}else if(args[1].equalsIgnoreCase("spawn")){
+			return Optional.of(world.getSpawnLocation());
+		}else{
+			String[] coords = args[1].split("\\.");
+			int x = Integer.parseInt(coords[0]);
+			int y = Integer.parseInt(coords[1]);
+			int z = Integer.parseInt(coords[2]);
+			
+			return Optional.of(world.getLocation(x, y, z));	
+		}
+	}
+	
+	public static Optional<Vector3d> getRotation(String destination){
+		String[] args = destination.split(":");
+		
+		if(args.length != 3){
+			return Optional.empty();
+		}
+		
+		Optional<Rotation> optional = Rotation.get(args[2]);
+		
+		if(!optional.isPresent()){
+			return Optional.empty();
+		}
+		
+		return Optional.of(new Vector3d(0,optional.get().getValue(),0));
+	}
 }

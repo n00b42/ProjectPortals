@@ -25,8 +25,8 @@ import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.data.immutable.ImmutableSignPortalData;
-import com.gmail.trentech.pjp.data.mutable.SignPortalData;
+import com.gmail.trentech.pjp.data.signportal.ImmutableSignPortalData;
+import com.gmail.trentech.pjp.data.signportal.SignPortalData;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
@@ -93,10 +93,10 @@ public class SignListener {
 		}
 		SignPortalData portalData = optionalSignPortalData.get();
 
-		Optional<Location<World>> optionalSpawnLocation = portalData.getDestination();
+		Optional<Location<World>> optionalSpawnLocation = portalData.sign().get().getDestination();
 		
 		if(!optionalSpawnLocation.isPresent()){
-			player.sendMessage(Text.of(TextColors.DARK_RED, portalData.destination().get().split(":")[0], " does not exist"));
+			player.sendMessage(Text.of(TextColors.DARK_RED, "Destination does not exist"));
 			return;
 		}
 		Location<World> spawnLocation = optionalSpawnLocation.get();
@@ -121,7 +121,7 @@ public class SignListener {
 			Location<World> currentLocation = player.getLocation();
 			spawnLocation = teleportEvent.getDestination();
 			
-			Vector3d rotation = portalData.getRotation().toVector3d();
+			Vector3d rotation = portalData.sign().get().getRotation().get().toVector3d();
 
 			player.setLocationAndRotation(spawnLocation, rotation);
 

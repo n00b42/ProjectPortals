@@ -1,7 +1,9 @@
 package com.gmail.trentech.pjp.commands.home;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.spongepowered.api.command.CommandException;
@@ -23,11 +25,13 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.data.mutable.HomeData;
+import com.gmail.trentech.pjp.data.Keys;
+import com.gmail.trentech.pjp.data.home.HomeData;
 import com.gmail.trentech.pjp.events.TeleportEvent;
+import com.gmail.trentech.pjp.portals.Home;
 import com.gmail.trentech.pjp.utils.Help;
+import com.gmail.trentech.pjp.utils.Rotation;
 
 public class CMDHome implements CommandExecutor {
 
@@ -42,22 +46,28 @@ public class CMDHome implements CommandExecutor {
 		if(args.hasAny("name")) {
 			String homeName = args.<String>getOne("name").get().toLowerCase();
 
-			HomeData homeData;
+			Map<String, Home> homeList = new HashMap<>();
 
-			Optional<HomeData> optionalHomeData = player.get(HomeData.class);
+			Optional<Map<String, Home>> optionalHomeList = player.get(Keys.HOME_LIST);
 			
-			if(optionalHomeData.isPresent()){
-				homeData = optionalHomeData.get();
+			if(optionalHomeList.isPresent()){
+				homeList = optionalHomeList.get();
 			}else{
-				homeData = new HomeData();
+				player.offer(new HomeData(new HashMap<String, Home>()));
 			}
 
-			Optional<Location<World>> optionalSpawnLocation = homeData.getDestination(homeName);
+			if(!homeList.containsKey(homeName)){
+				src.sendMessage(Text.of(TextColors.DARK_RED, homeName, " does not exist"));
+				return CommandResult.empty();
+			}
+			Home home = homeList.get(homeName);
+			
+			Optional<Location<World>> optionalSpawnLocation = home.getDestination();
 			
 			if(!optionalSpawnLocation.isPresent()){
-				src.sendMessage(Text.of(TextColors.DARK_RED, homeName, " does not exist or is invalid"));
+				src.sendMessage(Text.of(TextColors.DARK_RED, homeName, " is invalid"));
 				return CommandResult.empty();
-			}			
+			}
 			Location<World> spawnLocation = optionalSpawnLocation.get();
 
 			if(args.hasAny("player")) {
@@ -84,10 +94,10 @@ public class CMDHome implements CommandExecutor {
 				Location<World> currentLocation = player.getLocation();
 				spawnLocation = teleportEvent.getDestination();
 				
-				Optional<Vector3d> optionalRotation = homeData.getRotation(homeName);
+				Optional<Rotation> optionalRotation = home.getRotation();
 				
 				if(optionalRotation.isPresent()){
-					player.setLocationAndRotation(spawnLocation, optionalRotation.get());
+					player.setLocationAndRotation(spawnLocation, optionalRotation.get().toVector3d());
 				}else{
 					player.setLocation(spawnLocation);
 				}

@@ -1,5 +1,7 @@
 package com.gmail.trentech.pjp.commands.home;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.spongepowered.api.command.CommandException;
@@ -7,13 +9,16 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
+import org.spongepowered.api.data.DataTransactionResult;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.data.mutable.HomeData;
+import com.gmail.trentech.pjp.data.Keys;
+import com.gmail.trentech.pjp.data.home.HomeData;
+import com.gmail.trentech.pjp.portals.Home;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Rotation;
@@ -43,19 +48,17 @@ public class CMDCreate implements CommandExecutor {
 		}
 		String homeName = args.<String>getOne("name").get().toLowerCase();
 		
-		HomeData homeData;
+		Map<String, Home> homeList = new HashMap<>();
 
-		Optional<HomeData> optionalHomeData = player.get(HomeData.class);
+		Optional<Map<String, Home>> optionalHomeList = player.get(Keys.HOME_LIST);
 		
-		if(optionalHomeData.isPresent()){
-			homeData = optionalHomeData.get();
-		}else{
-			homeData = new HomeData();
+		if(optionalHomeList.isPresent()){
+			homeList = optionalHomeList.get();
 		}
 
 		int defaultAmount = new ConfigManager().getConfig().getNode("options", "homes").getInt();
 
-		int amount = homeData.homes().get().size();
+		int amount = homeList.size();
 
 		int extra = 0;
 		for(int i = 1; i <= 100; i++){
@@ -72,18 +75,21 @@ public class CMDCreate implements CommandExecutor {
 			}
 			amount++;
 		}
-		if(homeData.getDestination(homeName).isPresent()){
+		if(homeList.containsKey(homeName)){
 			src.sendMessage(Text.of(TextColors.DARK_RED, homeName, " already exists."));
 			return CommandResult.empty();
 		}
 
 		Location<World> location = player.getLocation();
+
+		homeList.put(homeName, new Home(location, Rotation.getClosest(player.getRotation().getFloorY())));
 		
-		homeData.addHome(homeName, location, Rotation.getClosest(player.getRotation().getFloorY()));
-		
-		player.offer(homeData);
-		
-		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Home ", homeName, " create"));
+		DataTransactionResult result = player.offer(new HomeData(homeList));
+		if(!result.isSuccessful()){
+			System.out.println("FAILED");
+		}else{
+			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Home ", homeName, " create"));
+		}
 
 		return CommandResult.success();
 	}

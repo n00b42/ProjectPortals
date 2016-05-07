@@ -13,8 +13,9 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.data.mutable.SignPortalData;
+import com.gmail.trentech.pjp.data.signportal.SignPortalData;
 import com.gmail.trentech.pjp.listeners.SignListener;
+import com.gmail.trentech.pjp.portals.Sign;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Rotation;
@@ -107,7 +108,7 @@ public class CMDSign implements CommandExecutor {
 			}
 		}
 		
-		SignListener.builders.put(player, new SignPortalData(destination, rotation, price));
+		SignListener.builders.put(player, new SignPortalData(new Sign(destination, rotation.getName(), price)));
 
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place sign to create sign portal"));
 

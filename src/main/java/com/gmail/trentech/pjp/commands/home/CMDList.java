@@ -1,7 +1,9 @@
 package com.gmail.trentech.pjp.commands.home;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 
@@ -17,9 +19,13 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Text.Builder;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.data.mutable.HomeData;
+import com.gmail.trentech.pjp.data.Keys;
+import com.gmail.trentech.pjp.data.home.HomeData;
+import com.gmail.trentech.pjp.portals.Home;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 
@@ -45,34 +51,38 @@ public class CMDList implements CommandExecutor {
 		
 		pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.AQUA, "Homes")).build());
 		
-		HomeData homeData;
+		Map<String, Home> homeList = new HashMap<>();
 
-		Optional<HomeData> optionalHomeData = player.get(HomeData.class);
+		Optional<Map<String, Home>> optionalHomeList = player.get(Keys.HOME_LIST);
 		
-		if(optionalHomeData.isPresent()){
-			homeData = optionalHomeData.get();
+		if(optionalHomeList.isPresent()){
+			homeList = optionalHomeList.get();
 		}else{
-			homeData = new HomeData();
+			player.offer(new HomeData(new HashMap<String, Home>()));
 		}
 		
 		List<Text> list = new ArrayList<>();
 
-		for(Entry<String, String> home : homeData.homes().get().entrySet()){
-			String homeName = home.getKey().toString();
-			home.getValue().split(":");
+		for(Entry<String, Home> entry : homeList.entrySet()){
+			String homeName = entry.getKey().toString();
+			Home home = entry.getValue();
 			
-			String[] destination = home.getValue().split(":");
-			
-			String worldName = destination[0];
-
-			String[] coords = destination[1].split("\\.");
-			
-			int x = Integer.parseInt(coords[0]);
-			int y = Integer.parseInt(coords[1]);
-			int z = Integer.parseInt(coords[2]);
-
 			Builder builder = Text.builder().color(TextColors.AQUA).onHover(TextActions.showText(Text.of(TextColors.WHITE, "Click to remove home")));
-			builder.onClick(TextActions.runCommand("/home remove " + homeName)).append(Text.of(TextColors.AQUA, homeName, ": ", TextColors.GREEN, worldName,", ", x, ", ", y, ", ", z));
+			
+			Optional<Location<World>> optionalDestination = home.getDestination();
+			if(optionalDestination.isPresent()){
+				Location<World> destination = optionalDestination.get();
+				
+				String worldName = destination.getExtent().getName();
+				int x = destination.getBlockX();
+				int y = destination.getBlockY();
+				int z = destination.getBlockZ();
+				
+				builder.onClick(TextActions.runCommand("/home remove " + homeName)).append(Text.of(TextColors.AQUA, homeName, ": ", TextColors.GREEN, worldName,", ", x, ", ", y, ", ", z));
+			}else{
+				builder.onClick(TextActions.runCommand("/home remove " + homeName)).append(Text.of(TextColors.AQUA, homeName, ": ", TextColors.RED, "INVALID DESTINATION"));
+			}
+
 			list.add(builder.build());
 		}
 
