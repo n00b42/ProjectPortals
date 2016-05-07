@@ -1,7 +1,7 @@
 package com.gmail.trentech.pjp.data.home;
 
-import static com.gmail.trentech.pjp.data.home.HomeDataQueries.DESTINATION;
-import static com.gmail.trentech.pjp.data.home.HomeDataQueries.ROTATION;
+import static com.gmail.trentech.pjp.data.DataQueries.DESTINATION;
+import static com.gmail.trentech.pjp.data.DataQueries.ROTATION;
 
 import java.util.Optional;
 

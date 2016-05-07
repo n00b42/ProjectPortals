@@ -9,7 +9,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.data.signportal.SignPortalDataQueries;
+import com.gmail.trentech.pjp.data.DataQueries;
 import com.gmail.trentech.pjp.utils.Rotation;
 import com.gmail.trentech.pjp.utils.Utils;
 
@@ -62,6 +62,6 @@ public class Sign implements DataSerializable {
 
     @Override
     public DataContainer toContainer() {
-        return new MemoryDataContainer().set(SignPortalDataQueries.DESTINATION, destination).set(SignPortalDataQueries.ROTATION, rotation).set(SignPortalDataQueries.PRICE, price);
+        return new MemoryDataContainer().set(DataQueries.DESTINATION, destination).set(DataQueries.ROTATION, rotation).set(DataQueries.PRICE, price);
     }
 }

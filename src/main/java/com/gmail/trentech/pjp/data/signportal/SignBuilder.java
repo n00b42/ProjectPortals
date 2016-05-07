@@ -1,8 +1,8 @@
 package com.gmail.trentech.pjp.data.signportal;
 
-import static com.gmail.trentech.pjp.data.signportal.SignPortalDataQueries.DESTINATION;
-import static com.gmail.trentech.pjp.data.signportal.SignPortalDataQueries.PRICE;
-import static com.gmail.trentech.pjp.data.signportal.SignPortalDataQueries.ROTATION;
+import static com.gmail.trentech.pjp.data.DataQueries.DESTINATION;
+import static com.gmail.trentech.pjp.data.DataQueries.PRICE;
+import static com.gmail.trentech.pjp.data.DataQueries.ROTATION;
 
 import java.util.Optional;
 

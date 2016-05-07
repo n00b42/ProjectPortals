@@ -9,7 +9,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.data.home.HomeDataQueries;
+import com.gmail.trentech.pjp.data.DataQueries;
 import com.gmail.trentech.pjp.utils.Rotation;
 
 public class Home implements DataSerializable {
@@ -59,6 +59,6 @@ public class Home implements DataSerializable {
 
     @Override
     public DataContainer toContainer() {
-        return new MemoryDataContainer().set(HomeDataQueries.DESTINATION, destination).set(HomeDataQueries.ROTATION, rotation);
+        return new MemoryDataContainer().set(DataQueries.DESTINATION, destination).set(DataQueries.ROTATION, rotation);
     }
 }

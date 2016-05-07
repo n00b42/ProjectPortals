@@ -1,9 +1,9 @@
-package com.gmail.trentech.pjp.data.signportal;
+package com.gmail.trentech.pjp.data;
 
 import static org.spongepowered.api.data.DataQuery.of;
 import org.spongepowered.api.data.DataQuery;
 
-public class SignPortalDataQueries  {
+public class DataQueries  {
 
     public static final DataQuery DESTINATION = of("destination");
     public static final DataQuery ROTATION = of("rotation");
