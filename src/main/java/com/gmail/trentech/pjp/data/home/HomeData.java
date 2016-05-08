@@ -2,6 +2,7 @@ package com.gmail.trentech.pjp.data.home;
 
 import static com.gmail.trentech.pjp.data.Keys.HOME_LIST;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -9,6 +10,8 @@ import java.util.Set;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataHolder;
+import org.spongepowered.api.data.DataQuery;
+import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.manipulator.mutable.common.AbstractMappedData;
 import org.spongepowered.api.data.merge.MergeFunction;
 import org.spongepowered.api.data.value.mutable.MapValue;
@@ -63,11 +66,17 @@ public class HomeData extends AbstractMappedData<String, Home, HomeData, Immutab
         return Optional.of(set(HOME_LIST, homeData.get(HOME_LIST).get()));
     }
 
-    @SuppressWarnings("unchecked")
 	@Override
     public Optional<HomeData> from(DataContainer container) {
         if (container.contains(HOME_LIST.getQuery())) {
-            return Optional.of(new HomeData((Map<String, Home>) container.getMap(HOME_LIST.getQuery()).get()));
+            HashMap<String, Home> homeList = new HashMap<>();
+            
+            DataView homes = container.getView(HOME_LIST.getQuery()).get();
+            
+            for(DataQuery home : homes.getKeys(false)){
+            	homeList.put(home.toString(), homes.getSerializable(home, Home.class).get());
+            }
+            return Optional.of(new HomeData(homeList));
         }
         return Optional.empty();
     }
@@ -91,4 +100,9 @@ public class HomeData extends AbstractMappedData<String, Home, HomeData, Immutab
 	public ImmutableHomeData asImmutable() {
 		return new ImmutableHomeData(getValue());
 	}
+	
+	 @Override
+    public DataContainer toContainer() {
+        return super.toContainer().set(HOME_LIST, getValue());
+    }
 }

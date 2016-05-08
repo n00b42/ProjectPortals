@@ -5,6 +5,7 @@ import static com.gmail.trentech.pjp.data.Keys.HOME_LIST;
 import java.util.Map;
 
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.manipulator.immutable.common.AbstractImmutableMappedData;
 import org.spongepowered.api.data.value.immutable.ImmutableMapValue;
 
@@ -33,5 +34,10 @@ public class ImmutableHomeData extends AbstractImmutableMappedData<String, Home,
     @Override
     public HomeData asMutable() {
         return new HomeData(this.getValue());
+    }
+    
+	@Override
+    public DataContainer toContainer() {
+        return super.toContainer().set(HOME_LIST, getValue());
     }
 }
