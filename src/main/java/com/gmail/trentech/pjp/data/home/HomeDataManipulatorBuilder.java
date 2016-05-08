@@ -1,6 +1,6 @@
 package com.gmail.trentech.pjp.data.home;
 
-import static com.gmail.trentech.pjp.data.Keys.HOME_LIST;
+import static com.gmail.trentech.pjp.data.Keys.HOMES;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -17,13 +17,13 @@ public class HomeDataManipulatorBuilder implements DataManipulatorBuilder<HomeDa
 
 	@Override
     public Optional<HomeData> build(DataView container) throws InvalidDataException {
-        if (!container.contains(HOME_LIST)) {
+        if (!container.contains(HOMES)) {
             return Optional.empty();
         }
         
         HashMap<String, Home> homeList = new HashMap<>();
         
-        DataView homes = container.getView(HOME_LIST.getQuery()).get();
+        DataView homes = container.getView(HOMES.getQuery()).get();
         
         for(DataQuery home : homes.getKeys(false)){
         	homeList.put(home.toString(), homes.getSerializable(home, Home.class).get());

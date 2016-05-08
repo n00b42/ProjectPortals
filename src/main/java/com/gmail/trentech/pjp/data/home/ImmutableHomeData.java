@@ -1,6 +1,6 @@
 package com.gmail.trentech.pjp.data.home;
 
-import static com.gmail.trentech.pjp.data.Keys.HOME_LIST;
+import static com.gmail.trentech.pjp.data.Keys.HOMES;
 
 import java.util.Map;
 
@@ -14,11 +14,11 @@ import com.gmail.trentech.pjp.portals.Home;
 public class ImmutableHomeData extends AbstractImmutableMappedData<String, Home, ImmutableHomeData, HomeData> {
 
     protected ImmutableHomeData(Map<String, Home> value) {
-        super(value, HOME_LIST);
+        super(value, HOMES);
     }
 
 	public ImmutableMapValue<String, Home> homes() {
-        return Sponge.getRegistry().getValueFactory().createMapValue(HOME_LIST, getValue()).asImmutable();
+        return Sponge.getRegistry().getValueFactory().createMapValue(HOMES, getValue()).asImmutable();
     }
 	
     @Override
@@ -38,6 +38,6 @@ public class ImmutableHomeData extends AbstractImmutableMappedData<String, Home,
     
 	@Override
     public DataContainer toContainer() {
-        return super.toContainer().set(HOME_LIST, getValue());
+        return super.toContainer().set(HOMES, getValue());
     }
 }

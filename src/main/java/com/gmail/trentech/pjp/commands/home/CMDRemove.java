@@ -47,7 +47,7 @@ public class CMDRemove implements CommandExecutor {
 		
 		Map<String, Home> homeList = new HashMap<>();
 
-		Optional<Map<String, Home>> optionalHomeList = player.get(Keys.HOME_LIST);
+		Optional<Map<String, Home>> optionalHomeList = player.get(Keys.HOMES);
 		
 		if(optionalHomeList.isPresent()){
 			homeList = optionalHomeList.get();

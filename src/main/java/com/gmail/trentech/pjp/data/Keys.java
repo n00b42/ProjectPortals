@@ -11,6 +11,6 @@ import com.gmail.trentech.pjp.portals.Sign;
 
 public class Keys {
 
-	public static final Key<Value<Sign>> SIGN = KeyFactory.makeSingleKey(Sign.class, Value.class, DataQuery.of("SIGN"));
-	public static final Key<MapValue<String, Home>> HOME_LIST = KeyFactory.makeMapKey(String.class, Home.class, DataQuery.of("HOMES"));
+	public static final Key<Value<Sign>> SIGN = KeyFactory.makeSingleKey(Sign.class, Value.class, DataQuery.of("sign"));
+	public static final Key<MapValue<String, Home>> HOMES = KeyFactory.makeMapKey(String.class, Home.class, DataQuery.of("homes"));
 }

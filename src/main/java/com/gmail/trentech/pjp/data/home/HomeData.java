@@ -1,6 +1,6 @@
 package com.gmail.trentech.pjp.data.home;
 
-import static com.gmail.trentech.pjp.data.Keys.HOME_LIST;
+import static com.gmail.trentech.pjp.data.Keys.HOMES;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,11 +22,11 @@ import com.google.common.base.Preconditions;
 public class HomeData extends AbstractMappedData<String, Home, HomeData, ImmutableHomeData> {
 
 	public HomeData(Map<String, Home> value) {		
-		super(value, HOME_LIST);
+		super(value, HOMES);
 	}
 
 	public MapValue<String, Home> homes() {
-        return Sponge.getRegistry().getValueFactory().createMapValue(HOME_LIST, getValue());
+        return Sponge.getRegistry().getValueFactory().createMapValue(HOMES, getValue());
     }
 	
 	@Override
@@ -63,15 +63,15 @@ public class HomeData extends AbstractMappedData<String, Home, HomeData, Immutab
     @Override
     public Optional<HomeData> fill(DataHolder dataHolder, MergeFunction mergeFn) {
         HomeData homeData = Preconditions.checkNotNull(mergeFn).merge(copy(), dataHolder.get(HomeData.class).orElse(copy()));
-        return Optional.of(set(HOME_LIST, homeData.get(HOME_LIST).get()));
+        return Optional.of(set(HOMES, homeData.get(HOMES).get()));
     }
 
 	@Override
     public Optional<HomeData> from(DataContainer container) {
-        if (container.contains(HOME_LIST.getQuery())) {
+        if (container.contains(HOMES.getQuery())) {
             HashMap<String, Home> homeList = new HashMap<>();
             
-            DataView homes = container.getView(HOME_LIST.getQuery()).get();
+            DataView homes = container.getView(HOMES.getQuery()).get();
             
             for(DataQuery home : homes.getKeys(false)){
             	homeList.put(home.toString(), homes.getSerializable(home, Home.class).get());
@@ -103,6 +103,6 @@ public class HomeData extends AbstractMappedData<String, Home, HomeData, Immutab
 	
 	 @Override
     public DataContainer toContainer() {
-        return super.toContainer().set(HOME_LIST, getValue());
+        return super.toContainer().set(HOMES, getValue());
     }
 }
