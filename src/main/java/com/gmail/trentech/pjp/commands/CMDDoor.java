@@ -15,17 +15,14 @@ import org.spongepowered.api.text.format.TextColors;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.listeners.DoorListener;
 import com.gmail.trentech.pjp.portals.Door;
-import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Rotation;
 
 public class CMDDoor implements CommandExecutor {
 
 	public CMDDoor(){
-		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "door").getString();
-		
 		Help help = new Help("door", "door", " Use this command to create a door that will teleport you to other worlds");
-		help.setSyntax(" /door <world> [-c <x,y,z>] [-d <direction>] [-p <price>]\n /" + alias + " door <world> [-c <x,y,z>] [-d <direction>] [-p <price>]");
+		help.setSyntax(" /door <world> [-c <x,y,z>] [-d <direction>] [-p <price>]\n /d door <world> [-c <x,y,z>] [-d <direction>] [-p <price>]");
 		help.setExample(" /door MyWorld\n /door MyWorld -c -100,65,254\n /door MyWorld -c random\n /door MyWorld -c -100,65,254 -d south\n /door MyWorld -d southeast\n /door MyWorld -p 50");
 		help.save();
 	}

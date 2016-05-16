@@ -16,17 +16,14 @@ import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.signportal.SignPortalData;
 import com.gmail.trentech.pjp.listeners.SignListener;
 import com.gmail.trentech.pjp.portals.Sign;
-import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Rotation;
 
 public class CMDSign implements CommandExecutor {
 
 	public CMDSign(){
-		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "sign").getString();
-		
 		Help help = new Help("sign", "sign", " Use this command to create a sign that will teleport you to other worlds");
-		help.setSyntax(" /sign <world> [-c <x,y,z>] [-d <direction>] [-p <price>]\n /" + alias + " sign <world> [-c <x,y,z>] [-d <direction>] [-p <price>]");
+		help.setSyntax(" /sign <world> [-c <x,y,z>] [-d <direction>] [-p <price>]\n /s sign <world> [-c <x,y,z>] [-d <direction>] [-p <price>]");
 		help.setExample(" /sign MyWorld\n /sign MyWorld -c -100,65,254\n /sign MyWorld -c random\n /sign MyWorld -c -100,65,254 -d south\n /sign MyWorld -d southeast\n /sign MyWorld -p 50");
 		help.save();
 	}

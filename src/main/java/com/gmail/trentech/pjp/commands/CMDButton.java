@@ -15,17 +15,14 @@ import org.spongepowered.api.text.format.TextColors;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.listeners.ButtonListener;
 import com.gmail.trentech.pjp.portals.Button;
-import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Rotation;
 
 public class CMDButton implements CommandExecutor {
 
 	public CMDButton(){
-		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "button").getString();
-		
 		Help help = new Help("button", "button", " Use this command to create a button that will teleport you to other worlds");
-		help.setSyntax(" /button <world> [-c <x,y,z>] [-d <direction>] [-p <price>]\n /" + alias + " button <world> [-c <x,y,z>] [-d <direction>] [-p <price>]");
+		help.setSyntax(" /button <world> [-c <x,y,z>] [-d <direction>] [-p <price>]\n /b button <world> [-c <x,y,z>] [-d <direction>] [-p <price>]");
 		help.setExample(" /button MyWorld\n /button MyWorld -c -100,65,254\n /button MyWorld -c random\n /button MyWorld -c -100,65,254 -d south\n /button MyWorld -d southeast\n /button MyWorld -p 50");
 		help.save();
 	}

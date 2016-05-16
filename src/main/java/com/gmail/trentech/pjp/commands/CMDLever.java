@@ -15,17 +15,14 @@ import org.spongepowered.api.text.format.TextColors;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.listeners.LeverListener;
 import com.gmail.trentech.pjp.portals.Lever;
-import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Rotation;
 
 public class CMDLever implements CommandExecutor {
 
 	public CMDLever(){
-		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "lever").getString();
-		
 		Help help = new Help("lever", "lever", " Use this command to create a lever that will teleport you to other worlds");
-		help.setSyntax(" /lever <world> [-c <x,y,z>] [-d <direction>] [-p <price>]\n /" + alias + " lever <world> [-c <x,y,z>] [-d <direction>] [-p <price>]");
+		help.setSyntax(" /lever <world> [-c <x,y,z>] [-d <direction>] [-p <price>]\n /l lever <world> [-c <x,y,z>] [-d <direction>] [-p <price>]");
 		help.setExample(" /lever MyWorld\n /lever MyWorld -c -100,65,254\n /lever MyWorld -c random\n /lever MyWorld -c -100,65,254 -d south\n /lever MyWorld -d southeast\n /lever MyWorld -p 50");
 		help.save();
 	}

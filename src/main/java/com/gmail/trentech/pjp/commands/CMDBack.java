@@ -18,7 +18,6 @@ import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.events.TeleportEvent;
-import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDBack implements CommandExecutor {
@@ -28,10 +27,8 @@ public class CMDBack implements CommandExecutor {
 	public static ConcurrentHashMap<Player, Location<World>> players = new ConcurrentHashMap<>();
 	
 	public CMDBack(){
-		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "back").getString();
-		
 		Help help = new Help("back", "back", " Use this command to teleport you to the location you previously came from");
-		help.setSyntax(" /back\n /" + alias);
+		help.setSyntax(" /back");
 		help.save();
 	}
 	

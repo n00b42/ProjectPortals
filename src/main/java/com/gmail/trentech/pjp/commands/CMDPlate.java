@@ -15,17 +15,14 @@ import org.spongepowered.api.text.format.TextColors;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.listeners.PlateListener;
 import com.gmail.trentech.pjp.portals.Plate;
-import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Rotation;
 
 public class CMDPlate implements CommandExecutor {
 
 	public CMDPlate(){
-		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "plate").getString();
-		
 		Help help = new Help("plate", "plate", " Use this command to create a plate that will teleport you to other worlds");
-		help.setSyntax(" /plate <world> [-c <x,y,z>] [-d <direction>] [-p <price>]\n /" + alias + " plate <world> [-c <x,y,z>] [-d <direction>] [-p <price>]");
+		help.setSyntax(" /plate <world> [-c <x,y,z>] [-d <direction>] [-p <price>]\n /pp plate <world> [-c <x,y,z>] [-d <direction>] [-p <price>]");
 		help.setExample(" /plate MyWorld\n /plate MyWorld -c -100,65,254\n /plate MyWorld -c random\n /plate MyWorld -c -100,65,254 -d south\n /plate MyWorld -d southeast\n /plate MyWorld -p 50");
 		help.save();
 	}
