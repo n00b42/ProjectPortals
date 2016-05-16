@@ -43,9 +43,9 @@ public class PortalListener {
 	public static ConcurrentHashMap<Player, PortalBuilder> builders = new ConcurrentHashMap<>();
 
 	@Listener
-	public void onConstructPortalEvent(ConstructPortalEvent event, @First Player player){
-		for(Location<World> location : event.getLocations()){
-			if(Portal.get(location).isPresent()){
+	public void onConstructPortalEvent(ConstructPortalEvent event, @First Player player) {
+		for(Location<World> location : event.getLocations()) {
+			if(Portal.get(location).isPresent()) {
 	        	player.sendMessage(Text.of(TextColors.DARK_RED, "Portals cannot over lap other portals"));
 	        	event.setCancelled(true);
 	        	return;
@@ -57,13 +57,13 @@ public class PortalListener {
         ConfigurationNode config = new ConfigManager().getConfig();
         
         int size = config.getNode("options", "portal", "size").getInt();
-        if(locations.size() > size){
+        if(locations.size() > size) {
         	player.sendMessage(Text.of(TextColors.DARK_RED, "Portals cannot be larger than ", size, " blocks"));
         	event.setCancelled(true);
         	return;
         }
         
-        if(locations.size() < 5){
+        if(locations.size() < 5) {
         	player.sendMessage(Text.of(TextColors.DARK_RED, "Portal too small"));
         	event.setCancelled(true);        	
         	return;
@@ -72,11 +72,11 @@ public class PortalListener {
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Place event, @First Player player) {
-		if(!builders.containsKey(player)){
+		if(!builders.containsKey(player)) {
 			for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 				Location<World> location = transaction.getFinal().getLocation().get();		
 
-				if(!Portal.get(location).isPresent()){
+				if(!Portal.get(location).isPresent()) {
 					continue;
 				}
 
@@ -88,14 +88,14 @@ public class PortalListener {
 		PortalBuilder builder = (PortalBuilder) builders.get(player);
 		
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
-			if(transaction.getFinal().getState().getType().equals(BlockTypes.FIRE)){
+			if(transaction.getFinal().getState().getType().equals(BlockTypes.FIRE)) {
 				event.setCancelled(true);
 				break;
 			}
 			
 			Location<World> location = transaction.getFinal().getLocation().get();
 			
-			if(builder.isFill()){
+			if(builder.isFill()) {
 				builder.addFill(location);
 			}else{
 				builder.addFrame(location);
@@ -105,11 +105,11 @@ public class PortalListener {
 	
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Break event, @First Player player) {
-		if(!builders.containsKey(player)){
+		if(!builders.containsKey(player)) {
 			for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 				Location<World> location = transaction.getFinal().getLocation().get();		
 
-				if(!Portal.get(location).isPresent()){
+				if(!Portal.get(location).isPresent()) {
 					continue;
 				}
 
@@ -122,7 +122,7 @@ public class PortalListener {
 		
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			Location<World> location = transaction.getFinal().getLocation().get();
-			if(builder.isFill()){
+			if(builder.isFill()) {
 				builder.removeFill(location);
 			}else{
 				builder.removeFrame(location);
@@ -131,10 +131,10 @@ public class PortalListener {
 	}
 
 	@Listener
-	public void onDisplaceEntityEvent(DisplaceEntityEvent.Move event){
+	public void onDisplaceEntityEvent(DisplaceEntityEvent.Move event) {
 		Entity entity = event.getTargetEntity();
 		
-		if (entity instanceof Player || !(entity instanceof Living || entity instanceof Item)){
+		if (entity instanceof Player || !(entity instanceof Living || entity instanceof Item)) {
 			return;
 		}
 
@@ -142,25 +142,25 @@ public class PortalListener {
 
 		Optional<Portal> optionalPortal = Portal.get(location);
 		
-		if(!optionalPortal.isPresent()){
+		if(!optionalPortal.isPresent()) {
 			return;
 		}
 		Portal portal = optionalPortal.get();
 		
-		if(entity instanceof Item){
-			if(!new ConfigManager().getConfig().getNode("options", "portal", "teleport_item").getBoolean()){
+		if(entity instanceof Item) {
+			if(!new ConfigManager().getConfig().getNode("options", "portal", "teleport_item").getBoolean()) {
 				return;
 			}
 		}
-		if(entity instanceof Living){
-			if(!new ConfigManager().getConfig().getNode("options", "portal", "teleport_mob").getBoolean()){
+		if(entity instanceof Living) {
+			if(!new ConfigManager().getConfig().getNode("options", "portal", "teleport_mob").getBoolean()) {
 				return;
 			}
 		}
 		
 		Optional<Location<World>> optionalSpawnLocation = portal.getDestination();
 		
-		if(!optionalSpawnLocation.isPresent()){
+		if(!optionalSpawnLocation.isPresent()) {
 			return;
 		}
 		Location<World> spawnLocation = optionalSpawnLocation.get();
@@ -169,8 +169,8 @@ public class PortalListener {
 	}
 	
 	@Listener
-	public void onDisplaceEntityEvent(DisplaceEntityEvent.TargetPlayer event){
-		if (!(event.getTargetEntity() instanceof Player)){
+	public void onDisplaceEntityEvent(DisplaceEntityEvent.TargetPlayer event) {
+		if (!(event.getTargetEntity() instanceof Player)) {
 			return;
 		}
 		Player player = (Player) event.getTargetEntity();
@@ -179,18 +179,18 @@ public class PortalListener {
 
 		Optional<Portal> optionalPortal = Portal.get(location);
 		
-		if(!optionalPortal.isPresent()){
+		if(!optionalPortal.isPresent()) {
 			return;
 		}
 		Portal portal = optionalPortal.get();
 		
-		if(new ConfigManager().getConfig().getNode("options", "advanced_permissions").getBoolean()){
-			if(!player.hasPermission("pjp.portal." + portal.getName())){
+		if(new ConfigManager().getConfig().getNode("options", "advanced_permissions").getBoolean()) {
+			if(!player.hasPermission("pjp.portal." + portal.getName())) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use this portal"));
 				return;
 			}
 		}else{
-			if(!player.hasPermission("pjp.portal.interact")){
+			if(!player.hasPermission("pjp.portal.interact")) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use portals"));
 				return;
 			}
@@ -198,7 +198,7 @@ public class PortalListener {
 
 		Optional<Location<World>> optionalSpawnLocation = portal.getDestination();
 		
-		if(!optionalSpawnLocation.isPresent()){
+		if(!optionalSpawnLocation.isPresent()) {
 			player.sendMessage(Text.of(TextColors.DARK_RED, portal.destination.split(":")[0], " does not exist"));
 			return;
 		}
@@ -206,7 +206,7 @@ public class PortalListener {
 
 		TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, portal.getPrice(), Cause.of(NamedCause.source(portal)));
 
-		if(!Main.getGame().getEventManager().post(teleportEvent)){
+		if(!Main.getGame().getEventManager().post(teleportEvent)) {
 			Location<World> currentLocation = player.getLocation();
 			spawnLocation = teleportEvent.getDestination();
 			
@@ -226,16 +226,16 @@ public class PortalListener {
     	}
     	Player player = (Player) event.getTargetEntity();
 
-		if(!builders.containsKey(player)){
+		if(!builders.containsKey(player)) {
 			return;
 		}
 
-		if(!event.getCause().first(DamageSource.class).isPresent()){
+		if(!event.getCause().first(DamageSource.class).isPresent()) {
 			return;
 		}
 		DamageSource damageSource = event.getCause().first(DamageSource.class).get();
 
-		if(!damageSource.getType().equals(DamageTypes.PROJECTILE)){
+		if(!damageSource.getType().equals(DamageTypes.PROJECTILE)) {
 			return;
 		}
 		event.setCancelled(true);

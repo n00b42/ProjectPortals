@@ -27,18 +27,16 @@ import com.gmail.trentech.pjp.utils.Rotation;
 
 public class CMDCreate implements CommandExecutor {
 
-	public CMDCreate(){
-		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "portal").getString();
-		
+	public CMDCreate() {
 		Help help = new Help("pcreate", "create", " Use this command to create a portal that will teleport you to other worlds");
-		help.setSyntax(" /portal create <name> <world> [-c <x,y,z>] [-d <direction>] [-p <price>] [-e <particle[:color]>]\n /" + alias + " portal <name> <world> [-c <x,y,z>] [-d <direction>] [-p <price>] [-e <particle[:color]>]");
+		help.setSyntax(" /portal create <name> <world> [-c <x,y,z>] [-d <direction>] [-p <price>] [-e <particle[:color]>]\n /p portal <name> <world> [-c <x,y,z>] [-d <direction>] [-p <price>] [-e <particle[:color]>]");
 		help.setExample(" /portal create MyPortal MyWorld\n /portal create MyPortal MyWorld -c -100,65,254\n /portal create MyPortal MyWorld -c random\n /portal create MyPortal MyWorld -c -100,65,254 -d south\n /portal create MyPortal MyWorld -d southeast\n /portal create MyPortal MyWorld -p 50\n /portal create MyPortal MyWorld -e REDSTONE:BLUE");
 		help.save();
 	}
 	
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if(!(src instanceof Player)){
+		if(!(src instanceof Player)) {
 			src.sendMessage(Text.of(TextColors.DARK_RED, "Must be a player"));
 			return CommandResult.empty();
 		}
@@ -50,7 +48,7 @@ public class CMDCreate implements CommandExecutor {
 		}
 		String name = args.<String>getOne("name").get().toLowerCase();
 		
-		if(name.equalsIgnoreCase("-c") || name.equalsIgnoreCase("-d") || name.equalsIgnoreCase("-p") || name.equalsIgnoreCase("-e")){
+		if(name.equalsIgnoreCase("-c") || name.equalsIgnoreCase("-d") || name.equalsIgnoreCase("-p") || name.equalsIgnoreCase("-e")) {
 			src.sendMessage(invalidArg());
 			return CommandResult.empty();
 		}
@@ -61,27 +59,27 @@ public class CMDCreate implements CommandExecutor {
 		}
 		String worldName = args.<String>getOne("world").get();
 		
-		if(worldName.equalsIgnoreCase("-c") || worldName.equalsIgnoreCase("-d") || worldName.equalsIgnoreCase("-p") || worldName.equalsIgnoreCase("-e")){
+		if(worldName.equalsIgnoreCase("-c") || worldName.equalsIgnoreCase("-d") || worldName.equalsIgnoreCase("-p") || worldName.equalsIgnoreCase("-e")) {
 			src.sendMessage(invalidArg());
 			return CommandResult.empty();
 		}
 		
-		if(Portal.getByName(name).isPresent()){
+		if(Portal.getByName(name).isPresent()) {
 			src.sendMessage(Text.of(TextColors.DARK_RED, name, " already exists"));
 			return CommandResult.empty();
 		}
 
-		if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
+		if(!Main.getGame().getServer().getWorld(worldName).isPresent()) {
 			src.sendMessage(Text.of(TextColors.DARK_RED, worldName, " is not loaded or does not exist"));
 			return CommandResult.empty();
 		}
 
 		String destination = worldName + ":spawn";
 		
-		if(args.hasAny("x,y,z")){
+		if(args.hasAny("x,y,z")) {
 			String[] coords = args.<String>getOne("x,y,z").get().split(",");
 
-			if(coords[0].equalsIgnoreCase("random")){
+			if(coords[0].equalsIgnoreCase("random")) {
 				destination = destination.replace("spawn", "random");
 			}else{
 				int x;
@@ -92,7 +90,7 @@ public class CMDCreate implements CommandExecutor {
 					x = Integer.parseInt(coords[0]);
 					y = Integer.parseInt(coords[1]);
 					z = Integer.parseInt(coords[2]);				
-				}catch(Exception e){
+				}catch(Exception e) {
 					src.sendMessage(Text.of(TextColors.RED, "Incorrect coordinates"));
 					src.sendMessage(invalidArg());
 					return CommandResult.empty();
@@ -103,12 +101,12 @@ public class CMDCreate implements CommandExecutor {
 		
 		Rotation rotation = Rotation.EAST;
 		
-		if(args.hasAny("direction")){
+		if(args.hasAny("direction")) {
 			String direction = args.<String>getOne("direction").get();
 			
 			Optional<Rotation> optionalRotation = Rotation.get(direction);
 			
-			if(!optionalRotation.isPresent()){
+			if(!optionalRotation.isPresent()) {
 				src.sendMessage(Text.of(TextColors.RED, "Incorrect direction"));
 				src.sendMessage(invalidArg());
 				return CommandResult.empty();
@@ -119,10 +117,10 @@ public class CMDCreate implements CommandExecutor {
 		
 		double price = 0;
 		
-		if(args.hasAny("price")){
+		if(args.hasAny("price")) {
 			try{
 				price = Double.parseDouble(args.<String>getOne("price").get());
-			}catch(Exception e){
+			}catch(Exception e) {
 				src.sendMessage(Text.of(TextColors.RED, "Incorrect price"));
 				src.sendMessage(invalidArg());
 				return CommandResult.empty();
@@ -131,7 +129,7 @@ public class CMDCreate implements CommandExecutor {
 		
 		String particle = new ConfigManager().getConfig().getNode("options", "particles", "type", "portal").getString().toUpperCase();
 		
-		if(args.hasAny("particle[:color]")){
+		if(args.hasAny("particle[:color]")) {
 			String[] type = args.<String>getOne("particle[:color]").get().toUpperCase().split(":");
 			
 			Optional<Particle> optionalParticle = Particles.get(type[0]);
@@ -145,8 +143,8 @@ public class CMDCreate implements CommandExecutor {
 			particle = type[0];
 			
 			if(type.length == 2) {
-				if(part.getType() instanceof Colorable){
-		    		if(!ParticleColor.get(type[1]).isPresent()){
+				if(part.getType() instanceof Colorable) {
+		    		if(!ParticleColor.get(type[1]).isPresent()) {
 		    			src.sendMessage(Text.of(TextColors.RED, "Incorrect color"));
 		    			src.sendMessage(invalidArg());
 		    			return CommandResult.empty();
@@ -166,7 +164,7 @@ public class CMDCreate implements CommandExecutor {
 		return CommandResult.success();
 	}
 	
-	private Text invalidArg(){
+	private Text invalidArg() {
 		Text t1 = Text.of(TextColors.RED, "Usage: /portal create <name> <world> [-c <x,y,z>] ");
 		Text t2 = Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("NORTH\nNORTHEAST\nEAST\nSOUTHEAST\nSOUTH\nSOUTHWEST\nWEST\nNORTHWEST"))).append(Text.of("[-d <direction>] ")).build();
 		Text t3 = Text.of(TextColors.RED, "[-p <price>] ");

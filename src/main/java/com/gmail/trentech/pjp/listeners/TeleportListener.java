@@ -37,14 +37,14 @@ import ninja.leaping.configurate.ConfigurationNode;
 public class TeleportListener {
 
 	@Listener
-	public void onTeleportEvent(TeleportEvent event){
+	public void onTeleportEvent(TeleportEvent event) {
 		Player player = event.getTarget();
 		
 		Location<World> src = event.getSource();
 		src = src.getExtent().getLocation(src.getBlockX(), src.getBlockY(), src.getBlockZ());
 		Location<World> dest = event.getDestination();
 
-		if(!player.hasPermission("pjp.worlds." + dest.getExtent().getName()) && !player.hasPermission("pjw.worlds." + dest.getExtent().getName())){
+		if(!player.hasPermission("pjp.worlds." + dest.getExtent().getName()) && !player.hasPermission("pjw.worlds." + dest.getExtent().getName())) {
 			player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to travel to ", dest.getExtent().getName()));
 			event.setCancelled(true);
 			return;
@@ -54,7 +54,7 @@ public class TeleportListener {
 		
 		Optional<Location<World>> optionalLocation = teleportHelper.getSafeLocation(dest);
 
-		if(!optionalLocation.isPresent()){
+		if(!optionalLocation.isPresent()) {
 			player.sendMessage(Text.builder().color(TextColors.DARK_RED).append(Text.of("Unsafe spawn point detected. Teleport anyway? "))
 					.onClick(TextActions.executeCallback(Utils.unsafeTeleport(dest))).append(Text.of(TextColors.GOLD, TextStyles.UNDERLINE, "Click Here")).build());
 			event.setCancelled(true);
@@ -63,12 +63,12 @@ public class TeleportListener {
 
 		double price = event.getPrice();
 		Optional<EconomyService> optionalEconomy = Main.getGame().getServiceManager().provide(EconomyService.class);
-		if(price != 0 && optionalEconomy.isPresent()){
+		if(price != 0 && optionalEconomy.isPresent()) {
 			EconomyService economy = optionalEconomy.get();
 
 			UniqueAccount account = economy.getOrCreateAccount(player.getUniqueId()).get();
 
-			if(account.withdraw(economy.getDefaultCurrency(), new BigDecimal(price), Cause.of(NamedCause.source(Main.getPlugin()))).getResult() != ResultType.SUCCESS){
+			if(account.withdraw(economy.getDefaultCurrency(), new BigDecimal(price), Cause.of(NamedCause.source(Main.getPlugin()))).getResult() != ResultType.SUCCESS) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "Not enough money. You need $", new DecimalFormat("#,###,##0.00").format(price)));
 				event.setCancelled(true);
 				return;
@@ -83,13 +83,13 @@ public class TeleportListener {
 		
 		Optional<Particle> optionalParticle = Particles.get(split[0]);
 		
-		if(optionalParticle.isPresent()){
+		if(optionalParticle.isPresent()) {
 			Particle particle = optionalParticle.get();
 			
-			if(split.length == 2 && particle.isColorable()){
+			if(split.length == 2 && particle.isColorable()) {
 				Optional<ParticleColor> optionalColors = ParticleColor.get(split[1]);
 				
-				if(optionalColors.isPresent()){
+				if(optionalColors.isPresent()) {
 					particle.spawnParticle(src, optionalColors.get());
 					particle.spawnParticle(src.getRelative(Direction.UP), optionalColors.get());
 				}else{
@@ -107,7 +107,7 @@ public class TeleportListener {
 		
 		player.sendTitle(Title.of(title, subTitle));
 
-		if(player.hasPermission("pjp.cmd.back")){
+		if(player.hasPermission("pjp.cmd.back")) {
 			CMDBack.players.put(player, src);
 		}
 	}
@@ -119,8 +119,8 @@ public class TeleportListener {
 		Location<World> src = event.getFromTransform().getLocation();
 		Location<World> dest = event.getToTransform().getLocation();
 		
-		if(event.getFromTransform().getExtent() != event.getToTransform().getExtent()){
-			if(player.hasPermission("pjp.cmd.back")){
+		if(event.getFromTransform().getExtent() != event.getToTransform().getExtent()) {
+			if(player.hasPermission("pjp.cmd.back")) {
 				CMDBack.players.put(player, src);
 			}
 			return;
@@ -128,8 +128,8 @@ public class TeleportListener {
 
 		double distance = dest.getPosition().distance(src.getBlockX(), src.getBlockY(), src.getBlockZ());
 		
-		if(distance > 5){
-			if(player.hasPermission("pjp.cmd.back")){
+		if(distance > 5) {
+			if(player.hasPermission("pjp.cmd.back")) {
 				CMDBack.players.put(player, src);
 			}
 		}

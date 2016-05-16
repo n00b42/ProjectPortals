@@ -17,12 +17,12 @@ public class Home implements DataSerializable {
 	private String destination;
 	private String rotation;
 	
-	public Home(Location<World> destination, Rotation rotation){
+	public Home(Location<World> destination, Rotation rotation) {
 		this.destination = destination.getExtent().getName() + ":" + destination.getBlockX() + "." + destination.getBlockY() + "." + destination.getBlockZ() ;
 		this.rotation = rotation.getName();
 	}
 	
-	public Home(String destination, String rotation){
+	public Home(String destination, String rotation) {
 		this.destination = destination;
 		this.rotation = rotation;
 	}
@@ -30,7 +30,7 @@ public class Home implements DataSerializable {
 	public Optional<Location<World>> getDestination() {
 		String[] args = destination.split(":");
 		
-		if(!Main.getGame().getServer().getWorld(args[0]).isPresent()){
+		if(!Main.getGame().getServer().getWorld(args[0]).isPresent()) {
 			return Optional.empty();
 		}
 		World world = Main.getGame().getServer().getWorld(args[0]).get();
@@ -43,12 +43,12 @@ public class Home implements DataSerializable {
 			int z = Integer.parseInt(coords[2]);
 				
 			return Optional.of(world.getLocation(x, y, z));	
-		}catch(Exception e){
+		}catch(Exception e) {
 			return Optional.empty();
 		}
 	}
 
-	public Optional<Rotation> getRotation(){
+	public Optional<Rotation> getRotation() {
 		return Rotation.get(rotation);
 	}
 

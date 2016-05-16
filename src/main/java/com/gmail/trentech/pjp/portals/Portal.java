@@ -44,7 +44,7 @@ public class Portal extends SQLUtils {
 		this.fill = fill;
 		
 		this.particle = particle;
-		if(this.particle == null){
+		if(this.particle == null) {
 			this.particle = new ConfigManager().getConfig().getNode("options", "particles", "type", "portal").getString().toUpperCase();
 		}
 		this.price = price;
@@ -58,19 +58,19 @@ public class Portal extends SQLUtils {
 		this.frame = new ArrayList<>();
 		this.fill = new ArrayList<>();
 		
-		for(Location<World> location : frame){
+		for(Location<World> location : frame) {
 			String loc = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 			cache.put(loc, name);
 			this.frame.add(loc);
 		}
-		for(Location<World> location : fill){
+		for(Location<World> location : fill) {
 			String loc = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 			cache.put(loc, name);
 			this.fill.add(loc);
 		}
 		
 		this.particle = particle;
-		if(this.particle == null){
+		if(this.particle == null) {
 			this.particle = new ConfigManager().getConfig().getNode("options", "particles", "type", "portal").getString().toUpperCase();
 		}
 	}
@@ -79,15 +79,15 @@ public class Portal extends SQLUtils {
 		return name;
 	}
 	
-	public String getParticle(){
+	public String getParticle() {
 		return particle;
 	}
 
-	public double getPrice(){
+	public double getPrice() {
 		return price;
 	}
 	
-	public void setParticle(String particle){
+	public void setParticle(String particle) {
 		this.particle = particle;
 		try {
 		    Connection connection = getDataSource().getConnection();
@@ -102,21 +102,21 @@ public class Portal extends SQLUtils {
 			e.printStackTrace();
 		}
 		
-		for(Task task : Main.getGame().getScheduler().getScheduledTasks()){
-			if(task.getName().equals(this.name)){
+		for(Task task : Main.getGame().getScheduler().getScheduledTasks()) {
+			if(task.getName().equals(this.name)) {
 				task.cancel();
 			}
 		}
 
 		String[] split = particle.split(":");
-		if(split.length == 2){
+		if(split.length == 2) {
 			Particles.get(split[0]).get().createTask(getName(), getFill(), ParticleColor.get(split[1]).get());			
 		}else{
 			Particles.get(split[0]).get().createTask(getName(), getFill());
 		}
 	}
 	
-	public void setPrice(double price){
+	public void setPrice(double price) {
 		this.price = price;
 		
 		try {
@@ -159,14 +159,14 @@ public class Portal extends SQLUtils {
 		
 		Optional<World> optional = Main.getGame().getServer().getWorld(args[0]);
 		
-		if(!optional.isPresent()){
+		if(!optional.isPresent()) {
 			return Optional.empty();
 		}
 		World world = optional.get();
 		
-		if(args[1].equalsIgnoreCase("random")){
+		if(args[1].equalsIgnoreCase("random")) {
 			return Optional.of(Utils.getRandomLocation(world));
-		}else if(args[1].equalsIgnoreCase("spawn")){
+		}else if(args[1].equalsIgnoreCase("spawn")) {
 			return Optional.of(world.getSpawnLocation());
 		}else{
 			String[] coords = args[1].split("\\.");
@@ -178,7 +178,7 @@ public class Portal extends SQLUtils {
 		}
 	}
 
-	public void setDestination(String destination){
+	public void setDestination(String destination) {
 		this.destination = destination;
 		
 		try {
@@ -198,10 +198,10 @@ public class Portal extends SQLUtils {
 	public List<Location<World>> getFrame() {
 		List<Location<World>> list = new ArrayList<>();
 		
-		for(String loc : frame){
+		for(String loc : frame) {
 			String[] args = loc.split(":");
 			
-			if(!Main.getGame().getServer().getWorld(args[0]).isPresent()){
+			if(!Main.getGame().getServer().getWorld(args[0]).isPresent()) {
 				continue;
 			}
 			World world = Main.getGame().getServer().getWorld(args[0]).get();
@@ -220,10 +220,10 @@ public class Portal extends SQLUtils {
 	public List<Location<World>> getFill() {
 		List<Location<World>> list = new ArrayList<>();
 		
-		for(String loc : fill){
+		for(String loc : fill) {
 			String[] args = loc.split(":");
 			
-			if(!Main.getGame().getServer().getWorld(args[0]).isPresent()){
+			if(!Main.getGame().getServer().getWorld(args[0]).isPresent()) {
 				continue;
 			}
 			World world = Main.getGame().getServer().getWorld(args[0]).get();
@@ -239,12 +239,12 @@ public class Portal extends SQLUtils {
 		return list;
 	}
 
-	public static Optional<Portal> get(Location<World> location){
+	public static Optional<Portal> get(Location<World> location) {
 		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 		
 		Optional<Portal> optionalPortal = Optional.empty();
 		
-		if(cache.containsKey(name)){
+		if(cache.containsKey(name)) {
 			try {
 			    Connection connection = getDataSource().getConnection();
 			    
@@ -260,7 +260,7 @@ public class Portal extends SQLUtils {
 					String[] fillArray = result.getString("Fill").split(";");
 					List<String> fill = new ArrayList<String>(Arrays.asList(fillArray));
 
-			    	if(!frame.contains(name) && !fill.contains(name)){
+			    	if(!frame.contains(name) && !fill.contains(name)) {
 			    		continue;
 			    	}
 			    	
@@ -282,11 +282,11 @@ public class Portal extends SQLUtils {
 		return optionalPortal;
 	}
 
-	public static Optional<Portal> getByName(String name){
+	public static Optional<Portal> getByName(String name) {
 		Optional<Portal> optionalPortal = Optional.empty();
 		
-		for(Entry<String, String> entry : cache.entrySet()){
-			if(!entry.getValue().equalsIgnoreCase(name)){
+		for(Entry<String, String> entry : cache.entrySet()) {
+			if(!entry.getValue().equalsIgnoreCase(name)) {
 				continue;
 			}
 			
@@ -326,7 +326,7 @@ public class Portal extends SQLUtils {
 		return optionalPortal;
 	}
 	
-	public static void remove(String name){
+	public static void remove(String name) {
 		try {
 		    Connection connection = getDataSource().getConnection();
 		    
@@ -337,14 +337,14 @@ public class Portal extends SQLUtils {
 			
 			connection.close();
 			
-			for(Task task : Main.getGame().getScheduler().getScheduledTasks()){
-				if(task.getName().equals(name)){
+			for(Task task : Main.getGame().getScheduler().getScheduledTasks()) {
+				if(task.getName().equals(name)) {
 					task.cancel();
 				}
 			}
 			
-			for(Entry<String, String> entry : cache.entrySet()){
-				if(entry.getValue().equalsIgnoreCase(name)){
+			for(Entry<String, String> entry : cache.entrySet()) {
+				if(entry.getValue().equalsIgnoreCase(name)) {
 					cache.remove(entry.getKey());
 				}
 			}
@@ -353,7 +353,7 @@ public class Portal extends SQLUtils {
 		}
 	}
 	
-	public static void save(Portal portal){	
+	public static void save(Portal portal) {	
 		try {
 		    Connection connection = getDataSource().getConnection();
 		    
@@ -362,13 +362,13 @@ public class Portal extends SQLUtils {
 		    statement.setString(1, portal.name);
 		    
 		    StringBuilder stringBuilder = new StringBuilder();
-		    for (String string : portal.frame){
+		    for (String string : portal.frame) {
 		    	stringBuilder.append(string + ";");
 		    }
 		    statement.setString(2, stringBuilder.toString().substring(0, stringBuilder.length() - 1));
 		    
 		    stringBuilder = new StringBuilder();
-		    for (String string : portal.fill){
+		    for (String string : portal.fill) {
 		    	stringBuilder.append(string + ";");
 		    }	    
 		    statement.setString(3, stringBuilder.toString().substring(0, stringBuilder.length() - 1));
@@ -383,7 +383,7 @@ public class Portal extends SQLUtils {
 			connection.close();
 
 			String[] split = portal.getParticle().split(":");
-			if(split.length == 2){
+			if(split.length == 2) {
 				Particles.get(split[0]).get().createTask(portal.getName(), portal.getFill(), ParticleColor.get(split[1]).get());			
 			}else{
 				Particles.get(split[0]).get().createTask(portal.getName(), portal.getFill());
@@ -393,7 +393,7 @@ public class Portal extends SQLUtils {
 		}
 	}
 	
-	public static List<Portal> list(){
+	public static List<Portal> list() {
 		List<Portal> list = new ArrayList<>();
 
 		try {
@@ -415,7 +415,7 @@ public class Portal extends SQLUtils {
 		    	String destination = result.getString("Destination");
 		    	String rotation = result.getString("Rotation");
 		    	
-		    	if(rotation == null){
+		    	if(rotation == null) {
 		    		rotation = Rotation.EAST.getName();
 		    	}
 		    	
@@ -432,16 +432,16 @@ public class Portal extends SQLUtils {
 		return list;
 	}
 	
-	public static void init(){
+	public static void init() {
 		update();
 
-		for(Portal portal : Portal.list()){
+		for(Portal portal : Portal.list()) {
 			String name = portal.getName().toLowerCase();
 
 			Rotation rotation = portal.getRotation();
 			String[] args = portal.destination.split(":");
 			
-			if(args.length == 3){
+			if(args.length == 3) {
 				rotation = Rotation.get(args[2]).get();
 				portal.setDestination(args[0] + ":" + args[1]);
 			}
@@ -449,15 +449,15 @@ public class Portal extends SQLUtils {
 			portal.setRotation(rotation);
 			portal.setPrice(portal.getPrice());
 			
-			for(String loc : portal.fill){
+			for(String loc : portal.fill) {
 				cache.put(loc, name);
 			}
-			for(String loc : portal.frame){
+			for(String loc : portal.frame) {
 				cache.put(loc, name);
 			}
 			
     		String[] split = portal.getParticle().split(":");
-    		if(split.length == 2){
+    		if(split.length == 2) {
     			Particles.get(split[0]).get().createTask(name, portal.getFill(), ParticleColor.get(split[1]).get());
     		}else{
     			Particles.get(split[0]).get().createTask(name, portal.getFill());
@@ -465,7 +465,7 @@ public class Portal extends SQLUtils {
 		}
 	}
 
-	public static void update(){
+	public static void update() {
 		try {
 			Connection connection = getDataSource().getConnection();
 			

@@ -15,16 +15,16 @@ public enum ParticleColor {
 	private final Color color;
 	private final String name;
 	
-	private ParticleColor(String name, Color color){
+	private ParticleColor(String name, Color color) {
 		this.name = name;
 		this.color = color;
 	}
 	
     public Color getColor() {
-		if(this.color == null){
+		if(this.color == null) {
 			int random = ThreadLocalRandom.current().nextInt(8 - 1 + 1) + 1;
 			
-			switch(random){
+			switch(random) {
 				case 1: return Color.BLUE;
 				case 2: return Color.CYAN;
 				case 3: return Color.LIME;
@@ -38,13 +38,13 @@ public enum ParticleColor {
 		return color;
 	}
 
-	public static Optional<ParticleColor> get(String name){
+	public static Optional<ParticleColor> get(String name) {
     	Optional<ParticleColor> optional = Optional.empty();
     	
     	ParticleColor[] colors = ParticleColor.values();
     	
-        for (ParticleColor color : colors){
-        	if(color.name.equals(name)){
+        for (ParticleColor color : colors) {
+        	if(color.name.equals(name)) {
         		optional = Optional.of(color);
         		break;
         	}    		

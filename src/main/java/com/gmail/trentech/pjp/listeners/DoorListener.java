@@ -40,11 +40,11 @@ public class DoorListener {
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			Location<World> location = transaction.getFinal().getLocation().get();		
 
-			if(!Door.get(location).isPresent()){
+			if(!Door.get(location).isPresent()) {
 				continue;
 			}
 			
-			if(!player.hasPermission("pjp.door.break")){
+			if(!player.hasPermission("pjp.door.break")) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to break door portals"));
 				event.setCancelled(true);
 			}else{
@@ -57,7 +57,7 @@ public class DoorListener {
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Place event, @First Player player) {
-		if(!builders.containsKey(player)){
+		if(!builders.containsKey(player)) {
 			return;
 		}
 
@@ -66,13 +66,13 @@ public class DoorListener {
 			
 			if(!blockType.equals(BlockTypes.ACACIA_DOOR) && !blockType.equals(BlockTypes.BIRCH_DOOR) && !blockType.equals(BlockTypes.DARK_OAK_DOOR)
 					 && !blockType.equals(BlockTypes.IRON_DOOR) && !blockType.equals(BlockTypes.JUNGLE_DOOR) && !blockType.equals(BlockTypes.SPRUCE_DOOR)
-					 && !blockType.equals(BlockTypes.WOODEN_DOOR)){
+					 && !blockType.equals(BlockTypes.WOODEN_DOOR)) {
 				continue;
 			}
 
 			Location<World> location = transaction.getFinal().getLocation().get();
 
-			if(!player.hasPermission("pjp.door.place")){
+			if(!player.hasPermission("pjp.door.place")) {
 	        	player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to place door portals"));
 	        	builders.remove(player);
 	        	event.setCancelled(true);
@@ -85,13 +85,13 @@ public class DoorListener {
 			
 			Optional<Particle> optionalParticle = Particles.get(split[0]);
 			
-			if(optionalParticle.isPresent()){
+			if(optionalParticle.isPresent()) {
 				Particle particle = optionalParticle.get();
 				
-				if(split.length == 2 && particle.isColorable()){
+				if(split.length == 2 && particle.isColorable()) {
 					Optional<ParticleColor> optionalColors = ParticleColor.get(split[1]);
 					
-					if(optionalColors.isPresent()){
+					if(optionalColors.isPresent()) {
 						particle.spawnParticle(location, optionalColors.get());
 					}else{
 						particle.spawnParticle(location);
@@ -109,8 +109,8 @@ public class DoorListener {
 	}
 	
 	@Listener
-	public void onDisplaceEntityEvent(DisplaceEntityEvent.TargetPlayer event){
-		if (!(event.getTargetEntity() instanceof Player)){
+	public void onDisplaceEntityEvent(DisplaceEntityEvent.TargetPlayer event) {
+		if (!(event.getTargetEntity() instanceof Player)) {
 			return;
 		}
 		Player player = (Player) event.getTargetEntity();
@@ -119,18 +119,18 @@ public class DoorListener {
 
 		Optional<Door> optionalDoor = Door.get(location);
 		
-		if(!optionalDoor.isPresent()){
+		if(!optionalDoor.isPresent()) {
 			return;
 		}
 		Door door = optionalDoor.get();
 
-		if(new ConfigManager().getConfig().getNode("options", "advanced_permissions").getBoolean()){
-			if(!player.hasPermission("pjp.door." + location.getExtent().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ())){
+		if(new ConfigManager().getConfig().getNode("options", "advanced_permissions").getBoolean()) {
+			if(!player.hasPermission("pjp.door." + location.getExtent().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ())) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use this door portal"));
 				return;
 			}
 		}else{
-			if(!player.hasPermission("pjp.door.interact")){
+			if(!player.hasPermission("pjp.door.interact")) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with door portals"));
 				return;
 			}
@@ -138,7 +138,7 @@ public class DoorListener {
 
 		Optional<Location<World>> optionalSpawnLocation = door.getDestination();
 		
-		if(!optionalSpawnLocation.isPresent()){
+		if(!optionalSpawnLocation.isPresent()) {
 			player.sendMessage(Text.of(TextColors.DARK_RED, "World does not exist"));
 			return;
 		}
@@ -146,7 +146,7 @@ public class DoorListener {
 
 		TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, door.getPrice(), Cause.of(NamedCause.source(door)));
 
-		if(!Main.getGame().getEventManager().post(teleportEvent)){
+		if(!Main.getGame().getEventManager().post(teleportEvent)) {
 			Location<World> currentLocation = player.getLocation();
 			spawnLocation = teleportEvent.getDestination();
 			

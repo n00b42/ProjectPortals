@@ -19,22 +19,19 @@ import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.portals.Warp;
-import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDList implements CommandExecutor {
 
-	public CMDList(){
-		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "warp").getString();
-		
+	public CMDList() {
 		Help help = new Help("wlist", "list", " List all warp points");
-		help.setSyntax(" /warp list\n /" + alias + " l");
+		help.setSyntax(" /warp list\n /w l");
 		help.save();
 	}
 	
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if(!(src instanceof Player)){
+		if(!(src instanceof Player)) {
 			src.sendMessage(Text.of(TextColors.DARK_RED, "Must be a player"));
 			return CommandResult.empty();
 		}
@@ -48,19 +45,19 @@ public class CMDList implements CommandExecutor {
 		
 		List<Warp> warps = Warp.list();
 
-		for(Warp warp : warps){
-			if(!player.hasPermission("pjp.warps." + warp.getName())){
+		for(Warp warp : warps) {
+			if(!player.hasPermission("pjp.warps." + warp.getName())) {
 				continue;
 			}
 			
 			Optional<Location<World>> optionalLocation = warp.getDestination();
 			
-			if(!optionalLocation.isPresent()){
+			if(!optionalLocation.isPresent()) {
 				continue;
 			}
 
 			double price = warp.getPrice();
-			if(price == 0){
+			if(price == 0) {
 				list.add(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, warp.getName()));
 			}else{
 				list.add(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, warp.getName(), TextColors.GREEN, " Price: ", TextColors.WHITE, "$", warp.getPrice()));
@@ -68,7 +65,7 @@ public class CMDList implements CommandExecutor {
 
 		}
 
-		if(list.isEmpty()){
+		if(list.isEmpty()) {
 			list.add(Text.of(TextColors.YELLOW, " No warp points"));
 		}
 		

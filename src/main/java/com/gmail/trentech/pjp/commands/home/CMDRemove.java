@@ -17,23 +17,20 @@ import org.spongepowered.api.text.format.TextColors;
 import com.gmail.trentech.pjp.data.Keys;
 import com.gmail.trentech.pjp.data.home.HomeData;
 import com.gmail.trentech.pjp.portals.Home;
-import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDRemove implements CommandExecutor {
 
-	public CMDRemove(){
-		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "home").getString();
-		
+	public CMDRemove() {
 		Help help = new Help("hremove", "remove", "Remove an existing home");
-		help.setSyntax(" /home remove <name>\n /" + alias + " r <name>");
+		help.setSyntax(" /home remove <name>\n /h r <name>");
 		help.setExample(" /home remove OldHome");
 		help.save();
 	}
 	
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if(!(src instanceof Player)){
+		if(!(src instanceof Player)) {
 			src.sendMessage(Text.of(TextColors.DARK_RED, "Must be a player"));
 			return CommandResult.empty();
 		}
@@ -49,11 +46,11 @@ public class CMDRemove implements CommandExecutor {
 
 		Optional<Map<String, Home>> optionalHomeList = player.get(Keys.HOMES);
 		
-		if(optionalHomeList.isPresent()){
+		if(optionalHomeList.isPresent()) {
 			homeList = optionalHomeList.get();
 		}
 
-		if(!homeList.containsKey(homeName)){
+		if(!homeList.containsKey(homeName)) {
 			src.sendMessage(Text.of(TextColors.DARK_RED, homeName, " does not exist"));
 			return CommandResult.empty();
 		}
@@ -61,7 +58,7 @@ public class CMDRemove implements CommandExecutor {
 		homeList.remove(homeName);
 		
 		DataTransactionResult result = player.offer(new HomeData(homeList));
-		if(!result.isSuccessful()){
+		if(!result.isSuccessful()) {
 			System.out.println("FAILED");
 		}else{
 			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Home ", homeName, " removed"));

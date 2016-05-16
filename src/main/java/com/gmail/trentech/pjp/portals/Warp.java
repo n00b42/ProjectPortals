@@ -41,7 +41,7 @@ public class Warp extends SQLUtils{
 		return price;
 	}
 	
-	public void setPrice(double price){
+	public void setPrice(double price) {
 		this.price = price;
 		
 		try {
@@ -84,14 +84,14 @@ public class Warp extends SQLUtils{
 		
 		Optional<World> optional = Main.getGame().getServer().getWorld(args[0]);
 		
-		if(!optional.isPresent()){
+		if(!optional.isPresent()) {
 			return Optional.empty();
 		}
 		World world = optional.get();
 		
-		if(args[1].equalsIgnoreCase("random")){
+		if(args[1].equalsIgnoreCase("random")) {
 			return Optional.of(Utils.getRandomLocation(world));
-		}else if(args[1].equalsIgnoreCase("spawn")){
+		}else if(args[1].equalsIgnoreCase("spawn")) {
 			return Optional.of(world.getSpawnLocation());
 		}else{
 			String[] coords = args[1].split("\\.");
@@ -103,7 +103,7 @@ public class Warp extends SQLUtils{
 		}
 	}
 
-	public void setDestination(String destination){
+	public void setDestination(String destination) {
 		this.destination = destination;
 		
 		try {
@@ -120,17 +120,17 @@ public class Warp extends SQLUtils{
 		}
 	}
 	
-	public static Optional<Warp> get(String name){
+	public static Optional<Warp> get(String name) {
 		Optional<Warp> optional = Optional.empty();
 		
-		if(cache.containsKey(name)){
+		if(cache.containsKey(name)) {
 			optional = Optional.of(cache.get(name));
 		}
 		
 		return optional;
 	}
 	
-	public static void remove(String name){
+	public static void remove(String name) {
 		try {
 		    Connection connection = getDataSource().getConnection();
 		    
@@ -147,7 +147,7 @@ public class Warp extends SQLUtils{
 		}
 	}
 	
-	public void save(){
+	public void save() {
 		try {
 		    Connection connection = getDataSource().getConnection();
 		    
@@ -167,7 +167,7 @@ public class Warp extends SQLUtils{
 		}
 	}
 	
-	public static List<Warp> list(){
+	public static List<Warp> list() {
 		List<Warp> list = new ArrayList<>();
 
 		try {
@@ -182,7 +182,7 @@ public class Warp extends SQLUtils{
 		    	String destination = result.getString("Destination");
 		    	String rotation = result.getString("Rotation");
 		    	
-		    	if(rotation == null){
+		    	if(rotation == null) {
 		    		rotation = Rotation.EAST.getName();
 		    	}
 
@@ -199,14 +199,14 @@ public class Warp extends SQLUtils{
 		return list;
 	}
 	
-	public static void init(){
+	public static void init() {
 		update();
 		
-		for(Warp warp : Warp.list()){
+		for(Warp warp : Warp.list()) {
 			Rotation rotation = warp.getRotation();
 			String[] args = warp.destination.split(":");
 			
-			if(args.length == 3){
+			if(args.length == 3) {
 				rotation = Rotation.get(args[2]).get();
 				warp.setDestination(args[0] + ":" + args[1]);
 			}
@@ -218,7 +218,7 @@ public class Warp extends SQLUtils{
 		}
 	}
 	
-	public static void update(){
+	public static void update() {
 		try {
 			Connection connection = getDataSource().getConnection();
 			

@@ -47,7 +47,7 @@ public class Button extends SQLUtils{
 		return price;
 	}
 	
-	public void setPrice(double price){
+	public void setPrice(double price) {
 		this.price = price;
 		
 		try {
@@ -90,14 +90,14 @@ public class Button extends SQLUtils{
 		
 		Optional<World> optional = Main.getGame().getServer().getWorld(args[0]);
 		
-		if(!optional.isPresent()){
+		if(!optional.isPresent()) {
 			return Optional.empty();
 		}
 		World world = optional.get();
 		
-		if(args[1].equalsIgnoreCase("random")){
+		if(args[1].equalsIgnoreCase("random")) {
 			return Optional.of(Utils.getRandomLocation(world));
-		}else if(args[1].equalsIgnoreCase("spawn")){
+		}else if(args[1].equalsIgnoreCase("spawn")) {
 			return Optional.of(world.getSpawnLocation());
 		}else{
 			String[] coords = args[1].split("\\.");
@@ -109,7 +109,7 @@ public class Button extends SQLUtils{
 		}
 	}
 	
-	public void setDestination(String destination){
+	public void setDestination(String destination) {
 		this.destination = destination;
 		
 		try {
@@ -131,7 +131,7 @@ public class Button extends SQLUtils{
 		
 		Optional<Button> optional = Optional.empty();
 		
-		if(cache.containsKey(name)){
+		if(cache.containsKey(name)) {
 			optional = Optional.of(cache.get(name));
 		}
 		
@@ -157,7 +157,7 @@ public class Button extends SQLUtils{
 		}
 	}
 	
-	public void save(Location<World> location){
+	public void save(Location<World> location) {
 		name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 		
 		try {
@@ -180,7 +180,7 @@ public class Button extends SQLUtils{
 		}
 	}
 	
-	public static List<Button> list(){
+	public static List<Button> list() {
 		List<Button> list = new ArrayList<>();
 
 		try {
@@ -195,7 +195,7 @@ public class Button extends SQLUtils{
 		    	String destination = result.getString("Destination");
 		    	String rotation = result.getString("Rotation");
 		    	
-		    	if(rotation == null){
+		    	if(rotation == null) {
 		    		rotation = Rotation.EAST.getName();
 		    	}
 
@@ -212,14 +212,14 @@ public class Button extends SQLUtils{
 		return list;
 	}
 	
-	public static void init(){
+	public static void init() {
 		update();
 		
-		for(Button button : Button.list()){
+		for(Button button : Button.list()) {
 			Rotation rotation = button.getRotation();
 			String[] args = button.destination.split(":");
 			
-			if(args.length == 3){
+			if(args.length == 3) {
 				rotation = Rotation.get(args[2]).get();
 				button.setDestination(args[0] + ":" + args[1]);
 			}
@@ -234,7 +234,7 @@ public class Button extends SQLUtils{
 		}
 	}
 	
-	public static void update(){
+	public static void update() {
 		try {
 			Connection connection = getDataSource().getConnection();
 			

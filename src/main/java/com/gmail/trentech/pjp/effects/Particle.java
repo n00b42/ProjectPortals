@@ -19,49 +19,49 @@ public class Particle {
 	private final ParticleType type;
 	private final long time;
 
-	protected Particle(String name, ParticleType type, long time, boolean colored){
+	protected Particle(String name, ParticleType type, long time, boolean colored) {
 		this.name = name;
 		this.type = type;
 		this.time = time;
 	}
 	
-	public String getName(){
+	public String getName() {
 		return name;
 	}
 	
-	public ParticleType getType(){
+	public ParticleType getType() {
 		return type;
 	}
 	
-	private long getTime(){
+	private long getTime() {
 		return time;
 	}
 	
-	public boolean isColorable(){
-		if(getType() instanceof Colorable){
+	public boolean isColorable() {
+		if(getType() instanceof Colorable) {
 			return true;
 		}
 		return false;
 	}
 	
-	public void spawnParticle(Location<World> location, ParticleColor color){
-		if(new ConfigManager().getConfig().getNode("options", "particles", "enable").getBoolean()){
-			if(isColorable()){
+	public void spawnParticle(Location<World> location, ParticleColor color) {
+		if(new ConfigManager().getConfig().getNode("options", "particles", "enable").getBoolean()) {
+			if(isColorable()) {
 				spawnColoredNonRepeat(location, color);
 			}
 		}
 	}
 	
-	public void spawnParticle(Location<World> location){
-		if(new ConfigManager().getConfig().getNode("options", "particles", "enable").getBoolean()){
+	public void spawnParticle(Location<World> location) {
+		if(new ConfigManager().getConfig().getNode("options", "particles", "enable").getBoolean()) {
 			spawnNonRepeat(location);
 		}
 	}
 	
-	private void spawnNonRepeat(Location<World> location){
+	private void spawnNonRepeat(Location<World> location) {
 		ThreadLocalRandom random = ThreadLocalRandom.current();
 		
-		for(int i = 0; i < 9; i++){	
+		for(int i = 0; i < 9; i++) {	
 			ParticleEffect particle = ParticleEffect.builder().type(getType()).build();
 			
 			location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble(),random.nextDouble(),random.nextDouble()));
@@ -69,10 +69,10 @@ public class Particle {
 		}
 	}
 	
-	private void spawnColoredNonRepeat(Location<World>location, ParticleColor color){
+	private void spawnColoredNonRepeat(Location<World>location, ParticleColor color) {
 		ThreadLocalRandom random = ThreadLocalRandom.current();
 		
-		for(int i = 0; i < 9; i++){	
+		for(int i = 0; i < 9; i++) {	
 			ColoredParticle particle = ColoredParticle.builder().color(color.getColor()).type((Colorable) getType()).build();
 			
 			location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble(),random.nextDouble(),random.nextDouble()));
@@ -80,27 +80,27 @@ public class Particle {
 		}
 	}
 	
-	public void createTask(String name, List<Location<World>> locations, ParticleColor color){
-		if(new ConfigManager().getConfig().getNode("options", "particles", "enable").getBoolean()){
+	public void createTask(String name, List<Location<World>> locations, ParticleColor color) {
+		if(new ConfigManager().getConfig().getNode("options", "particles", "enable").getBoolean()) {
 			ThreadLocalRandom random = ThreadLocalRandom.current();
 
-			if(isColorable()){
+			if(isColorable()) {
 				spawnColoredRepeat(name, locations, random, color);
 			}
 		}
 	}
 	
-	public void createTask(String name, List<Location<World>> locations){
-		if(new ConfigManager().getConfig().getNode("options", "particles", "enable").getBoolean()){
+	public void createTask(String name, List<Location<World>> locations) {
+		if(new ConfigManager().getConfig().getNode("options", "particles", "enable").getBoolean()) {
 			ThreadLocalRandom random = ThreadLocalRandom.current();
 
 			spawnRepeat(name, locations, random);
 		}
 	}
 
-	private void spawnRepeat(String name, List<Location<World>> locations, ThreadLocalRandom random){
+	private void spawnRepeat(String name, List<Location<World>> locations, ThreadLocalRandom random) {
         Main.getGame().getScheduler().createTaskBuilder().interval(getTime(), TimeUnit.MILLISECONDS).name(name).execute(t -> {
-    		for(Location<World> location : locations){
+    		for(Location<World> location : locations) {
     			ParticleEffect particle = ParticleEffect.builder().type(getType()).build();
 
     			location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble(),random.nextDouble(),random.nextDouble()));
@@ -109,9 +109,9 @@ public class Particle {
         }).submit(Main.getPlugin());
 	}
 	
-	private void spawnColoredRepeat(String name, List<Location<World>> locations, ThreadLocalRandom random, ParticleColor color){
+	private void spawnColoredRepeat(String name, List<Location<World>> locations, ThreadLocalRandom random, ParticleColor color) {
         Main.getGame().getScheduler().createTaskBuilder().interval(getTime(), TimeUnit.MILLISECONDS).name(name).execute(t -> {
-    		for(Location<World> location : locations){
+    		for(Location<World> location : locations) {
     			ColoredParticle particle = ColoredParticle.builder().color(color.getColor()).type((Colorable) getType()).build();
 
     			location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble(),random.nextDouble(),random.nextDouble()));

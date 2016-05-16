@@ -31,7 +31,7 @@ public class HomeData extends AbstractMappedData<String, Home, HomeData, Immutab
 	
 	@Override
 	public Optional<Home> get(String key) {
-		if(getValue().containsKey(key)){
+		if(getValue().containsKey(key)) {
 			return Optional.of(getValue().get(key));
 		}
 		return Optional.empty();
@@ -73,7 +73,7 @@ public class HomeData extends AbstractMappedData<String, Home, HomeData, Immutab
             
             DataView homes = container.getView(HOMES.getQuery()).get();
             
-            for(DataQuery home : homes.getKeys(false)){
+            for(DataQuery home : homes.getKeys(false)) {
             	homeList.put(home.toString(), homes.getSerializable(home, Home.class).get());
             }
             return Optional.of(new HomeData(homeList));

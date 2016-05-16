@@ -10,23 +10,20 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import com.gmail.trentech.pjp.portals.Warp;
-import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDRemove implements CommandExecutor {
 
-	public CMDRemove(){
-		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "warp").getString();
-		
+	public CMDRemove() {
 		Help help = new Help("wremove", "remove", " Remove an existing  warp point");
-		help.setSyntax(" /warp remove <name>\n /" + alias + " r <name>");
+		help.setSyntax(" /warp remove <name>\n /w r <name>");
 		help.setExample(" /warp remove OldSpawn");
 		help.save();
 	}
 	
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if(!(src instanceof Player)){
+		if(!(src instanceof Player)) {
 			src.sendMessage(Text.of(TextColors.DARK_RED, "Must be a player"));
 			return CommandResult.empty();
 		}
@@ -38,7 +35,7 @@ public class CMDRemove implements CommandExecutor {
 		}
 		String warpName = args.<String>getOne("name").get().toLowerCase();
 		
-		if(!Warp.get(warpName).isPresent()){
+		if(!Warp.get(warpName).isPresent()) {
 			src.sendMessage(Text.of(TextColors.DARK_RED, warpName, " does not exist"));
 			return CommandResult.empty();
 		}

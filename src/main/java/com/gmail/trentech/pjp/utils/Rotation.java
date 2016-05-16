@@ -17,7 +17,7 @@ public enum Rotation {
         this.value = value;
     }
 
-    public String getName(){
+    public String getName() {
     	return name;
     }
     
@@ -25,17 +25,17 @@ public enum Rotation {
         return value;
     }
     
-    public Vector3d toVector3d(){
+    public Vector3d toVector3d() {
     	return new Vector3d(0,getValue(),0);
     }
     
-    public static Optional<Rotation> get(String name){
+    public static Optional<Rotation> get(String name) {
     	Optional<Rotation> optional = Optional.empty();
     	
     	Rotation[] rotations = Rotation.values();
     	
-        for (Rotation rotation : rotations){
-        	if(rotation.getName().equals(name.toLowerCase())){
+        for (Rotation rotation : rotations) {
+        	if(rotation.getName().equals(name.toLowerCase())) {
         		optional = Optional.of(rotation);
         		break;
         	}    		
@@ -44,14 +44,14 @@ public enum Rotation {
         return optional;
     }
     
-    public static Rotation getClosest(int value){
+    public static Rotation getClosest(int value) {
     	Rotation[] rotations = Rotation.values();
 
     	int distance = Math.abs(rotations[0].getValue() - value);
     	int index = 0;
-    	for(int i = 1; i < rotations.length; i++){
+    	for(int i = 1; i < rotations.length; i++) {
     	    int cdistance = Math.abs(rotations[i].getValue() - value);
-    	    if(cdistance < distance){
+    	    if(cdistance < distance) {
     	    	index = i;
     	        distance = cdistance;
     	    }

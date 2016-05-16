@@ -16,24 +16,21 @@ import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.portals.Warp;
-import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Rotation;
 
 public class CMDCreate implements CommandExecutor {
 
-	public CMDCreate(){
-		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "warp").getString();
-		
+	public CMDCreate() {
 		Help help = new Help("wcreate", "create", " Use this command to create a warp that will teleport you to other worlds");
-		help.setSyntax(" /warp create <name> [<world> [-c <x,y,z>] [-d <direction>]] [-p <price>]\n /" + alias + " warp <name> [<world> [-c <x,y,z>] [-d <direction>]] [-p <price>]");
+		help.setSyntax(" /warp create <name> [<world> [-c <x,y,z>] [-d <direction>]] [-p <price>]\n /w warp <name> [<world> [-c <x,y,z>] [-d <direction>]] [-p <price>]");
 		help.setExample(" /warp create Lobby\n /warp create Lobby MyWorld\n /warp create Lobby MyWorld -c -100,65,254\n /warp create Random MyWorld -c random\n /warp create Lobby MyWorld -c -100,65,254 -d south\n /warp create Lobby MyWorld -d southeast\n /warp Lobby MyWorld -p 50\n /warp Lobby -p 50");
 		help.save();
 	}
 	
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if(!(src instanceof Player)){
+		if(!(src instanceof Player)) {
 			src.sendMessage(Text.of(TextColors.DARK_RED, "Must be a player"));
 			return CommandResult.empty();
 		}
@@ -45,12 +42,12 @@ public class CMDCreate implements CommandExecutor {
 		}
 		String name = args.<String>getOne("name").get().toLowerCase();
 
-		if(name.equalsIgnoreCase("-c") || name.equalsIgnoreCase("-d") || name.equalsIgnoreCase("-p")){
+		if(name.equalsIgnoreCase("-c") || name.equalsIgnoreCase("-d") || name.equalsIgnoreCase("-p")) {
 			src.sendMessage(invalidArg());
 			return CommandResult.empty();
 		}
 		
-		if(Warp.get(name).isPresent()){
+		if(Warp.get(name).isPresent()) {
 			src.sendMessage(Text.of(TextColors.DARK_RED, name, " already exists"));
 			return CommandResult.empty();
 		}
@@ -62,21 +59,21 @@ public class CMDCreate implements CommandExecutor {
 		if(args.hasAny("world")) {
 			worldName = args.<String>getOne("world").get();
 
-			if(worldName.equalsIgnoreCase("-c") || worldName.equalsIgnoreCase("-d") || worldName.equalsIgnoreCase("-p")){
+			if(worldName.equalsIgnoreCase("-c") || worldName.equalsIgnoreCase("-d") || worldName.equalsIgnoreCase("-p")) {
 				src.sendMessage(invalidArg());
 				return CommandResult.empty();
 			}
 			
-			if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
+			if(!Main.getGame().getServer().getWorld(worldName).isPresent()) {
 				src.sendMessage(Text.of(TextColors.DARK_RED, worldName, " is not loaded or does not exist"));
 				return CommandResult.empty();
 			}
 			destination = worldName + ":spawn";;
 			
-			if(args.hasAny("x,y,z")){
+			if(args.hasAny("x,y,z")) {
 				String[] coords = args.<String>getOne("x,y,z").get().split(",");
 
-				if(coords[0].equalsIgnoreCase("random")){
+				if(coords[0].equalsIgnoreCase("random")) {
 					destination = destination.replace("spawn", "random");
 				}else{
 					int x;
@@ -87,7 +84,7 @@ public class CMDCreate implements CommandExecutor {
 						x = Integer.parseInt(coords[0]);
 						y = Integer.parseInt(coords[1]);
 						z = Integer.parseInt(coords[2]);				
-					}catch(Exception e){
+					}catch(Exception e) {
 						src.sendMessage(Text.of(TextColors.RED, "Incorrect coordinates"));
 						src.sendMessage(invalidArg());
 						return CommandResult.empty();
@@ -96,12 +93,12 @@ public class CMDCreate implements CommandExecutor {
 				}
 			}
 
-			if(args.hasAny("direction")){
+			if(args.hasAny("direction")) {
 				String direction = args.<String>getOne("direction").get();
 				
 				Optional<Rotation> optionalRotation = Rotation.get(direction);
 				
-				if(!optionalRotation.isPresent()){
+				if(!optionalRotation.isPresent()) {
 					src.sendMessage(Text.of(TextColors.RED, "Incorrect direction"));
 					src.sendMessage(invalidArg());
 					return CommandResult.empty();
@@ -117,10 +114,10 @@ public class CMDCreate implements CommandExecutor {
 
 		double price = 0;
 		
-		if(args.hasAny("price")){
+		if(args.hasAny("price")) {
 			try{
 				price = Double.parseDouble(args.<String>getOne("price").get());
-			}catch(Exception e){
+			}catch(Exception e) {
 				src.sendMessage(Text.of(TextColors.RED, "Incorrect price"));
 				src.sendMessage(invalidArg());
 				return CommandResult.empty();
@@ -134,7 +131,7 @@ public class CMDCreate implements CommandExecutor {
 		return CommandResult.success();
 	}
 	
-	private Text invalidArg(){
+	private Text invalidArg() {
 		Text t1 = Text.of(TextColors.RED, "Usage: /warp create <name> [<world> [-c <x,y,z>] ");
 		Text t2 = Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("NORTH\nNORTHEAST\nEAST\nSOUTHEAST\nSOUTH\nSOUTHWEST\nWEST\nNORTHWEST"))).append(Text.of("[-d <direction>]] ")).build();
 		Text t3 = Text.of(TextColors.RED, "[-p <price>]");

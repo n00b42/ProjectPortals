@@ -20,17 +20,17 @@ public enum Particles {
 
 	private final Particle particle;
 
-	private Particles(Particle particle){
+	private Particles(Particle particle) {
 		this.particle = particle;
 	}
 
-	public static Optional<Particle> get(String name){
+	public static Optional<Particle> get(String name) {
     	Optional<Particle> optional = Optional.empty();
     	
     	Particles[] particles = Particles.values();
     	
-        for (Particles particle : particles){
-        	if(particle.particle.getName().equals(name)){
+        for (Particles particle : particles) {
+        	if(particle.particle.getName().equals(name)) {
         		optional = Optional.of(particle.particle);
         		break;
         	}    		

@@ -43,16 +43,16 @@ public class ButtonListener {
 			BlockState block = snapshot.getExtendedState();
 			BlockType blockType = block.getType();
 			
-			if(!blockType.equals(BlockTypes.STONE_BUTTON) && !blockType.equals(BlockTypes.WOODEN_BUTTON)){
+			if(!blockType.equals(BlockTypes.STONE_BUTTON) && !blockType.equals(BlockTypes.WOODEN_BUTTON)) {
 				continue;
 			}
 
 			
-			if(!block.get(Keys.POWERED).isPresent()){
+			if(!block.get(Keys.POWERED).isPresent()) {
 				continue;
 			}
 
-			if(!block.get(Keys.POWERED).get()){
+			if(!block.get(Keys.POWERED).get()) {
 				continue;
 			}
 
@@ -60,20 +60,20 @@ public class ButtonListener {
 
 			Optional<Button> optionalButton = Button.get(location);
 			
-			if(!optionalButton.isPresent()){
+			if(!optionalButton.isPresent()) {
 				continue;
 			}
 			
 			Button button = optionalButton.get();
 
-			if(new ConfigManager().getConfig().getNode("options", "advanced_permissions").getBoolean()){
-				if(!player.hasPermission("pjp.button." + location.getExtent().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ())){
+			if(new ConfigManager().getConfig().getNode("options", "advanced_permissions").getBoolean()) {
+				if(!player.hasPermission("pjp.button." + location.getExtent().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ())) {
 					player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use this button portal"));
 					event.setCancelled(true);
 					return;
 				}
 			}else{
-				if(!player.hasPermission("pjp.button.interact")){
+				if(!player.hasPermission("pjp.button.interact")) {
 					player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with button portals"));
 					event.setCancelled(true);
 					return;
@@ -82,7 +82,7 @@ public class ButtonListener {
 
 			Optional<Location<World>> optionalSpawnLocation = button.getDestination();
 			
-			if(!optionalSpawnLocation.isPresent()){
+			if(!optionalSpawnLocation.isPresent()) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "World does not exist"));
 				continue;
 			}
@@ -90,7 +90,7 @@ public class ButtonListener {
 
 			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, button.getPrice(), Cause.of(NamedCause.source(button)));
 
-			if(!Main.getGame().getEventManager().post(teleportEvent)){
+			if(!Main.getGame().getEventManager().post(teleportEvent)) {
 				Location<World> currentLocation = player.getLocation();
 				spawnLocation = teleportEvent.getDestination();
 				
@@ -109,11 +109,11 @@ public class ButtonListener {
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			Location<World> location = transaction.getFinal().getLocation().get();		
 
-			if(!Button.get(location).isPresent()){
+			if(!Button.get(location).isPresent()) {
 				continue;
 			}
 			
-			if(!player.hasPermission("pjp.button.break")){
+			if(!player.hasPermission("pjp.button.break")) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to break button portals"));
 				event.setCancelled(true);
 			}else{
@@ -127,20 +127,20 @@ public class ButtonListener {
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Place event, @First Player player) {
-		if(!builders.containsKey(player)){
+		if(!builders.containsKey(player)) {
 			return;
 		}
 
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			BlockType blockType = transaction.getFinal().getState().getType();
 			
-			if(!blockType.equals(BlockTypes.STONE_BUTTON) && !blockType.equals(BlockTypes.WOODEN_BUTTON)){
+			if(!blockType.equals(BlockTypes.STONE_BUTTON) && !blockType.equals(BlockTypes.WOODEN_BUTTON)) {
 				continue;
 			}
 
 			Location<World> location = transaction.getFinal().getLocation().get();
 
-			if(!player.hasPermission("pjp.button.place")){
+			if(!player.hasPermission("pjp.button.place")) {
 	        	player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to place button portals"));
 	        	builders.remove(player);
 	        	return;
@@ -152,13 +152,13 @@ public class ButtonListener {
 			
 			Optional<Particle> optionalParticle = Particles.get(split[0]);
 			
-			if(optionalParticle.isPresent()){
+			if(optionalParticle.isPresent()) {
 				Particle particle = optionalParticle.get();
 				
-				if(split.length == 2 && particle.isColorable()){
+				if(split.length == 2 && particle.isColorable()) {
 					Optional<ParticleColor> optionalColors = ParticleColor.get(split[1]);
 					
-					if(optionalColors.isPresent()){
+					if(optionalColors.isPresent()) {
 						particle.spawnParticle(location, optionalColors.get());
 					}else{
 						particle.spawnParticle(location);

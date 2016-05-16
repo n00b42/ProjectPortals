@@ -40,7 +40,7 @@ public class LeverListener {
 			BlockSnapshot snapshot = transaction.getFinal();
 			BlockType blockType = snapshot.getState().getType();
 			
-			if(!blockType.equals(BlockTypes.LEVER)){
+			if(!blockType.equals(BlockTypes.LEVER)) {
 				continue;
 			}
 
@@ -48,20 +48,20 @@ public class LeverListener {
 
 			Optional<Lever> optionalLever = Lever.get(location);
 			
-			if(!optionalLever.isPresent()){
+			if(!optionalLever.isPresent()) {
 				continue;
 			}
 			
 			Lever lever = optionalLever.get();
 
-			if(new ConfigManager().getConfig().getNode("options", "advanced_permissions").getBoolean()){
-				if(!player.hasPermission("pjp.lever." + location.getExtent().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ())){
+			if(new ConfigManager().getConfig().getNode("options", "advanced_permissions").getBoolean()) {
+				if(!player.hasPermission("pjp.lever." + location.getExtent().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ())) {
 					player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use this lever portal"));
 					event.setCancelled(true);
 					return;
 				}
 			}else{
-				if(!player.hasPermission("pjp.lever.interact")){
+				if(!player.hasPermission("pjp.lever.interact")) {
 					player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with lever portals"));
 					event.setCancelled(true);
 					return;
@@ -70,7 +70,7 @@ public class LeverListener {
 			
 			Optional<Location<World>> optionalSpawnLocation = lever.getDestination();
 			
-			if(!optionalSpawnLocation.isPresent()){
+			if(!optionalSpawnLocation.isPresent()) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "World does not exist"));
 				continue;
 			}
@@ -78,7 +78,7 @@ public class LeverListener {
 
 			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, lever.getPrice(), Cause.of(NamedCause.source(lever)));
 
-			if(!Main.getGame().getEventManager().post(teleportEvent)){
+			if(!Main.getGame().getEventManager().post(teleportEvent)) {
 				Location<World> currentLocation = player.getLocation();
 				spawnLocation = teleportEvent.getDestination();
 				
@@ -97,11 +97,11 @@ public class LeverListener {
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			Location<World> location = transaction.getFinal().getLocation().get();		
 
-			if(!Lever.get(location).isPresent()){
+			if(!Lever.get(location).isPresent()) {
 				continue;
 			}
 			
-			if(!player.hasPermission("pjp.lever.break")){
+			if(!player.hasPermission("pjp.lever.break")) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to break lever portals"));
 				event.setCancelled(true);
 			}else{
@@ -114,20 +114,20 @@ public class LeverListener {
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Place event, @First Player player) {
-		if(!builders.containsKey(player)){
+		if(!builders.containsKey(player)) {
 			return;
 		}
 
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			BlockType blockType = transaction.getFinal().getState().getType();
 			
-			if(!blockType.equals(BlockTypes.LEVER)){
+			if(!blockType.equals(BlockTypes.LEVER)) {
 				continue;
 			}
 
 			Location<World> location = transaction.getFinal().getLocation().get();
 
-			if(!player.hasPermission("pjp.lever.place")){
+			if(!player.hasPermission("pjp.lever.place")) {
 	        	player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to place lever portals"));
 	        	builders.remove(player);
 	        	event.setCancelled(true);
@@ -140,13 +140,13 @@ public class LeverListener {
 			
 			Optional<Particle> optionalParticle = Particles.get(split[0]);
 			
-			if(optionalParticle.isPresent()){
+			if(optionalParticle.isPresent()) {
 				Particle particle = optionalParticle.get();
 				
-				if(split.length == 2 && particle.isColorable()){
+				if(split.length == 2 && particle.isColorable()) {
 					Optional<ParticleColor> optionalColors = ParticleColor.get(split[1]);
 					
-					if(optionalColors.isPresent()){
+					if(optionalColors.isPresent()) {
 						particle.spawnParticle(location, optionalColors.get());
 					}else{
 						particle.spawnParticle(location);

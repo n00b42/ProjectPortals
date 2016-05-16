@@ -39,7 +39,7 @@ public class SignListener {
 	
 	@Listener
 	public void onSignCreateEvent(ChangeSignEvent event, @First Player player) {
-		if(!builders.containsKey(player)){
+		if(!builders.containsKey(player)) {
 			return;
 		}
 		SignPortalData portalData = builders.get(player);
@@ -56,13 +56,13 @@ public class SignListener {
 		
 		Optional<Particle> optionalParticle = Particles.get(split[0]);
 		
-		if(optionalParticle.isPresent()){
+		if(optionalParticle.isPresent()) {
 			Particle particle = optionalParticle.get();
 			
-			if(split.length == 2 && particle.isColorable()){
+			if(split.length == 2 && particle.isColorable()) {
 				Optional<ParticleColor> optionalColors = ParticleColor.get(split[1]);
 				
-				if(optionalColors.isPresent()){
+				if(optionalColors.isPresent()) {
 					particle.spawnParticle(event.getTargetTile().getLocation(), optionalColors.get());
 				}else{
 					particle.spawnParticle(event.getTargetTile().getLocation());
@@ -80,7 +80,7 @@ public class SignListener {
 	@Listener
 	public void onSignInteractEvent(InteractBlockEvent.Secondary event, @First Player player) {
 		BlockSnapshot snapshot = event.getTargetBlock();
-		if(!(snapshot.getState().getType().equals(BlockTypes.WALL_SIGN) || snapshot.getState().getType().equals(BlockTypes.STANDING_SIGN))){
+		if(!(snapshot.getState().getType().equals(BlockTypes.WALL_SIGN) || snapshot.getState().getType().equals(BlockTypes.STANDING_SIGN))) {
 			return;
 		}
 
@@ -88,21 +88,21 @@ public class SignListener {
 
 		Optional<SignPortalData> optionalSignPortalData = location.get(SignPortalData.class);
 		
-		if(!optionalSignPortalData.isPresent()){
+		if(!optionalSignPortalData.isPresent()) {
 			return;
 		}
 		SignPortalData portalData = optionalSignPortalData.get();
 
 		Optional<Location<World>> optionalSpawnLocation = portalData.sign().get().getDestination();
 		
-		if(!optionalSpawnLocation.isPresent()){
+		if(!optionalSpawnLocation.isPresent()) {
 			player.sendMessage(Text.of(TextColors.DARK_RED, "Destination does not exist"));
 			return;
 		}
 		Location<World> spawnLocation = optionalSpawnLocation.get();
 		
-		if(new ConfigManager().getConfig().getNode("options", "advanced_permissions").getBoolean()){
-			if(!player.hasPermission("pjp.sign." + location.getExtent().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ())){
+		if(new ConfigManager().getConfig().getNode("options", "advanced_permissions").getBoolean()) {
+			if(!player.hasPermission("pjp.sign." + location.getExtent().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ())) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use this sign portal"));
 				event.setCancelled(true);
 				return;
@@ -117,7 +117,7 @@ public class SignListener {
 
 		TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, 0, Cause.of(NamedCause.source(portalData)));
 
-		if(!Main.getGame().getEventManager().post(teleportEvent)){
+		if(!Main.getGame().getEventManager().post(teleportEvent)) {
 			Location<World> currentLocation = player.getLocation();
 			spawnLocation = teleportEvent.getDestination();
 			
@@ -132,18 +132,18 @@ public class SignListener {
 	
 	@Listener
 	public void onSignBreakEvent(ChangeBlockEvent.Break event, @First Player player) {
-	    for(Transaction<BlockSnapshot> blockTransaction : event.getTransactions()){
+	    for(Transaction<BlockSnapshot> blockTransaction : event.getTransactions()) {
     		BlockSnapshot snapshot = blockTransaction.getOriginal();
 
     		BlockType blockType = snapshot.getState().getType();
 
-    		if(!blockType.equals(BlockTypes.WALL_SIGN) && !blockType.equals(BlockTypes.STANDING_SIGN)){
+    		if(!blockType.equals(BlockTypes.WALL_SIGN) && !blockType.equals(BlockTypes.STANDING_SIGN)) {
     			continue;
     		}
 
     		Optional<ImmutableSignPortalData> optionalSignPortalData = snapshot.get(ImmutableSignPortalData.class);
     		
-			if(!optionalSignPortalData.isPresent()){
+			if(!optionalSignPortalData.isPresent()) {
 				continue;
 			}
 

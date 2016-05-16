@@ -10,23 +10,20 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import com.gmail.trentech.pjp.portals.Portal;
-import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDRemove implements CommandExecutor {
 
-	public CMDRemove(){
-		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "portal").getString();
-		
+	public CMDRemove() {
 		Help help = new Help("premove", "remove", " Remove an existing portal");
-		help.setSyntax(" /portal remove <name>\n /" + alias + " r <name>");
+		help.setSyntax(" /portal remove <name>\n /p r <name>");
 		help.setExample(" /portal remove MyPortal");
 		help.save();
 	}
 	
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if(!(src instanceof Player)){
+		if(!(src instanceof Player)) {
 			src.sendMessage(Text.of(TextColors.DARK_RED, "Must be a player"));
 			return CommandResult.empty();
 		}
@@ -38,7 +35,7 @@ public class CMDRemove implements CommandExecutor {
 		}
 		String name = args.<String>getOne("name").get().toLowerCase();
 
-		if(!Portal.getByName(name).isPresent()){
+		if(!Portal.getByName(name).isPresent()) {
 			src.sendMessage(Text.of(TextColors.DARK_RED, name, " does not exist"));
 			return CommandResult.empty();
 		}

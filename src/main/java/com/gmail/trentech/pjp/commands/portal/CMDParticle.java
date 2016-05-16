@@ -17,23 +17,20 @@ import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.portals.Portal;
-import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDParticle implements CommandExecutor {
 
-	public CMDParticle(){
-		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "portal").getString();
-		
+	public CMDParticle() {
 		Help help = new Help("particle", "particle", " change a portals particle effect. Color currently only available for REDSTONE");
-		help.setSyntax(" /portal particle <name> <type> [color]\n /" + alias + " p <name> <type> [color]");
+		help.setSyntax(" /portal particle <name> <type> [color]\n /p p <name> <type> [color]");
 		help.setExample(" /portal particle MyPortal CRIT\n /portal particle MyPortal REDSTONE BLUE");
 		help.save();
 	}
 	
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if(!(src instanceof Player)){
+		if(!(src instanceof Player)) {
 			src.sendMessage(Text.of(TextColors.DARK_RED, "Must be a player"));
 			return CommandResult.empty();
 		}
@@ -44,7 +41,7 @@ public class CMDParticle implements CommandExecutor {
 		}
 		String name = args.<String>getOne("name").get().toLowerCase();
 
-		if(!Portal.getByName(name).isPresent()){
+		if(!Portal.getByName(name).isPresent()) {
 			src.sendMessage(Text.of(TextColors.DARK_RED, name, " does not exist"));
 			return CommandResult.empty();
 		}	
@@ -66,9 +63,9 @@ public class CMDParticle implements CommandExecutor {
 		Particle particle = optionalParticle.get();
 		
 		if(args.hasAny("color")) {
-			if(particle.getType() instanceof Colorable){
+			if(particle.getType() instanceof Colorable) {
 				String color = args.<String>getOne("color").get().toUpperCase();
-	    		if(ParticleColor.get(color).isPresent()){
+	    		if(ParticleColor.get(color).isPresent()) {
 	    			type = type + ":" + color;
 	    		}else{
 	    			src.sendMessage(Text.of(TextColors.RED, "Incorrect color"));
@@ -85,7 +82,7 @@ public class CMDParticle implements CommandExecutor {
 		return CommandResult.success();
 	}
 	
-	private Text invalidArg(){
+	private Text invalidArg() {
 		Text t1 = Text.of(TextColors.RED, "Usage: /portal particle <name> ");
 		Text t2 = Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("CLOUD\nCRIT\nCRIT_MAGIC\nENCHANTMENT_TABLE\nFLAME\nHEART\nNOTE\nPORTAL"
 				+ "\nREDSTONE\nSLIME\nSNOWBALL\nSNOW_SHOVEL\nSMOKE_LARGE\nSPELL\nSPELL_WITCH\nSUSPENDED_DEPTH\nVILLAGER_HAPPY\nWATER_BUBBLE\nWATER_DROP\nWATER_SPLASH\nWATER_WAKE"))).append(Text.of("<type> ")).build();

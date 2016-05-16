@@ -17,16 +17,13 @@ import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.portals.Portal;
-import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDList implements CommandExecutor {
 
-	public CMDList(){
-		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "portal").getString();
-		
+	public CMDList() {
 		Help help = new Help("plist", "list", " List all portals");
-		help.setSyntax(" /portal list\n /" + alias + " l");
+		help.setSyntax(" /portal list\n /p l");
 		help.save();
 	}
 	
@@ -40,11 +37,11 @@ public class CMDList implements CommandExecutor {
 		
 		List<Portal> portals = Portal.list();
 
-		for(Portal portal : portals){
+		for(Portal portal : portals) {
 			Location<World> location = portal.getFrame().get(0);
 			String worldName = location.getExtent().getName();
 			double price = portal.getPrice();
-			if(price == 0){
+			if(price == 0) {
 				list.add(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, portal.getName(), TextColors.GREEN, " Location: ", TextColors.WHITE, worldName, " ", location.getBlockX(), " ", location.getBlockY(), " ", location.getBlockZ()));
 			}else{
 				list.add(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, portal.getName(), TextColors.GREEN, " Location: ", TextColors.WHITE, worldName, " ", location.getBlockX(), " ", location.getBlockY(), " ", location.getBlockZ(),
@@ -52,7 +49,7 @@ public class CMDList implements CommandExecutor {
 			}
 		}
 
-		if(list.isEmpty()){
+		if(list.isEmpty()) {
 			list.add(Text.of(TextColors.YELLOW, " No portals"));
 		}
 		

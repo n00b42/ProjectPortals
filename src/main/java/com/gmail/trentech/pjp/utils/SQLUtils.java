@@ -30,27 +30,27 @@ public abstract class SQLUtils {
 			Connection connection = getDataSource().getConnection();
 			PreparedStatement statement;
 			
-			if(modules.getNode("portals").getBoolean()){
+			if(modules.getNode("portals").getBoolean()) {
 				statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS Portals (Name TEXT, Frame TEXT, Fill TEXT, Destination TEXT, Rotation TEXT, Particle TEXT, Price DOUBLE)");
 				statement.executeUpdate();
 			}
-			if(modules.getNode("buttons").getBoolean()){
+			if(modules.getNode("buttons").getBoolean()) {
 				statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS Buttons (Name TEXT, Destination TEXT, Rotation TEXT, Price DOUBLE)");
 				statement.executeUpdate();
 			}
-			if(modules.getNode("doors").getBoolean()){
+			if(modules.getNode("doors").getBoolean()) {
 				statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS Doors (Name TEXT, Destination TEXT, Rotation TEXT, Price DOUBLE)");
 				statement.executeUpdate();
 			}
-			if(modules.getNode("levers").getBoolean()){
+			if(modules.getNode("levers").getBoolean()) {
 				statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS Levers (Name TEXT, Destination TEXT, Rotation TEXT, Price DOUBLE)");
 				statement.executeUpdate();
 			}
-			if(modules.getNode("plates").getBoolean()){
+			if(modules.getNode("plates").getBoolean()) {
 				statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS Plates (Name TEXT, Destination TEXT, Rotation TEXT, Price DOUBLE)");
 				statement.executeUpdate();
 			}
-			if(modules.getNode("warps").getBoolean()){
+			if(modules.getNode("warps").getBoolean()) {
 				statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS Warps (Name TEXT, Destination TEXT, Rotation TEXT, Price DOUBLE)");
 				statement.executeUpdate();
 			}

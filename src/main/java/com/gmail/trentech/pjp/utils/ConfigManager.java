@@ -61,11 +61,6 @@ public class ConfigManager {
 
 	private void init() {
 		if(file.getName().equalsIgnoreCase("config.conf")){
-			//UPDATE CONFIG
-			if(!config.getNode("options", "portal_size").isVirtual()){
-				config.getNode("options", "portal", "size").setValue(config.getNode("options", "portal_size").getInt()).setComment("Maximum number of blocks a portal can use");
-				config.getNode("options").removeChild("portal_size");
-			}
 			if(config.getNode("options", "portal", "size").isVirtual()) {
 				config.getNode("options", "portal", "size").setValue(100).setComment("Maximum number of blocks a portal can use");
 			}
@@ -85,16 +80,6 @@ public class ConfigManager {
 				config.getNode("options", "particles", "type", "portal").setValue("PORTAL").setComment("Default particle type for portals");
 				config.getNode("options", "particles", "type", "teleport").setValue("REDSTONE:RAINBOW").setComment("Default particle type when teleporting");
 				config.getNode("options", "particles", "type", "creation").setValue("SPELL_WITCH").setComment("Default particle type when creating any kind of portal");
-			}else{
-				// UPDATE CONFIG
-				if(config.getNode("options", "particles", "enable").isVirtual()){
-					config.getNode("options").removeChild("particles");
-					config.getNode("options", "particles", "enable").setValue(true).setComment("Enable particle effects");
-					config.getNode("options", "particles", "type").setComment("Default particle types");
-					config.getNode("options", "particles", "type", "portal").setValue("PORTAL").setComment("Default particle type for portals");
-					config.getNode("options", "particles", "type", "teleport").setValue("REDSTONE:RAINBOW").setComment("Default particle type when teleporting");
-					config.getNode("options", "particles", "type", "creation").setValue("SPELL_WITCH").setComment("Default particle type when creating any kind of portal");
-				}
 			}
 			if(config.getNode("options", "random_spawn_radius").isVirtual()) {
 				config.getNode("options", "random_spawn_radius").setValue(5000).setComment("World radius for random spawn portals.");
@@ -104,44 +89,15 @@ public class ConfigManager {
 				config.getNode("options", "teleport_message", "title").setValue("&2%WORLD%");
 				config.getNode("options", "teleport_message", "sub_title").setValue("&bx: %X%, y: %Y%, z: %Z%");
 			}
-			// UPDATE CONFIG
-			if(!config.getNode("options", "portal_permissions").isVirtual()) {
-				config.getNode("options", "advanced_permissions").setValue(config.getNode("options", "portal_permissions").getBoolean()).setComment("Require permission node for each portal. ex. 'pjp.portal.<name>', 'pjp.button.<world_x_y_z>'. If false use 'pjp.portal.interact' instead");
-				config.getNode("options").removeChild("portal_permissions");
-			}
+
 			if(config.getNode("options", "advanced_permissions").isVirtual()) {
 				config.getNode("options", "advanced_permissions").setValue(false).setComment("Require permission node for each portal. ex. 'pjp.portal.<name>', 'pjp.button.<world_x_y_z>'. If false use 'pjp.portal.interact' instead");
 			}
-			if(config.getNode("settings", "commands").isVirtual()){
-				config.getNode("settings", "commands").setComment("Allow to set custom command aliases");
+			// UPDATE CONFIG
+			if(!config.getNode("settings", "commands").isVirtual()){
+				config.getNode("settings").removeChild("commands");
 			}
-			if(config.getNode("settings", "commands", "portal").isVirtual()) {
-				config.getNode("settings", "commands", "portal").setValue("p");
-			}
-			if(config.getNode("settings", "commands", "button").isVirtual()) {
-				config.getNode("settings", "commands", "button").setValue("btn");
-			}
-			if(config.getNode("settings", "commands", "door").isVirtual()) {
-				config.getNode("settings", "commands", "door").setValue("d");
-			}
-			if(config.getNode("settings", "commands", "plate").isVirtual()) {
-				config.getNode("settings", "commands", "plate").setValue("pl");
-			}
-			if(config.getNode("settings", "commands", "sign").isVirtual()) {
-				config.getNode("settings", "commands", "sign").setValue("s");
-			}
-			if(config.getNode("settings", "commands", "lever").isVirtual()) {
-				config.getNode("settings", "commands", "lever").setValue("l");
-			}
-			if(config.getNode("settings", "commands", "home").isVirtual()) {
-				config.getNode("settings", "commands", "home").setValue("h");
-			}
-			if(config.getNode("settings", "commands", "warp").isVirtual()) {
-				config.getNode("settings", "commands", "warp").setValue("wp");
-			}
-			if(config.getNode("settings", "commands", "back").isVirtual()) {
-				config.getNode("settings", "commands", "back").setValue("bk");
-			}
+
 			if(config.getNode("settings", "modules").isVirtual()) {
 				config.getNode("settings", "modules").setComment("Toggle on and off specific features");
 			}

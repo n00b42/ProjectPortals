@@ -25,7 +25,7 @@ public class HomeDataManipulatorBuilder implements DataManipulatorBuilder<HomeDa
         
         DataView homes = container.getView(HOMES.getQuery()).get();
         
-        for(DataQuery home : homes.getKeys(false)){
+        for(DataQuery home : homes.getKeys(false)) {
         	homeList.put(home.toString(), homes.getSerializable(home, Home.class).get());
         }
 

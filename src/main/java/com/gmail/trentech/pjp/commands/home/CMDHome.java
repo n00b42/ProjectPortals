@@ -37,7 +37,7 @@ public class CMDHome implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if(!(src instanceof Player)){
+		if(!(src instanceof Player)) {
 			src.sendMessage(Text.of(TextColors.DARK_RED, "Must be a player"));
 			return CommandResult.empty();
 		}
@@ -50,13 +50,13 @@ public class CMDHome implements CommandExecutor {
 
 			Optional<Map<String, Home>> optionalHomeList = player.get(Keys.HOMES);
 			
-			if(optionalHomeList.isPresent()){
+			if(optionalHomeList.isPresent()) {
 				homeList = optionalHomeList.get();
 			}else{
 				player.offer(new HomeData(new HashMap<String, Home>()));
 			}
 
-			if(!homeList.containsKey(homeName)){
+			if(!homeList.containsKey(homeName)) {
 				src.sendMessage(Text.of(TextColors.DARK_RED, homeName, " does not exist"));
 				return CommandResult.empty();
 			}
@@ -64,7 +64,7 @@ public class CMDHome implements CommandExecutor {
 			
 			Optional<Location<World>> optionalSpawnLocation = home.getDestination();
 			
-			if(!optionalSpawnLocation.isPresent()){
+			if(!optionalSpawnLocation.isPresent()) {
 				src.sendMessage(Text.of(TextColors.DARK_RED, homeName, " is invalid"));
 				return CommandResult.empty();
 			}
@@ -80,7 +80,7 @@ public class CMDHome implements CommandExecutor {
 				
 				Optional<Player> optionalPlayer = Main.getGame().getServer().getPlayer(playerName);
 				
-				if(!optionalPlayer.isPresent()){
+				if(!optionalPlayer.isPresent()) {
 					player.sendMessage(Text.of(TextColors.DARK_RED, playerName, " does not exist"));
 					return CommandResult.empty();
 				}
@@ -90,13 +90,13 @@ public class CMDHome implements CommandExecutor {
 
 			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, 0, Cause.of(NamedCause.source("home")));
 
-			if(!Main.getGame().getEventManager().post(teleportEvent)){
+			if(!Main.getGame().getEventManager().post(teleportEvent)) {
 				Location<World> currentLocation = player.getLocation();
 				spawnLocation = teleportEvent.getDestination();
 				
 				Optional<Rotation> optionalRotation = home.getRotation();
 				
-				if(optionalRotation.isPresent()){
+				if(optionalRotation.isPresent()) {
 					player.setLocationAndRotation(spawnLocation, optionalRotation.get().toVector3d());
 				}else{
 					player.setLocation(spawnLocation);

@@ -11,23 +11,20 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
 import com.gmail.trentech.pjp.portals.Warp;
-import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDPrice implements CommandExecutor {
 
-	public CMDPrice(){
-		String alias = new ConfigManager().getConfig().getNode("settings", "commands", "warp").getString();
-		
+	public CMDPrice() {
 		Help help = new Help("wprice", "price", " Charge players for using warps. 0 to disable");
-		help.setSyntax(" /warp price <name> <price>\n /" + alias + " p <name> <price>");
+		help.setSyntax(" /warp price <name> <price>\n /w p <name> <price>");
 		help.setExample(" /warp price Lobby 50\n /warp price Lobby 0");
 		help.save();
 	}
 	
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if(!(src instanceof Player)){
+		if(!(src instanceof Player)) {
 			src.sendMessage(Text.of(TextColors.DARK_RED, "Must be a player"));
 			return CommandResult.empty();
 		}
@@ -38,7 +35,7 @@ public class CMDPrice implements CommandExecutor {
 		}
 		String name = args.<String>getOne("name").get().toLowerCase();
 
-		if(!Warp.get(name).isPresent()){
+		if(!Warp.get(name).isPresent()) {
 			src.sendMessage(Text.of(TextColors.DARK_RED, name, " does not exist"));
 			return CommandResult.empty();
 		}	
@@ -52,7 +49,7 @@ public class CMDPrice implements CommandExecutor {
 		double price;
 		try{
 			price = Double.parseDouble(args.<String>getOne("price").get());
-		}catch(Exception e){
+		}catch(Exception e) {
 			src.sendMessage(Text.of(TextColors.RED, "Incorrect price"));
 			src.sendMessage(invalidArg());
 			return CommandResult.empty();
@@ -65,7 +62,7 @@ public class CMDPrice implements CommandExecutor {
 		return CommandResult.success();
 	}
 	
-	private Text invalidArg(){
+	private Text invalidArg() {
 		Text t1 = Text.of(TextColors.RED, "Usage: /warp price <name> ");
 		Text t2 = Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("Enter a number amount or 0 to disable"))).append(Text.of("<price>")).build();
 		return Text.of(t1,t2);

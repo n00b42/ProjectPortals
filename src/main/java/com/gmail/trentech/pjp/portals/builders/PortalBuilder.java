@@ -39,7 +39,7 @@ public class PortalBuilder {
 		this.particle = particle;
 	}
 
-	public PortalBuilder(){
+	public PortalBuilder() {
 		destination = null;
 		rotation = Rotation.EAST;
 		price = 0;
@@ -54,24 +54,24 @@ public class PortalBuilder {
 		return regionFrame;
 	}
 
-	public String getName(){
+	public String getName() {
 		return name;
 	}
 	
-	public PortalBuilder name(String name){
+	public PortalBuilder name(String name) {
 		this.name = name;
 		return this;
 	}
 	
 	public PortalBuilder addFill(Location<World> location) {
-		if(!regionFill.isPresent()){
+		if(!regionFill.isPresent()) {
 			regionFill = Optional.of(new ArrayList<Location<World>>());
 		}
 		regionFill.get().add(location);
 		return this;
 	}
 	public PortalBuilder addFrame(Location<World> location) {
-		if(!regionFrame.isPresent()){
+		if(!regionFrame.isPresent()) {
 			regionFrame = Optional.of(new ArrayList<Location<World>>());
 		}
 		regionFrame.get().add(location);
@@ -79,21 +79,21 @@ public class PortalBuilder {
 	}
 	
 	public PortalBuilder removeFrame(Location<World> location) {
-		if(regionFrame.isPresent()){
+		if(regionFrame.isPresent()) {
 			regionFrame.get().remove(location);
 		}
 		return this;
 	}
 	
 	public PortalBuilder removeFill(Location<World> location) {
-		if(regionFill.isPresent()){
+		if(regionFill.isPresent()) {
 			regionFill.get().remove(location);
 		}
 		return this;
 	}
 	
-	public boolean build(){
-		if(!regionFrame.isPresent() || !regionFill.isPresent()){
+	public boolean build() {
+		if(!regionFrame.isPresent() || !regionFill.isPresent()) {
 			return false;
 		}
 		List<Location<World>> frame = new ArrayList<>(regionFrame.get());
@@ -102,18 +102,18 @@ public class PortalBuilder {
 		if(!Main.getGame().getEventManager().post(new ConstructPortalEvent(frame, fill, Cause.of(NamedCause.source(this))))) {
 			BlockState block = BlockTypes.AIR.getDefaultState();
 
-			for(Location<World> location : fill){
+			for(Location<World> location : fill) {
 				Optional<Particle> optionalParticle = Particles.get(this.particle);
 				
 				String[] split = this.particle.split(":");
 				
-				if(optionalParticle.isPresent()){
+				if(optionalParticle.isPresent()) {
 					Particle particle = optionalParticle.get();
 					
-					if(split.length == 2 && particle.isColorable()){
+					if(split.length == 2 && particle.isColorable()) {
 						Optional<ParticleColor> optionalColors = ParticleColor.get(split[1]);
 						
-						if(optionalColors.isPresent()){
+						if(optionalColors.isPresent()) {
 							particle.spawnParticle(location, optionalColors.get());
 						}else{
 							particle.spawnParticle(location);

@@ -33,7 +33,7 @@ public class CMDWarp implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if(!(src instanceof Player)){
+		if(!(src instanceof Player)) {
 			src.sendMessage(Text.of(TextColors.DARK_RED, "Must be a player"));
 			return CommandResult.empty();
 		}
@@ -44,20 +44,20 @@ public class CMDWarp implements CommandExecutor {
 			
 			Optional<Warp> optionalWarp = Warp.get(warpName);
 			
-			if(!optionalWarp.isPresent()){
+			if(!optionalWarp.isPresent()) {
 				src.sendMessage(Text.of(TextColors.DARK_RED, warpName, " does not exist"));
 				return CommandResult.empty();
 			}
 			Warp warp = optionalWarp.get();
 			
-			if(!player.hasPermission("pjp.warps." + warpName)){
+			if(!player.hasPermission("pjp.warps." + warpName)) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to warp here"));
 				return CommandResult.empty();
 			}
 			
 			Optional<Location<World>> optionalSpawnLocation = warp.getDestination();
 			
-			if(!optionalSpawnLocation.isPresent()){
+			if(!optionalSpawnLocation.isPresent()) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, warp.destination.split(":")[0], " does not exist"));
 				return CommandResult.empty();
 			}			
@@ -73,7 +73,7 @@ public class CMDWarp implements CommandExecutor {
 
 				Optional<Player> optionalPlayer = Main.getGame().getServer().getPlayer(playerName);
 				
-				if(!optionalPlayer.isPresent()){
+				if(!optionalPlayer.isPresent()) {
 					player.sendMessage(Text.of(TextColors.DARK_RED, playerName, " does not exist"));
 					return CommandResult.empty();
 				}
@@ -83,7 +83,7 @@ public class CMDWarp implements CommandExecutor {
 
 			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, warp.getPrice(), Cause.of(NamedCause.source("warp")));
 
-			if(!Main.getGame().getEventManager().post(teleportEvent)){
+			if(!Main.getGame().getEventManager().post(teleportEvent)) {
 				Location<World> currentLocation = player.getLocation();
 				spawnLocation = teleportEvent.getDestination();
 				

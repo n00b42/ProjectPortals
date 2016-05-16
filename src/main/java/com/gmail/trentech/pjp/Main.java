@@ -62,7 +62,7 @@ public class Main {
 		plugin = getGame().getPluginManager().getPlugin(Resource.ID).get();
 		log = getPlugin().getLogger();
 		
-		if(this.stats.start()){
+		if(this.stats.start()) {
 			getLog().info("MCStats started.");
 		}else{
 			getLog().warn("Could not start MCStats. This could be due to server opt-out, or error.");
@@ -72,55 +72,54 @@ public class Main {
     @Listener
     public void onInitialization(GameInitializationEvent event) {
     	ConfigurationNode config = new ConfigManager().getConfig();
-    	ConfigurationNode commands = config.getNode("settings", "commands");
     	ConfigurationNode modules = config.getNode("settings", "modules");
     	
     	getGame().getEventManager().registerListeners(this, new TeleportListener());
     	
-    	getGame().getCommandManager().register(this, new CMDBack().cmdBack, "back", commands.getNode("back").getString());
+    	getGame().getCommandManager().register(this, new CMDBack().cmdBack, "back");
     	getGame().getCommandManager().register(this, new CommandManager().cmdPJP, "pjp");
 
-    	if(modules.getNode("portals").getBoolean()){  		
+    	if(modules.getNode("portals").getBoolean()) {  		
     		getGame().getEventManager().registerListeners(this, new PortalListener());
-    		getGame().getCommandManager().register(this, new CommandManager().cmdPortal, "portal", commands.getNode("portal").getString());
+    		getGame().getCommandManager().register(this, new CommandManager().cmdPortal, "portal", "p");
     		getLog().info("Portal module activated");
     	}
-    	if(modules.getNode("buttons").getBoolean()){
+    	if(modules.getNode("buttons").getBoolean()) {
     		getGame().getEventManager().registerListeners(this, new ButtonListener());
-    		getGame().getCommandManager().register(this, new CommandManager().cmdButton, "button", commands.getNode("button").getString());
+    		getGame().getCommandManager().register(this, new CommandManager().cmdButton, "button", "b");
     		getLog().info("Button module activated");
     	}
-    	if(modules.getNode("doors").getBoolean()){
+    	if(modules.getNode("doors").getBoolean()) {
     		getGame().getEventManager().registerListeners(this, new DoorListener());
-    		getGame().getCommandManager().register(this, new CommandManager().cmdDoor, "door", commands.getNode("door").getString());
+    		getGame().getCommandManager().register(this, new CommandManager().cmdDoor, "door", "d");
     		getLog().info("Door module activated");
     	}
-    	if(modules.getNode("plates").getBoolean()){
+    	if(modules.getNode("plates").getBoolean()) {
     		getGame().getEventManager().registerListeners(this, new PlateListener());
-    		getGame().getCommandManager().register(this, new CommandManager().cmdPlate, "plate", commands.getNode("plate").getString());
+    		getGame().getCommandManager().register(this, new CommandManager().cmdPlate, "plate", "pp");
     		getLog().info("Plate module activated");
     	}
-    	if(modules.getNode("signs").getBoolean()){
+    	if(modules.getNode("signs").getBoolean()) {
         	getGame().getDataManager().register(SignPortalData.class, ImmutableSignPortalData.class, new SignPortalDataManipulatorBuilder());
         	getGame().getDataManager().registerBuilder(Sign.class, new SignBuilder());
     		getGame().getEventManager().registerListeners(this, new SignListener());
-    		getGame().getCommandManager().register(this, new CommandManager().cmdSign, "sign", commands.getNode("sign").getString());
+    		getGame().getCommandManager().register(this, new CommandManager().cmdSign, "sign", "s");
     		getLog().info("Sign module activated");
     	}
-    	if(modules.getNode("levers").getBoolean()){
+    	if(modules.getNode("levers").getBoolean()) {
     		getGame().getEventManager().registerListeners(this, new LeverListener());
-    		getGame().getCommandManager().register(this, new CommandManager().cmdLever, "lever", commands.getNode("lever").getString());
+    		getGame().getCommandManager().register(this, new CommandManager().cmdLever, "lever", "l");
     		getLog().info("Lever module activated");
     	}
-    	if(modules.getNode("homes").getBoolean()){
+    	if(modules.getNode("homes").getBoolean()) {
     		getGame().getDataManager().register(HomeData.class, ImmutableHomeData.class, new HomeDataManipulatorBuilder());
     		getGame().getDataManager().registerBuilder(Home.class, new HomeBuilder());
-    		getGame().getCommandManager().register(this, new CommandManager().cmdHome, "home", commands.getNode("home").getString());
+    		getGame().getCommandManager().register(this, new CommandManager().cmdHome, "home", "h");
     		getLog().info("Home module activated");
     	}
-    	if(modules.getNode("warps").getBoolean()){
+    	if(modules.getNode("warps").getBoolean()) {
     		getGame().getEventManager().registerListeners(this, new SignListener());
-    		getGame().getCommandManager().register(this, new CommandManager().cmdWarp, "warp", commands.getNode("warp").getString());
+    		getGame().getCommandManager().register(this, new CommandManager().cmdWarp, "warp", "w");
     		getLog().info("Warp module activated");
     	}
     	
@@ -131,22 +130,22 @@ public class Main {
     public void onStartedServer(GameStartedServerEvent event) {
     	ConfigurationNode modules = new ConfigManager().getConfig().getNode("settings", "modules");
 
-    	if(modules.getNode("portals").getBoolean()){
+    	if(modules.getNode("portals").getBoolean()) {
     		Portal.init();
     	}
-    	if(modules.getNode("buttons").getBoolean()){
+    	if(modules.getNode("buttons").getBoolean()) {
     		Button.init();
     	}
-    	if(modules.getNode("doors").getBoolean()){
+    	if(modules.getNode("doors").getBoolean()) {
     		Door.init();
     	}
-    	if(modules.getNode("plates").getBoolean()){
+    	if(modules.getNode("plates").getBoolean()) {
     		Plate.init();
     	}
-    	if(modules.getNode("levers").getBoolean()){
+    	if(modules.getNode("levers").getBoolean()) {
     		Lever.init();
     	}
-    	if(modules.getNode("warps").getBoolean()){
+    	if(modules.getNode("warps").getBoolean()) {
     		Warp.init();
     	}
     }

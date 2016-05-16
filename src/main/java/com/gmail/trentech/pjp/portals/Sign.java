@@ -19,7 +19,7 @@ public class Sign implements DataSerializable {
 	private String rotation;
 	private double price;
 	
-	public Sign(String destination, String rotation, double price){
+	public Sign(String destination, String rotation, double price) {
 		this.destination = destination;
 		this.rotation = rotation;
 		this.price = price;
@@ -28,14 +28,14 @@ public class Sign implements DataSerializable {
 	public Optional<Location<World>> getDestination() {
 		String[] args = destination.split(":");
 		
-		if(!Main.getGame().getServer().getWorld(args[0]).isPresent()){
+		if(!Main.getGame().getServer().getWorld(args[0]).isPresent()) {
 			return Optional.empty();
 		}
 		World world = Main.getGame().getServer().getWorld(args[0]).get();
 		
-		if(args[1].equalsIgnoreCase("random")){
+		if(args[1].equalsIgnoreCase("random")) {
 			return Optional.of(Utils.getRandomLocation(world));
-		}else if(args[1].equalsIgnoreCase("spawn")){
+		}else if(args[1].equalsIgnoreCase("spawn")) {
 			return Optional.of(world.getSpawnLocation());
 		}else{
 			String[] coords = args[1].split("\\.");
@@ -47,11 +47,11 @@ public class Sign implements DataSerializable {
 		}
 	}
 
-	public Optional<Rotation> getRotation(){
+	public Optional<Rotation> getRotation() {
 		return Rotation.get(rotation);
 	}
 	
-	public double getPrice(){
+	public double getPrice() {
 		return price;
 	}
 	

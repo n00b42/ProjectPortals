@@ -16,7 +16,7 @@ public class TeleportEvent extends AbstractEvent implements Cancellable {
 	private Location<World> destination;
 	private double price;
 	
-	public TeleportEvent(Player target, Location<World> source, Location<World> destination, double price, Cause cause){
+	public TeleportEvent(Player target, Location<World> source, Location<World> destination, double price, Cause cause) {
 		this.target = target;
 		this.source = source;
 		this.setDestination(destination);

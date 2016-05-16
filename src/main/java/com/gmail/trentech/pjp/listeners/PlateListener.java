@@ -44,15 +44,15 @@ public class PlateListener {
 			BlockType blockType = block.getType();
 			
 			if(!blockType.equals(BlockTypes.HEAVY_WEIGHTED_PRESSURE_PLATE) && !blockType.equals(BlockTypes.LIGHT_WEIGHTED_PRESSURE_PLATE) 
-					&& !blockType.equals(BlockTypes.STONE_PRESSURE_PLATE) && !blockType.equals(BlockTypes.WOODEN_PRESSURE_PLATE)){
+					&& !blockType.equals(BlockTypes.STONE_PRESSURE_PLATE) && !blockType.equals(BlockTypes.WOODEN_PRESSURE_PLATE)) {
 				continue;
 			}
 
-			if(!block.get(Keys.POWERED).isPresent()){
+			if(!block.get(Keys.POWERED).isPresent()) {
 				continue;
 			}
 
-			if(!block.get(Keys.POWERED).get()){
+			if(!block.get(Keys.POWERED).get()) {
 				continue;
 			}
 
@@ -60,19 +60,19 @@ public class PlateListener {
 
 			Optional<Plate> optionalPlate = Plate.get(location);
 			
-			if(!optionalPlate.isPresent()){
+			if(!optionalPlate.isPresent()) {
 				continue;
 			}
 			Plate plate = optionalPlate.get();
 			
-			if(new ConfigManager().getConfig().getNode("options", "advanced_permissions").getBoolean()){
-				if(!player.hasPermission("pjp.plate." + location.getExtent().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ())){
+			if(new ConfigManager().getConfig().getNode("options", "advanced_permissions").getBoolean()) {
+				if(!player.hasPermission("pjp.plate." + location.getExtent().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ())) {
 					player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use this pressure plate portal"));
 					event.setCancelled(true);
 					return;
 				}
 			}else{
-				if(!player.hasPermission("pjp.plate.interact")){
+				if(!player.hasPermission("pjp.plate.interact")) {
 					player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with pressure plate portals"));
 					event.setCancelled(true);
 					return;
@@ -81,7 +81,7 @@ public class PlateListener {
 			
 			Optional<Location<World>> optionalSpawnLocation = plate.getDestination();
 			
-			if(!optionalSpawnLocation.isPresent()){
+			if(!optionalSpawnLocation.isPresent()) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "World does not exist"));
 				continue;
 			}
@@ -89,7 +89,7 @@ public class PlateListener {
 
 			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, plate.getPrice(), Cause.of(NamedCause.source(plate)));
 
-			if(!Main.getGame().getEventManager().post(teleportEvent)){
+			if(!Main.getGame().getEventManager().post(teleportEvent)) {
 				Location<World> currentLocation = player.getLocation();
 				spawnLocation = teleportEvent.getDestination();
 				
@@ -105,7 +105,7 @@ public class PlateListener {
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Break event, @First Player player) {
-		if(builders.containsKey(player)){
+		if(builders.containsKey(player)) {
 			builders.remove(player);
 			return;
 		}
@@ -113,11 +113,11 @@ public class PlateListener {
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			Location<World> location = transaction.getFinal().getLocation().get();		
 
-			if(!Plate.get(location).isPresent()){
+			if(!Plate.get(location).isPresent()) {
 				continue;
 			}
 			
-			if(!player.hasPermission("pjp.plate.break")){
+			if(!player.hasPermission("pjp.plate.break")) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to break pressure plate portals"));
 				event.setCancelled(true);
 			}else{
@@ -130,7 +130,7 @@ public class PlateListener {
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Place event, @First Player player) {
-		if(!builders.containsKey(player)){
+		if(!builders.containsKey(player)) {
 			return;
 		}
 
@@ -138,13 +138,13 @@ public class PlateListener {
 			BlockType blockType = transaction.getFinal().getState().getType();
 			
 			if(!blockType.equals(BlockTypes.HEAVY_WEIGHTED_PRESSURE_PLATE) && !blockType.equals(BlockTypes.LIGHT_WEIGHTED_PRESSURE_PLATE) 
-					&& !blockType.equals(BlockTypes.STONE_PRESSURE_PLATE) && !blockType.equals(BlockTypes.WOODEN_PRESSURE_PLATE)){
+					&& !blockType.equals(BlockTypes.STONE_PRESSURE_PLATE) && !blockType.equals(BlockTypes.WOODEN_PRESSURE_PLATE)) {
 				continue;
 			}
 
 			Location<World> location = transaction.getFinal().getLocation().get();
 
-			if(!player.hasPermission("pjp.plate.place")){
+			if(!player.hasPermission("pjp.plate.place")) {
 	        	player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to place pressure plate portals"));
 	        	builders.remove(player);
 	        	return;
@@ -156,13 +156,13 @@ public class PlateListener {
 			
 			Optional<Particle> optionalParticle = Particles.get(split[0]);
 			
-			if(optionalParticle.isPresent()){
+			if(optionalParticle.isPresent()) {
 				Particle particle = optionalParticle.get();
 				
-				if(split.length == 2 && particle.isColorable()){
+				if(split.length == 2 && particle.isColorable()) {
 					Optional<ParticleColor> optionalColors = ParticleColor.get(split[1]);
 					
-					if(optionalColors.isPresent()){
+					if(optionalColors.isPresent()) {
 						particle.spawnParticle(location, optionalColors.get());
 					}else{
 						particle.spawnParticle(location);
