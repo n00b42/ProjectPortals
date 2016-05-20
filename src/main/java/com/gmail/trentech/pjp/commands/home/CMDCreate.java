@@ -17,8 +17,8 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.data.Keys;
-import com.gmail.trentech.pjp.data.home.HomeData;
-import com.gmail.trentech.pjp.portals.Home;
+import com.gmail.trentech.pjp.data.mutable.HomeData;
+import com.gmail.trentech.pjp.data.object.Home;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Rotation;
@@ -73,6 +73,7 @@ public class CMDCreate implements CommandExecutor {
 			}
 			amount++;
 		}
+		
 		if(homeList.containsKey(homeName)) {
 			src.sendMessage(Text.of(TextColors.DARK_RED, homeName, " already exists."));
 			return CommandResult.empty();
@@ -80,7 +81,9 @@ public class CMDCreate implements CommandExecutor {
 
 		Location<World> location = player.getLocation();
 
-		homeList.put(homeName, new Home(location, Rotation.getClosest(player.getRotation().getFloorY())));
+		String destination = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
+		
+		homeList.put(homeName, new Home(destination, Rotation.getClosest(player.getRotation().getFloorY()).getName()));
 		
 		DataTransactionResult result = player.offer(new HomeData(homeList));
 		if(!result.isSuccessful()) {

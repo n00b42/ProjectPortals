@@ -13,14 +13,27 @@ import org.spongepowered.api.plugin.PluginContainer;
 
 import com.gmail.trentech.pjp.commands.CMDBack;
 import com.gmail.trentech.pjp.commands.CommandManager;
-import com.gmail.trentech.pjp.data.home.HomeBuilder;
-import com.gmail.trentech.pjp.data.home.HomeData;
-import com.gmail.trentech.pjp.data.home.HomeDataManipulatorBuilder;
-import com.gmail.trentech.pjp.data.home.ImmutableHomeData;
-import com.gmail.trentech.pjp.data.signportal.ImmutableSignPortalData;
-import com.gmail.trentech.pjp.data.signportal.SignBuilder;
-import com.gmail.trentech.pjp.data.signportal.SignPortalData;
-import com.gmail.trentech.pjp.data.signportal.SignPortalDataManipulatorBuilder;
+import com.gmail.trentech.pjp.data.builder.data.ButtonBuilder;
+import com.gmail.trentech.pjp.data.builder.data.DoorBuilder;
+import com.gmail.trentech.pjp.data.builder.data.HomeBuilder;
+import com.gmail.trentech.pjp.data.builder.data.PlateBuilder;
+import com.gmail.trentech.pjp.data.builder.data.PortalBuilder;
+import com.gmail.trentech.pjp.data.builder.data.SignBuilder;
+import com.gmail.trentech.pjp.data.builder.data.WarpBuilder;
+import com.gmail.trentech.pjp.data.builder.manipulator.HomeDataManipulatorBuilder;
+import com.gmail.trentech.pjp.data.builder.manipulator.SignPortalDataManipulatorBuilder;
+import com.gmail.trentech.pjp.data.immutable.ImmutableHomeData;
+import com.gmail.trentech.pjp.data.immutable.ImmutableSignPortalData;
+import com.gmail.trentech.pjp.data.mutable.HomeData;
+import com.gmail.trentech.pjp.data.mutable.SignPortalData;
+import com.gmail.trentech.pjp.data.object.Button;
+import com.gmail.trentech.pjp.data.object.Door;
+import com.gmail.trentech.pjp.data.object.Home;
+import com.gmail.trentech.pjp.data.object.Lever;
+import com.gmail.trentech.pjp.data.object.Plate;
+import com.gmail.trentech.pjp.data.object.Portal;
+import com.gmail.trentech.pjp.data.object.Sign;
+import com.gmail.trentech.pjp.data.object.Warp;
 import com.gmail.trentech.pjp.listeners.ButtonListener;
 import com.gmail.trentech.pjp.listeners.DoorListener;
 import com.gmail.trentech.pjp.listeners.LeverListener;
@@ -28,14 +41,6 @@ import com.gmail.trentech.pjp.listeners.PlateListener;
 import com.gmail.trentech.pjp.listeners.PortalListener;
 import com.gmail.trentech.pjp.listeners.SignListener;
 import com.gmail.trentech.pjp.listeners.TeleportListener;
-import com.gmail.trentech.pjp.portals.Button;
-import com.gmail.trentech.pjp.portals.Door;
-import com.gmail.trentech.pjp.portals.Home;
-import com.gmail.trentech.pjp.portals.Lever;
-import com.gmail.trentech.pjp.portals.Plate;
-import com.gmail.trentech.pjp.portals.Portal;
-import com.gmail.trentech.pjp.portals.Sign;
-import com.gmail.trentech.pjp.portals.Warp;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Resource;
 import com.gmail.trentech.pjp.utils.SQLUtils;
@@ -71,33 +76,39 @@ public class Main {
 
     @Listener
     public void onInitialization(GameInitializationEvent event) {
-    	ConfigurationNode config = new ConfigManager().getConfig();
-    	ConfigurationNode modules = config.getNode("settings", "modules");
-    	
+    	ConfigManager configManager = new ConfigManager();
+    	configManager.init();
+
     	getGame().getEventManager().registerListeners(this, new TeleportListener());
     	
     	getGame().getCommandManager().register(this, new CMDBack().cmdBack, "back");
     	getGame().getCommandManager().register(this, new CommandManager().cmdPJP, "pjp");
 
-    	if(modules.getNode("portals").getBoolean()) {  		
+    	ConfigurationNode modules = configManager.getConfig().getNode("settings", "modules");
+    	
+    	if(modules.getNode("portals").getBoolean()) { 
+    		getGame().getDataManager().registerBuilder(Portal.class, new PortalBuilder());
     		getGame().getEventManager().registerListeners(this, new PortalListener());
     		getGame().getCommandManager().register(this, new CommandManager().cmdPortal, "portal", "p");
     		getLog().info("Portal module activated");
     	}
     	if(modules.getNode("buttons").getBoolean()) {
+    		getGame().getDataManager().registerBuilder(Button.class, new ButtonBuilder());
     		getGame().getEventManager().registerListeners(this, new ButtonListener());
     		getGame().getCommandManager().register(this, new CommandManager().cmdButton, "button", "b");
     		getLog().info("Button module activated");
     	}
     	if(modules.getNode("doors").getBoolean()) {
+    		getGame().getDataManager().registerBuilder(Door.class, new DoorBuilder());
     		getGame().getEventManager().registerListeners(this, new DoorListener());
     		getGame().getCommandManager().register(this, new CommandManager().cmdDoor, "door", "d");
     		getLog().info("Door module activated");
     	}
     	if(modules.getNode("plates").getBoolean()) {
+    		getGame().getDataManager().registerBuilder(Plate.class, new PlateBuilder());
     		getGame().getEventManager().registerListeners(this, new PlateListener());
     		getGame().getCommandManager().register(this, new CommandManager().cmdPlate, "plate", "pp");
-    		getLog().info("Plate module activated");
+    		getLog().info("Pressure plate module activated");
     	}
     	if(modules.getNode("signs").getBoolean()) {
         	getGame().getDataManager().register(SignPortalData.class, ImmutableSignPortalData.class, new SignPortalDataManipulatorBuilder());
@@ -118,6 +129,7 @@ public class Main {
     		getLog().info("Home module activated");
     	}
     	if(modules.getNode("warps").getBoolean()) {
+    		getGame().getDataManager().registerBuilder(Warp.class, new WarpBuilder());
     		getGame().getEventManager().registerListeners(this, new SignListener());
     		getGame().getCommandManager().register(this, new CommandManager().cmdWarp, "warp", "w");
     		getLog().info("Warp module activated");

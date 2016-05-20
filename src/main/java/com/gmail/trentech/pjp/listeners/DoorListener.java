@@ -1,6 +1,7 @@
 package com.gmail.trentech.pjp.listeners;
 
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.spongepowered.api.block.BlockSnapshot;
@@ -24,31 +25,34 @@ import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
+import com.gmail.trentech.pjp.data.object.Door;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.events.TeleportEvent;
-import com.gmail.trentech.pjp.portals.Door;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 
 public class DoorListener {
 
-	public static ConcurrentHashMap<Player, Door> builders = new ConcurrentHashMap<>();
+	public static ConcurrentHashMap<UUID, Door> builders = new ConcurrentHashMap<>();
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Break event, @First Player player) {
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			Location<World> location = transaction.getFinal().getLocation().get();		
 
-			if(!Door.get(location).isPresent()) {
+			Optional<Door> optionalDoor = Door.get(location);
+			
+			if(!optionalDoor.isPresent()) {
 				continue;
 			}
+			Door door = optionalDoor.get();
 			
 			if(!player.hasPermission("pjp.door.break")) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to break door portals"));
 				event.setCancelled(true);
 			}else{
-				Door.remove(location);
+				door.remove(location);
 				player.sendMessage(Text.of(TextColors.DARK_GREEN, "Broke door portal"));
 			}
 			return;
@@ -57,7 +61,7 @@ public class DoorListener {
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Place event, @First Player player) {
-		if(!builders.containsKey(player)) {
+		if(!builders.containsKey(player.getUniqueId())) {
 			return;
 		}
 
@@ -74,12 +78,12 @@ public class DoorListener {
 
 			if(!player.hasPermission("pjp.door.place")) {
 	        	player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to place door portals"));
-	        	builders.remove(player);
+	        	builders.remove(player.getUniqueId());
 	        	event.setCancelled(true);
 	        	return;
 			}
 
-            builders.get(player).save(location);
+			builders.get(player.getUniqueId()).create(location);
 
 			String[] split = new ConfigManager().getConfig().getNode("options", "particles", "type", "creation").getString().split(":");
 			
@@ -103,7 +107,7 @@ public class DoorListener {
 
             player.sendMessage(Text.of(TextColors.DARK_GREEN, "New door portal created"));
             
-            builders.remove(player);
+            builders.remove(player.getUniqueId());
             break;
 		}
 	}

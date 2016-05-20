@@ -1,4 +1,4 @@
-package com.gmail.trentech.pjp.data.home;
+package com.gmail.trentech.pjp.data.immutable;
 
 import static com.gmail.trentech.pjp.data.Keys.HOMES;
 
@@ -9,11 +9,12 @@ import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.manipulator.immutable.common.AbstractImmutableMappedData;
 import org.spongepowered.api.data.value.immutable.ImmutableMapValue;
 
-import com.gmail.trentech.pjp.portals.Home;
+import com.gmail.trentech.pjp.data.mutable.HomeData;
+import com.gmail.trentech.pjp.data.object.Home;
 
 public class ImmutableHomeData extends AbstractImmutableMappedData<String, Home, ImmutableHomeData, HomeData> {
 
-    protected ImmutableHomeData(Map<String, Home> value) {
+    public ImmutableHomeData(Map<String, Home> value) {
         super(value, HOMES);
     }
 

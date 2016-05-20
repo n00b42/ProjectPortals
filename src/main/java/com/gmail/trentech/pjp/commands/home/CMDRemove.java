@@ -15,8 +15,8 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import com.gmail.trentech.pjp.data.Keys;
-import com.gmail.trentech.pjp.data.home.HomeData;
-import com.gmail.trentech.pjp.portals.Home;
+import com.gmail.trentech.pjp.data.mutable.HomeData;
+import com.gmail.trentech.pjp.data.object.Home;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDRemove implements CommandExecutor {

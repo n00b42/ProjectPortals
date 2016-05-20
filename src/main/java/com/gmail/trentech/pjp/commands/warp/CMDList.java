@@ -2,7 +2,9 @@ package com.gmail.trentech.pjp.commands.warp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -18,7 +20,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.portals.Warp;
+import com.gmail.trentech.pjp.data.object.Warp;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDList implements CommandExecutor {
@@ -43,10 +45,13 @@ public class CMDList implements CommandExecutor {
 
 		List<Text> list = new ArrayList<>();
 		
-		List<Warp> warps = Warp.list();
+		ConcurrentHashMap<String, Warp> warps = Warp.all();
 
-		for(Warp warp : warps) {
-			if(!player.hasPermission("pjp.warps." + warp.getName())) {
+		for(Entry<String, Warp> entry : warps.entrySet()) {
+			String name = entry.getKey();
+			Warp warp = entry.getValue();
+			
+			if(!player.hasPermission("pjp.warps." + name)) {
 				continue;
 			}
 			
@@ -58,9 +63,9 @@ public class CMDList implements CommandExecutor {
 
 			double price = warp.getPrice();
 			if(price == 0) {
-				list.add(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, warp.getName()));
+				list.add(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name));
 			}else{
-				list.add(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, warp.getName(), TextColors.GREEN, " Price: ", TextColors.WHITE, "$", warp.getPrice()));
+				list.add(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Price: ", TextColors.WHITE, "$", warp.getPrice()));
 			}
 
 		}

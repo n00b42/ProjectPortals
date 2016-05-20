@@ -1,6 +1,7 @@
 package com.gmail.trentech.pjp.listeners;
 
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.spongepowered.api.block.BlockSnapshot;
@@ -25,8 +26,8 @@ import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.data.signportal.ImmutableSignPortalData;
-import com.gmail.trentech.pjp.data.signportal.SignPortalData;
+import com.gmail.trentech.pjp.data.immutable.ImmutableSignPortalData;
+import com.gmail.trentech.pjp.data.mutable.SignPortalData;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
@@ -35,14 +36,14 @@ import com.gmail.trentech.pjp.utils.ConfigManager;
 
 public class SignListener {
 	
-	public static ConcurrentHashMap<Player, SignPortalData> builders = new ConcurrentHashMap<>();
+	public static ConcurrentHashMap<UUID, SignPortalData> builders = new ConcurrentHashMap<>();
 	
 	@Listener
 	public void onSignCreateEvent(ChangeSignEvent event, @First Player player) {
-		if(!builders.containsKey(player)) {
+		if(!builders.containsKey(player.getUniqueId())) {
 			return;
 		}
-		SignPortalData portalData = builders.get(player);
+		SignPortalData portalData = builders.get(player.getUniqueId());
 
 		if(!player.hasPermission("pjp.sign.place")) {
 			player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to place sign portals"));
@@ -74,7 +75,7 @@ public class SignListener {
 
         player.sendMessage(Text.of(TextColors.DARK_GREEN, "New sign portal created"));
         
-        builders.remove(player);
+        builders.remove(player.getUniqueId());
 	}
 
 	@Listener
@@ -121,7 +122,7 @@ public class SignListener {
 			Location<World> currentLocation = player.getLocation();
 			spawnLocation = teleportEvent.getDestination();
 			
-			Vector3d rotation = portalData.sign().get().getRotation().get().toVector3d();
+			Vector3d rotation = portalData.sign().get().getRotation().toVector3d();
 
 			player.setLocationAndRotation(spawnLocation, rotation);
 

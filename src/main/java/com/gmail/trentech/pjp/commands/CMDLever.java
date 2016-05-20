@@ -13,8 +13,8 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
 import com.gmail.trentech.pjp.Main;
+import com.gmail.trentech.pjp.data.object.Lever;
 import com.gmail.trentech.pjp.listeners.LeverListener;
-import com.gmail.trentech.pjp.portals.Lever;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Rotation;
 
@@ -104,7 +104,7 @@ public class CMDLever implements CommandExecutor {
 			}
 		}
 		
-		LeverListener.builders.put(player, new Lever(destination, rotation, price));
+		LeverListener.builders.put(player.getUniqueId(), new Lever(destination, rotation.getName(), price));
 
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place lever to create lever portal"));
 

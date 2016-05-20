@@ -13,8 +13,8 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
 import com.gmail.trentech.pjp.Main;
+import com.gmail.trentech.pjp.data.object.Door;
 import com.gmail.trentech.pjp.listeners.DoorListener;
-import com.gmail.trentech.pjp.portals.Door;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Rotation;
 
@@ -104,7 +104,7 @@ public class CMDDoor implements CommandExecutor {
 			}
 		}
 		
-		DoorListener.builders.put(player, new Door(destination, rotation, price));
+		DoorListener.builders.put(player.getUniqueId(), new Door(destination, rotation.getName(), price));
 
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place door to create door portal"));
 

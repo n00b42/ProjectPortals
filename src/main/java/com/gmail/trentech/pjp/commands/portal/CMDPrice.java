@@ -10,7 +10,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
-import com.gmail.trentech.pjp.portals.Portal;
+import com.gmail.trentech.pjp.data.object.Portal;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDPrice implements CommandExecutor {
@@ -35,11 +35,11 @@ public class CMDPrice implements CommandExecutor {
 		}
 		String name = args.<String>getOne("name").get().toLowerCase();
 
-		if(!Portal.getByName(name).isPresent()) {
+		if(!Portal.get(name).isPresent()) {
 			src.sendMessage(Text.of(TextColors.DARK_RED, name, " does not exist"));
 			return CommandResult.empty();
 		}	
-		Portal portal = Portal.getByName(name).get();
+		Portal portal = Portal.get(name).get();
 		
 		if(!args.hasAny("price")) {
 			src.sendMessage(invalidArg());
@@ -56,8 +56,9 @@ public class CMDPrice implements CommandExecutor {
 		}
 
 		portal.setPrice(price);
+		portal.update(name);
 
-		src.sendMessage(Text.of(TextColors.DARK_GREEN, "Set price of portal ", portal.getName(), " to $", price));
+		src.sendMessage(Text.of(TextColors.DARK_GREEN, "Set price of portal ", name, " to $", price));
 		
 		return CommandResult.success();
 	}

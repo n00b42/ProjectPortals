@@ -15,7 +15,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.portals.Warp;
+import com.gmail.trentech.pjp.data.object.Warp;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Rotation;
 
@@ -124,7 +124,7 @@ public class CMDCreate implements CommandExecutor {
 			}
 		}
 
-		new Warp(name, destination, rotation, price).save();
+		new Warp(destination, rotation.getName(), price).create(name);
 
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Warp ", name, " create"));
 

@@ -13,8 +13,8 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
 import com.gmail.trentech.pjp.Main;
+import com.gmail.trentech.pjp.data.object.Plate;
 import com.gmail.trentech.pjp.listeners.PlateListener;
-import com.gmail.trentech.pjp.portals.Plate;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Rotation;
 
@@ -104,7 +104,7 @@ public class CMDPlate implements CommandExecutor {
 			}
 		}
 		
-		PlateListener.builders.put(player, new Plate(destination, rotation, price));
+		PlateListener.builders.put(player.getUniqueId(), new Plate(destination, rotation.getName(), price));
 
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place plate to create plate portal"));
 

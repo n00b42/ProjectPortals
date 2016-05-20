@@ -8,4 +8,7 @@ public class DataQueries  {
     public static final DataQuery DESTINATION = of("destination");
     public static final DataQuery ROTATION = of("rotation");
     public static final DataQuery PRICE = of("price");
+    public static final DataQuery FRAME = of("frame");
+    public static final DataQuery FILL = of("fill");
+    public static final DataQuery PARTICLE = of("particle");
 }

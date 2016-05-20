@@ -24,8 +24,8 @@ import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.Keys;
-import com.gmail.trentech.pjp.data.home.HomeData;
-import com.gmail.trentech.pjp.portals.Home;
+import com.gmail.trentech.pjp.data.mutable.HomeData;
+import com.gmail.trentech.pjp.data.object.Home;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDList implements CommandExecutor {

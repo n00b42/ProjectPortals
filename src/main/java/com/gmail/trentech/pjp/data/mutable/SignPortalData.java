@@ -1,8 +1,7 @@
-package com.gmail.trentech.pjp.data.signportal;
+package com.gmail.trentech.pjp.data.mutable;
 import static com.gmail.trentech.pjp.data.Keys.SIGN;
 
-import com.gmail.trentech.pjp.portals.Sign;
-import com.google.common.base.Preconditions;
+import java.util.Optional;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
@@ -11,7 +10,9 @@ import org.spongepowered.api.data.manipulator.mutable.common.AbstractSingleData;
 import org.spongepowered.api.data.merge.MergeFunction;
 import org.spongepowered.api.data.value.mutable.Value;
 
-import java.util.Optional;
+import com.gmail.trentech.pjp.data.immutable.ImmutableSignPortalData;
+import com.gmail.trentech.pjp.data.object.Sign;
+import com.google.common.base.Preconditions;
 
 public class SignPortalData extends AbstractSingleData<Sign, SignPortalData, ImmutableSignPortalData> {
 

@@ -10,7 +10,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
-import com.gmail.trentech.pjp.portals.Warp;
+import com.gmail.trentech.pjp.data.object.Warp;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDPrice implements CommandExecutor {
@@ -56,8 +56,9 @@ public class CMDPrice implements CommandExecutor {
 		}
 
 		warp.setPrice(price);
+		warp.update(name);
 
-		src.sendMessage(Text.of(TextColors.DARK_GREEN, "Set price of warp ", warp.getName(), " to $", price));
+		src.sendMessage(Text.of(TextColors.DARK_GREEN, "Set price of warp ", name, " to $", price));
 		
 		return CommandResult.success();
 	}

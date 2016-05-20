@@ -27,11 +27,10 @@ import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.Keys;
-import com.gmail.trentech.pjp.data.home.HomeData;
+import com.gmail.trentech.pjp.data.mutable.HomeData;
+import com.gmail.trentech.pjp.data.object.Home;
 import com.gmail.trentech.pjp.events.TeleportEvent;
-import com.gmail.trentech.pjp.portals.Home;
 import com.gmail.trentech.pjp.utils.Help;
-import com.gmail.trentech.pjp.utils.Rotation;
 
 public class CMDHome implements CommandExecutor {
 
@@ -93,14 +92,8 @@ public class CMDHome implements CommandExecutor {
 			if(!Main.getGame().getEventManager().post(teleportEvent)) {
 				Location<World> currentLocation = player.getLocation();
 				spawnLocation = teleportEvent.getDestination();
-				
-				Optional<Rotation> optionalRotation = home.getRotation();
-				
-				if(optionalRotation.isPresent()) {
-					player.setLocationAndRotation(spawnLocation, optionalRotation.get().toVector3d());
-				}else{
-					player.setLocation(spawnLocation);
-				}
+
+				player.setLocationAndRotation(spawnLocation, home.getRotation().toVector3d());
 				
 				TargetPlayer displaceEvent = SpongeEventFactory.createDisplaceEntityEventTargetPlayer(Cause.of(NamedCause.source(this)), new Transform<World>(currentLocation), new Transform<World>(spawnLocation), player);
 				Main.getGame().getEventManager().post(displaceEvent);

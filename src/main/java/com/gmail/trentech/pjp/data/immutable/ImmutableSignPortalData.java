@@ -1,4 +1,4 @@
-package com.gmail.trentech.pjp.data.signportal;
+package com.gmail.trentech.pjp.data.immutable;
 
 import static com.gmail.trentech.pjp.data.Keys.SIGN;
 
@@ -10,11 +10,12 @@ import org.spongepowered.api.data.manipulator.immutable.common.AbstractImmutable
 import org.spongepowered.api.data.value.BaseValue;
 import org.spongepowered.api.data.value.immutable.ImmutableValue;
 
-import com.gmail.trentech.pjp.portals.Sign;
+import com.gmail.trentech.pjp.data.mutable.SignPortalData;
+import com.gmail.trentech.pjp.data.object.Sign;
 
 public class ImmutableSignPortalData extends AbstractImmutableSingleData<Sign, ImmutableSignPortalData, SignPortalData> {
 
-    protected ImmutableSignPortalData(Sign value) {
+    public ImmutableSignPortalData(Sign value) {
         super(value, SIGN);
     }
 

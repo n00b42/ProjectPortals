@@ -1,4 +1,4 @@
-package com.gmail.trentech.pjp.data.signportal;
+package com.gmail.trentech.pjp.data.builder.manipulator;
 
 import static com.gmail.trentech.pjp.data.Keys.SIGN;
 
@@ -9,7 +9,9 @@ import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.manipulator.DataManipulatorBuilder;
 import org.spongepowered.api.data.persistence.InvalidDataException;
 
-import com.gmail.trentech.pjp.portals.Sign;
+import com.gmail.trentech.pjp.data.immutable.ImmutableSignPortalData;
+import com.gmail.trentech.pjp.data.mutable.SignPortalData;
+import com.gmail.trentech.pjp.data.object.Sign;
 
 public class SignPortalDataManipulatorBuilder implements DataManipulatorBuilder<SignPortalData, ImmutableSignPortalData> {
 

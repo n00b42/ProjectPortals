@@ -13,8 +13,8 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
 import com.gmail.trentech.pjp.Main;
+import com.gmail.trentech.pjp.data.object.Button;
 import com.gmail.trentech.pjp.listeners.ButtonListener;
-import com.gmail.trentech.pjp.portals.Button;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Rotation;
 
@@ -104,7 +104,7 @@ public class CMDButton implements CommandExecutor {
 			}
 		}
 		
-		ButtonListener.builders.put(player, new Button(destination, rotation, price));
+		ButtonListener.builders.put(player.getUniqueId(), new Button(destination, rotation.getName(), price));
 
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place button to create button portal"));
 

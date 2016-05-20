@@ -15,12 +15,12 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 
 import com.gmail.trentech.pjp.Main;
+import com.gmail.trentech.pjp.data.object.Portal;
+import com.gmail.trentech.pjp.data.object.builder.PortalBuilder;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.listeners.PortalListener;
-import com.gmail.trentech.pjp.portals.Portal;
-import com.gmail.trentech.pjp.portals.builders.PortalBuilder;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Rotation;
@@ -64,7 +64,7 @@ public class CMDCreate implements CommandExecutor {
 			return CommandResult.empty();
 		}
 		
-		if(Portal.getByName(name).isPresent()) {
+		if(Portal.get(name).isPresent()) {
 			src.sendMessage(Text.of(TextColors.DARK_RED, name, " already exists"));
 			return CommandResult.empty();
 		}
@@ -156,7 +156,7 @@ public class CMDCreate implements CommandExecutor {
 			}
 		}
 		
-		PortalListener.builders.put(player, new PortalBuilder(destination, rotation, particle, price).name(name));
+		PortalListener.builders.put(player.getUniqueId(), new PortalBuilder(name, destination, rotation, particle, price));
 		
 		player.sendMessage(Text.builder().color(TextColors.DARK_GREEN).append(Text.of("Begin building your portal frame, followed by "))
 				.onClick(TextActions.runCommand("/pjp:portal save")).append(Text.of(TextColors.YELLOW, TextStyles.UNDERLINE, "/portal save")).build());

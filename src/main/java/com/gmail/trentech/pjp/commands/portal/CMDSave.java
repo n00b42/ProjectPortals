@@ -12,8 +12,8 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 
 import com.gmail.trentech.pjp.Main;
+import com.gmail.trentech.pjp.data.object.builder.PortalBuilder;
 import com.gmail.trentech.pjp.listeners.PortalListener;
-import com.gmail.trentech.pjp.portals.builders.PortalBuilder;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDSave implements CommandExecutor {
@@ -32,13 +32,14 @@ public class CMDSave implements CommandExecutor {
 		}
 		Player player = (Player) src;
 
-		if(!PortalListener.builders.containsKey(player)) {
+		if(!PortalListener.builders.containsKey(player.getUniqueId())) {
+			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Not in build mode"));
 			return CommandResult.empty();
 		}
-		PortalBuilder builder = (PortalBuilder) PortalListener.builders.get(player);
+		PortalBuilder builder = PortalListener.builders.get(player.getUniqueId());
 
 		if(!builder.isFill()) {
-			builder.fill(true);
+			builder.setFill(true);
 			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Portal frame saved"));
 			player.sendMessage(Text.builder().color(TextColors.DARK_GREEN).append(Text.of("Begin filling in portal frame, followed by "))
 					.onClick(TextActions.runCommand("/pjp:portal save")).append(Text.of(TextColors.YELLOW, TextStyles.UNDERLINE, "/portal save")).build());
@@ -47,7 +48,7 @@ public class CMDSave implements CommandExecutor {
 		
 		if(builder.build()) {
 			Main.getGame().getScheduler().createTaskBuilder().name("PJP" + builder.getName()).delayTicks(20).execute(t -> {
-				PortalListener.builders.remove(player);
+				PortalListener.builders.remove(player.getUniqueId());
 			}).submit(Main.getPlugin());
 
 			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Portal ", builder.getName(), " created successfully"));

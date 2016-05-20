@@ -1,6 +1,7 @@
 package com.gmail.trentech.pjp.listeners;
 
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.spongepowered.api.block.BlockSnapshot;
@@ -25,16 +26,16 @@ import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
+import com.gmail.trentech.pjp.data.object.Plate;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.events.TeleportEvent;
-import com.gmail.trentech.pjp.portals.Plate;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 
 public class PlateListener {
 
-	public static ConcurrentHashMap<Player, Plate> builders = new ConcurrentHashMap<>();
+	public static ConcurrentHashMap<UUID, Plate> builders = new ConcurrentHashMap<>();
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Modify event, @First Player player) {
@@ -105,23 +106,21 @@ public class PlateListener {
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Break event, @First Player player) {
-		if(builders.containsKey(player)) {
-			builders.remove(player);
-			return;
-		}
-
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			Location<World> location = transaction.getFinal().getLocation().get();		
 
-			if(!Plate.get(location).isPresent()) {
+			Optional<Plate> optionalPlate = Plate.get(location);
+			
+			if(!optionalPlate.isPresent()) {
 				continue;
 			}
+			Plate plate = optionalPlate.get();
 			
 			if(!player.hasPermission("pjp.plate.break")) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to break pressure plate portals"));
 				event.setCancelled(true);
 			}else{
-				Plate.remove(location);
+				plate.remove(location);
 				player.sendMessage(Text.of(TextColors.DARK_GREEN, "Broke pressure plate portal"));
 			}
 		}
@@ -130,7 +129,7 @@ public class PlateListener {
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Place event, @First Player player) {
-		if(!builders.containsKey(player)) {
+		if(!builders.containsKey(player.getUniqueId())) {
 			return;
 		}
 
@@ -146,11 +145,11 @@ public class PlateListener {
 
 			if(!player.hasPermission("pjp.plate.place")) {
 	        	player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to place pressure plate portals"));
-	        	builders.remove(player);
+	        	builders.remove(player.getUniqueId());
 	        	return;
 			}
 
-            builders.get(player).save(location);
+			builders.get(player.getUniqueId()).create(location);
 
 			String[] split = new ConfigManager().getConfig().getNode("options", "particles", "type", "creation").getString().split(":");
 			
@@ -174,7 +173,7 @@ public class PlateListener {
 
             player.sendMessage(Text.of(TextColors.DARK_GREEN, "New pressure plate portal created"));
             
-            builders.remove(player);
+            builders.remove(player.getUniqueId());
 		}
 	}
 }

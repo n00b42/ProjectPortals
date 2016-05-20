@@ -25,8 +25,8 @@ import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
+import com.gmail.trentech.pjp.data.object.Warp;
 import com.gmail.trentech.pjp.events.TeleportEvent;
-import com.gmail.trentech.pjp.portals.Warp;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDWarp implements CommandExecutor {
@@ -58,7 +58,7 @@ public class CMDWarp implements CommandExecutor {
 			Optional<Location<World>> optionalSpawnLocation = warp.getDestination();
 			
 			if(!optionalSpawnLocation.isPresent()) {
-				player.sendMessage(Text.of(TextColors.DARK_RED, warp.destination.split(":")[0], " does not exist"));
+				player.sendMessage(Text.of(TextColors.DARK_RED, "Destination does not exist or world is not loaded"));
 				return CommandResult.empty();
 			}			
 			Location<World> spawnLocation = optionalSpawnLocation.get();

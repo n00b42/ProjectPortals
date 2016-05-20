@@ -24,7 +24,6 @@ public class ConfigManager {
 		
 		create();
 		load();
-		init();
 	}
 	
 	public ConfigManager(String configName) {
@@ -36,7 +35,6 @@ public class ConfigManager {
 		
 		create();
 		load();
-		init();
 	}
 	
 	public ConfigManager() {
@@ -48,7 +46,6 @@ public class ConfigManager {
 		
 		create();
 		load();
-		init();
 	}
 	
 	public ConfigurationLoader<CommentedConfigurationNode> getLoader() {
@@ -59,7 +56,7 @@ public class ConfigManager {
 		return config;
 	}
 
-	private void init() {
+	public void init() {
 		if(file.getName().equalsIgnoreCase("config.conf")){
 			if(config.getNode("options", "portal", "size").isVirtual()) {
 				config.getNode("options", "portal", "size").setValue(100).setComment("Maximum number of blocks a portal can use");

@@ -1,6 +1,7 @@
 package com.gmail.trentech.pjp.listeners;
 
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.spongepowered.api.block.BlockSnapshot;
@@ -23,16 +24,16 @@ import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
+import com.gmail.trentech.pjp.data.object.Lever;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.events.TeleportEvent;
-import com.gmail.trentech.pjp.portals.Lever;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 
 public class LeverListener {
 
-	public static ConcurrentHashMap<Player, Lever> builders = new ConcurrentHashMap<>();
+	public static ConcurrentHashMap<UUID, Lever> builders = new ConcurrentHashMap<>();
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Modify event, @First Player player) {
@@ -97,15 +98,18 @@ public class LeverListener {
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			Location<World> location = transaction.getFinal().getLocation().get();		
 
-			if(!Lever.get(location).isPresent()) {
+			Optional<Lever> optionalLever = Lever.get(location);
+			
+			if(!optionalLever.isPresent()) {
 				continue;
 			}
+			Lever lever = optionalLever.get();
 			
 			if(!player.hasPermission("pjp.lever.break")) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to break lever portals"));
 				event.setCancelled(true);
 			}else{
-				Lever.remove(location);
+				lever.remove(location);
 				player.sendMessage(Text.of(TextColors.DARK_GREEN, "Broke lever portal"));
 			}
 		}
@@ -114,7 +118,7 @@ public class LeverListener {
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Place event, @First Player player) {
-		if(!builders.containsKey(player)) {
+		if(!builders.containsKey(player.getUniqueId())) {
 			return;
 		}
 
@@ -129,12 +133,12 @@ public class LeverListener {
 
 			if(!player.hasPermission("pjp.lever.place")) {
 	        	player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to place lever portals"));
-	        	builders.remove(player);
+	        	builders.remove(player.getUniqueId());
 	        	event.setCancelled(true);
 	        	return;
 			}
 
-            builders.get(player).save(location);
+			builders.get(player.getUniqueId()).create(location);
 
 			String[] split = new ConfigManager().getConfig().getNode("options", "particles", "type", "creation").getString().split(":");
 			
@@ -158,7 +162,7 @@ public class LeverListener {
 
             player.sendMessage(Text.of(TextColors.DARK_GREEN, "New button lever created"));
             
-            builders.remove(player);
+            builders.remove(player.getUniqueId());
 		}
 	}
 }

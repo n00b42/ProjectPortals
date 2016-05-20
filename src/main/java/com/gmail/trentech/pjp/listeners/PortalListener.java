@@ -2,6 +2,7 @@ package com.gmail.trentech.pjp.listeners;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.spongepowered.api.block.BlockSnapshot;
@@ -17,9 +18,6 @@ import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
-import org.spongepowered.api.event.cause.entity.damage.DamageTypes;
-import org.spongepowered.api.event.cause.entity.damage.source.DamageSource;
-import org.spongepowered.api.event.entity.DamageEntityEvent;
 import org.spongepowered.api.event.entity.DisplaceEntityEvent;
 import org.spongepowered.api.event.entity.DisplaceEntityEvent.TargetPlayer;
 import org.spongepowered.api.event.filter.cause.First;
@@ -30,20 +28,22 @@ import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
+import com.gmail.trentech.pjp.data.object.Portal;
+import com.gmail.trentech.pjp.data.object.builder.PortalBuilder;
 import com.gmail.trentech.pjp.events.ConstructPortalEvent;
 import com.gmail.trentech.pjp.events.TeleportEvent;
-import com.gmail.trentech.pjp.portals.Portal;
-import com.gmail.trentech.pjp.portals.builders.PortalBuilder;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 
 import ninja.leaping.configurate.ConfigurationNode;
 
 public class PortalListener {
 
-	public static ConcurrentHashMap<Player, PortalBuilder> builders = new ConcurrentHashMap<>();
+	public static ConcurrentHashMap<UUID, PortalBuilder> builders = new ConcurrentHashMap<>();
 
 	@Listener
 	public void onConstructPortalEvent(ConstructPortalEvent event, @First Player player) {
+		List<Location<World>> locations = event.getLocations();
+		
 		for(Location<World> location : event.getLocations()) {
 			if(Portal.get(location).isPresent()) {
 	        	player.sendMessage(Text.of(TextColors.DARK_RED, "Portals cannot over lap other portals"));
@@ -52,8 +52,6 @@ public class PortalListener {
 			}
 		}
 
-        List<Location<World>> locations = event.getLocations();
-        
         ConfigurationNode config = new ConfigManager().getConfig();
         
         int size = config.getNode("options", "portal", "size").getInt();
@@ -72,7 +70,7 @@ public class PortalListener {
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Place event, @First Player player) {
-		if(!builders.containsKey(player)) {
+		if(!builders.containsKey(player.getUniqueId())) {
 			for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 				Location<World> location = transaction.getFinal().getLocation().get();		
 
@@ -85,7 +83,7 @@ public class PortalListener {
 			}
 			return;
 		}
-		PortalBuilder builder = (PortalBuilder) builders.get(player);
+		PortalBuilder builder = builders.get(player.getUniqueId());
 		
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			if(transaction.getFinal().getState().getType().equals(BlockTypes.FIRE)) {
@@ -105,7 +103,7 @@ public class PortalListener {
 	
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Break event, @First Player player) {
-		if(!builders.containsKey(player)) {
+		if(!builders.containsKey(player.getUniqueId())) {
 			for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 				Location<World> location = transaction.getFinal().getLocation().get();		
 
@@ -118,7 +116,7 @@ public class PortalListener {
 			}
 			return;
 		}
-		PortalBuilder builder = (PortalBuilder) builders.get(player);
+		PortalBuilder builder = builders.get(player.getUniqueId());
 		
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			Location<World> location = transaction.getFinal().getLocation().get();
@@ -185,7 +183,7 @@ public class PortalListener {
 		Portal portal = optionalPortal.get();
 		
 		if(new ConfigManager().getConfig().getNode("options", "advanced_permissions").getBoolean()) {
-			if(!player.hasPermission("pjp.portal." + portal.getName())) {
+			if(!player.hasPermission("pjp.portal." + Portal.get(portal.getFill().get(0)))) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use this portal"));
 				return;
 			}
@@ -199,7 +197,7 @@ public class PortalListener {
 		Optional<Location<World>> optionalSpawnLocation = portal.getDestination();
 		
 		if(!optionalSpawnLocation.isPresent()) {
-			player.sendMessage(Text.of(TextColors.DARK_RED, portal.destination.split(":")[0], " does not exist"));
+			player.sendMessage(Text.of(TextColors.DARK_RED, "Spawn location does not exist or world is not loaded"));
 			return;
 		}
 		Location<World> spawnLocation = optionalSpawnLocation.get();
@@ -218,27 +216,4 @@ public class PortalListener {
 			Main.getGame().getEventManager().post(displaceEvent);
 		}
 	}
-	
-    @Listener
-    public void onDamageEntityEvent(DamageEntityEvent event) {
-    	if(!(event.getTargetEntity() instanceof Player)) {
-    		return;
-    	}
-    	Player player = (Player) event.getTargetEntity();
-
-		if(!builders.containsKey(player)) {
-			return;
-		}
-
-		if(!event.getCause().first(DamageSource.class).isPresent()) {
-			return;
-		}
-		DamageSource damageSource = event.getCause().first(DamageSource.class).get();
-
-		if(!damageSource.getType().equals(DamageTypes.PROJECTILE)) {
-			return;
-		}
-		event.setCancelled(true);
-	}
-    
 }

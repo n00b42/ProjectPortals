@@ -1,5 +1,7 @@
 package com.gmail.trentech.pjp.commands.portal;
 
+import java.util.Optional;
+
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -9,7 +11,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-import com.gmail.trentech.pjp.portals.Portal;
+import com.gmail.trentech.pjp.data.object.Portal;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDRemove implements CommandExecutor {
@@ -35,12 +37,14 @@ public class CMDRemove implements CommandExecutor {
 		}
 		String name = args.<String>getOne("name").get().toLowerCase();
 
-		if(!Portal.getByName(name).isPresent()) {
+		Optional<Portal> optionalPortal = Portal.get(name);
+		
+		if(!optionalPortal.isPresent()) {
 			src.sendMessage(Text.of(TextColors.DARK_RED, name, " does not exist"));
 			return CommandResult.empty();
 		}
-		
-		Portal.remove(name);
+		Portal portal = optionalPortal.get();
+		portal.remove(name);
 
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Portal ", name, " removed"));
 

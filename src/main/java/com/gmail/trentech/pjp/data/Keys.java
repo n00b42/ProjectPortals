@@ -6,8 +6,8 @@ import org.spongepowered.api.data.key.KeyFactory;
 import org.spongepowered.api.data.value.mutable.MapValue;
 import org.spongepowered.api.data.value.mutable.Value;
 
-import com.gmail.trentech.pjp.portals.Home;
-import com.gmail.trentech.pjp.portals.Sign;
+import com.gmail.trentech.pjp.data.object.Home;
+import com.gmail.trentech.pjp.data.object.Sign;
 
 public class Keys {
 

@@ -1,6 +1,7 @@
 package com.gmail.trentech.pjp.listeners;
 
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.spongepowered.api.block.BlockSnapshot;
@@ -25,16 +26,16 @@ import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
+import com.gmail.trentech.pjp.data.object.Button;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.events.TeleportEvent;
-import com.gmail.trentech.pjp.portals.Button;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 
 public class ButtonListener {
 
-	public static ConcurrentHashMap<Player, Button> builders = new ConcurrentHashMap<>();
+	public static ConcurrentHashMap<UUID, Button> builders = new ConcurrentHashMap<>();
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Modify event, @First Player player) {
@@ -46,7 +47,6 @@ public class ButtonListener {
 			if(!blockType.equals(BlockTypes.STONE_BUTTON) && !blockType.equals(BlockTypes.WOODEN_BUTTON)) {
 				continue;
 			}
-
 			
 			if(!block.get(Keys.POWERED).isPresent()) {
 				continue;
@@ -109,15 +109,18 @@ public class ButtonListener {
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			Location<World> location = transaction.getFinal().getLocation().get();		
 
-			if(!Button.get(location).isPresent()) {
+			Optional<Button> optionalButton = Button.get(location);
+			
+			if(!optionalButton.isPresent()) {
 				continue;
 			}
+			Button button = optionalButton.get();
 			
 			if(!player.hasPermission("pjp.button.break")) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to break button portals"));
 				event.setCancelled(true);
 			}else{
-				Button.remove(location);
+				button.remove(location);
 				player.sendMessage(Text.of(TextColors.DARK_GREEN, "Broke button portal"));
 				
 			}
@@ -127,7 +130,7 @@ public class ButtonListener {
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Place event, @First Player player) {
-		if(!builders.containsKey(player)) {
+		if(!builders.containsKey(player.getUniqueId())) {
 			return;
 		}
 
@@ -142,11 +145,11 @@ public class ButtonListener {
 
 			if(!player.hasPermission("pjp.button.place")) {
 	        	player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to place button portals"));
-	        	builders.remove(player);
+	        	builders.remove(player.getUniqueId());
 	        	return;
 			}
 
-            builders.get(player).save(location);
+			builders.get(player.getUniqueId()).create(location);
 
 			String[] split = new ConfigManager().getConfig().getNode("options", "particles", "type", "creation").getString().split(":");
 			
@@ -170,7 +173,7 @@ public class ButtonListener {
 
             player.sendMessage(Text.of(TextColors.DARK_GREEN, "New button portal created"));
             
-            builders.remove(player);
+            builders.remove(player.getUniqueId());
 		}
 	}
 }

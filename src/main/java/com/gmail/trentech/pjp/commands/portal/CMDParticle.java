@@ -13,10 +13,10 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
+import com.gmail.trentech.pjp.data.object.Portal;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
-import com.gmail.trentech.pjp.portals.Portal;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDParticle implements CommandExecutor {
@@ -41,11 +41,11 @@ public class CMDParticle implements CommandExecutor {
 		}
 		String name = args.<String>getOne("name").get().toLowerCase();
 
-		if(!Portal.getByName(name).isPresent()) {
+		if(!Portal.get(name).isPresent()) {
 			src.sendMessage(Text.of(TextColors.DARK_RED, name, " does not exist"));
 			return CommandResult.empty();
 		}	
-		Portal portal = Portal.getByName(name).get();
+		Portal portal = Portal.get(name).get();
 		
 		if(!args.hasAny("type")) {
 			src.sendMessage(invalidArg());
@@ -78,6 +78,7 @@ public class CMDParticle implements CommandExecutor {
 		}
 
 		portal.setParticle(type);
+		portal.update(name);
 
 		return CommandResult.success();
 	}

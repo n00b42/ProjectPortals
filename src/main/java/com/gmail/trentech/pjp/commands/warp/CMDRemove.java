@@ -1,5 +1,7 @@
 package com.gmail.trentech.pjp.commands.warp;
 
+import java.util.Optional;
+
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -9,7 +11,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-import com.gmail.trentech.pjp.portals.Warp;
+import com.gmail.trentech.pjp.data.object.Warp;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDRemove implements CommandExecutor {
@@ -33,16 +35,18 @@ public class CMDRemove implements CommandExecutor {
 			src.sendMessage(Text.of(TextColors.YELLOW, "/home remove <name>"));
 			return CommandResult.empty();
 		}
-		String warpName = args.<String>getOne("name").get().toLowerCase();
+		String name = args.<String>getOne("name").get().toLowerCase();
 		
-		if(!Warp.get(warpName).isPresent()) {
-			src.sendMessage(Text.of(TextColors.DARK_RED, warpName, " does not exist"));
+		Optional<Warp> optionalWarp = Warp.get(name);
+		
+		if(!optionalWarp.isPresent()) {
+			src.sendMessage(Text.of(TextColors.DARK_RED, name, " does not exist"));
 			return CommandResult.empty();
 		}
-		
-		Warp.remove(warpName);
+		Warp warp = optionalWarp.get();
+		warp.remove(name);
 
-		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Warp ", warpName, " removed"));
+		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Warp ", name, " removed"));
 
 		return CommandResult.success();
 	}

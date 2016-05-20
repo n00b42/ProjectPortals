@@ -1,4 +1,4 @@
-package com.gmail.trentech.pjp.data.signportal;
+package com.gmail.trentech.pjp.data.builder.data;
 
 import static com.gmail.trentech.pjp.data.DataQueries.DESTINATION;
 import static com.gmail.trentech.pjp.data.DataQueries.PRICE;
@@ -10,7 +10,7 @@ import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.persistence.AbstractDataBuilder;
 import org.spongepowered.api.data.persistence.InvalidDataException;
 
-import com.gmail.trentech.pjp.portals.Sign;
+import com.gmail.trentech.pjp.data.object.Sign;
 
 public class SignBuilder extends AbstractDataBuilder<Sign> {
 
@@ -21,9 +21,13 @@ public class SignBuilder extends AbstractDataBuilder<Sign> {
     @Override
     protected Optional<Sign> buildContent(DataView container) throws InvalidDataException {
         if (container.contains(DESTINATION, ROTATION, PRICE)) {
-            Sign signPortal = new Sign(container.getString(DESTINATION).get(), container.getString(ROTATION).get(), container.getDouble(PRICE).get());
-            return Optional.of(signPortal);
+        	String destination = container.getString(DESTINATION).get();
+        	String rotation = container.getString(ROTATION).get();
+        	Double price = container.getDouble(PRICE).get();
+        	
+            return Optional.of(new Sign(destination, rotation, price));
         }
+        
         return Optional.empty();
     }
 }
