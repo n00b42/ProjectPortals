@@ -52,7 +52,7 @@ public class DoorListener {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to break door portals"));
 				event.setCancelled(true);
 			}else{
-				door.remove(location);
+				door.remove();
 				player.sendMessage(Text.of(TextColors.DARK_GREEN, "Broke door portal"));
 			}
 			return;
@@ -83,7 +83,9 @@ public class DoorListener {
 	        	return;
 			}
 
-			builders.get(player.getUniqueId()).create(location);
+			Door door = builders.get(player.getUniqueId());
+			door.setLocation(location);
+			door.create();
 
 			String[] split = new ConfigManager().getConfig().getNode("options", "particles", "type", "creation").getString().split(":");
 			

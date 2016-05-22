@@ -50,7 +50,7 @@ public class CMDPrice implements CommandExecutor {
 		}
 
 		portal.setPrice(price);
-		portal.update(name);
+		portal.update();
 
 		src.sendMessage(Text.of(TextColors.DARK_GREEN, "Set price of portal ", name, " to $", price));
 		

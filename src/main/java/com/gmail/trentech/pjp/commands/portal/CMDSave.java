@@ -12,7 +12,7 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.data.object.builder.PortalBuilder;
+import com.gmail.trentech.pjp.data.object.PortalBuilder;
 import com.gmail.trentech.pjp.listeners.PortalListener;
 import com.gmail.trentech.pjp.utils.Help;
 

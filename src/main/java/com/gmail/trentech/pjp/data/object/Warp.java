@@ -12,9 +12,13 @@ import com.gmail.trentech.pjp.utils.Serializer;
 public class Warp extends PortalBase {
 
 	private static ConcurrentHashMap<String, Warp> cache = new ConcurrentHashMap<>();
-	
+
 	public Warp(String destination, String rotation, double price) {
 		super(destination, rotation, price);
+	}
+
+	public Warp(String name, String destination, String rotation, double price) {
+		super(name, destination, rotation, price);
 	}
 
 	public static Optional<Warp> get(String name) {
@@ -29,7 +33,7 @@ public class Warp extends PortalBase {
 		return cache;
 	}
 	
-	public void create(String name) {
+	public void create() {
 		try {
 		    Connection connection = getDataSource().getConnection();
 		    
@@ -48,7 +52,7 @@ public class Warp extends PortalBase {
 		}
 	}
 	
-	public void update(String name) {
+	public void update() {
 		try {
 		    Connection connection = getDataSource().getConnection();
 		    
@@ -67,7 +71,7 @@ public class Warp extends PortalBase {
 		}
 	}
 	
-	public void remove(String name) {
+	public void remove() {
 		try {
 		    Connection connection = getDataSource().getConnection();
 		    
@@ -93,7 +97,12 @@ public class Warp extends PortalBase {
 			ResultSet result = statement.executeQuery();
 
 			while (result.next()) {
-				cache.put(result.getString("Name"), Serializer.deserializeWarp(result.getString("Warp")));
+				String name = result.getString("Name");
+				
+				Warp warp = Serializer.deserializeWarp(result.getString("Warp"));
+				warp.setName(name);
+				
+				cache.put(name, warp);
 			}
 			
 			connection.close();

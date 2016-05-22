@@ -72,7 +72,7 @@ public class CMDParticle implements CommandExecutor {
 		}
 
 		portal.setParticle(type);
-		portal.update(name);
+		portal.update();
 
 		return CommandResult.success();
 	}

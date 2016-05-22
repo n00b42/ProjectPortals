@@ -20,6 +20,10 @@ public class Plate extends PortalBase {
 		super(destination, rotation, price);
 	}
 
+	public Plate(String name, String destination, String rotation, double price) {
+		super(name, destination, rotation, price);
+	}
+	
 	public static Optional<Plate> get(Location<World> location) {
 		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 
@@ -30,9 +34,7 @@ public class Plate extends PortalBase {
 		return Optional.empty();
 	}
 
-	public void create(Location<World> location) {
-		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
-		
+	public void create() {
 		try {
 		    Connection connection = getDataSource().getConnection();
 		    
@@ -51,9 +53,7 @@ public class Plate extends PortalBase {
 		}
 	}
 	
-	public void update(Location<World> location) {
-		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
-
+	public void update() {
 		try {
 		    Connection connection = getDataSource().getConnection();
 		    
@@ -72,9 +72,7 @@ public class Plate extends PortalBase {
 		}
 	}
 	
-	public void remove(Location<World> location) {
-		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
-		
+	public void remove() {
 		try {
 		    Connection connection = getDataSource().getConnection();
 		    
@@ -100,7 +98,12 @@ public class Plate extends PortalBase {
 			ResultSet result = statement.executeQuery();
 
 			while (result.next()) {
-				cache.put(result.getString("Name"), Serializer.deserializePlate(result.getString("Plate")));
+				String name = result.getString("Name");
+				
+				Plate plate = Serializer.deserializePlate(result.getString("Plate"));
+				plate.setName(name);
+				
+				cache.put(name, plate);
 			}
 			
 			connection.close();

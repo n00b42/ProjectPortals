@@ -37,7 +37,7 @@ public class CMDRemove implements CommandExecutor {
 			return CommandResult.empty();
 		}
 		Portal portal = optionalPortal.get();
-		portal.remove(name);
+		portal.remove();
 
 		src.sendMessage(Text.of(TextColors.DARK_GREEN, "Portal ", name, " removed"));
 

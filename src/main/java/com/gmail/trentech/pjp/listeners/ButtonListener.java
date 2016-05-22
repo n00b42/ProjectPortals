@@ -120,7 +120,7 @@ public class ButtonListener {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to break button portals"));
 				event.setCancelled(true);
 			}else{
-				button.remove(location);
+				button.remove();
 				player.sendMessage(Text.of(TextColors.DARK_GREEN, "Broke button portal"));
 				
 			}
@@ -149,7 +149,9 @@ public class ButtonListener {
 	        	return;
 			}
 
-			builders.get(player.getUniqueId()).create(location);
+			Button button = builders.get(player.getUniqueId());
+			button.setLocation(location);
+			button.create();
 
 			String[] split = new ConfigManager().getConfig().getNode("options", "particles", "type", "creation").getString().split(":");
 			

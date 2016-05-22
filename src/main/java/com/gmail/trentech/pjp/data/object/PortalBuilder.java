@@ -1,4 +1,4 @@
-package com.gmail.trentech.pjp.data.object.builder;
+package com.gmail.trentech.pjp.data.object;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,6 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.data.object.Portal;
 import com.gmail.trentech.pjp.events.ConstructPortalEvent;
 import com.gmail.trentech.pjp.utils.Rotation;
 
@@ -98,7 +97,7 @@ public class PortalBuilder {
 				location.getExtent().setBlock(location.getBlockX(), location.getBlockY(), location.getBlockZ(), block, false, Cause.of(NamedCause.source(Main.getPlugin())));
 			}
 
-			new Portal(destination, rotation, frame, fill, particle, price).create(getName());
+			new Portal(getName(), destination, rotation, frame, fill, particle, price).create();
 
 			return true;
 		}

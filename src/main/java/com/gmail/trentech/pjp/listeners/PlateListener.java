@@ -120,7 +120,7 @@ public class PlateListener {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to break pressure plate portals"));
 				event.setCancelled(true);
 			}else{
-				plate.remove(location);
+				plate.remove();
 				player.sendMessage(Text.of(TextColors.DARK_GREEN, "Broke pressure plate portal"));
 			}
 		}
@@ -149,7 +149,9 @@ public class PlateListener {
 	        	return;
 			}
 
-			builders.get(player.getUniqueId()).create(location);
+			Plate plate = builders.get(player.getUniqueId());
+			plate.setLocation(location);
+			plate.create();
 
 			String[] split = new ConfigManager().getConfig().getNode("options", "particles", "type", "creation").getString().split(":");
 			

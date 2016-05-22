@@ -29,7 +29,7 @@ import org.spongepowered.api.world.World;
 import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.object.Portal;
-import com.gmail.trentech.pjp.data.object.builder.PortalBuilder;
+import com.gmail.trentech.pjp.data.object.PortalBuilder;
 import com.gmail.trentech.pjp.events.ConstructPortalEvent;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.utils.ConfigManager;

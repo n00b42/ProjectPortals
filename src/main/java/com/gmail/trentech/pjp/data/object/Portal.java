@@ -26,14 +26,14 @@ import com.gmail.trentech.pjp.utils.Serializer;
 public class Portal extends PortalBase {
 
 	private static ConcurrentHashMap<String, Portal> cache = new ConcurrentHashMap<>();
-	
+
 	private final List<String> frame;
 	private final List<String> fill;
 	private String particle;
 	
 	public Portal(String destination, String rotation, List<String> frame, List<String> fill, String particle, double price) {
 		super(destination, rotation, price);
-		
+
 		this.frame = frame;
 		this.fill = fill;
 		
@@ -43,6 +43,18 @@ public class Portal extends PortalBase {
 		}
 	}
 
+	public Portal(String name, String destination, String rotation, List<String> frame, List<String> fill, String particle, double price) {
+		super(name, destination, rotation, price);
+
+		this.frame = frame;
+		this.fill = fill;
+		
+		this.particle = particle;
+		if(this.particle == null) {
+			this.particle = new ConfigManager().getConfig().getNode("options", "particles", "type", "portal").getString().toUpperCase();
+		}
+	}
+	
 	public String getParticle() {
 		return particle;
 	}
@@ -137,7 +149,7 @@ public class Portal extends PortalBase {
 		return cache;
 	}
 
-	public void create(String name) {
+	public void create() {
 		try {
 		    Connection connection = getDataSource().getConnection();
 		    
@@ -163,7 +175,7 @@ public class Portal extends PortalBase {
 		}
 	}
 	
-	public void update(String name) {
+	public void update() {
 		try {
 		    Connection connection = getDataSource().getConnection();
 		    
@@ -195,7 +207,7 @@ public class Portal extends PortalBase {
 		}
 	}
 	
-	public void remove(String name) {
+	public void remove() {
 		try {
 		    Connection connection = getDataSource().getConnection();
 		    
@@ -228,7 +240,10 @@ public class Portal extends PortalBase {
 
 			while (result.next()) {
 				String name = result.getString("Name");
+				
 				Portal portal = Serializer.deserializePortal(result.getString("Portal"));
+				portal.setName(name);
+				
 				cache.put(name, portal);
 				
 	    		String[] split = portal.getParticle().split(":");
@@ -244,7 +259,7 @@ public class Portal extends PortalBase {
 			e.printStackTrace();
 		}
 	}
-
+	
 	@Override
     public DataContainer toContainer() {
         return new MemoryDataContainer().set(DataQueries.DESTINATION, destination).set(DataQueries.ROTATION, rotation)

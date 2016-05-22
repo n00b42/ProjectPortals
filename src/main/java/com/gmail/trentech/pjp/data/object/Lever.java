@@ -20,6 +20,10 @@ public class Lever extends PortalBase {
 		super(destination, rotation, price);
 	}
 
+	public Lever(String name, String destination, String rotation, double price) {
+		super(name, destination, rotation, price);
+	}
+	
 	public static Optional<Lever> get(Location<World> location) {
 		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 
@@ -30,9 +34,7 @@ public class Lever extends PortalBase {
 		return Optional.empty();
 	}
 
-	public void create(Location<World> location) {
-		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
-		
+	public void create() {
 		try {
 		    Connection connection = getDataSource().getConnection();
 		    
@@ -51,9 +53,7 @@ public class Lever extends PortalBase {
 		}
 	}
 	
-	public void update(Location<World> location) {
-		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
-
+	public void update() {
 		try {
 		    Connection connection = getDataSource().getConnection();
 		    
@@ -72,9 +72,7 @@ public class Lever extends PortalBase {
 		}
 	}
 	
-	public void remove(Location<World> location) {
-		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
-		
+	public void remove() {
 		try {
 		    Connection connection = getDataSource().getConnection();
 		    
@@ -100,7 +98,12 @@ public class Lever extends PortalBase {
 			ResultSet result = statement.executeQuery();
 
 			while (result.next()) {
-				cache.put(result.getString("Name"), Serializer.deserializeLever(result.getString("Lever")));
+				String name = result.getString("Name");
+				
+				Lever lever = Serializer.deserializeLever(result.getString("Lever"));
+				lever.setName(name);
+				
+				cache.put(name, lever);
 			}
 			
 			connection.close();

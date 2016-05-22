@@ -109,7 +109,7 @@ public class LeverListener {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to break lever portals"));
 				event.setCancelled(true);
 			}else{
-				lever.remove(location);
+				lever.remove();
 				player.sendMessage(Text.of(TextColors.DARK_GREEN, "Broke lever portal"));
 			}
 		}
@@ -138,7 +138,9 @@ public class LeverListener {
 	        	return;
 			}
 
-			builders.get(player.getUniqueId()).create(location);
+			Lever lever = builders.get(player.getUniqueId());
+			lever.setLocation(location);
+			lever.create();
 
 			String[] split = new ConfigManager().getConfig().getNode("options", "particles", "type", "creation").getString().split(":");
 			

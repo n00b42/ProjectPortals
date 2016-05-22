@@ -50,7 +50,7 @@ public class CMDPrice implements CommandExecutor {
 		}
 
 		warp.setPrice(price);
-		warp.update(name);
+		warp.update();
 
 		src.sendMessage(Text.of(TextColors.DARK_GREEN, "Set price of warp ", name, " to $", price));
 		

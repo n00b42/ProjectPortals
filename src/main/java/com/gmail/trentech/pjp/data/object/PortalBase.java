@@ -15,7 +15,7 @@ import com.gmail.trentech.pjp.utils.SQLUtils;
 import com.gmail.trentech.pjp.utils.Utils;
 
 public class PortalBase extends SQLUtils implements DataSerializable {
-
+	protected String name;
 	protected String destination;
 	protected String rotation;
 	protected double price;
@@ -26,6 +26,45 @@ public class PortalBase extends SQLUtils implements DataSerializable {
 		this.price = price;
 	}
 
+	protected PortalBase(String name, String destination, String rotation, double price) {
+		this.name = name;
+		this.destination = destination;
+		this.rotation = rotation;
+		this.price = price;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	protected void setName(String name) {
+		this.name = name;
+	}
+	
+	public Optional<Location<World>> getLocation() {
+		String[] args = name.split(":");
+		
+		Optional<World> optionalWorld = Main.getGame().getServer().getWorld(args[0]);
+		
+		if(!optionalWorld.isPresent()) {
+			return Optional.empty();
+		}
+		World world = optionalWorld.get();
+
+		String[] coords = args[1].split("\\.");
+		
+		int x = Integer.parseInt(coords[0]);
+		int y = Integer.parseInt(coords[1]);
+		int z = Integer.parseInt(coords[2]);
+		
+		return Optional.of(world.getLocation(x, y, z));	
+	}
+	
+	public void setLocation(Location<World> location) {
+		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
+		this.name = name;
+	}
+	
 	public double getPrice() {
 		return price;
 	}

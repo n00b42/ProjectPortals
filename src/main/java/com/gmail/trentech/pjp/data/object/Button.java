@@ -15,9 +15,13 @@ import com.gmail.trentech.pjp.utils.Serializer;
 public class Button extends PortalBase {
 
 	private static ConcurrentHashMap<String, Button> cache = new ConcurrentHashMap<>();
-	
+
 	public Button(String destination, String rotation, double price) {
 		super(destination, rotation, price);
+	}
+
+	public Button(String name, String destination, String rotation, double price) {
+		super(name, destination, rotation, price);
 	}
 
 	public static Optional<Button> get(Location<World> location) {
@@ -30,9 +34,7 @@ public class Button extends PortalBase {
 		return Optional.empty();
 	}
 
-	public void create(Location<World> location) {
-		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
-		
+	public void create() {
 		try {
 		    Connection connection = getDataSource().getConnection();
 		    
@@ -51,9 +53,7 @@ public class Button extends PortalBase {
 		}
 	}
 	
-	public void update(Location<World> location) {
-		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
-
+	public void update() {
 		try {
 		    Connection connection = getDataSource().getConnection();
 		    
@@ -72,9 +72,7 @@ public class Button extends PortalBase {
 		}
 	}
 	
-	public void remove(Location<World> location) {
-		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
-		
+	public void remove() {
 		try {
 		    Connection connection = getDataSource().getConnection();
 		    
@@ -100,7 +98,12 @@ public class Button extends PortalBase {
 			ResultSet result = statement.executeQuery();
 
 			while (result.next()) {
-				cache.put(result.getString("Name"), Serializer.deserializeButton(result.getString("Button")));
+				String name = result.getString("Name");
+				
+				Button button = Serializer.deserializeButton(result.getString("Button"));
+				button.setName(name);
+
+				cache.put(name, button);
 			}
 			
 			connection.close();

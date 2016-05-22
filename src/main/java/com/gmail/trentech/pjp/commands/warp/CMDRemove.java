@@ -37,7 +37,7 @@ public class CMDRemove implements CommandExecutor {
 			return CommandResult.empty();
 		}
 		Warp warp = optionalWarp.get();
-		warp.remove(name);
+		warp.remove();
 
 		src.sendMessage(Text.of(TextColors.DARK_GREEN, "Warp ", name, " removed"));
 

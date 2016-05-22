@@ -124,7 +124,7 @@ public class CMDCreate implements CommandExecutor {
 			}
 		}
 
-		new Warp(destination, rotation.getName(), price).create(name);
+		new Warp(name, destination, rotation.getName(), price).create();
 
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Warp ", name, " create"));
 

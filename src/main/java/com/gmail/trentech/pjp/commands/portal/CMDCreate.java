@@ -16,7 +16,7 @@ import org.spongepowered.api.text.format.TextStyles;
 
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.object.Portal;
-import com.gmail.trentech.pjp.data.object.builder.PortalBuilder;
+import com.gmail.trentech.pjp.data.object.PortalBuilder;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
