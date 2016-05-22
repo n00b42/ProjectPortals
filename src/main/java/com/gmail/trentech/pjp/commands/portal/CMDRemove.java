@@ -7,7 +7,6 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
@@ -25,12 +24,6 @@ public class CMDRemove implements CommandExecutor {
 	
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if(!(src instanceof Player)) {
-			src.sendMessage(Text.of(TextColors.DARK_RED, "Must be a player"));
-			return CommandResult.empty();
-		}
-		Player player = (Player) src;
-		
 		if(!args.hasAny("name")) {
 			src.sendMessage(Text.of(TextColors.YELLOW, "/portal remove <name>"));
 			return CommandResult.empty();
@@ -46,7 +39,7 @@ public class CMDRemove implements CommandExecutor {
 		Portal portal = optionalPortal.get();
 		portal.remove(name);
 
-		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Portal ", name, " removed"));
+		src.sendMessage(Text.of(TextColors.DARK_GREEN, "Portal ", name, " removed"));
 
 		return CommandResult.success();
 	}

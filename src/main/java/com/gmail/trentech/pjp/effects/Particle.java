@@ -45,17 +45,17 @@ public class Particle {
 		return false;
 	}
 	
-	public void spawnParticle(Location<World> location, ParticleColor color) {
+	public void spawnParticle(Location<World> location, ParticleColor color, boolean player) {
 		if(new ConfigManager().getConfig().getNode("options", "particles", "enable").getBoolean()) {
 			if(isColorable()) {
-				spawnColoredNonRepeat(location, color);
+				spawnColoredNonRepeat(location, color, player);
 			}
 		}
 	}
 	
-	public void spawnParticle(Location<World> location) {
+	public void spawnParticle(Location<World> location, boolean player) {
 		if(new ConfigManager().getConfig().getNode("options", "particles", "enable").getBoolean()) {
-			spawnNonRepeat(location);
+			spawnNonRepeat(location, player);
 		}
 	}
 
@@ -73,21 +73,31 @@ public class Particle {
 		}
 	}
 
-	private void spawnNonRepeat(Location<World> location) {
+	private void spawnNonRepeat(Location<World> location, boolean player) {
 		ParticleEffect particle = ParticleEffect.builder().type(getType()).build();
 		
 		for(int i = 0; i < 9; i++) {
-			location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble(),random.nextDouble(),random.nextDouble()));
-			location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble(),random.nextDouble(),random.nextDouble()));
+			if(player) {
+				location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble() - .5,random.nextDouble() - .5,random.nextDouble() - .5));
+				location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble() - .5,random.nextDouble() - .5,random.nextDouble() - .5));
+			}else {
+				location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble(),random.nextDouble(),random.nextDouble()));
+				location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble(),random.nextDouble(),random.nextDouble()));
+			}
 		}
 	}
 	
-	private void spawnColoredNonRepeat(Location<World>location, ParticleColor color) {
+	private void spawnColoredNonRepeat(Location<World>location, ParticleColor color, boolean player) {
 		ColoredParticle particle = ColoredParticle.builder().color(color.getColor()).type((Colorable) getType()).build();
 		
 		for(int i = 0; i < 9; i++) {
-			location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble(),random.nextDouble(),random.nextDouble()));
-			location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble(),random.nextDouble(),random.nextDouble()));
+			if(player) {
+				location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble() - .5,random.nextDouble() - .5,random.nextDouble() - .5));
+				location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble() - .5,random.nextDouble() - .5,random.nextDouble() - .5));
+			}else {
+				location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble(),random.nextDouble(),random.nextDouble()));
+				location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble(),random.nextDouble(),random.nextDouble()));
+			}
 		}
 	}
 	

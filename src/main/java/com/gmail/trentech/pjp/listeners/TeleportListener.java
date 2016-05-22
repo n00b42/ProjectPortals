@@ -90,15 +90,15 @@ public class TeleportListener {
 				Optional<ParticleColor> optionalColors = ParticleColor.get(split[1]);
 				
 				if(optionalColors.isPresent()) {
-					particle.spawnParticle(src, optionalColors.get());
-					particle.spawnParticle(src.getRelative(Direction.UP), optionalColors.get());
+					particle.spawnParticle(src, optionalColors.get(), true);
+					particle.spawnParticle(src.getRelative(Direction.UP), optionalColors.get(), true);
 				}else{
-					particle.spawnParticle(src);
-					particle.spawnParticle(src.getRelative(Direction.UP), optionalColors.get());
+					particle.spawnParticle(src, true);
+					particle.spawnParticle(src.getRelative(Direction.UP), optionalColors.get(), true);
 				}
 			}else{
-				particle.spawnParticle(src);
-				particle.spawnParticle(src.getRelative(Direction.UP));
+				particle.spawnParticle(src, true);
+				particle.spawnParticle(src.getRelative(Direction.UP), true);
 			}
 		}
 

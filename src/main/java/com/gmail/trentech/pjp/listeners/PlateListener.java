@@ -162,12 +162,12 @@ public class PlateListener {
 					Optional<ParticleColor> optionalColors = ParticleColor.get(split[1]);
 					
 					if(optionalColors.isPresent()) {
-						particle.spawnParticle(location, optionalColors.get());
+						particle.spawnParticle(location, optionalColors.get(), false);
 					}else{
-						particle.spawnParticle(location);
+						particle.spawnParticle(location, false);
 					}
 				}else{
-					particle.spawnParticle(location);
+					particle.spawnParticle(location, false);
 				}
 			}
 

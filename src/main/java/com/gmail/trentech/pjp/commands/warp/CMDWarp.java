@@ -33,13 +33,13 @@ public class CMDWarp implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if(!(src instanceof Player)) {
-			src.sendMessage(Text.of(TextColors.DARK_RED, "Must be a player"));
-			return CommandResult.empty();
-		}
-		Player player = (Player) src;
-		
 		if(args.hasAny("name")) {
+			if(!(src instanceof Player)) {
+				src.sendMessage(Text.of(TextColors.DARK_RED, "Must be a player"));
+				return CommandResult.empty();
+			}
+			Player player = (Player) src;
+			
 			String warpName = args.<String>getOne("name").get().toLowerCase();
 			
 			Optional<Warp> optionalWarp = Warp.get(warpName);

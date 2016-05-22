@@ -64,12 +64,12 @@ public class SignListener {
 				Optional<ParticleColor> optionalColors = ParticleColor.get(split[1]);
 				
 				if(optionalColors.isPresent()) {
-					particle.spawnParticle(event.getTargetTile().getLocation(), optionalColors.get());
+					particle.spawnParticle(event.getTargetTile().getLocation(), optionalColors.get(), false);
 				}else{
-					particle.spawnParticle(event.getTargetTile().getLocation());
+					particle.spawnParticle(event.getTargetTile().getLocation(), false);
 				}
 			}else{
-				particle.spawnParticle(event.getTargetTile().getLocation());
+				particle.spawnParticle(event.getTargetTile().getLocation(), false);
 			}
 		}
 
