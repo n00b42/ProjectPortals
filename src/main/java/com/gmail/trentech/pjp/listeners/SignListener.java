@@ -28,11 +28,16 @@ import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.immutable.ImmutableSignPortalData;
 import com.gmail.trentech.pjp.data.mutable.SignPortalData;
+import com.gmail.trentech.pjp.data.object.Sign;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.events.TeleportEvent;
+import com.gmail.trentech.pjp.events.TeleportEvent.Local;
+import com.gmail.trentech.pjp.events.TeleportEvent.Server;
 import com.gmail.trentech.pjp.utils.ConfigManager;
+
+import flavor.pie.spongee.Spongee;
 
 public class SignListener {
 	
@@ -93,15 +98,8 @@ public class SignListener {
 			return;
 		}
 		SignPortalData portalData = optionalSignPortalData.get();
+		Sign sign = portalData.sign().get();
 
-		Optional<Location<World>> optionalSpawnLocation = portalData.sign().get().getDestination();
-		
-		if(!optionalSpawnLocation.isPresent()) {
-			player.sendMessage(Text.of(TextColors.DARK_RED, "Destination does not exist"));
-			return;
-		}
-		Location<World> spawnLocation = optionalSpawnLocation.get();
-		
 		if(new ConfigManager().getConfig().getNode("options", "advanced_permissions").getBoolean()) {
 			if(!player.hasPermission("pjp.sign." + location.getExtent().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ())) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use this sign portal"));
@@ -116,18 +114,36 @@ public class SignListener {
 			}
 		}
 
-		TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, 0, Cause.of(NamedCause.source(portalData)));
-
-		if(!Main.getGame().getEventManager().post(teleportEvent)) {
-			Location<World> currentLocation = player.getLocation();
-			spawnLocation = teleportEvent.getDestination();
+		if(sign.isBungee()) {
+			String source = "source";
 			
-			Vector3d rotation = portalData.sign().get().getRotation().toVector3d();
+			Server teleportEvent = new TeleportEvent.Server(player, source, sign.getServer(), sign.getPrice(), Cause.of(NamedCause.source(sign)));
 
-			player.setLocationAndRotation(spawnLocation, rotation);
+			if(!Main.getGame().getEventManager().post(teleportEvent)) {
+				Spongee.API.connectPlayer(player, teleportEvent.getDestination());
+			}
+		}else {
+			Optional<Location<World>> optionalSpawnLocation = sign.getDestination();
+			
+			if(!optionalSpawnLocation.isPresent()) {
+				player.sendMessage(Text.of(TextColors.DARK_RED, "Destination does not exist"));
+				return;
+			}
+			Location<World> spawnLocation = optionalSpawnLocation.get();
+			
+			Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, 0, Cause.of(NamedCause.source(sign)));
 
-			TargetPlayer displaceEvent = SpongeEventFactory.createDisplaceEntityEventTargetPlayer(Cause.of(NamedCause.source(this)), new Transform<World>(currentLocation), new Transform<World>(spawnLocation), player);
-			Main.getGame().getEventManager().post(displaceEvent);
+			if(!Main.getGame().getEventManager().post(teleportEvent)) {
+				Location<World> currentLocation = player.getLocation();
+				spawnLocation = teleportEvent.getDestination();
+				
+				Vector3d rotation = portalData.sign().get().getRotation().toVector3d();
+
+				player.setLocationAndRotation(spawnLocation, rotation);
+
+				TargetPlayer displaceEvent = SpongeEventFactory.createDisplaceEntityEventTargetPlayer(Cause.of(NamedCause.source(this)), new Transform<World>(currentLocation), new Transform<World>(spawnLocation), player);
+				Main.getGame().getEventManager().post(displaceEvent);
+			}
 		}
 	}
 	

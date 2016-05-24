@@ -31,8 +31,8 @@ public class Portal extends PortalBase {
 	private final List<String> fill;
 	private String particle;
 	
-	public Portal(String destination, String rotation, List<String> frame, List<String> fill, String particle, double price) {
-		super(destination, rotation, price);
+	public Portal(String destination, String rotation, List<String> frame, List<String> fill, String particle, double price, boolean bungee) {
+		super(destination, rotation, price, bungee);
 
 		this.frame = frame;
 		this.fill = fill;
@@ -43,8 +43,8 @@ public class Portal extends PortalBase {
 		}
 	}
 
-	public Portal(String name, String destination, String rotation, List<String> frame, List<String> fill, String particle, double price) {
-		super(name, destination, rotation, price);
+	public Portal(String name, String destination, String rotation, List<String> frame, List<String> fill, String particle, double price, boolean bungee) {
+		super(name, destination, rotation, price, bungee);
 
 		this.frame = frame;
 		this.fill = fill;

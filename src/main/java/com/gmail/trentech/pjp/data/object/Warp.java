@@ -13,12 +13,12 @@ public class Warp extends PortalBase {
 
 	private static ConcurrentHashMap<String, Warp> cache = new ConcurrentHashMap<>();
 
-	public Warp(String destination, String rotation, double price) {
-		super(destination, rotation, price);
+	public Warp(String destination, String rotation, double price, boolean bungee) {
+		super(destination, rotation, price, bungee);
 	}
 
-	public Warp(String name, String destination, String rotation, double price) {
-		super(name, destination, rotation, price);
+	public Warp(String name, String destination, String rotation, double price, boolean bungee) {
+		super(name, destination, rotation, price, bungee);
 	}
 
 	public static Optional<Warp> get(String name) {

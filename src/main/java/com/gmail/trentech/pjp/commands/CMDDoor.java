@@ -1,6 +1,8 @@
 package com.gmail.trentech.pjp.commands;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -18,11 +20,15 @@ import com.gmail.trentech.pjp.listeners.DoorListener;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Rotation;
 
+import flavor.pie.spongee.Spongee;
+
 public class CMDDoor implements CommandExecutor {
 
+	private boolean exist = true;
+	
 	public CMDDoor(){
 		Help help = new Help("door", "door", " Use this command to create a door that will teleport you to other worlds");
-		help.setSyntax(" /door <world> [-c <x,y,z>] [-d <direction>] [-p <price>]\n /d door <world> [-c <x,y,z>] [-d <direction>] [-p <price>]");
+		help.setSyntax(" /door <destination> [-c <x,y,z>] [-d <direction>] [-b] [-p <price>]\n /d <destination> [-c <x,y,z>] [-d <direction>] [-b] [-p <price>]");
 		help.setExample(" /door MyWorld\n /door MyWorld -c -100,65,254\n /door MyWorld -c random\n /door MyWorld -c -100,65,254 -d south\n /door MyWorld -d southeast\n /door MyWorld -p 50");
 		help.save();
 	}
@@ -52,44 +58,63 @@ public class CMDDoor implements CommandExecutor {
 		}
 
 		String destination = worldName + ":spawn";
+		Rotation rotation = Rotation.EAST;
+		boolean bungee = args.hasAny("b");
 		
-		if(args.hasAny("x,y,z")){
-			String[] coords = args.<String>getOne("x,y,z").get().split(",");
+		if (bungee) {
+			String server = args.<String>getOne("destination").get();
 
-			if(coords[0].equalsIgnoreCase("random")){
-				destination = destination.replace("spawn", "random");
-			}else{
-				int x;
-				int y;
-				int z;
+			Consumer<List<String>> consumer = (list) -> {
+				if(!list.contains(server)) {
+					player.sendMessage(Text.of(TextColors.DARK_RED, server, " is offline or not correctly configured for Bungee"));
+					exist = false;
+				}
+			};
+			
+			Spongee.API.getServerList(consumer, player);
+			
+			if(!exist) {
+				return CommandResult.empty();
+			}
+			
+			destination = server;
+		}else {
+			if(args.hasAny("x,y,z")){
+				String[] coords = args.<String>getOne("x,y,z").get().split(",");
+
+				if(coords[0].equalsIgnoreCase("random")){
+					destination = destination.replace("spawn", "random");
+				}else{
+					int x;
+					int y;
+					int z;
+					
+					try{
+						x = Integer.parseInt(coords[0]);
+						y = Integer.parseInt(coords[1]);
+						z = Integer.parseInt(coords[2]);				
+					}catch(Exception e){
+						src.sendMessage(Text.of(TextColors.RED, "Incorrect coordinates"));
+						src.sendMessage(invalidArg());
+						return CommandResult.empty();
+					}
+					destination = destination.replace("spawn", x + "." + y + "." + z);
+				}
+			}
+
+			if(args.hasAny("direction")){
+				String direction = args.<String>getOne("direction").get();
 				
-				try{
-					x = Integer.parseInt(coords[0]);
-					y = Integer.parseInt(coords[1]);
-					z = Integer.parseInt(coords[2]);				
-				}catch(Exception e){
-					src.sendMessage(Text.of(TextColors.RED, "Incorrect coordinates"));
+				Optional<Rotation> optionalRotation = Rotation.get(direction);
+				
+				if(!optionalRotation.isPresent()){
+					src.sendMessage(Text.of(TextColors.RED, "Incorrect direction"));
 					src.sendMessage(invalidArg());
 					return CommandResult.empty();
 				}
-				destination = destination.replace("spawn", x + "." + y + "." + z);
-			}
-		}
-		
-		Rotation rotation = Rotation.EAST;
-		
-		if(args.hasAny("direction")){
-			String direction = args.<String>getOne("direction").get();
-			
-			Optional<Rotation> optionalRotation = Rotation.get(direction);
-			
-			if(!optionalRotation.isPresent()){
-				src.sendMessage(Text.of(TextColors.RED, "Incorrect direction"));
-				src.sendMessage(invalidArg());
-				return CommandResult.empty();
-			}
 
-			rotation = optionalRotation.get();
+				rotation = optionalRotation.get();
+			}
 		}
 		
 		double price = 0;
@@ -104,7 +129,7 @@ public class CMDDoor implements CommandExecutor {
 			}
 		}
 		
-		DoorListener.builders.put(player.getUniqueId(), new Door(destination, rotation.getName(), price));
+		DoorListener.builders.put(player.getUniqueId(), new Door(destination, rotation.getName(), price, args.hasAny("b")));
 
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place door to create door portal"));
 
@@ -112,9 +137,9 @@ public class CMDDoor implements CommandExecutor {
 	}
 	
 	private Text invalidArg(){
-		Text t1 = Text.of(TextColors.RED, "Usage: /door <world> [-c <x,y,z>] ");
+		Text t1 = Text.of(TextColors.RED, "Usage: /door <destination> [-c <x,y,z>] ");
 		Text t2 = Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("NORTH\nNORTHEAST\nEAST\nSOUTHEAST\nSOUTH\nSOUTHWEST\nWEST\nNORTHWEST"))).append(Text.of("[-d <direction>] ")).build();
-		Text t3 = Text.of(TextColors.RED, "[-p <price>]");
+		Text t3 = Text.of(TextColors.RED, "[-b] [-p <price>]");
 		return Text.of(t1,t2,t3);
 	}
 }

@@ -12,6 +12,7 @@ import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 
 import com.gmail.trentech.pjp.commands.CMDBack;
+import com.gmail.trentech.pjp.commands.CMDBungee;
 import com.gmail.trentech.pjp.commands.CommandManager;
 import com.gmail.trentech.pjp.data.builder.data.ButtonBuilder;
 import com.gmail.trentech.pjp.data.builder.data.DoorBuilder;
@@ -81,6 +82,7 @@ public class Main {
 
     	getGame().getEventManager().registerListeners(this, new TeleportListener());
     	
+    	getGame().getCommandManager().register(this, new CMDBungee().cmdBungee, "cord");
     	getGame().getCommandManager().register(this, new CMDBack().cmdBack, "back");
     	getGame().getCommandManager().register(this, new CommandManager().cmdPJP, "pjp");
 

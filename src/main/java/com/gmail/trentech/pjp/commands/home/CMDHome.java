@@ -30,6 +30,7 @@ import com.gmail.trentech.pjp.data.Keys;
 import com.gmail.trentech.pjp.data.mutable.HomeData;
 import com.gmail.trentech.pjp.data.object.Home;
 import com.gmail.trentech.pjp.events.TeleportEvent;
+import com.gmail.trentech.pjp.events.TeleportEvent.Local;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDHome implements CommandExecutor {
@@ -87,7 +88,7 @@ public class CMDHome implements CommandExecutor {
 				player = optionalPlayer.get();
 			}
 
-			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, 0, Cause.of(NamedCause.source("home")));
+			Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, 0, Cause.of(NamedCause.source("home")));
 
 			if(!Main.getGame().getEventManager().post(teleportEvent)) {
 				Location<World> currentLocation = player.getLocation();

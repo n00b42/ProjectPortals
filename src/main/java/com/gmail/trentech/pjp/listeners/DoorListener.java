@@ -30,7 +30,11 @@ import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.events.TeleportEvent;
+import com.gmail.trentech.pjp.events.TeleportEvent.Local;
+import com.gmail.trentech.pjp.events.TeleportEvent.Server;
 import com.gmail.trentech.pjp.utils.ConfigManager;
+
+import flavor.pie.spongee.Spongee;
 
 public class DoorListener {
 
@@ -142,26 +146,36 @@ public class DoorListener {
 			}
 		}
 
-		Optional<Location<World>> optionalSpawnLocation = door.getDestination();
-		
-		if(!optionalSpawnLocation.isPresent()) {
-			player.sendMessage(Text.of(TextColors.DARK_RED, "World does not exist"));
-			return;
-		}
-		Location<World> spawnLocation = optionalSpawnLocation.get();
-
-		TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, door.getPrice(), Cause.of(NamedCause.source(door)));
-
-		if(!Main.getGame().getEventManager().post(teleportEvent)) {
-			Location<World> currentLocation = player.getLocation();
-			spawnLocation = teleportEvent.getDestination();
+		if(door.isBungee()) {
+			String source = "source";
 			
-			Vector3d rotation = door.getRotation().toVector3d();
+			Server teleportEvent = new TeleportEvent.Server(player, source, door.getServer(), door.getPrice(), Cause.of(NamedCause.source(door)));
 
-			player.setLocationAndRotation(spawnLocation, rotation);
+			if(!Main.getGame().getEventManager().post(teleportEvent)) {
+				Spongee.API.connectPlayer(player, teleportEvent.getDestination());
+			}
+		}else {
+			Optional<Location<World>> optionalSpawnLocation = door.getDestination();
+			
+			if(!optionalSpawnLocation.isPresent()) {
+				player.sendMessage(Text.of(TextColors.DARK_RED, "World does not exist"));
+				return;
+			}
+			Location<World> spawnLocation = optionalSpawnLocation.get();
 
-			TargetPlayer displaceEvent = SpongeEventFactory.createDisplaceEntityEventTargetPlayer(Cause.of(NamedCause.source(this)), new Transform<World>(currentLocation), new Transform<World>(spawnLocation), player);
-			Main.getGame().getEventManager().post(displaceEvent);
+			Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, door.getPrice(), Cause.of(NamedCause.source(door)));
+
+			if(!Main.getGame().getEventManager().post(teleportEvent)) {
+				Location<World> currentLocation = player.getLocation();
+				spawnLocation = teleportEvent.getDestination();
+				
+				Vector3d rotation = door.getRotation().toVector3d();
+
+				player.setLocationAndRotation(spawnLocation, rotation);
+
+				TargetPlayer displaceEvent = SpongeEventFactory.createDisplaceEntityEventTargetPlayer(Cause.of(NamedCause.source(this)), new Transform<World>(currentLocation), new Transform<World>(spawnLocation), player);
+				Main.getGame().getEventManager().post(displaceEvent);
+			}
 		}
 	}
 }

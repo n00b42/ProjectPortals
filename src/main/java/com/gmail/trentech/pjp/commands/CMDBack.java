@@ -18,6 +18,7 @@ import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.events.TeleportEvent;
+import com.gmail.trentech.pjp.events.TeleportEvent.Local;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDBack implements CommandExecutor {
@@ -46,7 +47,7 @@ public class CMDBack implements CommandExecutor {
 		}
 		Location<World> spawnLocation = players.get(player);
 
-		TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, 0, Cause.of(NamedCause.source("back")));
+		Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, 0, Cause.of(NamedCause.source("back")));
 
 		if(!Main.getGame().getEventManager().post(teleportEvent)){
 			spawnLocation = teleportEvent.getDestination();

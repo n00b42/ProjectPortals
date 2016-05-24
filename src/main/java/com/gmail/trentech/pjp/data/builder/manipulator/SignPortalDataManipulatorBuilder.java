@@ -26,7 +26,7 @@ public class SignPortalDataManipulatorBuilder implements DataManipulatorBuilder<
 
     @Override
     public SignPortalData create() {
-        return new SignPortalData(new Sign("", "", 0));
+        return new SignPortalData(new Sign("", "", 0, false));
     }
 
     @Override

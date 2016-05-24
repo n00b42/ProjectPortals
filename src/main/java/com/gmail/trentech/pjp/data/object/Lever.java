@@ -16,12 +16,12 @@ public class Lever extends PortalBase {
 
 	private static ConcurrentHashMap<String, Lever> cache = new ConcurrentHashMap<>();
 	
-	public Lever(String destination, String rotation, double price) {
-		super(destination, rotation, price);
+	public Lever(String destination, String rotation, double price, boolean bungee) {
+		super(destination, rotation, price, bungee);
 	}
 
-	public Lever(String name, String destination, String rotation, double price) {
-		super(name, destination, rotation, price);
+	public Lever(String name, String destination, String rotation, double price, boolean bungee) {
+		super(name, destination, rotation, price, bungee);
 	}
 	
 	public static Optional<Lever> get(Location<World> location) {

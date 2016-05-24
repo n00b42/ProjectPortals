@@ -8,7 +8,7 @@ import com.gmail.trentech.pjp.data.DataQueries;
 public class Home extends PortalBase {
 
 	public Home(String destination, String rotation) {
-		super(destination, rotation, 0);
+		super(destination, rotation, 0, false);
 	}
 
 	@Override

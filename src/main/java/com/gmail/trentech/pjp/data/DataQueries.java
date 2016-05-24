@@ -11,4 +11,5 @@ public class DataQueries  {
     public static final DataQuery FRAME = of("frame");
     public static final DataQuery FILL = of("fill");
     public static final DataQuery PARTICLE = of("particle");
+    public static final DataQuery BUNGEE = of("particle");
 }

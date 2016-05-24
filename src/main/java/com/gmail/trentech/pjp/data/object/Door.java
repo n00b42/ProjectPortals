@@ -16,12 +16,12 @@ public class Door extends PortalBase {
 
 	private static ConcurrentHashMap<String, Door> cache = new ConcurrentHashMap<>();
 	
-	public Door(String destination, String rotation, double price) {
-		super(destination, rotation, price);
+	public Door(String destination, String rotation, double price, boolean bungee) {
+		super(destination, rotation, price, bungee);
 	}
 
-	public Door(String name, String destination, String rotation, double price) {
-		super(name, destination, rotation, price);
+	public Door(String name, String destination, String rotation, double price, boolean bungee) {
+		super(name, destination, rotation, price, bungee);
 	}
 	
 	public static Optional<Door> get(Location<World> location) {

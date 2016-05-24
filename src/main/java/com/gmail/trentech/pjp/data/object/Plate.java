@@ -16,12 +16,12 @@ public class Plate extends PortalBase {
 
 	private static ConcurrentHashMap<String, Plate> cache = new ConcurrentHashMap<>();
 	
-	public Plate(String destination, String rotation, double price) {
-		super(destination, rotation, price);
+	public Plate(String destination, String rotation, double price, boolean bungee) {
+		super(destination, rotation, price, bungee);
 	}
 
-	public Plate(String name, String destination, String rotation, double price) {
-		super(name, destination, rotation, price);
+	public Plate(String name, String destination, String rotation, double price, boolean bungee) {
+		super(name, destination, rotation, price, bungee);
 	}
 	
 	public static Optional<Plate> get(Location<World> location) {

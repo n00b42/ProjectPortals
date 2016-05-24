@@ -16,12 +16,12 @@ public class Button extends PortalBase {
 
 	private static ConcurrentHashMap<String, Button> cache = new ConcurrentHashMap<>();
 
-	public Button(String destination, String rotation, double price) {
-		super(destination, rotation, price);
+	public Button(String destination, String rotation, double price, boolean bungee) {
+		super(destination, rotation, price, bungee);
 	}
 
-	public Button(String name, String destination, String rotation, double price) {
-		super(name, destination, rotation, price);
+	public Button(String name, String destination, String rotation, double price, boolean bungee) {
+		super(name, destination, rotation, price, bungee);
 	}
 
 	public static Optional<Button> get(Location<World> location) {

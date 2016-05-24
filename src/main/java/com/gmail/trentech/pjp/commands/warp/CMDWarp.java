@@ -27,7 +27,11 @@ import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.object.Warp;
 import com.gmail.trentech.pjp.events.TeleportEvent;
+import com.gmail.trentech.pjp.events.TeleportEvent.Local;
+import com.gmail.trentech.pjp.events.TeleportEvent.Server;
 import com.gmail.trentech.pjp.utils.Help;
+
+import flavor.pie.spongee.Spongee;
 
 public class CMDWarp implements CommandExecutor {
 
@@ -55,14 +59,6 @@ public class CMDWarp implements CommandExecutor {
 				return CommandResult.empty();
 			}
 			
-			Optional<Location<World>> optionalSpawnLocation = warp.getDestination();
-			
-			if(!optionalSpawnLocation.isPresent()) {
-				player.sendMessage(Text.of(TextColors.DARK_RED, "Destination does not exist or world is not loaded"));
-				return CommandResult.empty();
-			}			
-			Location<World> spawnLocation = optionalSpawnLocation.get();
-			
 			if(args.hasAny("player")) {
 				String playerName = args.<String>getOne("player").get();
 				
@@ -80,19 +76,37 @@ public class CMDWarp implements CommandExecutor {
 				
 				player = optionalPlayer.get();
 			}
-
-			TeleportEvent teleportEvent = new TeleportEvent(player, player.getLocation(), spawnLocation, warp.getPrice(), Cause.of(NamedCause.source("warp")));
-
-			if(!Main.getGame().getEventManager().post(teleportEvent)) {
-				Location<World> currentLocation = player.getLocation();
-				spawnLocation = teleportEvent.getDestination();
+			
+			if(warp.isBungee()) {
+				String source = "source";
 				
-				Vector3d rotation = warp.getRotation().toVector3d();
+				Server teleportEvent = new TeleportEvent.Server(player, source, warp.getServer(), warp.getPrice(), Cause.of(NamedCause.source(warp)));
 
-				player.setLocationAndRotation(spawnLocation, rotation);
+				if(!Main.getGame().getEventManager().post(teleportEvent)) {
+					Spongee.API.connectPlayer(player, teleportEvent.getDestination());
+				}
+			}else {
+				Optional<Location<World>> optionalSpawnLocation = warp.getDestination();
 				
-				TargetPlayer displaceEvent = SpongeEventFactory.createDisplaceEntityEventTargetPlayer(Cause.of(NamedCause.source(this)), new Transform<World>(currentLocation), new Transform<World>(spawnLocation), player);
-				Main.getGame().getEventManager().post(displaceEvent);
+				if(!optionalSpawnLocation.isPresent()) {
+					player.sendMessage(Text.of(TextColors.DARK_RED, "Destination does not exist or world is not loaded"));
+					return CommandResult.empty();
+				}			
+				Location<World> spawnLocation = optionalSpawnLocation.get();
+
+				Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, warp.getPrice(), Cause.of(NamedCause.source("warp")));
+
+				if(!Main.getGame().getEventManager().post(teleportEvent)) {
+					Location<World> currentLocation = player.getLocation();
+					spawnLocation = teleportEvent.getDestination();
+					
+					Vector3d rotation = warp.getRotation().toVector3d();
+
+					player.setLocationAndRotation(spawnLocation, rotation);
+					
+					TargetPlayer displaceEvent = SpongeEventFactory.createDisplaceEntityEventTargetPlayer(Cause.of(NamedCause.source(this)), new Transform<World>(currentLocation), new Transform<World>(spawnLocation), player);
+					Main.getGame().getEventManager().post(displaceEvent);
+				}
 			}
 
 			return CommandResult.success();

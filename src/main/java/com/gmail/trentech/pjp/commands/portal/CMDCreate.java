@@ -1,6 +1,8 @@
 package com.gmail.trentech.pjp.commands.portal;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -25,11 +27,15 @@ import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Rotation;
 
+import flavor.pie.spongee.Spongee;
+
 public class CMDCreate implements CommandExecutor {
 
+	public boolean exist = true;
+	
 	public CMDCreate() {
 		Help help = new Help("pcreate", "create", " Use this command to create a portal that will teleport you to other worlds");
-		help.setSyntax(" /portal create <name> <world> [-c <x,y,z>] [-d <direction>] [-p <price>] [-e <particle[:color]>]\n /p portal <name> <world> [-c <x,y,z>] [-d <direction>] [-p <price>] [-e <particle[:color]>]");
+		help.setSyntax(" /portal create <name> <destination> [-c <x,y,z>] [-d <direction>] [-b] [-p <price>] [-e <particle[:color]>]\n /p <name> <destination> [-c <x,y,z>] [-d <direction>] [-b] [-p <price>] [-e <particle[:color]>]");
 		help.setExample(" /portal create MyPortal MyWorld\n /portal create MyPortal MyWorld -c -100,65,254\n /portal create MyPortal MyWorld -c random\n /portal create MyPortal MyWorld -c -100,65,254 -d south\n /portal create MyPortal MyWorld -d southeast\n /portal create MyPortal MyWorld -p 50\n /portal create MyPortal MyWorld -e REDSTONE:BLUE");
 		help.save();
 	}
@@ -75,46 +81,65 @@ public class CMDCreate implements CommandExecutor {
 		}
 
 		String destination = worldName + ":spawn";
+		Rotation rotation = Rotation.EAST;
+		boolean bungee = args.hasAny("b");
 		
-		if(args.hasAny("x,y,z")) {
-			String[] coords = args.<String>getOne("x,y,z").get().split(",");
+		if (bungee) {
+			String server = args.<String>getOne("destination").get();
 
-			if(coords[0].equalsIgnoreCase("random")) {
-				destination = destination.replace("spawn", "random");
-			}else{
-				int x;
-				int y;
-				int z;
+			Consumer<List<String>> consumer = (list) -> {
+				if(!list.contains(server)) {
+					player.sendMessage(Text.of(TextColors.DARK_RED, server, " is offline or not correctly configured for Bungee"));
+					exist = false;
+				}
+			};
+			
+			Spongee.API.getServerList(consumer, player);
+			
+			if(!exist) {
+				return CommandResult.empty();
+			}
+			
+			destination = server;
+		}else {
+			if(args.hasAny("x,y,z")) {
+				String[] coords = args.<String>getOne("x,y,z").get().split(",");
+
+				if(coords[0].equalsIgnoreCase("random")) {
+					destination = destination.replace("spawn", "random");
+				}else{
+					int x;
+					int y;
+					int z;
+					
+					try{
+						x = Integer.parseInt(coords[0]);
+						y = Integer.parseInt(coords[1]);
+						z = Integer.parseInt(coords[2]);				
+					}catch(Exception e) {
+						src.sendMessage(Text.of(TextColors.RED, "Incorrect coordinates"));
+						src.sendMessage(invalidArg());
+						return CommandResult.empty();
+					}
+					destination = destination.replace("spawn", x + "." + y + "." + z);
+				}
+			}
+
+			if(args.hasAny("direction")) {
+				String direction = args.<String>getOne("direction").get();
 				
-				try{
-					x = Integer.parseInt(coords[0]);
-					y = Integer.parseInt(coords[1]);
-					z = Integer.parseInt(coords[2]);				
-				}catch(Exception e) {
-					src.sendMessage(Text.of(TextColors.RED, "Incorrect coordinates"));
+				Optional<Rotation> optionalRotation = Rotation.get(direction);
+				
+				if(!optionalRotation.isPresent()) {
+					src.sendMessage(Text.of(TextColors.RED, "Incorrect direction"));
 					src.sendMessage(invalidArg());
 					return CommandResult.empty();
 				}
-				destination = destination.replace("spawn", x + "." + y + "." + z);
-			}
-		}
-		
-		Rotation rotation = Rotation.EAST;
-		
-		if(args.hasAny("direction")) {
-			String direction = args.<String>getOne("direction").get();
-			
-			Optional<Rotation> optionalRotation = Rotation.get(direction);
-			
-			if(!optionalRotation.isPresent()) {
-				src.sendMessage(Text.of(TextColors.RED, "Incorrect direction"));
-				src.sendMessage(invalidArg());
-				return CommandResult.empty();
-			}
 
-			rotation = optionalRotation.get();
+				rotation = optionalRotation.get();
+			}
 		}
-		
+
 		double price = 0;
 		
 		if(args.hasAny("price")) {
@@ -156,7 +181,7 @@ public class CMDCreate implements CommandExecutor {
 			}
 		}
 		
-		PortalListener.builders.put(player.getUniqueId(), new PortalBuilder(name, destination, rotation, particle, price));
+		PortalListener.builders.put(player.getUniqueId(), new PortalBuilder(name, destination, rotation, particle, price, bungee));
 		
 		player.sendMessage(Text.builder().color(TextColors.DARK_GREEN).append(Text.of("Begin building your portal frame, followed by "))
 				.onClick(TextActions.runCommand("/pjp:portal save")).append(Text.of(TextColors.YELLOW, TextStyles.UNDERLINE, "/portal save")).build());
@@ -165,9 +190,9 @@ public class CMDCreate implements CommandExecutor {
 	}
 	
 	private Text invalidArg() {
-		Text t1 = Text.of(TextColors.RED, "Usage: /portal create <name> <world> [-c <x,y,z>] ");
+		Text t1 = Text.of(TextColors.RED, "Usage: /portal create <name> <destination> [-c <x,y,z>] ");
 		Text t2 = Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("NORTH\nNORTHEAST\nEAST\nSOUTHEAST\nSOUTH\nSOUTHWEST\nWEST\nNORTHWEST"))).append(Text.of("[-d <direction>] ")).build();
-		Text t3 = Text.of(TextColors.RED, "[-p <price>] ");
+		Text t3 = Text.of(TextColors.RED, "[-b] [-p <price>] ");
 		Text t4 = Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("CLOUD\nCRIT\nCRIT_MAGIC\nENCHANTMENT_TABLE\nFLAME\nHEART\nNOTE\nPORTAL"
 				+ "\nREDSTONE\nSLIME\nSNOWBALL\nSNOW_SHOVEL\nSMOKE_LARGE\nSPELL\nSPELL_WITCH\nSUSPENDED_DEPTH\nVILLAGER_HAPPY\nWATER_BUBBLE\nWATER_DROP\nWATER_SPLASH\nWATER_WAKE"))).append(Text.of("[-e <particle")).build();
 		Text t5 = Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("REDSTONE ONLY\n", TextColors.DARK_GRAY, "BLACK\n", TextColors.GRAY, "GRAY\n", TextColors.WHITE, "WHITE\n",

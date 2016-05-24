@@ -3,6 +3,7 @@ package com.gmail.trentech.pjp.data.builder.data;
 import static com.gmail.trentech.pjp.data.DataQueries.DESTINATION;
 import static com.gmail.trentech.pjp.data.DataQueries.PRICE;
 import static com.gmail.trentech.pjp.data.DataQueries.ROTATION;
+import static com.gmail.trentech.pjp.data.DataQueries.BUNGEE;
 
 import java.util.Optional;
 
@@ -20,12 +21,13 @@ public class PlateBuilder extends AbstractDataBuilder<Plate> {
 
     @Override
     protected Optional<Plate> buildContent(DataView container) throws InvalidDataException {
-        if (container.contains(DESTINATION, ROTATION, PRICE)) {
+        if (container.contains(DESTINATION, ROTATION, PRICE, BUNGEE)) {
         	String destination = container.getString(DESTINATION).get();
         	String rotation = container.getString(ROTATION).get();
         	Double price = container.getDouble(PRICE).get();
+        	boolean bungee = container.getBoolean(BUNGEE).get();
         	
-            return Optional.of(new Plate(destination, rotation, price));
+            return Optional.of(new Plate(destination, rotation, price, bungee));
         }
         
         return Optional.empty();

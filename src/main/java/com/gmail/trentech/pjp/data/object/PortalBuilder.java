@@ -20,16 +20,18 @@ public class PortalBuilder {
 	private final String destination;
 	private final String rotation;
 	private final double price;
+	private final boolean bungee;
 	private final String particle;
 	private boolean fill = false;
 	private List<Location<World>> regionFrame;
 	private List<Location<World>> regionFill;
 	
-	public PortalBuilder(String name, String destination, Rotation rotation, String particle, double price) {
+	public PortalBuilder(String name, String destination, Rotation rotation, String particle, double price, boolean bungee) {
 		this.name = name;
 		this.destination = destination;
 		this.rotation = rotation.getName();
 		this.price = price;
+		this.bungee = bungee;
 		this.particle = particle;
 		this.regionFrame = new ArrayList<>();
 		this.regionFill = new ArrayList<>();
@@ -97,7 +99,7 @@ public class PortalBuilder {
 				location.getExtent().setBlock(location.getBlockX(), location.getBlockY(), location.getBlockZ(), block, false, Cause.of(NamedCause.source(Main.getPlugin())));
 			}
 
-			new Portal(getName(), destination, rotation, frame, fill, particle, price).create();
+			new Portal(getName(), destination, rotation, frame, fill, particle, price, bungee).create();
 
 			return true;
 		}

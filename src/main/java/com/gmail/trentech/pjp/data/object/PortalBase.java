@@ -15,22 +15,26 @@ import com.gmail.trentech.pjp.utils.SQLUtils;
 import com.gmail.trentech.pjp.utils.Utils;
 
 public class PortalBase extends SQLUtils implements DataSerializable {
+	
 	protected String name;
 	protected String destination;
 	protected String rotation;
 	protected double price;
+	protected boolean bungee;
 
-	protected PortalBase(String destination, String rotation, double price) {
+	protected PortalBase(String destination, String rotation, double price, boolean bungee) {
 		this.destination = destination;
 		this.rotation = rotation;
 		this.price = price;
+		this.bungee = bungee;
 	}
 
-	protected PortalBase(String name, String destination, String rotation, double price) {
+	protected PortalBase(String name, String destination, String rotation, double price, boolean bungee) {
 		this.name = name;
 		this.destination = destination;
 		this.rotation = rotation;
 		this.price = price;
+		this.bungee = bungee;
 	}
 	
 	public String getName() {
@@ -109,6 +113,14 @@ public class PortalBase extends SQLUtils implements DataSerializable {
 		this.destination = destination;
 	}
 
+	public boolean isBungee() {
+		return bungee;
+	}
+	
+	public String getServer() {
+		return destination;
+	}
+	
 	@Override
 	public int getContentVersion() {
 		return 1;
@@ -116,7 +128,7 @@ public class PortalBase extends SQLUtils implements DataSerializable {
 
 	@Override
     public DataContainer toContainer() {
-        return new MemoryDataContainer().set(DataQueries.DESTINATION, destination).set(DataQueries.ROTATION, rotation).set(DataQueries.PRICE, price);
+        return new MemoryDataContainer().set(DataQueries.DESTINATION, destination).set(DataQueries.ROTATION, rotation).set(DataQueries.PRICE, price).set(DataQueries.BUNGEE, bungee);
     }
 
 }
