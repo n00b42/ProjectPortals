@@ -35,7 +35,7 @@ public class CMDCreate implements CommandExecutor {
 	
 	public CMDCreate() {
 		Help help = new Help("pcreate", "create", " Use this command to create a portal that will teleport you to other worlds");
-		help.setSyntax(" /portal create <name> <destination> [-c <x,y,z>] [-d <direction>] [-b] [-p <price>] [-e <particle[:color]>]\n /p <name> <destination> [-c <x,y,z>] [-d <direction>] [-b] [-p <price>] [-e <particle[:color]>]");
+		help.setSyntax(" /portal create <name> <destination> [-b] [-c <x,y,z>] [-d <direction>] [-e <particle[:color]>] [-p <price>]\n /p <name> <destination> [-b] [-c <x,y,z>] [-d <direction>] [-e <particle[:color]>] [-p <price>]");
 		help.setExample(" /portal create MyPortal MyWorld\n /portal create MyPortal MyWorld -c -100,65,254\n /portal create MyPortal MyWorld -c random\n /portal create MyPortal MyWorld -c -100,65,254 -d south\n /portal create MyPortal MyWorld -d southeast\n /portal create MyPortal MyWorld -p 50\n /portal create MyPortal MyWorld -e REDSTONE:BLUE");
 		help.save();
 	}
@@ -49,24 +49,24 @@ public class CMDCreate implements CommandExecutor {
 		Player player = (Player) src;
 
 		if(!args.hasAny("name")) {
-			src.sendMessage(invalidArg());
+			src.sendMessage(getUsage());
 			return CommandResult.empty();
 		}
 		String name = args.<String>getOne("name").get().toLowerCase();
 		
-		if(name.equalsIgnoreCase("-c") || name.equalsIgnoreCase("-d") || name.equalsIgnoreCase("-p") || name.equalsIgnoreCase("-e")) {
-			src.sendMessage(invalidArg());
+		if(name.equalsIgnoreCase("-c") || name.equalsIgnoreCase("-d") || name.equalsIgnoreCase("-p") || name.equalsIgnoreCase("-e") || name.equalsIgnoreCase("-b")) {
+			src.sendMessage(getUsage());
 			return CommandResult.empty();
 		}
 		
-		if(!args.hasAny("world")) {
-			src.sendMessage(invalidArg());
+		if(!args.hasAny("destination")) {
+			src.sendMessage(getUsage());
 			return CommandResult.empty();
 		}
-		String worldName = args.<String>getOne("world").get();
+		String worldName = args.<String>getOne("destination").get();
 		
-		if(worldName.equalsIgnoreCase("-c") || worldName.equalsIgnoreCase("-d") || worldName.equalsIgnoreCase("-p") || worldName.equalsIgnoreCase("-e")) {
-			src.sendMessage(invalidArg());
+		if(name.equalsIgnoreCase("-c") || name.equalsIgnoreCase("-d") || name.equalsIgnoreCase("-p") || name.equalsIgnoreCase("-e") || name.equalsIgnoreCase("-b")) {
+			src.sendMessage(getUsage());
 			return CommandResult.empty();
 		}
 		
@@ -84,7 +84,7 @@ public class CMDCreate implements CommandExecutor {
 		Rotation rotation = Rotation.EAST;
 		boolean bungee = args.hasAny("b");
 		
-		if (bungee) {
+		if(bungee) {
 			String server = args.<String>getOne("destination").get();
 
 			Consumer<List<String>> consumer = (list) -> {
@@ -118,7 +118,7 @@ public class CMDCreate implements CommandExecutor {
 						z = Integer.parseInt(coords[2]);				
 					}catch(Exception e) {
 						src.sendMessage(Text.of(TextColors.RED, "Incorrect coordinates"));
-						src.sendMessage(invalidArg());
+						src.sendMessage(getUsage());
 						return CommandResult.empty();
 					}
 					destination = destination.replace("spawn", x + "." + y + "." + z);
@@ -132,7 +132,7 @@ public class CMDCreate implements CommandExecutor {
 				
 				if(!optionalRotation.isPresent()) {
 					src.sendMessage(Text.of(TextColors.RED, "Incorrect direction"));
-					src.sendMessage(invalidArg());
+					src.sendMessage(getUsage());
 					return CommandResult.empty();
 				}
 
@@ -147,7 +147,7 @@ public class CMDCreate implements CommandExecutor {
 				price = Double.parseDouble(args.<String>getOne("price").get());
 			}catch(Exception e) {
 				src.sendMessage(Text.of(TextColors.RED, "Incorrect price"));
-				src.sendMessage(invalidArg());
+				src.sendMessage(getUsage());
 				return CommandResult.empty();
 			}
 		}
@@ -161,7 +161,7 @@ public class CMDCreate implements CommandExecutor {
 			
 			if(!optionalParticle.isPresent()) {
 				src.sendMessage(Text.of(TextColors.DARK_RED, "Incorrect particle"));
-				src.sendMessage(invalidArg());
+				src.sendMessage(getUsage());
 				return CommandResult.empty();
 			}
 			Particle part = optionalParticle.get();
@@ -171,7 +171,7 @@ public class CMDCreate implements CommandExecutor {
 				if(part.getType() instanceof Colorable) {
 		    		if(!ParticleColor.get(type[1]).isPresent()) {
 		    			src.sendMessage(Text.of(TextColors.RED, "Incorrect color"));
-		    			src.sendMessage(invalidArg());
+		    			src.sendMessage(getUsage());
 		    			return CommandResult.empty();
 		    		}
 		    		particle = particle + ":" + type[1];
@@ -189,18 +189,22 @@ public class CMDCreate implements CommandExecutor {
 		return CommandResult.success();
 	}
 	
-	private Text invalidArg() {
-		Text t1 = Text.of(TextColors.RED, "Usage: /portal create <name> <destination> [-c <x,y,z>] ");
-		Text t2 = Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("NORTH\nNORTHEAST\nEAST\nSOUTHEAST\nSOUTH\nSOUTHWEST\nWEST\nNORTHWEST"))).append(Text.of("[-d <direction>] ")).build();
-		Text t3 = Text.of(TextColors.RED, "[-b] [-p <price>] ");
-		Text t4 = Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("CLOUD\nCRIT\nCRIT_MAGIC\nENCHANTMENT_TABLE\nFLAME\nHEART\nNOTE\nPORTAL"
-				+ "\nREDSTONE\nSLIME\nSNOWBALL\nSNOW_SHOVEL\nSMOKE_LARGE\nSPELL\nSPELL_WITCH\nSUSPENDED_DEPTH\nVILLAGER_HAPPY\nWATER_BUBBLE\nWATER_DROP\nWATER_SPLASH\nWATER_WAKE"))).append(Text.of("[-e <particle")).build();
-		Text t5 = Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("REDSTONE ONLY\n", TextColors.DARK_GRAY, "BLACK\n", TextColors.GRAY, "GRAY\n", TextColors.WHITE, "WHITE\n",
+	private Text getUsage() {
+		Text usage = Text.of(TextColors.RED, "Usage: /portal create <name>");
+		
+		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("Enter a world or bungee server"))).append(Text.of(" <destination>")).build());
+		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("Use this flag if <destination> is a bungee server"))).append(Text.of(" [-b]")).build());
+		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("Enter x y z coordinates or \"random\""))).append(Text.of(" [-c <x,y,z>]")).build());
+		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("NORTH\nNORTHEAST\nEAST\nSOUTHEAST\nSOUTH\nSOUTHWEST\nWEST\nNORTHWEST"))).append(Text.of(" [-d <direction>]")).build());
+		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("CLOUD\nCRIT\nCRIT_MAGIC\nENCHANTMENT_TABLE\nFLAME\nHEART\nNOTE\nPORTAL"
+				+ "\nREDSTONE\nSLIME\nSNOWBALL\nSNOW_SHOVEL\nSMOKE_LARGE\nSPELL\nSPELL_WITCH\nSUSPENDED_DEPTH\nVILLAGER_HAPPY\nWATER_BUBBLE\nWATER_DROP\nWATER_SPLASH\nWATER_WAKE"))).append(Text.of(" [-e <particle")).build());		
+		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("REDSTONE ONLY\n", TextColors.DARK_GRAY, "BLACK\n", TextColors.GRAY, "GRAY\n", TextColors.WHITE, "WHITE\n",
 				TextColors.BLUE, "BLUE\n", TextColors.GREEN, "GREEN\n", TextColors.GREEN, "LIME\n", TextColors.RED, "RED\n", TextColors.YELLOW, "YELLOW\n", TextColors.LIGHT_PURPLE, "MAGENTA\n",
 				TextColors.DARK_PURPLE, "PURPLE\n", TextColors.DARK_AQUA, "DARK_CYAN\n", TextColors.DARK_GREEN, "DARK_GREEN\n", TextColors.DARK_PURPLE, "DARK_MAGENTA\n",
 				TextColors.AQUA, "CYAN\n", TextColors.DARK_BLUE, "NAVY\n", TextColors.LIGHT_PURPLE, "PINK\n",
 				TextColors.RED,"R",TextColors.YELLOW,"A",TextColors.GREEN,"I",TextColors.BLUE,"N",TextColors.DARK_PURPLE,"B",TextColors.RED,"O",TextColors.YELLOW,"W")))
-				.append(Text.of("[:color]>]")).build();
-		return Text.of(t1,t2,t3,t4,t5);
+				.append(Text.of("[:color]>]")).build());
+		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("Enter the cost to use portal or 0 to disable"))).append(Text.of(" [-p price]")).build());
+		return usage;
 	}
 }

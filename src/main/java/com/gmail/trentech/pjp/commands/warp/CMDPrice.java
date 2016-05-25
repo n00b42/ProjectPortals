@@ -24,7 +24,7 @@ public class CMDPrice implements CommandExecutor {
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if(!args.hasAny("name")) {
-			src.sendMessage(invalidArg());
+			src.sendMessage(getUsage());
 			return CommandResult.empty();
 		}
 		String name = args.<String>getOne("name").get().toLowerCase();
@@ -36,7 +36,7 @@ public class CMDPrice implements CommandExecutor {
 		Warp warp = Warp.get(name).get();
 		
 		if(!args.hasAny("price")) {
-			src.sendMessage(invalidArg());
+			src.sendMessage(getUsage());
 			return CommandResult.empty();
 		}
 		
@@ -45,7 +45,7 @@ public class CMDPrice implements CommandExecutor {
 			price = Double.parseDouble(args.<String>getOne("price").get());
 		}catch(Exception e) {
 			src.sendMessage(Text.of(TextColors.RED, "Incorrect price"));
-			src.sendMessage(invalidArg());
+			src.sendMessage(getUsage());
 			return CommandResult.empty();
 		}
 
@@ -57,9 +57,11 @@ public class CMDPrice implements CommandExecutor {
 		return CommandResult.success();
 	}
 	
-	private Text invalidArg() {
-		Text t1 = Text.of(TextColors.RED, "Usage: /warp price <name> ");
-		Text t2 = Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("Enter a number amount or 0 to disable"))).append(Text.of("<price>")).build();
-		return Text.of(t1,t2);
+	private Text getUsage() {
+		Text usage = Text.of(TextColors.RED, "Usage: /warp price <name>");
+		
+		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("Enter the cost to use portal or 0 to disable"))).append(Text.of(" <price>")).build());
+		
+		return usage;
 	}
 }

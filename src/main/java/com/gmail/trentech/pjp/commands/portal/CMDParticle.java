@@ -30,7 +30,7 @@ public class CMDParticle implements CommandExecutor {
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if(!args.hasAny("name")) {
-			src.sendMessage(invalidArg());
+			src.sendMessage(getUsage());
 			return CommandResult.empty();
 		}
 		String name = args.<String>getOne("name").get().toLowerCase();
@@ -42,7 +42,7 @@ public class CMDParticle implements CommandExecutor {
 		Portal portal = Portal.get(name).get();
 		
 		if(!args.hasAny("type")) {
-			src.sendMessage(invalidArg());
+			src.sendMessage(getUsage());
 			return CommandResult.empty();
 		}
 		String type = args.<String>getOne("type").get().toUpperCase();
@@ -51,7 +51,7 @@ public class CMDParticle implements CommandExecutor {
 		
 		if(!optionalParticle.isPresent()) {
 			src.sendMessage(Text.of(TextColors.DARK_RED, "Incorrect particle"));
-			src.sendMessage(invalidArg());
+			src.sendMessage(getUsage());
 			return CommandResult.empty();
 		}
 		Particle particle = optionalParticle.get();
@@ -63,7 +63,7 @@ public class CMDParticle implements CommandExecutor {
 	    			type = type + ":" + color;
 	    		}else{
 	    			src.sendMessage(Text.of(TextColors.RED, "Incorrect color"));
-	    			src.sendMessage(invalidArg());
+	    			src.sendMessage(getUsage());
 	    			return CommandResult.empty();
 	    		}
 			}else{
@@ -77,17 +77,18 @@ public class CMDParticle implements CommandExecutor {
 		return CommandResult.success();
 	}
 	
-	private Text invalidArg() {
-		Text t1 = Text.of(TextColors.RED, "Usage: /portal particle <name> ");
-		Text t2 = Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("CLOUD\nCRIT\nCRIT_MAGIC\nENCHANTMENT_TABLE\nFLAME\nHEART\nNOTE\nPORTAL"
-				+ "\nREDSTONE\nSLIME\nSNOWBALL\nSNOW_SHOVEL\nSMOKE_LARGE\nSPELL\nSPELL_WITCH\nSUSPENDED_DEPTH\nVILLAGER_HAPPY\nWATER_BUBBLE\nWATER_DROP\nWATER_SPLASH\nWATER_WAKE"))).append(Text.of("<type> ")).build();
-		Text t3 = Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("REDSTONE ONLY\n", TextColors.DARK_GRAY, "BLACK\n", TextColors.GRAY, "GRAY\n", TextColors.WHITE, "WHITE\n",
+	private Text getUsage() {
+		Text usage = Text.of(TextColors.RED, "Usage: /portal particle <name>");
+		
+		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("CLOUD\nCRIT\nCRIT_MAGIC\nENCHANTMENT_TABLE\nFLAME\nHEART\nNOTE\nPORTAL"
+				+ "\nREDSTONE\nSLIME\nSNOWBALL\nSNOW_SHOVEL\nSMOKE_LARGE\nSPELL\nSPELL_WITCH\nSUSPENDED_DEPTH\nVILLAGER_HAPPY\nWATER_BUBBLE\nWATER_DROP\nWATER_SPLASH\nWATER_WAKE"))).append(Text.of(" <type>")).build());
+		
+		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("REDSTONE ONLY\n", TextColors.DARK_GRAY, "BLACK\n", TextColors.GRAY, "GRAY\n", TextColors.WHITE, "WHITE\n",
 				TextColors.BLUE, "BLUE\n", TextColors.GREEN, "GREEN\n", TextColors.GREEN, "LIME\n", TextColors.RED, "RED\n", TextColors.YELLOW, "YELLOW\n", TextColors.LIGHT_PURPLE, "MAGENTA\n",
 				TextColors.DARK_PURPLE, "PURPLE\n", TextColors.DARK_AQUA, "DARK_CYAN\n", TextColors.DARK_GREEN, "DARK_GREEN\n", TextColors.DARK_PURPLE, "DARK_MAGENTA\n",
 				TextColors.AQUA, "CYAN\n", TextColors.DARK_BLUE, "NAVY\n", TextColors.LIGHT_PURPLE, "PINK\n",
 				TextColors.RED,"R",TextColors.YELLOW,"A",TextColors.GREEN,"I",TextColors.BLUE,"N",TextColors.DARK_PURPLE,"B",TextColors.RED,"O",TextColors.YELLOW,"W")))
-				.append(Text.of("[color]")).build();
-		return Text.of(t1,t2,t3);
+				.append(Text.of(" [color]")).build());
+		return usage;
 	}
-
 }

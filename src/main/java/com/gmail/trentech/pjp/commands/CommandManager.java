@@ -11,33 +11,32 @@ import com.gmail.trentech.pjp.commands.warp.CMDWarp;
 
 public class CommandManager {
 	
-	public CommandSpec cmdWarpCreate = CommandSpec.builder()
+	private CommandSpec cmdWarpCreate = CommandSpec.builder()
 		    .description(Text.of("Create a new warp point"))
 		    .permission("pjp.cmd.warp.create")
-		    .arguments()
-		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))), GenericArguments.optional(GenericArguments.string(Text.of("destination"))), GenericArguments.flags()
-		    		.flag("b")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))), GenericArguments.optional(GenericArguments.string(Text.of("destination"))),
+		    		GenericArguments.flags().flag("b")
 		    		.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
     				.valueFlag(GenericArguments.string(Text.of("direction")), "d")
     				.valueFlag(GenericArguments.string(Text.of("price")), "p").buildWith(GenericArguments.none()))
 		    .executor(new com.gmail.trentech.pjp.commands.warp.CMDCreate())
 		    .build();
 	
-	public CommandSpec cmdWarpRemove = CommandSpec.builder()
+	private CommandSpec cmdWarpRemove = CommandSpec.builder()
 		    .description(Text.of("Remove an existing warp point"))
 		    .permission("pjp.cmd.warp.remove")
 		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))))
 		    .executor(new com.gmail.trentech.pjp.commands.warp.CMDRemove())
 		    .build();
 	
-	public CommandSpec cmdWarpPrice = CommandSpec.builder()
-		    .description(Text.of("Remove an existing warp point"))
+	private CommandSpec cmdWarpPrice = CommandSpec.builder()
+		    .description(Text.of("Set price of an existing warp point"))
 		    .permission("pjp.cmd.warp.price")
 		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))), GenericArguments.optional(GenericArguments.string(Text.of("price"))))
 		    .executor(new com.gmail.trentech.pjp.commands.warp.CMDPrice())
 		    .build();
 	
-	public CommandSpec cmdWarpList = CommandSpec.builder()
+	private CommandSpec cmdWarpList = CommandSpec.builder()
 		    .description(Text.of("List all available warp points"))
 		    .permission("pjp.cmd.warp.list")
 		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))))
@@ -45,7 +44,7 @@ public class CommandManager {
 		    .build();
 	
 	public CommandSpec cmdWarp = CommandSpec.builder()
-		    .description(Text.of("Warp base command"))
+		    .description(Text.of("Top level warp command"))
 		    .permission("pjp.cmd.warp")
 		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))), GenericArguments.optional(GenericArguments.string(Text.of("player"))))
 		    .child(cmdWarpCreate, "create", "c")
@@ -56,21 +55,21 @@ public class CommandManager {
 		    .build();
 	
 	
-	public CommandSpec cmdHomeCreate = CommandSpec.builder()
+	private CommandSpec cmdHomeCreate = CommandSpec.builder()
 		    .description(Text.of("Create a new home"))
 		    .permission("pjp.cmd.home.create")
 		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))))
 		    .executor(new com.gmail.trentech.pjp.commands.home.CMDCreate())
 		    .build();
 	
-	public CommandSpec cmdHomeRemove = CommandSpec.builder()
+	private CommandSpec cmdHomeRemove = CommandSpec.builder()
 		    .description(Text.of("Remove an existing home"))
 		    .permission("pjp.cmd.home.remove")
 		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))))
 		    .executor(new com.gmail.trentech.pjp.commands.home.CMDRemove())
 		    .build();
 	
-	public CommandSpec cmdHomeList = CommandSpec.builder()
+	private CommandSpec cmdHomeList = CommandSpec.builder()
 		    .description(Text.of("List all homes"))
 		    .permission("pjp.cmd.home.list")
 		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))))
@@ -78,7 +77,7 @@ public class CommandManager {
 		    .build();
 
 	public CommandSpec cmdHome = CommandSpec.builder()
-		    .description(Text.of("Home base command"))
+		    .description(Text.of("Top level home command"))
 		    .permission("pjp.cmd.home")
 		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))), GenericArguments.optional(GenericArguments.string(Text.of("player"))))
 		    .child(cmdHomeCreate, "create", "c")
@@ -87,56 +86,56 @@ public class CommandManager {
 		    .executor(new CMDHome())
 		    .build();
 
-	public CommandSpec cmdPortalCreate = CommandSpec.builder()
+	private CommandSpec cmdPortalCreate = CommandSpec.builder()
 		    .description(Text.of("Create a new portal"))
 		    .permission("pjp.cmd.portal.create")
 		    .arguments()
-		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))), GenericArguments.optional(GenericArguments.string(Text.of("world"))), GenericArguments.flags()
-		    		.flag("b")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))), GenericArguments.optional(GenericArguments.string(Text.of("destination"))), 
+		    		GenericArguments.flags().flag("b")
 		    		.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
     				.valueFlag(GenericArguments.string(Text.of("direction")), "d")
-    				.valueFlag(GenericArguments.string(Text.of("price")), "p")
-		    		.valueFlag(GenericArguments.string(Text.of("particle[:color]")), "e").buildWith(GenericArguments.none()))
+		    		.valueFlag(GenericArguments.string(Text.of("particle[:color]")), "e")
+    				.valueFlag(GenericArguments.string(Text.of("price")), "p").buildWith(GenericArguments.none()))
 		    .executor(new com.gmail.trentech.pjp.commands.portal.CMDCreate())
 		    .build();
 
-	public CommandSpec cmdPortalRemove = CommandSpec.builder()
-		    .description(Text.of("Remove an portal"))
+	private CommandSpec cmdPortalRemove = CommandSpec.builder()
+		    .description(Text.of("Remove an existing portal"))
 		    .permission("pjp.cmd.portal.remove")
 		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))))
 		    .executor(new com.gmail.trentech.pjp.commands.portal.CMDRemove())
 		    .build();
 	
-	public CommandSpec cmdPortalParticle = CommandSpec.builder()
-		    .description(Text.of("Change portal particles"))
+	private CommandSpec cmdPortalParticle = CommandSpec.builder()
+		    .description(Text.of("Set particle effects of an existing portal"))
 		    .permission("pjp.cmd.portal.particle")
 		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))), GenericArguments.optional(GenericArguments.string(Text.of("type")))
 		    		, GenericArguments.optional(GenericArguments.string(Text.of("color"))))
 		    .executor(new com.gmail.trentech.pjp.commands.portal.CMDParticle())
 		    .build();
 	
-	public CommandSpec cmdPortalPrice = CommandSpec.builder()
-		    .description(Text.of("Change portal price"))
+	private CommandSpec cmdPortalPrice = CommandSpec.builder()
+		    .description(Text.of("Set price of an existing portal"))
 		    .permission("pjp.cmd.portal.price")
 		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))), GenericArguments.optional(GenericArguments.string(Text.of("price"))))
 		    .executor(new com.gmail.trentech.pjp.commands.portal.CMDPrice())
 		    .build();
 	
-	public CommandSpec cmdPortalList = CommandSpec.builder()
+	private CommandSpec cmdPortalList = CommandSpec.builder()
 		    .description(Text.of("List all portals"))
 		    .permission("pjp.cmd.portal.list")
 		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))))
 		    .executor(new com.gmail.trentech.pjp.commands.portal.CMDList())
 		    .build();
 
-	public CommandSpec cmdSave = CommandSpec.builder()
+	private CommandSpec cmdSave = CommandSpec.builder()
 		    .description(Text.of("Saves generated portal"))
 		    .permission("pjp.cmd.portal.create")
 		    .executor(new CMDSave())
 		    .build();
 	
 	public CommandSpec cmdPortal = CommandSpec.builder()
-		    .description(Text.of("Portal base command"))
+		    .description(Text.of("Top level portal command"))
 		    .permission("pjp.cmd.portal")
 		    .child(cmdPortalCreate, "create", "c")
 		    .child(cmdPortalRemove, "remove", "r")
@@ -149,11 +148,10 @@ public class CommandManager {
 	
 	
 	public CommandSpec cmdButton = CommandSpec.builder()
-		    .description(Text.of("Button base command"))
+		    .description(Text.of("Create a new button portal"))
 		    .permission("pjp.cmd.button")
 		    .arguments()
-		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("world"))), GenericArguments.flags()		    				
-		    		.flag("b")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("destination"))), GenericArguments.flags().flag("b")
 		    		.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
 		    		.valueFlag(GenericArguments.string(Text.of("direction")), "d")
 		    		.valueFlag(GenericArguments.string(Text.of("price")), "p").buildWith(GenericArguments.none()))
@@ -161,11 +159,10 @@ public class CommandManager {
 		    .build();
 
 	public CommandSpec cmdDoor = CommandSpec.builder()
-		    .description(Text.of("Door base command"))
+		    .description(Text.of("Create a new door portal"))
 		    .permission("pjp.cmd.door")
 		    .arguments()
-		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("world"))), GenericArguments.flags()
-		    		.flag("b")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("destination"))), GenericArguments.flags().flag("b")
 		    		.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
 		    		.valueFlag(GenericArguments.string(Text.of("direction")), "d")
 		    		.valueFlag(GenericArguments.string(Text.of("price")), "p").buildWith(GenericArguments.none()))
@@ -173,11 +170,10 @@ public class CommandManager {
 		    .build();
 	
 	public CommandSpec cmdLever = CommandSpec.builder()
-		    .description(Text.of("Lever base command"))
+		    .description(Text.of("Create a new lever portal"))
 		    .permission("pjp.cmd.lever")
 		    .arguments()
-		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("world"))), GenericArguments.flags()
-		    		.flag("b")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("destination"))), GenericArguments.flags().flag("b")
 		    		.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
 		    		.valueFlag(GenericArguments.string(Text.of("direction")), "d")
 		    		.valueFlag(GenericArguments.string(Text.of("price")), "p").buildWith(GenericArguments.none()))
@@ -185,11 +181,10 @@ public class CommandManager {
 		    .build();
 	
 	public CommandSpec cmdPlate = CommandSpec.builder()
-		    .description(Text.of("Plate base command"))
+		    .description(Text.of("Create a new pressure plate portal"))
 		    .permission("pjp.cmd.plate")
 		    .arguments()
-		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("world"))), GenericArguments.flags()
-		    		.flag("b")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("destination"))), GenericArguments.flags().flag("b")
 		    		.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
 		    		.valueFlag(GenericArguments.string(Text.of("direction")), "d")
 		    		.valueFlag(GenericArguments.string(Text.of("price")), "p").buildWith(GenericArguments.none()))
@@ -197,11 +192,10 @@ public class CommandManager {
 		    .build();
 
 	public CommandSpec cmdSign = CommandSpec.builder()
-		    .description(Text.of("Sign base command"))
+		    .description(Text.of("Create a new sign portal"))
 		    .permission("pjp.cmd.sign")
 		    .arguments()
-		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("world"))), GenericArguments.flags()
-		    		.flag("b")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("destination"))), GenericArguments.flags().flag("b")
 		    		.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
 		    		.valueFlag(GenericArguments.string(Text.of("direction")), "d")
 		    		.valueFlag(GenericArguments.string(Text.of("price")), "p").buildWith(GenericArguments.none()))

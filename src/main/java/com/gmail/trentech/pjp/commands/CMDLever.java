@@ -28,7 +28,7 @@ public class CMDLever implements CommandExecutor {
 	
 	public CMDLever(){
 		Help help = new Help("lever", "lever", " Use this command to create a lever that will teleport you to other worlds");
-		help.setSyntax(" /lever <destination> [-c <x,y,z>] [-d <direction>] [-b] [-p <price>]\n /l <destination> [-c <x,y,z>] [-d <direction>] [-b] [-p <price>]");
+		help.setSyntax(" /lever <destination> [-b] [-c <x,y,z>] [-d <direction>] [-p <price>]\n /l <destination> [-b] [-c <x,y,z>] [-d <direction>] [-p <price>]");
 		help.setExample(" /lever MyWorld\n /lever MyWorld -c -100,65,254\n /lever MyWorld -c random\n /lever MyWorld -c -100,65,254 -d south\n /lever MyWorld -d southeast\n /lever MyWorld -p 50");
 		help.save();
 	}
@@ -41,14 +41,14 @@ public class CMDLever implements CommandExecutor {
 		}
 		Player player = (Player) src;
 
-		if(!args.hasAny("world")) {
-			src.sendMessage(invalidArg());
+		if(!args.hasAny("destination")) {
+			src.sendMessage(getUsage());
 			return CommandResult.empty();
 		}
-		String worldName = args.<String>getOne("world").get();
+		String worldName = args.<String>getOne("destination").get();
 
-		if(worldName.equalsIgnoreCase("-c") || worldName.equalsIgnoreCase("-d") || worldName.equalsIgnoreCase("-p")){
-			src.sendMessage(invalidArg());
+		if(worldName.equalsIgnoreCase("-c") || worldName.equalsIgnoreCase("-d") || worldName.equalsIgnoreCase("-p") || worldName.equalsIgnoreCase("-b")) {
+			src.sendMessage(getUsage());
 			return CommandResult.empty();
 		}
 		
@@ -61,7 +61,7 @@ public class CMDLever implements CommandExecutor {
 		Rotation rotation = Rotation.EAST;
 		boolean bungee = args.hasAny("b");
 		
-		if (bungee) {
+		if(bungee) {
 			String server = args.<String>getOne("destination").get();
 
 			Consumer<List<String>> consumer = (list) -> {
@@ -95,7 +95,7 @@ public class CMDLever implements CommandExecutor {
 						z = Integer.parseInt(coords[2]);				
 					}catch(Exception e){
 						src.sendMessage(Text.of(TextColors.RED, "Incorrect coordinates"));
-						src.sendMessage(invalidArg());
+						src.sendMessage(getUsage());
 						return CommandResult.empty();
 					}
 					destination = destination.replace("spawn", x + "." + y + "." + z);
@@ -109,7 +109,7 @@ public class CMDLever implements CommandExecutor {
 				
 				if(!optionalRotation.isPresent()){
 					src.sendMessage(Text.of(TextColors.RED, "Incorrect direction"));
-					src.sendMessage(invalidArg());
+					src.sendMessage(getUsage());
 					return CommandResult.empty();
 				}
 
@@ -124,7 +124,7 @@ public class CMDLever implements CommandExecutor {
 				price = Double.parseDouble(args.<String>getOne("price").get());
 			}catch(Exception e){
 				src.sendMessage(Text.of(TextColors.RED, "Incorrect price"));
-				src.sendMessage(invalidArg());
+				src.sendMessage(getUsage());
 				return CommandResult.empty();
 			}
 		}
@@ -136,10 +136,15 @@ public class CMDLever implements CommandExecutor {
 		return CommandResult.success();
 	}
 	
-	private Text invalidArg(){
-		Text t1 = Text.of(TextColors.RED, "Usage: /lever <world> [-c <x,y,z>] ");
-		Text t2 = Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("NORTH\nNORTHEAST\nEAST\nSOUTHEAST\nSOUTH\nSOUTHWEST\nWEST\nNORTHWEST"))).append(Text.of("[-d <direction>] ")).build();
-		Text t3 = Text.of(TextColors.RED, "[-b] [-p <price>]");
-		return Text.of(t1,t2,t3);
+	private Text getUsage() {
+		Text usage = Text.of(TextColors.RED, "Usage: /lever");
+		
+		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("Enter a world or bungee server"))).append(Text.of(" <destination>")).build());
+		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("Use this flag if <destination> is a bungee server"))).append(Text.of(" [-b]")).build());
+		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("Enter x y z coordinates or \"random\""))).append(Text.of(" [-c <x,y,z>]")).build());
+		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("NORTH\nNORTHEAST\nEAST\nSOUTHEAST\nSOUTH\nSOUTHWEST\nWEST\nNORTHWEST"))).append(Text.of(" [-d <direction>]")).build());
+		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("Enter the cost to use portal or 0 to disable"))).append(Text.of(" [-p price]")).build());
+		
+		return usage;
 	}
 }

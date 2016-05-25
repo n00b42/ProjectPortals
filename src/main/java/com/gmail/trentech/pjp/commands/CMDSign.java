@@ -29,7 +29,7 @@ public class CMDSign implements CommandExecutor {
 	
 	public CMDSign(){
 		Help help = new Help("sign", "sign", " Use this command to create a sign that will teleport you to other worlds");
-		help.setSyntax(" /sign <destination> [-c <x,y,z>] [-d <direction>] [-b] [-p <price>]\n /s <destination> [-c <x,y,z>] [-d <direction>] [-b] [-p <price>]");
+		help.setSyntax(" /sign <destination> [-b] [-c <x,y,z>] [-d <direction>] [-p <price>]\n /s <destination> [-b] [-c <x,y,z>] [-d <direction>] [-p <price>]");
 		help.setExample(" /sign MyWorld\n /sign MyWorld -c -100,65,254\n /sign MyWorld -c random\n /sign MyWorld -c -100,65,254 -d south\n /sign MyWorld -d southeast\n /sign MyWorld -p 50");
 		help.save();
 	}
@@ -42,14 +42,14 @@ public class CMDSign implements CommandExecutor {
 		}
 		Player player = (Player) src;
 
-		if(!args.hasAny("world")) {
-			src.sendMessage(invalidArg());
+		if(!args.hasAny("destination")) {
+			src.sendMessage(getUsage());
 			return CommandResult.empty();
 		}
-		String worldName = args.<String>getOne("world").get();
+		String worldName = args.<String>getOne("destination").get();
 
-		if(worldName.equalsIgnoreCase("-c") || worldName.equalsIgnoreCase("-d") || worldName.equalsIgnoreCase("-p")){
-			src.sendMessage(invalidArg());
+		if(worldName.equalsIgnoreCase("-c") || worldName.equalsIgnoreCase("-d") || worldName.equalsIgnoreCase("-p") || worldName.equalsIgnoreCase("-b")){
+			src.sendMessage(getUsage());
 			return CommandResult.empty();
 		}
 		
@@ -62,7 +62,7 @@ public class CMDSign implements CommandExecutor {
 		Rotation rotation = Rotation.EAST;
 		boolean bungee = args.hasAny("b");
 		
-		if (bungee) {
+		if(bungee) {
 			String server = args.<String>getOne("destination").get();
 
 			Consumer<List<String>> consumer = (list) -> {
@@ -96,7 +96,7 @@ public class CMDSign implements CommandExecutor {
 						z = Integer.parseInt(coords[2]);				
 					}catch(Exception e){
 						src.sendMessage(Text.of(TextColors.RED, "Incorrect coordinates"));
-						src.sendMessage(invalidArg());
+						src.sendMessage(getUsage());
 						return CommandResult.empty();
 					}
 					destination = destination.replace("spawn", x + "." + y + "." + z);
@@ -110,7 +110,7 @@ public class CMDSign implements CommandExecutor {
 				
 				if(!optionalRotation.isPresent()){
 					src.sendMessage(Text.of(TextColors.RED, "Incorrect direction"));
-					src.sendMessage(invalidArg());
+					src.sendMessage(getUsage());
 					return CommandResult.empty();
 				}
 
@@ -125,7 +125,7 @@ public class CMDSign implements CommandExecutor {
 				price = Double.parseDouble(args.<String>getOne("price").get());
 			}catch(Exception e){
 				src.sendMessage(Text.of(TextColors.RED, "Incorrect price"));
-				src.sendMessage(invalidArg());
+				src.sendMessage(getUsage());
 				return CommandResult.empty();
 			}
 		}
@@ -137,10 +137,15 @@ public class CMDSign implements CommandExecutor {
 		return CommandResult.success();
 	}
 	
-	private Text invalidArg(){
-		Text t1 = Text.of(TextColors.RED, "Usage: /sign <destination> [-c <x,y,z>] ");
-		Text t2 = Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("NORTH\nNORTHEAST\nEAST\nSOUTHEAST\nSOUTH\nSOUTHWEST\nWEST\nNORTHWEST"))).append(Text.of("[-d <direction>] ")).build();
-		Text t3 = Text.of(TextColors.RED, "[-b] [-p <price>]");
-		return Text.of(t1,t2,t3);
+	private Text getUsage() {
+		Text usage = Text.of(TextColors.RED, "Usage: /sign");
+		
+		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("Enter a world or bungee server"))).append(Text.of(" <destination>")).build());
+		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("Use this flag if <destination> is a bungee server"))).append(Text.of(" [-b]")).build());
+		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("Enter x y z coordinates or \"random\""))).append(Text.of(" [-c <x,y,z>]")).build());
+		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("NORTH\nNORTHEAST\nEAST\nSOUTHEAST\nSOUTH\nSOUTHWEST\nWEST\nNORTHWEST"))).append(Text.of(" [-d <direction>]")).build());
+		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("Enter the cost to use portal or 0 to disable"))).append(Text.of(" [-p price]")).build());
+		
+		return usage;
 	}
 }

@@ -29,7 +29,7 @@ public class CMDCreate implements CommandExecutor {
 	
 	public CMDCreate() {
 		Help help = new Help("wcreate", "create", " Use this command to create a warp that will teleport you to other worlds");
-		help.setSyntax(" /warp create <name> [<destination> [-c <x,y,z>] [-d <direction>] [-b]] [-p <price>]\n /w <name> [<destination> [-c <x,y,z>] [-d <direction>] [-b]] [-p <price>]");
+		help.setSyntax(" /warp create <name> [<destination> [-b] [-c <x,y,z>] [-d <direction>]] [-p <price>]\n /w <name> [<destination> [-b] [-c <x,y,z>] [-d <direction>]] [-p <price>]");
 		help.setExample(" /warp create Lobby\n /warp create Lobby MyWorld\n /warp create Lobby MyWorld -c -100,65,254\n /warp create Random MyWorld -c random\n /warp create Lobby MyWorld -c -100,65,254 -d south\n /warp create Lobby MyWorld -d southeast\n /warp Lobby MyWorld -p 50\n /warp Lobby -p 50");
 		help.save();
 	}
@@ -43,13 +43,13 @@ public class CMDCreate implements CommandExecutor {
 		Player player = (Player) src;
 
 		if(!args.hasAny("name")) {
-			src.sendMessage(invalidArg());
+			src.sendMessage(getUsage());
 			return CommandResult.empty();
 		}
 		String name = args.<String>getOne("name").get().toLowerCase();
 
-		if(name.equalsIgnoreCase("-c") || name.equalsIgnoreCase("-d") || name.equalsIgnoreCase("-p")) {
-			src.sendMessage(invalidArg());
+		if(name.equalsIgnoreCase("-c") || name.equalsIgnoreCase("-d") || name.equalsIgnoreCase("-p") || name.equalsIgnoreCase("-b")) {
+			src.sendMessage(getUsage());
 			return CommandResult.empty();
 		}
 		
@@ -64,11 +64,16 @@ public class CMDCreate implements CommandExecutor {
 		boolean bungee = false;
 		
 		if(args.hasAny("destination")) {
-			if (args.hasAny("b")) {
+			if(args.hasAny("b")) {
 				bungee = args.hasAny("b");
 				
 				String server = args.<String>getOne("destination").get();
 
+				if(server.equalsIgnoreCase("-c") || server.equalsIgnoreCase("-d") || server.equalsIgnoreCase("-p") || server.equalsIgnoreCase("-b")) {
+					src.sendMessage(getUsage());
+					return CommandResult.empty();
+				}
+				
 				Consumer<List<String>> consumer = (list) -> {
 					if(!list.contains(server)) {
 						player.sendMessage(Text.of(TextColors.DARK_RED, server, " is offline or not correctly configured for Bungee"));
@@ -86,8 +91,8 @@ public class CMDCreate implements CommandExecutor {
 			}else {
 				worldName = args.<String>getOne("destination").get();
 
-				if(worldName.equalsIgnoreCase("-c") || worldName.equalsIgnoreCase("-d") || worldName.equalsIgnoreCase("-p")) {
-					src.sendMessage(invalidArg());
+				if(worldName.equalsIgnoreCase("-c") || worldName.equalsIgnoreCase("-d") || worldName.equalsIgnoreCase("-p") || worldName.equalsIgnoreCase("-b")) {
+					src.sendMessage(getUsage());
 					return CommandResult.empty();
 				}
 				
@@ -113,7 +118,7 @@ public class CMDCreate implements CommandExecutor {
 							z = Integer.parseInt(coords[2]);				
 						}catch(Exception e) {
 							src.sendMessage(Text.of(TextColors.RED, "Incorrect coordinates"));
-							src.sendMessage(invalidArg());
+							src.sendMessage(getUsage());
 							return CommandResult.empty();
 						}
 						destination = destination.replace("spawn", x + "." + y + "." + z);
@@ -127,7 +132,7 @@ public class CMDCreate implements CommandExecutor {
 					
 					if(!optionalRotation.isPresent()) {
 						src.sendMessage(Text.of(TextColors.RED, "Incorrect direction"));
-						src.sendMessage(invalidArg());
+						src.sendMessage(getUsage());
 						return CommandResult.empty();
 					}
 
@@ -147,7 +152,7 @@ public class CMDCreate implements CommandExecutor {
 				price = Double.parseDouble(args.<String>getOne("price").get());
 			}catch(Exception e) {
 				src.sendMessage(Text.of(TextColors.RED, "Incorrect price"));
-				src.sendMessage(invalidArg());
+				src.sendMessage(getUsage());
 				return CommandResult.empty();
 			}
 		}
@@ -159,10 +164,15 @@ public class CMDCreate implements CommandExecutor {
 		return CommandResult.success();
 	}
 	
-	private Text invalidArg() {
-		Text t1 = Text.of(TextColors.RED, "Usage: /warp create <name> [<destination> [-c <x,y,z>] ");
-		Text t2 = Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("NORTH\nNORTHEAST\nEAST\nSOUTHEAST\nSOUTH\nSOUTHWEST\nWEST\nNORTHWEST"))).append(Text.of("[-d <direction>]> ")).build();
-		Text t3 = Text.of(TextColors.RED, "[-b]] [-p <price>]");
-		return Text.of(t1,t2,t3);
+	private Text getUsage() {
+		Text usage = Text.of(TextColors.RED, "Usage: /warp create <name>");
+		
+		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("Enter a world or bungee server"))).append(Text.of(" [<destination>")).build());
+		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("Use this flag if <destination> is a bungee server"))).append(Text.of(" [-b]")).build());
+		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("Enter x y z coordinates or \"random\""))).append(Text.of(" [-c <x,y,z>]")).build());
+		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("NORTH\nNORTHEAST\nEAST\nSOUTHEAST\nSOUTH\nSOUTHWEST\nWEST\nNORTHWEST"))).append(Text.of(" [-d <direction>]]")).build());
+		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("Enter the cost to use portal or 0 to disable"))).append(Text.of(" [-p price]")).build());
+		
+		return usage;
 	}
 }
