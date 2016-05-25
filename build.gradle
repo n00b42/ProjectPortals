@@ -19,10 +19,6 @@ repositories {
         name 'jitpack.io'
         url 'https://jitpack.io'
     }
-    maven {
-        name = 'minecrell-releases'
-        url = 'http://repo.minecrell.net/releases'
-    }
 }
 
 configurations {
@@ -34,7 +30,6 @@ dependencies {
     compile "org.spongepowered:spongeapi:4.1.0-SNAPSHOT"
     compile "com.github.pie-flavor:Spongee:-SNAPSHOT"
 	shade "com.github.Flibio:Updatifier:-SNAPSHOT:api"
-	shade "net.minecrell.mcstats:statslite-sponge:0.2.2"	
 }
 
 jar {
