@@ -12,7 +12,6 @@ import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 
 import com.gmail.trentech.pjp.commands.CMDBack;
-import com.gmail.trentech.pjp.commands.CMDBungee;
 import com.gmail.trentech.pjp.commands.CommandManager;
 import com.gmail.trentech.pjp.data.builder.data.ButtonBuilder;
 import com.gmail.trentech.pjp.data.builder.data.DoorBuilder;
@@ -52,7 +51,7 @@ import net.minecrell.mcstats.SpongeStatsLite;
 import ninja.leaping.configurate.ConfigurationNode;
 
 @Updatifier(repoName = "ProjectPortals", repoOwner = "TrenTech", version = Resource.VERSION)
-@Plugin(id = Resource.ID, name = Resource.NAME, version = Resource.VERSION, authors = Resource.AUTHOR, url = Resource.URL, description = Resource.DESCRIPTION, dependencies = {@Dependency(id = "Updatifier", optional = true)})
+@Plugin(id = Resource.ID, name = Resource.NAME, version = Resource.VERSION, authors = Resource.AUTHOR, url = Resource.URL, description = Resource.DESCRIPTION, dependencies = {@Dependency(id = "Updatifier", optional = true), @Dependency(id = "Spongee", optional = true)})
 public class Main {
 
     @Inject
@@ -81,8 +80,7 @@ public class Main {
     	configManager.init();
 
     	getGame().getEventManager().registerListeners(this, new TeleportListener());
-    	
-    	getGame().getCommandManager().register(this, new CMDBungee().cmdBungee, "cord");
+
     	getGame().getCommandManager().register(this, new CMDBack().cmdBack, "back");
     	getGame().getCommandManager().register(this, new CommandManager().cmdPJP, "pjp");
 

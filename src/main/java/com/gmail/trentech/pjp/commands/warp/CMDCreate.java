@@ -1,8 +1,6 @@
 package com.gmail.trentech.pjp.commands.warp;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -21,11 +19,9 @@ import com.gmail.trentech.pjp.data.object.Warp;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Rotation;
 
-import flavor.pie.spongee.Spongee;
-
 public class CMDCreate implements CommandExecutor {
 
-	private boolean exist = true;
+	//private boolean exist = true;
 	
 	public CMDCreate() {
 		Help help = new Help("wcreate", "create", " Use this command to create a warp that will teleport you to other worlds");
@@ -65,29 +61,33 @@ public class CMDCreate implements CommandExecutor {
 		
 		if(args.hasAny("destination")) {
 			if(args.hasAny("b")) {
-				bungee = args.hasAny("b");
+				// TEMP DISABLE
+				src.sendMessage(Text.of(TextColors.DARK_RED, "TEMPORARILY DISABLED"));
+				return CommandResult.empty();
 				
-				String server = args.<String>getOne("destination").get();
-
-				if(server.equalsIgnoreCase("-c") || server.equalsIgnoreCase("-d") || server.equalsIgnoreCase("-p") || server.equalsIgnoreCase("-b")) {
-					src.sendMessage(getUsage());
-					return CommandResult.empty();
-				}
-				
-				Consumer<List<String>> consumer = (list) -> {
-					if(!list.contains(server)) {
-						player.sendMessage(Text.of(TextColors.DARK_RED, server, " is offline or not correctly configured for Bungee"));
-						exist = false;
-					}
-				};
-				
-				Spongee.API.getServerList(consumer, player);
-				
-				if(!exist) {
-					return CommandResult.empty();
-				}
-				
-				destination = server;
+//				bungee = args.hasAny("b");
+//				
+//				String server = args.<String>getOne("destination").get();
+//
+//				if(server.equalsIgnoreCase("-c") || server.equalsIgnoreCase("-d") || server.equalsIgnoreCase("-p") || server.equalsIgnoreCase("-b")) {
+//					src.sendMessage(getUsage());
+//					return CommandResult.empty();
+//				}
+//				
+//				Consumer<List<String>> consumer = (list) -> {
+//					if(!list.contains(server)) {
+//						player.sendMessage(Text.of(TextColors.DARK_RED, server, " is offline or not correctly configured for Bungee"));
+//						exist = false;
+//					}
+//				};
+//				
+//				Spongee.API.getServerList(consumer, player);
+//				
+//				if(!exist) {
+//					return CommandResult.empty();
+//				}
+//				
+//				destination = server;
 			}else {
 				worldName = args.<String>getOne("destination").get();
 

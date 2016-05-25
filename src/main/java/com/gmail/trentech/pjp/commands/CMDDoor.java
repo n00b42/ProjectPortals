@@ -1,8 +1,6 @@
 package com.gmail.trentech.pjp.commands;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -20,11 +18,9 @@ import com.gmail.trentech.pjp.listeners.DoorListener;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Rotation;
 
-import flavor.pie.spongee.Spongee;
-
 public class CMDDoor implements CommandExecutor {
 
-	private boolean exist = true;
+	//private boolean exist = true;
 	
 	public CMDDoor(){
 		Help help = new Help("door", "door", " Use this command to create a door that will teleport you to other worlds");
@@ -62,22 +58,26 @@ public class CMDDoor implements CommandExecutor {
 		boolean bungee = args.hasAny("b");
 		
 		if(bungee) {
-			String server = args.<String>getOne("destination").get();
-
-			Consumer<List<String>> consumer = (list) -> {
-				if(!list.contains(server)) {
-					player.sendMessage(Text.of(TextColors.DARK_RED, server, " is offline or not correctly configured for Bungee"));
-					exist = false;
-				}
-			};
+			// TEMP DISABLE
+			src.sendMessage(Text.of(TextColors.DARK_RED, "TEMPORARILY DISABLED"));
+			return CommandResult.empty();
 			
-			Spongee.API.getServerList(consumer, player);
-			
-			if(!exist) {
-				return CommandResult.empty();
-			}
-			
-			destination = server;
+//			String server = args.<String>getOne("destination").get();
+//
+//			Consumer<List<String>> consumer = (list) -> {
+//				if(!list.contains(server)) {
+//					player.sendMessage(Text.of(TextColors.DARK_RED, server, " is offline or not correctly configured for Bungee"));
+//					exist = false;
+//				}
+//			};
+//			
+//			Spongee.API.getServerList(consumer, player);
+//			
+//			if(!exist) {
+//				return CommandResult.empty();
+//			}
+//			
+//			destination = server;
 		}else {
 			if(args.hasAny("x,y,z")){
 				String[] coords = args.<String>getOne("x,y,z").get().split(",");
