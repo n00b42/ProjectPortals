@@ -263,6 +263,6 @@ public class Portal extends PortalBase {
 	@Override
     public DataContainer toContainer() {
         return new MemoryDataContainer().set(DataQueries.DESTINATION, destination).set(DataQueries.ROTATION, rotation)
-        		.set(DataQueries.FRAME, frame).set(DataQueries.FILL, fill).set(DataQueries.PARTICLE, particle).set(DataQueries.PRICE, price);
+        		.set(DataQueries.FRAME, frame).set(DataQueries.FILL, fill).set(DataQueries.PARTICLE, particle).set(DataQueries.PRICE, price).set(DataQueries.BUNGEE, bungee);
     }
 }
