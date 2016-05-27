@@ -20,7 +20,7 @@ public class Particle {
 	private final long time;
 	private static ThreadLocalRandom random = ThreadLocalRandom.current();
 	
-	protected Particle(String name, ParticleType type, long time, boolean colored) {
+	protected Particle(String name, ParticleType type, long time) {
 		this.name = name;
 		this.type = type;
 		this.time = time;

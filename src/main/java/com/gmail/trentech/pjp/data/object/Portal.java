@@ -125,20 +125,12 @@ public class Portal extends PortalBase {
 		for(Entry<String, Portal> entry : cache.entrySet()) {
 			Portal portal = entry.getValue();
 			
-			for(Location<World> loc : portal.getFill()) {
-				String fill = loc.getExtent().getName() + ":" + loc.getBlockX() + "." + loc.getBlockY() + "." + loc.getBlockZ();
-				
-				if(name.equals(fill)) {
-					return Optional.of(portal);
-				}
+			if(portal.fill.contains(name)) {
+				return Optional.of(portal);
 			}
 
-			for(Location<World> loc : portal.getFrame()) {
-				String frame = loc.getExtent().getName() + ":" + loc.getBlockX() + "." + loc.getBlockY() + "." + loc.getBlockZ();
-				
-				if(name.equals(frame)) {
-					return Optional.of(portal);
-				}
+			if(portal.frame.contains(name)) {
+				return Optional.of(portal);
 			}
 		}
 		
@@ -245,7 +237,7 @@ public class Portal extends PortalBase {
 				portal.setName(name);
 				
 				cache.put(name, portal);
-				
+
 	    		String[] split = portal.getParticle().split(":");
 	    		if(split.length == 2) {
 	    			Particles.get(split[0]).get().createTask(name, portal.getFill(), ParticleColor.get(split[1]).get());
@@ -263,6 +255,7 @@ public class Portal extends PortalBase {
 	@Override
     public DataContainer toContainer() {
         return new MemoryDataContainer().set(DataQueries.DESTINATION, destination).set(DataQueries.ROTATION, rotation)
-        		.set(DataQueries.FRAME, frame).set(DataQueries.FILL, fill).set(DataQueries.PARTICLE, particle).set(DataQueries.PRICE, price).set(DataQueries.BUNGEE, bungee);
+        		.set(DataQueries.FRAME, frame).set(DataQueries.FILL, fill).set(DataQueries.PARTICLE, particle)
+        		.set(DataQueries.PRICE, price).set(DataQueries.BUNGEE, bungee);
     }
 }
