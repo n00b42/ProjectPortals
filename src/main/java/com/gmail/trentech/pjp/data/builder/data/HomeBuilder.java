@@ -10,6 +10,7 @@ import org.spongepowered.api.data.persistence.AbstractDataBuilder;
 import org.spongepowered.api.data.persistence.InvalidDataException;
 
 import com.gmail.trentech.pjp.data.object.Home;
+import com.gmail.trentech.pjp.utils.Rotation;
 
 public class HomeBuilder extends AbstractDataBuilder<Home> {
 
@@ -23,7 +24,7 @@ public class HomeBuilder extends AbstractDataBuilder<Home> {
         	String destination = container.getString(DESTINATION).get();
         	String rotation = container.getString(ROTATION).get();
 
-            return Optional.of(new Home(destination, rotation));
+            return Optional.of(new Home(destination, Rotation.get(rotation).get()));
         }
         
         return Optional.empty();

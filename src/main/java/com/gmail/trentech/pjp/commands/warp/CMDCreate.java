@@ -157,7 +157,7 @@ public class CMDCreate implements CommandExecutor {
 			}
 		}
 
-		new Warp(name, destination, rotation.getName(), price, bungee).create();
+		new Warp(name, destination, rotation, price, bungee).create();
 
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Warp ", name, " create"));
 

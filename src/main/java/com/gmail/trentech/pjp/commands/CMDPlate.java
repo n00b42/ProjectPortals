@@ -129,7 +129,7 @@ public class CMDPlate implements CommandExecutor {
 			}
 		}
 		
-		PlateListener.builders.put(player.getUniqueId(), new Plate(destination, rotation.getName(), price, args.hasAny("b")));
+		PlateListener.builders.put(player.getUniqueId(), new Plate(destination, rotation, price, args.hasAny("b")));
 
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place plate to create plate portal"));
 

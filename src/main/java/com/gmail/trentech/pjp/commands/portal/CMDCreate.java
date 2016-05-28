@@ -21,7 +21,6 @@ import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.listeners.PortalListener;
-import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Rotation;
 
@@ -152,7 +151,9 @@ public class CMDCreate implements CommandExecutor {
 			}
 		}
 		
-		String particle = new ConfigManager().getConfig().getNode("options", "particles", "type", "portal").getString().toUpperCase();
+		Particle particle = Particles.getDefaultEffect("portal");
+		
+		Optional<ParticleColor> color = Particles.getDefaultColor("portal", particle.isColorable());
 		
 		if(args.hasAny("particle[:color]")) {
 			String[] type = args.<String>getOne("particle[:color]").get().toUpperCase().split(":");
@@ -164,24 +165,24 @@ public class CMDCreate implements CommandExecutor {
 				src.sendMessage(getUsage());
 				return CommandResult.empty();
 			}
-			Particle part = optionalParticle.get();
-			particle = type[0];
-			
+			particle = optionalParticle.get();
+
 			if(type.length == 2) {
-				if(part.getType() instanceof Colorable) {
-		    		if(!ParticleColor.get(type[1]).isPresent()) {
+				if(particle.getType() instanceof Colorable) {
+					color = ParticleColor.get(type[1]);
+					
+		    		if(!color.isPresent()) {
 		    			src.sendMessage(Text.of(TextColors.RED, "Incorrect color"));
 		    			src.sendMessage(getUsage());
 		    			return CommandResult.empty();
 		    		}
-		    		particle = particle + ":" + type[1];
 				}else{
 					src.sendMessage(Text.of(TextColors.YELLOW, "Colors currently only works with REDSTONE type"));
 				}
 			}
 		}
 		
-		PortalListener.builders.put(player.getUniqueId(), new PortalBuilder(name, destination, rotation, particle, price, bungee));
+		PortalListener.builders.put(player.getUniqueId(), new PortalBuilder(name, destination, rotation, particle, color, price, bungee));
 		
 		player.sendMessage(Text.builder().color(TextColors.DARK_GREEN).append(Text.of("Begin building your portal frame, followed by "))
 				.onClick(TextActions.runCommand("/pjp:portal save")).append(Text.of(TextColors.YELLOW, TextStyles.UNDERLINE, "/portal save")).build());

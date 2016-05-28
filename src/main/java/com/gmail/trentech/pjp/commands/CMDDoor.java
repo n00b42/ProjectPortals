@@ -129,7 +129,7 @@ public class CMDDoor implements CommandExecutor {
 			}
 		}
 		
-		DoorListener.builders.put(player.getUniqueId(), new Door(destination, rotation.getName(), price, args.hasAny("b")));
+		DoorListener.builders.put(player.getUniqueId(), new Door(destination, rotation, price, args.hasAny("b")));
 
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place door to create door portal"));
 

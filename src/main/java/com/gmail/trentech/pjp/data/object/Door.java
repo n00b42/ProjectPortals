@@ -10,17 +10,18 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import com.gmail.trentech.pjp.utils.Rotation;
 import com.gmail.trentech.pjp.utils.Serializer;
 
 public class Door extends PortalBase {
 
 	private static ConcurrentHashMap<String, Door> cache = new ConcurrentHashMap<>();
 	
-	public Door(String destination, String rotation, double price, boolean bungee) {
+	public Door(String destination, Rotation rotation, double price, boolean bungee) {
 		super(destination, rotation, price, bungee);
 	}
 
-	public Door(String name, String destination, String rotation, double price, boolean bungee) {
+	public Door(String name, String destination, Rotation rotation, double price, boolean bungee) {
 		super(name, destination, rotation, price, bungee);
 	}
 	

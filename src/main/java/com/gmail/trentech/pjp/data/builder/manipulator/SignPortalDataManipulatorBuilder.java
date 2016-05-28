@@ -12,6 +12,7 @@ import org.spongepowered.api.data.persistence.InvalidDataException;
 import com.gmail.trentech.pjp.data.immutable.ImmutableSignPortalData;
 import com.gmail.trentech.pjp.data.mutable.SignPortalData;
 import com.gmail.trentech.pjp.data.object.Sign;
+import com.gmail.trentech.pjp.utils.Rotation;
 
 public class SignPortalDataManipulatorBuilder implements DataManipulatorBuilder<SignPortalData, ImmutableSignPortalData> {
 
@@ -26,7 +27,7 @@ public class SignPortalDataManipulatorBuilder implements DataManipulatorBuilder<
 
     @Override
     public SignPortalData create() {
-        return new SignPortalData(new Sign("", "", 0, false));
+        return new SignPortalData(new Sign("", Rotation.EAST, 0, false));
     }
 
     @Override

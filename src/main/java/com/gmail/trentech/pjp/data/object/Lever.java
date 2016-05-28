@@ -10,17 +10,18 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import com.gmail.trentech.pjp.utils.Rotation;
 import com.gmail.trentech.pjp.utils.Serializer;
 
 public class Lever extends PortalBase {
 
 	private static ConcurrentHashMap<String, Lever> cache = new ConcurrentHashMap<>();
 	
-	public Lever(String destination, String rotation, double price, boolean bungee) {
+	public Lever(String destination, Rotation rotation, double price, boolean bungee) {
 		super(destination, rotation, price, bungee);
 	}
 
-	public Lever(String name, String destination, String rotation, double price, boolean bungee) {
+	public Lever(String name, String destination, Rotation rotation, double price, boolean bungee) {
 		super(name, destination, rotation, price, bungee);
 	}
 	

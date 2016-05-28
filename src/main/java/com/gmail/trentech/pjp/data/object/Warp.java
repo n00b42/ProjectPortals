@@ -7,17 +7,18 @@ import java.sql.SQLException;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.gmail.trentech.pjp.utils.Rotation;
 import com.gmail.trentech.pjp.utils.Serializer;
 
 public class Warp extends PortalBase {
 
 	private static ConcurrentHashMap<String, Warp> cache = new ConcurrentHashMap<>();
 
-	public Warp(String destination, String rotation, double price, boolean bungee) {
+	public Warp(String destination, Rotation rotation, double price, boolean bungee) {
 		super(destination, rotation, price, bungee);
 	}
 
-	public Warp(String name, String destination, String rotation, double price, boolean bungee) {
+	public Warp(String name, String destination, Rotation rotation, double price, boolean bungee) {
 		super(name, destination, rotation, price, bungee);
 	}
 

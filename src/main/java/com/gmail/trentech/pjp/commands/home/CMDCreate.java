@@ -83,7 +83,7 @@ public class CMDCreate implements CommandExecutor {
 
 		String destination = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 		
-		homeList.put(homeName, new Home(destination, Rotation.getClosest(player.getRotation().getFloorY()).getName()));
+		homeList.put(homeName, new Home(destination, Rotation.getClosest(player.getRotation().getFloorY())));
 		
 		DataTransactionResult result = player.offer(new HomeData(homeList));
 		if(!result.isSuccessful()) {

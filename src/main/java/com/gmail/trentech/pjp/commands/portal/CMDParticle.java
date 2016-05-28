@@ -56,12 +56,13 @@ public class CMDParticle implements CommandExecutor {
 		}
 		Particle particle = optionalParticle.get();
 		
+		Optional<ParticleColor> color = Optional.empty();
+		
 		if(args.hasAny("color")) {
 			if(particle.getType() instanceof Colorable) {
-				String color = args.<String>getOne("color").get().toUpperCase();
-	    		if(ParticleColor.get(color).isPresent()) {
-	    			type = type + ":" + color;
-	    		}else{
+				color = ParticleColor.get(args.<String>getOne("color").get().toUpperCase());
+				
+	    		if(!color.isPresent()) {
 	    			src.sendMessage(Text.of(TextColors.RED, "Incorrect color"));
 	    			src.sendMessage(getUsage());
 	    			return CommandResult.empty();
@@ -71,7 +72,8 @@ public class CMDParticle implements CommandExecutor {
 			}
 		}
 
-		portal.setParticle(type);
+		portal.setParticle(particle);
+		portal.setParticleColor(color.get());
 		portal.update();
 
 		return CommandResult.success();

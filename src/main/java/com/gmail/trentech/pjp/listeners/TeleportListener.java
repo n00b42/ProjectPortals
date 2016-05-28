@@ -29,7 +29,6 @@ import org.spongepowered.api.world.World;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.commands.CMDBack;
 import com.gmail.trentech.pjp.effects.Particle;
-import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.utils.ConfigManager;
@@ -64,30 +63,9 @@ public class TeleportListener {
 			player.sendMessage(Text.of(TextColors.GREEN, "Charged $",new DecimalFormat("#,###,##0.00").format(price)));
 		}
 		
-		ConfigurationNode config = new ConfigManager().getConfig();
-		
-		String[] split = config.getNode("options", "particles", "type", "teleport").getString().split(":");
-		
-		Optional<Particle> optionalParticle = Particles.get(split[0]);
-		
-		if(optionalParticle.isPresent()) {
-			Particle particle = optionalParticle.get();
-			
-			if(split.length == 2 && particle.isColorable()) {
-				Optional<ParticleColor> optionalColors = ParticleColor.get(split[1]);
-				
-				if(optionalColors.isPresent()) {
-					particle.spawnParticle(src, optionalColors.get(), true);
-					particle.spawnParticle(src.getRelative(Direction.UP), optionalColors.get(), true);
-				}else{
-					particle.spawnParticle(src, true);
-					particle.spawnParticle(src.getRelative(Direction.UP), optionalColors.get(), true);
-				}
-			}else{
-				particle.spawnParticle(src, true);
-				particle.spawnParticle(src.getRelative(Direction.UP), true);
-			}
-		}
+		Particle particle = Particles.getDefaultEffect("teleport");
+		particle.spawnParticle(src, true, Particles.getDefaultColor("teleport", particle.isColorable()));
+		particle.spawnParticle(src.getRelative(Direction.UP), true, Particles.getDefaultColor("teleport", particle.isColorable()));		
 	}
 	
 	@Listener

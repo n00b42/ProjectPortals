@@ -18,18 +18,18 @@ public class PortalBase extends SQLUtils implements DataSerializable {
 	
 	protected String name;
 	protected String destination;
-	protected String rotation;
+	protected Rotation rotation;
 	protected double price;
 	protected boolean bungee;
 
-	protected PortalBase(String destination, String rotation, double price, boolean bungee) {
+	protected PortalBase(String destination, Rotation rotation, double price, boolean bungee) {
 		this.destination = destination;
 		this.rotation = rotation;
 		this.price = price;
 		this.bungee = bungee;
 	}
 
-	protected PortalBase(String name, String destination, String rotation, double price, boolean bungee) {
+	protected PortalBase(String name, String destination, Rotation rotation, double price, boolean bungee) {
 		this.name = name;
 		this.destination = destination;
 		this.rotation = rotation;
@@ -78,11 +78,11 @@ public class PortalBase extends SQLUtils implements DataSerializable {
 	}
 	
 	public Rotation getRotation() {
-		return Rotation.get(rotation).get();
+		return rotation;
 	}
 
 	public void setRotation(Rotation rotation) {
-		this.rotation = rotation.getName();
+		this.rotation = rotation;
 	}
 	
 	public Optional<Location<World>> getDestination() {
@@ -128,7 +128,7 @@ public class PortalBase extends SQLUtils implements DataSerializable {
 
 	@Override
     public DataContainer toContainer() {
-        return new MemoryDataContainer().set(DataQueries.DESTINATION, destination).set(DataQueries.ROTATION, rotation).set(DataQueries.PRICE, price).set(DataQueries.BUNGEE, bungee);
+        return new MemoryDataContainer().set(DataQueries.DESTINATION, destination).set(DataQueries.ROTATION, rotation.getName()).set(DataQueries.PRICE, price).set(DataQueries.BUNGEE, bungee);
     }
 
 }

@@ -129,7 +129,7 @@ public class CMDLever implements CommandExecutor {
 			}
 		}
 		
-		LeverListener.builders.put(player.getUniqueId(), new Lever(destination, rotation.getName(), price, args.hasAny("b")));
+		LeverListener.builders.put(player.getUniqueId(), new Lever(destination, rotation, price, args.hasAny("b")));
 
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place lever to create lever portal"));
 

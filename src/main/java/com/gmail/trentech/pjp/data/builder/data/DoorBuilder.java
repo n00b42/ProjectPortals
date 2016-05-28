@@ -12,6 +12,7 @@ import org.spongepowered.api.data.persistence.AbstractDataBuilder;
 import org.spongepowered.api.data.persistence.InvalidDataException;
 
 import com.gmail.trentech.pjp.data.object.Door;
+import com.gmail.trentech.pjp.utils.Rotation;
 
 public class DoorBuilder extends AbstractDataBuilder<Door> {
 
@@ -27,7 +28,7 @@ public class DoorBuilder extends AbstractDataBuilder<Door> {
         	Double price = container.getDouble(PRICE).get();
         	boolean bungee = container.getBoolean(BUNGEE).get();
         	
-            return Optional.of(new Door(destination, rotation, price, bungee));
+            return Optional.of(new Door(destination, Rotation.get(rotation).get(), price, bungee));
         }
         
         return Optional.empty();

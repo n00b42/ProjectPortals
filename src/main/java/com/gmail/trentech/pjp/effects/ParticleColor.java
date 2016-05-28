@@ -20,6 +20,10 @@ public enum ParticleColor {
 		this.color = color;
 	}
 	
+	public String getName() {
+		return this.name;
+	}
+	
     public Color getColor() {
 		if(this.color == null) {
 			int random = ThreadLocalRandom.current().nextInt(8 - 1 + 1) + 1;

@@ -73,10 +73,12 @@ public class ConfigManager {
 			if(config.getNode("options", "particles").isVirtual()) {
 				config.getNode("options", "particles").setComment("Particle effect settings");
 				config.getNode("options", "particles", "enable").setValue(true).setComment("Enable particle effects");
-				config.getNode("options", "particles", "type").setComment("Default particle types");
-				config.getNode("options", "particles", "type", "portal").setValue("PORTAL").setComment("Default particle type for portals");
-				config.getNode("options", "particles", "type", "teleport").setValue("REDSTONE:RAINBOW").setComment("Default particle type when teleporting");
-				config.getNode("options", "particles", "type", "creation").setValue("SPELL_WITCH").setComment("Default particle type when creating any kind of portal");
+				config.getNode("options", "particles", "portal", "type").setValue("PORTAL").setComment("Default particle type for portals");
+				config.getNode("options", "particles", "portal", "color").setValue("NONE").setComment("Default Color of Particle if supported, otherwise set \"NONE\"");
+				config.getNode("options", "particles", "teleport", "type").setValue("REDSTONE").setComment("Default particle type when teleporting");
+				config.getNode("options", "particles", "teleport", "color").setValue("RAINBOW").setComment("Default Color of Particle if supported, otherwise set \"NONE\"");
+				config.getNode("options", "particles", "creation", "type").setValue("SPELL_WITCH").setComment("Default particle type when creating any kind of portal");
+				config.getNode("options", "particles", "creation", "color").setValue("NONE").setComment("Default Color of Particle if supported, otherwise set \"NONE\"");
 			}
 			if(config.getNode("options", "random_spawn_radius").isVirtual()) {
 				config.getNode("options", "random_spawn_radius").setValue(5000).setComment("World radius for random spawn portals.");

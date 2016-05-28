@@ -22,7 +22,7 @@ import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 
 public class Serializer {
-	
+
 	public static String serialize(Warp warp) {
 		ConfigurationNode node = ConfigurateTranslator.instance().translateData(warp.toContainer());
 		

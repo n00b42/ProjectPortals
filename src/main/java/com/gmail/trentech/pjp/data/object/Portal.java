@@ -18,97 +18,75 @@ import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.DataQueries;
+import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
-import com.gmail.trentech.pjp.utils.ConfigManager;
+import com.gmail.trentech.pjp.utils.Rotation;
 import com.gmail.trentech.pjp.utils.Serializer;
 
 public class Portal extends PortalBase {
 
 	private static ConcurrentHashMap<String, Portal> cache = new ConcurrentHashMap<>();
 
-	private final List<String> frame;
-	private final List<String> fill;
-	private String particle;
+	private final List<Location<World>> frame;
+	private final List<Location<World>> fill;
+	private Particle particle = Particles.getDefaultEffect("portal");
+	private Optional<ParticleColor> color = Particles.getDefaultColor("portal", particle.isColorable());
 	
-	public Portal(String destination, String rotation, List<String> frame, List<String> fill, String particle, double price, boolean bungee) {
+	public Portal(String destination, Rotation rotation, List<Location<World>> frame, List<Location<World>> fill, Particle particle, Optional<ParticleColor> color, double price, boolean bungee) {
 		super(destination, rotation, price, bungee);
 
 		this.frame = frame;
 		this.fill = fill;
+
+		if(this.particle != null) {
+			this.particle = particle;
+		}
 		
-		this.particle = particle;
-		if(this.particle == null) {
-			this.particle = new ConfigManager().getConfig().getNode("options", "particles", "type", "portal").getString().toUpperCase();
+		if(this.color != null) {
+			this.color = color;
 		}
 	}
 
-	public Portal(String name, String destination, String rotation, List<String> frame, List<String> fill, String particle, double price, boolean bungee) {
+	public Portal(String name, String destination, Rotation rotation, List<Location<World>> frame, List<Location<World>> fill, Particle particle, Optional<ParticleColor> color, double price, boolean bungee) {
 		super(name, destination, rotation, price, bungee);
 
 		this.frame = frame;
 		this.fill = fill;
-		
-		this.particle = particle;
-		if(this.particle == null) {
-			this.particle = new ConfigManager().getConfig().getNode("options", "particles", "type", "portal").getString().toUpperCase();
+
+		if(this.particle != null) {
+			this.particle = particle;
 		}
+		
+		if(this.color != null) {
+			this.color = color;
+		}
+		
+		this.color = color;
 	}
 	
-	public String getParticle() {
+	public Particle getParticle() {
 		return particle;
 	}
 	
-	public void setParticle(String particle) {
+	public void setParticle(Particle particle) {
 		this.particle = particle;
 	}
 	
+	public Optional<ParticleColor> getParticleColor() {
+		return color;
+	}
+	
+	public void setParticleColor(ParticleColor color) {
+		this.color = Optional.of(color);
+	}
+	
 	public List<Location<World>> getFrame() {
-		List<Location<World>> list = new ArrayList<>();
-		
-		for(String loc : frame) {
-			String[] args = loc.split(":");
-			
-			Optional<World> optionalWorld = Main.getGame().getServer().getWorld(args[0]);
-			
-			if(!optionalWorld.isPresent()) {
-				continue;
-			}
-			World world = optionalWorld.get();
-
-			String[] coords = args[1].split("\\.");
-
-			int x = Integer.parseInt(coords[0]);
-			int y = Integer.parseInt(coords[1]);
-			int z = Integer.parseInt(coords[2]);
-			
-			list.add(world.getLocation(x, y, z));	
-		}
-		return list;
+		return frame;
 	}
 	
 	public List<Location<World>> getFill() {
-		List<Location<World>> list = new ArrayList<>();
-		
-		for(String loc : fill) {
-			String[] args = loc.split(":");
-			
-			Optional<World> optionalWorld = Main.getGame().getServer().getWorld(args[0]);
-			
-			if(!optionalWorld.isPresent()) {
-				continue;
-			}
-			World world = optionalWorld.get();
-
-			String[] coords = args[1].split("\\.");
-
-			int x = Integer.parseInt(coords[0]);
-			int y = Integer.parseInt(coords[1]);
-			int z = Integer.parseInt(coords[2]);
-			
-			list.add(world.getLocation(x, y, z));	
-		}
-		return list;
+		return fill;
 	}
 
 	public static Optional<Portal> get(String name) {
@@ -120,17 +98,26 @@ public class Portal extends PortalBase {
 	}
 
 	public static Optional<Portal> get(Location<World> location) {
-		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
-		
+
 		for(Entry<String, Portal> entry : cache.entrySet()) {
 			Portal portal = entry.getValue();
-			
-			if(portal.fill.contains(name)) {
-				return Optional.of(portal);
-			}
 
-			if(portal.frame.contains(name)) {
-				return Optional.of(portal);
+			List<Location<World>> frame = portal.getFrame();
+			
+			if(frame.get(0).getExtent() != location.getExtent()) {
+				return Optional.empty();
+			}
+			
+			for(Location<World> loc : frame) {
+				if(loc.getBlockPosition().equals(location.getBlockPosition())) {
+					return Optional.of(portal);
+				}
+			}
+			
+			for(Location<World> loc : portal.getFill()) {
+				if(loc.getBlockPosition().equals(location.getBlockPosition())) {
+					return Optional.of(portal);
+				}
 			}
 		}
 		
@@ -155,13 +142,8 @@ public class Portal extends PortalBase {
 			connection.close();
 			
 			cache.put(name, this);
-			
-			String[] split = this.getParticle().split(":");
-			if(split.length == 2) {
-				Particles.get(split[0]).get().createTask(name, this.getFill(), ParticleColor.get(split[1]).get());			
-			}else{
-				Particles.get(split[0]).get().createTask(name, this.getFill());
-			}
+
+			particle.createTask(name, this.getFill(), getParticleColor());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -188,12 +170,7 @@ public class Portal extends PortalBase {
 				}
 			}
 
-			String[] split = this.getParticle().split(":");
-			if(split.length == 2) {
-				Particles.get(split[0]).get().createTask(name, this.getFill(), ParticleColor.get(split[1]).get());			
-			}else{
-				Particles.get(split[0]).get().createTask(name, this.getFill());
-			}
+			particle.createTask(name, this.getFill(), getParticleColor());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -233,17 +210,18 @@ public class Portal extends PortalBase {
 			while (result.next()) {
 				String name = result.getString("Name");
 				
-				Portal portal = Serializer.deserializePortal(result.getString("Portal"));
-				portal.setName(name);
-				
+				Portal portal;
+				try{
+					portal = Serializer.deserializePortal(result.getString("Portal"));
+					portal.setName(name);
+				}catch(Exception e) {
+					Main.getLog().error("Could not deserialize Portal: " + name);
+					portal = new Portal(name, Main.getGame().getServer().getDefaultWorldName() + ":spawn", Rotation.EAST, new ArrayList<Location<World>>(), new ArrayList<Location<World>>(), null, null, 0, false);
+				}
+
 				cache.put(name, portal);
 
-	    		String[] split = portal.getParticle().split(":");
-	    		if(split.length == 2) {
-	    			Particles.get(split[0]).get().createTask(name, portal.getFill(), ParticleColor.get(split[1]).get());
-	    		}else{
-	    			Particles.get(split[0]).get().createTask(name, portal.getFill());
-	    		}
+	    		portal.getParticle().createTask(name, portal.getFill(), portal.getParticleColor());
 			}
 			
 			connection.close();
@@ -254,8 +232,31 @@ public class Portal extends PortalBase {
 	
 	@Override
     public DataContainer toContainer() {
-        return new MemoryDataContainer().set(DataQueries.DESTINATION, destination).set(DataQueries.ROTATION, rotation)
-        		.set(DataQueries.FRAME, frame).set(DataQueries.FILL, fill).set(DataQueries.PARTICLE, particle)
-        		.set(DataQueries.PRICE, price).set(DataQueries.BUNGEE, bungee);
+		DataContainer container = new MemoryDataContainer();
+		
+		container.set(DataQueries.DESTINATION, destination).set(DataQueries.ROTATION, rotation.getName())
+		.set(DataQueries.PRICE, price).set(DataQueries.BUNGEE, bungee).set(DataQueries.PARTICLE, particle.getName());
+		
+		List<String> frame = new ArrayList<>();
+		
+		for(Location<World> location : this.frame) {
+			frame.add(location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ());
+		}
+		container.set(DataQueries.FRAME, frame);
+		
+		List<String> fill = new ArrayList<>();
+
+		for(Location<World> location : this.fill) {
+			fill.add(location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ());
+		}
+		container.set(DataQueries.FILL, fill);
+		
+		if(color.isPresent()) {
+			container.set(DataQueries.COLOR, color.get().getName());
+		}else {
+			container.set(DataQueries.COLOR, "NONE");
+		}
+		
+        return container;
     }
 }

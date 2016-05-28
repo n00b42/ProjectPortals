@@ -130,7 +130,7 @@ public class CMDSign implements CommandExecutor {
 			}
 		}
 		
-		SignListener.builders.put(player.getUniqueId(), new SignPortalData(new Sign(destination, rotation.getName(), price, args.hasAny("b"))));
+		SignListener.builders.put(player.getUniqueId(), new SignPortalData(new Sign(destination, rotation, price, args.hasAny("b"))));
 
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place sign to create sign portal"));
 

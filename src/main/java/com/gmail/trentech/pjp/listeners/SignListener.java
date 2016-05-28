@@ -30,7 +30,6 @@ import com.gmail.trentech.pjp.data.immutable.ImmutableSignPortalData;
 import com.gmail.trentech.pjp.data.mutable.SignPortalData;
 import com.gmail.trentech.pjp.data.object.Sign;
 import com.gmail.trentech.pjp.effects.Particle;
-import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.events.TeleportEvent.Local;
@@ -58,25 +57,8 @@ public class SignListener {
 
 		event.getTargetTile().offer(portalData);
 
-		String[] split = new ConfigManager().getConfig().getNode("options", "particles", "type", "creation").getString().split(":");
-		
-		Optional<Particle> optionalParticle = Particles.get(split[0]);
-		
-		if(optionalParticle.isPresent()) {
-			Particle particle = optionalParticle.get();
-			
-			if(split.length == 2 && particle.isColorable()) {
-				Optional<ParticleColor> optionalColors = ParticleColor.get(split[1]);
-				
-				if(optionalColors.isPresent()) {
-					particle.spawnParticle(event.getTargetTile().getLocation(), optionalColors.get(), false);
-				}else{
-					particle.spawnParticle(event.getTargetTile().getLocation(), false);
-				}
-			}else{
-				particle.spawnParticle(event.getTargetTile().getLocation(), false);
-			}
-		}
+		Particle particle = Particles.getDefaultEffect("creation");
+		particle.spawnParticle(event.getTargetTile().getLocation(), false, Particles.getDefaultColor("creation", particle.isColorable()));
 
         player.sendMessage(Text.of(TextColors.DARK_GREEN, "New sign portal created"));
         

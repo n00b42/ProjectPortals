@@ -129,7 +129,7 @@ public class CMDButton implements CommandExecutor {
 			}
 		}
 		
-		ButtonListener.builders.put(player.getUniqueId(), new Button(destination, rotation.getName(), price, bungee));
+		ButtonListener.builders.put(player.getUniqueId(), new Button(destination, rotation, price, bungee));
 
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place button to create button portal"));
 
