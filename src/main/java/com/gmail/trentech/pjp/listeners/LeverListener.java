@@ -8,14 +8,11 @@ import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.Transaction;
-import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
-import org.spongepowered.api.event.entity.DisplaceEntityEvent.TargetPlayer;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
@@ -92,15 +89,11 @@ public class LeverListener {
 				Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, lever.getPrice(), Cause.of(NamedCause.source(lever)));
 
 				if(!Main.getGame().getEventManager().post(teleportEvent)) {
-					Location<World> currentLocation = player.getLocation();
 					spawnLocation = teleportEvent.getDestination();
 					
 					Vector3d rotation = lever.getRotation().toVector3d();
 
 					player.setLocationAndRotation(spawnLocation, rotation);
-					
-					TargetPlayer displaceEvent = SpongeEventFactory.createDisplaceEntityEventTargetPlayer(Cause.of(NamedCause.source(this)), new Transform<World>(currentLocation), new Transform<World>(spawnLocation), player);
-					Main.getGame().getEventManager().post(displaceEvent);
 				}
 			}
 		}

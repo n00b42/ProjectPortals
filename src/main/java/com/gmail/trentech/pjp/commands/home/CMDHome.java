@@ -11,12 +11,9 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
-import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
-import org.spongepowered.api.event.entity.DisplaceEntityEvent.TargetPlayer;
 import org.spongepowered.api.service.pagination.PaginationList.Builder;
 import org.spongepowered.api.service.pagination.PaginationService;
 import org.spongepowered.api.text.Text;
@@ -91,13 +88,9 @@ public class CMDHome implements CommandExecutor {
 			Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, 0, Cause.of(NamedCause.source("home")));
 
 			if(!Main.getGame().getEventManager().post(teleportEvent)) {
-				Location<World> currentLocation = player.getLocation();
 				spawnLocation = teleportEvent.getDestination();
 
 				player.setLocationAndRotation(spawnLocation, home.getRotation().toVector3d());
-				
-				TargetPlayer displaceEvent = SpongeEventFactory.createDisplaceEntityEventTargetPlayer(Cause.of(NamedCause.source(this)), new Transform<World>(currentLocation), new Transform<World>(spawnLocation), player);
-				Main.getGame().getEventManager().post(displaceEvent);
 			}
 
 			return CommandResult.success();

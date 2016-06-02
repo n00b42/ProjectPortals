@@ -10,16 +10,13 @@ import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.Item;
-import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.event.entity.DisplaceEntityEvent;
-import org.spongepowered.api.event.entity.DisplaceEntityEvent.TargetPlayer;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
@@ -132,7 +129,7 @@ public class PortalListener {
 	}
 
 	@Listener
-	public void onDisplaceEntityEvent(DisplaceEntityEvent.Move event) {
+	public void onDisplaceEntityEventMoveOther(DisplaceEntityEvent.Move event) {
 		Entity entity = event.getTargetEntity();
 		
 		if (entity instanceof Player || !(entity instanceof Living || entity instanceof Item)) {
@@ -170,11 +167,13 @@ public class PortalListener {
 	}
 	
 	@Listener
-	public void onDisplaceEntityEvent(DisplaceEntityEvent.TargetPlayer event) {
-		if (!(event.getTargetEntity() instanceof Player)) {
+	public void onDisplaceEntityEventMovePlayer(DisplaceEntityEvent.Move event) {
+		Entity entity = event.getTargetEntity();
+		
+		if (!(entity instanceof Player)) {
 			return;
 		}
-		Player player = (Player) event.getTargetEntity();
+		Player player = (Player) entity;
 
 		Location<World> location = player.getLocation();		
 
@@ -217,15 +216,11 @@ public class PortalListener {
 			Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, portal.getPrice(), Cause.of(NamedCause.source(portal)));
 
 			if(!Main.getGame().getEventManager().post(teleportEvent)) {
-				Location<World> currentLocation = player.getLocation();
 				spawnLocation = teleportEvent.getDestination();
 				
 				Vector3d rotation = portal.getRotation().toVector3d();
 
 				player.setLocationAndRotation(spawnLocation, rotation);
-				
-				TargetPlayer displaceEvent = SpongeEventFactory.createDisplaceEntityEventTargetPlayer(Cause.of(NamedCause.source(this)), new Transform<World>(currentLocation), new Transform<World>(spawnLocation), player);
-				Main.getGame().getEventManager().post(displaceEvent);
 			}
 		}
 	}

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.cause.Cause;
@@ -26,6 +28,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.TeleportHelper;
 import org.spongepowered.api.world.World;
 
+import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.commands.CMDBack;
 import com.gmail.trentech.pjp.effects.Particle;
@@ -140,24 +143,32 @@ public class TeleportListener {
 	}
 	
 	@Listener
-	public void onDisplaceEntityEvent(DisplaceEntityEvent.TargetPlayer event) {
-		Player player = (Player) event.getTargetEntity();
-
-		Location<World> src = event.getFromTransform().getLocation();
-		Location<World> dest = event.getToTransform().getLocation();
+	public void onDisplaceEntityEvent(DisplaceEntityEvent.Teleport event) {
+		Entity entity = event.getTargetEntity();
 		
-		if(event.getFromTransform().getExtent() != event.getToTransform().getExtent()) {
+		if(!(entity instanceof Player)) {
+			return;
+		}
+		Player player = (Player) entity;
+
+		Transform<World> from = event.getFromTransform();
+		Transform<World> to = event.getToTransform();
+		
+		if(!to.getExtent().equals(from.getExtent())) {
 			if(player.hasPermission("pjp.cmd.back")) {
-				CMDBack.players.put(player, src);
+				CMDBack.players.put(player, from.getLocation());
 			}
 			return;
 		}
-
-		double distance = dest.getPosition().distance(src.getBlockX(), src.getBlockY(), src.getBlockZ());
+		
+		Vector3d fromPos = from.getPosition();
+		Vector3d toPos = to.getPosition();
+		
+		double distance = fromPos.distance(toPos.getFloorX(), toPos.getFloorY(), toPos.getFloorZ());
 		
 		if(distance > 5) {
 			if(player.hasPermission("pjp.cmd.back")) {
-				CMDBack.players.put(player, src);
+				CMDBack.players.put(player, player.getLocation().getExtent().getLocation(fromPos));
 			}
 		}
 	}
