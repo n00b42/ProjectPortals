@@ -132,10 +132,28 @@ public class PortalListener {
 	public void onDisplaceEntityEventMoveOther(DisplaceEntityEvent.Move event) {
 		Entity entity = event.getTargetEntity();
 		
-		if (entity instanceof Player || !(entity instanceof Living || entity instanceof Item)) {
+		if (entity instanceof Player) {
 			return;
 		}
 
+		if(!(entity instanceof Living) && !(entity instanceof Item)) {
+			return;
+		}
+		
+		ConfigurationNode node = new ConfigManager().getConfig().getNode("options", "portal");
+		
+		if(entity instanceof Item) {
+			if(!node.getNode("teleport_item").getBoolean()) {
+				return;
+			}
+		}
+		
+		if(entity instanceof Living) {
+			if(!node.getNode("teleport_mob").getBoolean()) {
+				return;
+			}
+		}
+		
 		Location<World> location = entity.getLocation();		
 
 		Optional<Portal> optionalPortal = Portal.get(location);
@@ -144,18 +162,7 @@ public class PortalListener {
 			return;
 		}
 		Portal portal = optionalPortal.get();
-		
-		if(entity instanceof Item) {
-			if(!new ConfigManager().getConfig().getNode("options", "portal", "teleport_item").getBoolean()) {
-				return;
-			}
-		}
-		if(entity instanceof Living) {
-			if(!new ConfigManager().getConfig().getNode("options", "portal", "teleport_mob").getBoolean()) {
-				return;
-			}
-		}
-		
+
 		Optional<Location<World>> optionalSpawnLocation = portal.getDestination();
 		
 		if(!optionalSpawnLocation.isPresent()) {
@@ -178,14 +185,14 @@ public class PortalListener {
 		Location<World> location = player.getLocation();		
 
 		Optional<Portal> optionalPortal = Portal.get(location);
-		
+
 		if(!optionalPortal.isPresent()) {
 			return;
 		}
 		Portal portal = optionalPortal.get();
-		
+
 		if(new ConfigManager().getConfig().getNode("options", "advanced_permissions").getBoolean()) {
-			if(!player.hasPermission("pjp.portal." + Portal.get(portal.getFill().get(0)))) {
+			if(!player.hasPermission("pjp.portal." + portal.getName())) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use this portal"));
 				return;
 			}

@@ -98,16 +98,15 @@ public class Portal extends PortalBase {
 	}
 
 	public static Optional<Portal> get(Location<World> location) {
-
 		for(Entry<String, Portal> entry : cache.entrySet()) {
 			Portal portal = entry.getValue();
 
 			List<Location<World>> frame = portal.getFrame();
 			
-			if(frame.get(0).getExtent() != location.getExtent()) {
-				return Optional.empty();
+			if(!frame.get(0).getExtent().equals(location.getExtent())) {
+				continue;
 			}
-			
+
 			for(Location<World> loc : frame) {
 				if(loc.getBlockPosition().equals(location.getBlockPosition())) {
 					return Optional.of(portal);
