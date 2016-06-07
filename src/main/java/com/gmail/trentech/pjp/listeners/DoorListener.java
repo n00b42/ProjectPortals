@@ -1,5 +1,7 @@
 package com.gmail.trentech.pjp.listeners;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -98,6 +100,8 @@ public class DoorListener {
 		}
 	}
 	
+	private static List<UUID> cache = new ArrayList<>();
+	
 	@Listener
 	public void onDisplaceEntityEvent(DisplaceEntityEvent.Move event) {
 		Entity entity = event.getTargetEntity();
@@ -129,12 +133,24 @@ public class DoorListener {
 		}
 
 		if(door.isBungee()) {
-			String source = "source";
+			UUID uuid = player.getUniqueId();
 			
-			Server teleportEvent = new TeleportEvent.Server(player, source, door.getServer(), door.getPrice(), Cause.of(NamedCause.source(door)));
+			if(cache.contains(uuid)) {
+				return;
+			}
+			
+			Server teleportEvent = new TeleportEvent.Server(player, "", door.getServer(), door.getPrice(), Cause.of(NamedCause.source(door)));
 
 			if(!Main.getGame().getEventManager().post(teleportEvent)) {
+				cache.add(uuid);
+
 				Spongee.API.connectPlayer(player, teleportEvent.getDestination());
+				
+				player.setLocation(player.getWorld().getSpawnLocation());
+				
+				Main.getGame().getScheduler().createTaskBuilder().delayTicks(20).execute(c -> {
+					cache.remove(uuid);				
+				}).submit(Main.getPlugin());
 			}
 		}else {
 			Optional<Location<World>> optionalSpawnLocation = door.getDestination();

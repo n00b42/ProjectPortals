@@ -1,6 +1,9 @@
 package com.gmail.trentech.pjp.commands;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -17,6 +20,8 @@ import com.gmail.trentech.pjp.data.object.Button;
 import com.gmail.trentech.pjp.listeners.ButtonListener;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Rotation;
+
+import flavor.pie.spongee.Spongee;
 
 public class CMDButton implements CommandExecutor {
 
@@ -41,49 +46,63 @@ public class CMDButton implements CommandExecutor {
 			src.sendMessage(getUsage());
 			return CommandResult.empty();
 		}
-		String worldName = args.<String>getOne("destination").get();
-
-		if(worldName.equalsIgnoreCase("-c") || worldName.equalsIgnoreCase("-d") || worldName.equalsIgnoreCase("-p") || worldName.equalsIgnoreCase("-b")) {
+		AtomicReference<String> destination = new AtomicReference<>(args.<String>getOne("destination").get());
+		
+		if(destination.get().equalsIgnoreCase("-c") || destination.get().equalsIgnoreCase("-d") || destination.get().equalsIgnoreCase("-p") || destination.get().equalsIgnoreCase("-b")) {
 			src.sendMessage(getUsage());
 			return CommandResult.empty();
 		}
-		
-		if(!Main.getGame().getServer().getWorld(worldName).isPresent()){
-			src.sendMessage(Text.of(TextColors.DARK_RED, worldName, " is not loaded or does not exist"));
-			return CommandResult.empty();
-		}
 
-		String destination = worldName + ":spawn";
-		Rotation rotation = Rotation.EAST;
-		boolean bungee = args.hasAny("b");
+		AtomicReference<Double> price = new AtomicReference<>(0.0);
 		
-		if(bungee) {
-			// TEMP DISABLE
-			src.sendMessage(Text.of(TextColors.DARK_RED, "TEMPORARILY DISABLED"));
-			return CommandResult.empty();
-			
-//			String server = args.<String>getOne("destination").get();
-//
-//			Consumer<List<String>> consumer = (list) -> {
-//				if(!list.contains(server)) {
-//					player.sendMessage(Text.of(TextColors.DARK_RED, server, " is offline or not correctly configured for Bungee"));
-//					exist = false;
-//				}
-//			};
-//			
-//			Spongee.API.getServerList(consumer, player);
-//			
-//			if(!exist) {
-//				return CommandResult.empty();
-//			}
-//			
-//			destination = server;
+		if(args.hasAny("price")) {
+			try{
+				price.set(Double.parseDouble(args.<String>getOne("price").get()));
+			}catch(Exception e) {
+				src.sendMessage(Text.of(TextColors.RED, "Incorrect price"));
+				src.sendMessage(getUsage());
+				return CommandResult.empty();
+			}
+		}
+		
+		AtomicReference<Rotation> rotation = new AtomicReference<>(Rotation.EAST);
+		final boolean isBungee = args.hasAny("b");
+		
+		if(isBungee) {
+			Consumer<List<String>> consumer1 = (list) -> {
+				if(!list.contains(destination.get())) {
+					player.sendMessage(Text.of(TextColors.DARK_RED, destination.get(), " is offline or not correctly configured in Bungee"));
+					return;
+				}
+				
+				Consumer<String> consumer2 = (s) -> {
+					if(destination.get().equalsIgnoreCase(s)) {
+						player.sendMessage(Text.of(TextColors.DARK_RED, "Nice try"));
+						return;
+					}
+					
+					ButtonListener.builders.put(player.getUniqueId(), new Button(destination.get(), rotation.get(), price.get(), isBungee));
+					
+					player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place button to create button portal"));
+				};
+					
+				Spongee.API.getServerName(consumer2, player);
+			};
+
+			Spongee.API.getServerList(consumer1, player);
 		}else {
-			if(args.hasAny("x,y,z")){
+			if(!Main.getGame().getServer().getWorld(destination.get()).isPresent()) {
+				src.sendMessage(Text.of(TextColors.DARK_RED, destination, " is not loaded or does not exist"));
+				return CommandResult.empty();
+			}
+			
+			destination.set(destination.get() + ":spawn");
+			
+			if(args.hasAny("x,y,z")) {
 				String[] coords = args.<String>getOne("x,y,z").get().split(",");
 
-				if(coords[0].equalsIgnoreCase("random")){
-					destination = destination.replace("spawn", "random");
+				if(coords[0].equalsIgnoreCase("random")) {
+					destination.set(destination.get().replace("spawn", "random"));
 				}else{
 					int x;
 					int y;
@@ -93,12 +112,12 @@ public class CMDButton implements CommandExecutor {
 						x = Integer.parseInt(coords[0]);
 						y = Integer.parseInt(coords[1]);
 						z = Integer.parseInt(coords[2]);				
-					}catch(Exception e){
+					}catch(Exception e) {
 						src.sendMessage(Text.of(TextColors.RED, "Incorrect coordinates"));
 						src.sendMessage(getUsage());
 						return CommandResult.empty();
 					}
-					destination = destination.replace("spawn", x + "." + y + "." + z);
+					destination.set(destination.get().replace("spawn", x + "." + y + "." + z));
 				}
 			}
 
@@ -113,25 +132,13 @@ public class CMDButton implements CommandExecutor {
 					return CommandResult.empty();
 				}
 
-				rotation = optionalRotation.get();
+				rotation.set(optionalRotation.get());
 			}
-		}
-		
-		double price = 0;
-		
-		if(args.hasAny("price")){
-			try{
-				price = Double.parseDouble(args.<String>getOne("price").get());
-			}catch(Exception e){
-				src.sendMessage(Text.of(TextColors.RED, "Incorrect price"));
-				src.sendMessage(getUsage());
-				return CommandResult.empty();
-			}
-		}
-		
-		ButtonListener.builders.put(player.getUniqueId(), new Button(destination, rotation, price, bungee));
+			
+			ButtonListener.builders.put(player.getUniqueId(), new Button(destination.get(), rotation.get(), price.get(), isBungee));
 
-		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place button to create button portal"));
+			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place button to create button portal"));
+		}
 
 		return CommandResult.success();
 	}

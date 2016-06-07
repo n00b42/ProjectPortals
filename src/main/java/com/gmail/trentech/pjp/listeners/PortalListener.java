@@ -1,5 +1,6 @@
 package com.gmail.trentech.pjp.listeners;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -163,6 +164,10 @@ public class PortalListener {
 		}
 		Portal portal = optionalPortal.get();
 
+		if(portal.isBungee()) {
+			return;
+		}
+		
 		Optional<Location<World>> optionalSpawnLocation = portal.getDestination();
 		
 		if(!optionalSpawnLocation.isPresent()) {
@@ -172,6 +177,8 @@ public class PortalListener {
 		
 		entity.setLocation(spawnLocation);
 	}
+	
+	private static List<UUID> cache = new ArrayList<>();
 	
 	@Listener
 	public void onDisplaceEntityEventMovePlayer(DisplaceEntityEvent.Move event) {
@@ -204,12 +211,24 @@ public class PortalListener {
 		}
 
 		if(portal.isBungee()) {
-			String source = "source";
+			UUID uuid = player.getUniqueId();
 			
-			Server teleportEvent = new TeleportEvent.Server(player, source, portal.getServer(), portal.getPrice(), Cause.of(NamedCause.source(portal)));
+			if(cache.contains(uuid)) {
+				return;
+			}
+			
+			Server teleportEvent = new TeleportEvent.Server(player, "", portal.getServer(), portal.getPrice(), Cause.of(NamedCause.source(portal)));
 
 			if(!Main.getGame().getEventManager().post(teleportEvent)) {
+				cache.add(uuid);
+
 				Spongee.API.connectPlayer(player, teleportEvent.getDestination());
+				
+				player.setLocation(player.getWorld().getSpawnLocation());
+				
+				Main.getGame().getScheduler().createTaskBuilder().delayTicks(20).execute(c -> {
+					cache.remove(uuid);				
+				}).submit(Main.getPlugin());
 			}
 		}else {
 			Optional<Location<World>> optionalSpawnLocation = portal.getDestination();

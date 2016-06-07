@@ -75,12 +75,12 @@ public class CMDWarp implements CommandExecutor {
 			}
 			
 			if(warp.isBungee()) {
-				String source = "source";
-				
-				Server teleportEvent = new TeleportEvent.Server(player, source, warp.getServer(), warp.getPrice(), Cause.of(NamedCause.source(warp)));
+				Server teleportEvent = new TeleportEvent.Server(player, "", warp.getServer(), warp.getPrice(), Cause.of(NamedCause.source(warp)));
 
-				if(!Main.getGame().getEventManager().post(teleportEvent)) {
+				if(!Main.getGame().getEventManager().post(teleportEvent)) {					
 					Spongee.API.connectPlayer(player, teleportEvent.getDestination());
+					
+					player.setLocation(player.getWorld().getSpawnLocation());
 				}
 			}else {
 				Optional<Location<World>> optionalSpawnLocation = warp.getDestination();

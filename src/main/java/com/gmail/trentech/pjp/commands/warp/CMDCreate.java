@@ -1,6 +1,9 @@
 package com.gmail.trentech.pjp.commands.warp;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -19,10 +22,10 @@ import com.gmail.trentech.pjp.data.object.Warp;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Rotation;
 
+import flavor.pie.spongee.Spongee;
+
 public class CMDCreate implements CommandExecutor {
 
-	//private boolean exist = true;
-	
 	public CMDCreate() {
 		Help help = new Help("wcreate", "create", " Use this command to create a warp that will teleport you to other worlds");
 		help.setSyntax(" /warp create <name> [<destination> [-b] [-c <x,y,z>] [-d <direction>]] [-p <price>]\n /w <name> [<destination> [-b] [-c <x,y,z>] [-d <direction>]] [-p <price>]");
@@ -53,60 +56,68 @@ public class CMDCreate implements CommandExecutor {
 			src.sendMessage(Text.of(TextColors.DARK_RED, name, " already exists"));
 			return CommandResult.empty();
 		}
+
+		AtomicReference<String> destination = new AtomicReference<>(player.getWorld().getName());
 		
-		String worldName = player.getWorld().getName();		
-		String destination = worldName + ":spawn";
-		Rotation rotation = Rotation.EAST;
-		boolean bungee = false;
+		AtomicReference<Double> price = new AtomicReference<>(0.0);
+		
+		if(args.hasAny("price")) {
+			try{
+				price.set(Double.parseDouble(args.<String>getOne("price").get()));
+			}catch(Exception e) {
+				src.sendMessage(Text.of(TextColors.RED, "Incorrect price"));
+				src.sendMessage(getUsage());
+				return CommandResult.empty();
+			}
+		}
+		
+		AtomicReference<Rotation> rotation = new AtomicReference<>(Rotation.EAST);
+		final boolean isBungee = args.hasAny("b");
 		
 		if(args.hasAny("destination")) {
-			if(args.hasAny("b")) {
-				// TEMP DISABLE
-				src.sendMessage(Text.of(TextColors.DARK_RED, "TEMPORARILY DISABLED"));
-				return CommandResult.empty();
-				
-//				bungee = args.hasAny("b");
-//				
-//				String server = args.<String>getOne("destination").get();
-//
-//				if(server.equalsIgnoreCase("-c") || server.equalsIgnoreCase("-d") || server.equalsIgnoreCase("-p") || server.equalsIgnoreCase("-b")) {
-//					src.sendMessage(getUsage());
-//					return CommandResult.empty();
-//				}
-//				
-//				Consumer<List<String>> consumer = (list) -> {
-//					if(!list.contains(server)) {
-//						player.sendMessage(Text.of(TextColors.DARK_RED, server, " is offline or not correctly configured for Bungee"));
-//						exist = false;
-//					}
-//				};
-//				
-//				Spongee.API.getServerList(consumer, player);
-//				
-//				if(!exist) {
-//					return CommandResult.empty();
-//				}
-//				
-//				destination = server;
-			}else {
-				worldName = args.<String>getOne("destination").get();
+			if(isBungee) {
+				Consumer<List<String>> consumer1 = (list) -> {
+					if(!list.contains(destination.get())) {
+						player.sendMessage(Text.of(TextColors.DARK_RED, destination.get(), " is offline or not correctly configured in Bungee"));
+						return;
+					}
+					
+					Consumer<String> consumer2 = (s) -> {
+						if(destination.get().equalsIgnoreCase(s)) {
+							player.sendMessage(Text.of(TextColors.DARK_RED, "Nice try"));
+							return;
+						}
+						
+						new Warp(destination.get(), rotation.get(), price.get(), isBungee).create();
+						
+						player.sendMessage(Text.of(TextColors.DARK_GREEN, "Warp ", name, " create"));
+					};
+						
+					Spongee.API.getServerName(consumer2, player);
+				};
 
-				if(worldName.equalsIgnoreCase("-c") || worldName.equalsIgnoreCase("-d") || worldName.equalsIgnoreCase("-p") || worldName.equalsIgnoreCase("-b")) {
+				Spongee.API.getServerList(consumer1, player);
+				
+				return CommandResult.success();
+			}else {
+				destination.set(args.<String>getOne("destination").get());
+
+				if(destination.get().equalsIgnoreCase("-c") || destination.get().equalsIgnoreCase("-d") || destination.get().equalsIgnoreCase("-p") || destination.get().equalsIgnoreCase("-b")) {
 					src.sendMessage(getUsage());
 					return CommandResult.empty();
 				}
 				
-				if(!Main.getGame().getServer().getWorld(worldName).isPresent()) {
-					src.sendMessage(Text.of(TextColors.DARK_RED, worldName, " is not loaded or does not exist"));
+				if(!Main.getGame().getServer().getWorld(destination.get()).isPresent()) {
+					src.sendMessage(Text.of(TextColors.DARK_RED, destination, " is not loaded or does not exist"));
 					return CommandResult.empty();
 				}
-				destination = worldName + ":spawn";;
+				destination.set(destination.get() + ":spawn");
 				
 				if(args.hasAny("x,y,z")) {
 					String[] coords = args.<String>getOne("x,y,z").get().split(",");
 
 					if(coords[0].equalsIgnoreCase("random")) {
-						destination = destination.replace("spawn", "random");
+						destination.set(destination.get().replace("spawn", "random"));
 					}else{
 						int x;
 						int y;
@@ -121,43 +132,31 @@ public class CMDCreate implements CommandExecutor {
 							src.sendMessage(getUsage());
 							return CommandResult.empty();
 						}
-						destination = destination.replace("spawn", x + "." + y + "." + z);
+						destination.set(destination.get().replace("spawn", x + "." + y + "." + z));
 					}
 				}
 
-				if(args.hasAny("direction")) {
+				if(args.hasAny("direction")){
 					String direction = args.<String>getOne("direction").get();
 					
 					Optional<Rotation> optionalRotation = Rotation.get(direction);
 					
-					if(!optionalRotation.isPresent()) {
+					if(!optionalRotation.isPresent()){
 						src.sendMessage(Text.of(TextColors.RED, "Incorrect direction"));
 						src.sendMessage(getUsage());
 						return CommandResult.empty();
 					}
 
-					rotation = optionalRotation.get();
+					rotation.set(optionalRotation.get());
 				}
 			}
 		}else {
 			Location<World> location = player.getLocation();
-			destination = worldName + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
-			rotation = Rotation.getClosest(player.getRotation().getFloorY());
+			destination.set(destination.get() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ());
+			rotation.set(Rotation.getClosest(player.getRotation().getFloorY()));
 		}
 
-		double price = 0;
-		
-		if(args.hasAny("price")) {
-			try{
-				price = Double.parseDouble(args.<String>getOne("price").get());
-			}catch(Exception e) {
-				src.sendMessage(Text.of(TextColors.RED, "Incorrect price"));
-				src.sendMessage(getUsage());
-				return CommandResult.empty();
-			}
-		}
-
-		new Warp(name, destination, rotation, price, bungee).create();
+		new Warp(name, destination.get(), rotation.get(), price.get(), isBungee).create();
 
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Warp ", name, " create"));
 

@@ -1,6 +1,9 @@
 package com.gmail.trentech.pjp.commands.portal;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -23,6 +26,8 @@ import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.listeners.PortalListener;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Rotation;
+
+import flavor.pie.spongee.Spongee;
 
 public class CMDCreate implements CommandExecutor {
 
@@ -52,60 +57,106 @@ public class CMDCreate implements CommandExecutor {
 		if(name.equalsIgnoreCase("-c") || name.equalsIgnoreCase("-d") || name.equalsIgnoreCase("-p") || name.equalsIgnoreCase("-e") || name.equalsIgnoreCase("-b")) {
 			src.sendMessage(getUsage());
 			return CommandResult.empty();
+		}		
+		
+		if(Portal.get(name).isPresent()) {
+			src.sendMessage(Text.of(TextColors.DARK_RED, name, " already exists"));
+			return CommandResult.empty();
 		}
 		
 		if(!args.hasAny("destination")) {
 			src.sendMessage(getUsage());
 			return CommandResult.empty();
 		}
-		String worldName = args.<String>getOne("destination").get();
+		AtomicReference<String> destination = new AtomicReference<>(args.<String>getOne("destination").get());
 		
-		if(name.equalsIgnoreCase("-c") || name.equalsIgnoreCase("-d") || name.equalsIgnoreCase("-p") || name.equalsIgnoreCase("-e") || name.equalsIgnoreCase("-b")) {
+		if(destination.get().equalsIgnoreCase("-c") || destination.get().equalsIgnoreCase("-d") || destination.get().equalsIgnoreCase("-p") || destination.get().equalsIgnoreCase("-e") || destination.get().equalsIgnoreCase("-b")) {
 			src.sendMessage(getUsage());
 			return CommandResult.empty();
 		}
-		
-		if(Portal.get(name).isPresent()) {
-			src.sendMessage(Text.of(TextColors.DARK_RED, name, " already exists"));
-			return CommandResult.empty();
-		}
 
-		if(!Main.getGame().getServer().getWorld(worldName).isPresent()) {
-			src.sendMessage(Text.of(TextColors.DARK_RED, worldName, " is not loaded or does not exist"));
-			return CommandResult.empty();
-		}
-
-		String destination = worldName + ":spawn";
-		Rotation rotation = Rotation.EAST;
-		boolean bungee = args.hasAny("b");
+		AtomicReference<Double> price = new AtomicReference<>(0.0);
 		
-		if(bungee) {
-			// TEMP DISABLE
-			src.sendMessage(Text.of(TextColors.DARK_RED, "TEMPORARILY DISABLED"));
-			return CommandResult.empty();
+		if(args.hasAny("price")) {
+			try{
+				price.set(Double.parseDouble(args.<String>getOne("price").get()));
+			}catch(Exception e) {
+				src.sendMessage(Text.of(TextColors.RED, "Incorrect price"));
+				src.sendMessage(getUsage());
+				return CommandResult.empty();
+			}
+		}
+		
+		AtomicReference<Particle> particle = new AtomicReference<>(Particles.getDefaultEffect("portal"));
+		
+		AtomicReference<Optional<ParticleColor>> color = new AtomicReference<>(Particles.getDefaultColor("portal", particle.get().isColorable()));
+		
+		if(args.hasAny("particle[:color]")) {
+			String[] type = args.<String>getOne("particle[:color]").get().toUpperCase().split(":");
 			
-//			String server = args.<String>getOne("destination").get();
-//
-//			Consumer<List<String>> consumer = (list) -> {
-//				if(!list.contains(server)) {
-//					player.sendMessage(Text.of(TextColors.DARK_RED, server, " is offline or not correctly configured for Bungee"));
-//					exist = false;
-//				}
-//			};
-//			
-//			Spongee.API.getServerList(consumer, player);
-//			
-//			if(!exist) {
-//				return CommandResult.empty();
-//			}
-//			
-//			destination = server;
+			Optional<Particle> optionalParticle = Particles.get(type[0]);
+			
+			if(!optionalParticle.isPresent()) {
+				src.sendMessage(Text.of(TextColors.DARK_RED, "Incorrect particle"));
+				src.sendMessage(getUsage());
+				return CommandResult.empty();
+			}
+			particle.set(optionalParticle.get());
+
+			if(type.length == 2) {
+				if(particle.get().getType() instanceof Colorable) {
+					color.set(ParticleColor.get(type[1]));
+					
+		    		if(!color.get().isPresent()) {
+		    			src.sendMessage(Text.of(TextColors.RED, "Incorrect color"));
+		    			src.sendMessage(getUsage());
+		    			return CommandResult.empty();
+		    		}
+				}else{
+					src.sendMessage(Text.of(TextColors.YELLOW, "Colors currently only works with REDSTONE type"));
+				}
+			}
+		}
+		
+		AtomicReference<Rotation> rotation = new AtomicReference<>(Rotation.EAST);
+		final boolean isBungee = args.hasAny("b");
+		
+		if(isBungee) {
+			Consumer<List<String>> consumer1 = (list) -> {
+				if(!list.contains(destination.get())) {
+					player.sendMessage(Text.of(TextColors.DARK_RED, destination.get(), " is offline or not correctly configured in Bungee"));
+					return;
+				}
+				
+				Consumer<String> consumer2 = (s) -> {
+					if(destination.get().equalsIgnoreCase(s)) {
+						player.sendMessage(Text.of(TextColors.DARK_RED, "Nice try"));
+						return;
+					}
+					
+					PortalListener.builders.put(player.getUniqueId(), new PortalBuilder(name, destination.get(), rotation.get(), particle.get(), color.get(), price.get(), isBungee));
+					
+					player.sendMessage(Text.builder().color(TextColors.DARK_GREEN).append(Text.of("Begin building your portal frame, followed by "))
+							.onClick(TextActions.runCommand("/pjp:portal save")).append(Text.of(TextColors.YELLOW, TextStyles.UNDERLINE, "/portal save")).build());
+				};
+					
+				Spongee.API.getServerName(consumer2, player);
+			};
+
+			Spongee.API.getServerList(consumer1, player);
 		}else {
+			if(!Main.getGame().getServer().getWorld(destination.get()).isPresent()) {
+				src.sendMessage(Text.of(TextColors.DARK_RED, destination.get(), " is not loaded or does not exist"));
+				return CommandResult.empty();
+			}
+			
+			destination.set(destination.get() + ":spawn");
+			
 			if(args.hasAny("x,y,z")) {
 				String[] coords = args.<String>getOne("x,y,z").get().split(",");
 
 				if(coords[0].equalsIgnoreCase("random")) {
-					destination = destination.replace("spawn", "random");
+					destination.set(destination.get().replace("spawn", "random"));
 				}else{
 					int x;
 					int y;
@@ -120,7 +171,7 @@ public class CMDCreate implements CommandExecutor {
 						src.sendMessage(getUsage());
 						return CommandResult.empty();
 					}
-					destination = destination.replace("spawn", x + "." + y + "." + z);
+					destination.set(destination.get().replace("spawn", x + "." + y + "." + z));
 				}
 			}
 
@@ -135,58 +186,15 @@ public class CMDCreate implements CommandExecutor {
 					return CommandResult.empty();
 				}
 
-				rotation = optionalRotation.get();
+				rotation.set(optionalRotation.get());
 			}
+			
+			PortalListener.builders.put(player.getUniqueId(), new PortalBuilder(name, destination.get(), rotation.get(), particle.get(), color.get(), price.get(), isBungee));
+			
+			player.sendMessage(Text.builder().color(TextColors.DARK_GREEN).append(Text.of("Begin building your portal frame, followed by "))
+					.onClick(TextActions.runCommand("/pjp:portal save")).append(Text.of(TextColors.YELLOW, TextStyles.UNDERLINE, "/portal save")).build());
 		}
 
-		double price = 0;
-		
-		if(args.hasAny("price")) {
-			try{
-				price = Double.parseDouble(args.<String>getOne("price").get());
-			}catch(Exception e) {
-				src.sendMessage(Text.of(TextColors.RED, "Incorrect price"));
-				src.sendMessage(getUsage());
-				return CommandResult.empty();
-			}
-		}
-		
-		Particle particle = Particles.getDefaultEffect("portal");
-		
-		Optional<ParticleColor> color = Particles.getDefaultColor("portal", particle.isColorable());
-		
-		if(args.hasAny("particle[:color]")) {
-			String[] type = args.<String>getOne("particle[:color]").get().toUpperCase().split(":");
-			
-			Optional<Particle> optionalParticle = Particles.get(type[0]);
-			
-			if(!optionalParticle.isPresent()) {
-				src.sendMessage(Text.of(TextColors.DARK_RED, "Incorrect particle"));
-				src.sendMessage(getUsage());
-				return CommandResult.empty();
-			}
-			particle = optionalParticle.get();
-
-			if(type.length == 2) {
-				if(particle.getType() instanceof Colorable) {
-					color = ParticleColor.get(type[1]);
-					
-		    		if(!color.isPresent()) {
-		    			src.sendMessage(Text.of(TextColors.RED, "Incorrect color"));
-		    			src.sendMessage(getUsage());
-		    			return CommandResult.empty();
-		    		}
-				}else{
-					src.sendMessage(Text.of(TextColors.YELLOW, "Colors currently only works with REDSTONE type"));
-				}
-			}
-		}
-		
-		PortalListener.builders.put(player.getUniqueId(), new PortalBuilder(name, destination, rotation, particle, color, price, bungee));
-		
-		player.sendMessage(Text.builder().color(TextColors.DARK_GREEN).append(Text.of("Begin building your portal frame, followed by "))
-				.onClick(TextActions.runCommand("/pjp:portal save")).append(Text.of(TextColors.YELLOW, TextStyles.UNDERLINE, "/portal save")).build());
-		
 		return CommandResult.success();
 	}
 	

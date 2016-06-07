@@ -94,12 +94,12 @@ public class SignListener {
 		}
 
 		if(sign.isBungee()) {
-			String source = "source";
-			
-			Server teleportEvent = new TeleportEvent.Server(player, source, sign.getServer(), sign.getPrice(), Cause.of(NamedCause.source(sign)));
+			Server teleportEvent = new TeleportEvent.Server(player, "", sign.getServer(), sign.getPrice(), Cause.of(NamedCause.source(sign)));
 
 			if(!Main.getGame().getEventManager().post(teleportEvent)) {
 				Spongee.API.connectPlayer(player, teleportEvent.getDestination());
+				
+				player.setLocation(player.getWorld().getSpawnLocation());
 			}
 		}else {
 			Optional<Location<World>> optionalSpawnLocation = sign.getDestination();
