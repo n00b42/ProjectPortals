@@ -7,12 +7,7 @@ import java.util.function.Consumer;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.SpongeEventFactory;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.NamedCause;
-import org.spongepowered.api.event.entity.DisplaceEntityEvent.TargetPlayer;
 import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.TeleportHelper;
@@ -66,12 +61,7 @@ public class Utils {
 		return (CommandSource src) -> {
 			Player player = (Player)src;
 			
-			Location<World> currentLocation = player.getLocation();
-
 			player.setLocation(location);
-
-			TargetPlayer displaceEvent = SpongeEventFactory.createDisplaceEntityEventTargetPlayer(Cause.of(NamedCause.source(player)), new Transform<World>(currentLocation), new Transform<World>(location), player);
-			Main.getGame().getEventManager().post(displaceEvent);
 		};
 	}
 }

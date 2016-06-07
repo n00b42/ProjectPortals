@@ -115,21 +115,7 @@ public class TeleportListener {
 			player.sendMessage(Text.of(TextColors.DARK_RED, "Bungee portals require Spongee plugin dependency"));
 			event.setCancelled(true);
 			return;
-		}
-
-//		final String server = event.getDestination();	
-//		
-//		Consumer<List<String>> consumer = (list) -> {
-//			if(!list.contains(server)) {
-//				player.sendMessage(Text.of(TextColors.DARK_RED, server, " does not exist"));
-//				event.setCancelled(true);
-//			}else if(!player.hasPermission("pjp.servers." + server)) {
-//				player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to travel to ", server));
-//				event.setCancelled(true);
-//			}
-//		};
-//
-//		Spongee.API.getServerList(consumer, player);	
+		}	
 	}
 	
 	@Listener
