@@ -17,7 +17,7 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
-import org.spongepowered.api.event.entity.DisplaceEntityEvent;
+import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
@@ -104,7 +104,7 @@ public class DoorListener {
 	private static List<UUID> cache = new ArrayList<>();
 	
 	@Listener
-	public void onDisplaceEntityEvent(DisplaceEntityEvent.Move event) {
+	public void onMoveEntityEvent(MoveEntityEvent event) {
 		Entity entity = event.getTargetEntity();
 		
 		if (!(entity instanceof Player)) {

@@ -10,7 +10,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
-import org.spongepowered.api.event.entity.DisplaceEntityEvent;
+import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.economy.EconomyService;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
@@ -116,24 +116,10 @@ public class TeleportListener {
 			event.setCancelled(true);
 			return;
 		}
-
-//		final String server = event.getDestination();	
-//		
-//		Consumer<List<String>> consumer = (list) -> {
-//			if(!list.contains(server)) {
-//				player.sendMessage(Text.of(TextColors.DARK_RED, server, " does not exist"));
-//				event.setCancelled(true);
-//			}else if(!player.hasPermission("pjp.servers." + server)) {
-//				player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to travel to ", server));
-//				event.setCancelled(true);
-//			}
-//		};
-//
-//		Spongee.API.getServerList(consumer, player);	
 	}
 	
 	@Listener
-	public void onDisplaceEntityEvent(DisplaceEntityEvent.Teleport event) {
+	public void onMoveEntityEvent(MoveEntityEvent.Teleport event) {
 		Entity entity = event.getTargetEntity();
 		
 		if(!(entity instanceof Player)) {
