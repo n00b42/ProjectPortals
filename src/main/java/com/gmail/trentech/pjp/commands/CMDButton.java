@@ -71,13 +71,13 @@ public class CMDButton implements CommandExecutor {
 		if(isBungee) {
 			Consumer<List<String>> consumer1 = (list) -> {
 				if(!list.contains(destination.get())) {
-					player.sendMessage(Text.of(TextColors.DARK_RED, destination.get(), " is offline or not correctly configured in Bungee"));
+					player.sendMessage(Text.of(TextColors.DARK_RED, destination.get(), " does not exist"));
 					return;
 				}
 				
 				Consumer<String> consumer2 = (s) -> {
 					if(destination.get().equalsIgnoreCase(s)) {
-						player.sendMessage(Text.of(TextColors.DARK_RED, "Nice try"));
+						player.sendMessage(Text.of(TextColors.DARK_RED, "Destination cannot be the server you are currently on"));
 						return;
 					}
 					

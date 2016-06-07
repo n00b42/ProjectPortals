@@ -119,34 +119,20 @@ public class TeleportListener {
 			event.setCancelled(true);
 			return;
 		}
+
+		final String server = event.getDestination();	
 		
-		String server = event.getDestination();	
-		
-		Consumer<List<String>> consumer1 = (list) -> {
+		Consumer<List<String>> consumer = (list) -> {
 			if(!list.contains(server)) {
-				player.sendMessage(Text.of(TextColors.DARK_RED, server, " is offline or not correctly configured in Bungee"));
+				player.sendMessage(Text.of(TextColors.DARK_RED, server, " does not exist"));
 				event.setCancelled(true);
-				return;
+			}else if(!player.hasPermission("pjp.servers." + server)) {
+				player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to travel to ", server));
+				event.setCancelled(true);
 			}
-			
-			Consumer<String> consumer2 = (s) -> {
-				if(server.equalsIgnoreCase(s)) {
-					player.sendMessage(Text.of(TextColors.DARK_RED, "Nice try"));
-					event.setCancelled(true);
-					return;
-				}
-				
-				if(!player.hasPermission("pjp.servers." + server) && !player.hasPermission("pjw.servers." + server)) {
-					player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to travel to ", server));
-					event.setCancelled(true);
-					return;
-				}
-			};
-				
-			Spongee.API.getServerName(consumer2, player);
 		};
 
-		Spongee.API.getServerList(consumer1, player);
+		Spongee.API.getServerList(consumer, player);	
 	}
 	
 	@Listener
