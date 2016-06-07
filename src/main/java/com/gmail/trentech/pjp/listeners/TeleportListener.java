@@ -2,9 +2,7 @@ package com.gmail.trentech.pjp.listeners;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.Transform;
@@ -37,7 +35,6 @@ import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Utils;
 
-import flavor.pie.spongee.Spongee;
 import ninja.leaping.configurate.ConfigurationNode;
 
 public class TeleportListener {
@@ -120,19 +117,19 @@ public class TeleportListener {
 			return;
 		}
 
-		final String server = event.getDestination();	
-		
-		Consumer<List<String>> consumer = (list) -> {
-			if(!list.contains(server)) {
-				player.sendMessage(Text.of(TextColors.DARK_RED, server, " does not exist"));
-				event.setCancelled(true);
-			}else if(!player.hasPermission("pjp.servers." + server)) {
-				player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to travel to ", server));
-				event.setCancelled(true);
-			}
-		};
-
-		Spongee.API.getServerList(consumer, player);	
+//		final String server = event.getDestination();	
+//		
+//		Consumer<List<String>> consumer = (list) -> {
+//			if(!list.contains(server)) {
+//				player.sendMessage(Text.of(TextColors.DARK_RED, server, " does not exist"));
+//				event.setCancelled(true);
+//			}else if(!player.hasPermission("pjp.servers." + server)) {
+//				player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to travel to ", server));
+//				event.setCancelled(true);
+//			}
+//		};
+//
+//		Spongee.API.getServerList(consumer, player);	
 	}
 	
 	@Listener

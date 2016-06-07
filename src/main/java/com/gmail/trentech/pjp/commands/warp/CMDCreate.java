@@ -75,6 +75,13 @@ public class CMDCreate implements CommandExecutor {
 		final boolean isBungee = args.hasAny("b");
 		
 		if(args.hasAny("destination")) {
+			destination.set(args.<String>getOne("destination").get());
+			
+			if(destination.get().equalsIgnoreCase("-c") || destination.get().equalsIgnoreCase("-d") || destination.get().equalsIgnoreCase("-p") || destination.get().equalsIgnoreCase("-b")) {
+				src.sendMessage(getUsage());
+				return CommandResult.empty();
+			}
+			
 			if(isBungee) {
 				Consumer<List<String>> consumer1 = (list) -> {
 					if(!list.contains(destination.get())) {
@@ -88,7 +95,7 @@ public class CMDCreate implements CommandExecutor {
 							return;
 						}
 						
-						new Warp(destination.get(), rotation.get(), price.get(), isBungee).create();
+						new Warp(name, destination.get(), rotation.get(), price.get(), isBungee).create();
 						
 						player.sendMessage(Text.of(TextColors.DARK_GREEN, "Warp ", name, " create"));
 					};
@@ -100,13 +107,6 @@ public class CMDCreate implements CommandExecutor {
 				
 				return CommandResult.success();
 			}else {
-				destination.set(args.<String>getOne("destination").get());
-
-				if(destination.get().equalsIgnoreCase("-c") || destination.get().equalsIgnoreCase("-d") || destination.get().equalsIgnoreCase("-p") || destination.get().equalsIgnoreCase("-b")) {
-					src.sendMessage(getUsage());
-					return CommandResult.empty();
-				}
-				
 				if(!Main.getGame().getServer().getWorld(destination.get()).isPresent()) {
 					src.sendMessage(Text.of(TextColors.DARK_RED, destination, " is not loaded or does not exist"));
 					return CommandResult.empty();

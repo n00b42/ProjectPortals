@@ -3,6 +3,8 @@ package com.gmail.trentech.pjp.commands.warp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -39,7 +41,7 @@ public class CMDWarp implements CommandExecutor {
 				src.sendMessage(Text.of(TextColors.DARK_RED, "Must be a player"));
 				return CommandResult.empty();
 			}
-			Player player = (Player) src;
+			AtomicReference<Player> player = new AtomicReference<>((Player) src);
 			
 			String warpName = args.<String>getOne("name").get().toLowerCase();
 			
@@ -51,8 +53,8 @@ public class CMDWarp implements CommandExecutor {
 			}
 			Warp warp = optionalWarp.get();
 			
-			if(!player.hasPermission("pjp.warps." + warpName)) {
-				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to warp here"));
+			if(!player.get().hasPermission("pjp.warps." + warpName)) {
+				player.get().sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to warp here"));
 				return CommandResult.empty();
 			}
 			
@@ -60,45 +62,49 @@ public class CMDWarp implements CommandExecutor {
 				String playerName = args.<String>getOne("player").get();
 				
 				if(!src.hasPermission("pjp.cmd.warp.others")) {
-					player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to warp others"));
+					player.get().sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to warp others"));
 					return CommandResult.empty();
 				}
 
 				Optional<Player> optionalPlayer = Main.getGame().getServer().getPlayer(playerName);
 				
 				if(!optionalPlayer.isPresent()) {
-					player.sendMessage(Text.of(TextColors.DARK_RED, playerName, " does not exist"));
+					player.get().sendMessage(Text.of(TextColors.DARK_RED, playerName, " does not exist"));
 					return CommandResult.empty();
 				}
 				
-				player = optionalPlayer.get();
+				player.set(optionalPlayer.get());
 			}
 			
 			if(warp.isBungee()) {
-				Server teleportEvent = new TeleportEvent.Server(player, "", warp.getServer(), warp.getPrice(), Cause.of(NamedCause.source(warp)));
+				Consumer<String> consumer = (server) -> {
+					Server teleportEvent = new TeleportEvent.Server(player.get(), server, warp.getServer(), warp.getPrice(), Cause.of(NamedCause.source(warp)));
 
-				if(!Main.getGame().getEventManager().post(teleportEvent)) {					
-					Spongee.API.connectPlayer(player, teleportEvent.getDestination());
+					if(!Main.getGame().getEventManager().post(teleportEvent)) {
+						Spongee.API.connectPlayer(player.get(), teleportEvent.getDestination());
+						
+						player.get().setLocation(player.get().getWorld().getSpawnLocation());
+					}
+				};
 					
-					player.setLocation(player.getWorld().getSpawnLocation());
-				}
+				Spongee.API.getServerName(consumer, player.get());
 			}else {
 				Optional<Location<World>> optionalSpawnLocation = warp.getDestination();
 				
 				if(!optionalSpawnLocation.isPresent()) {
-					player.sendMessage(Text.of(TextColors.DARK_RED, "Destination does not exist or world is not loaded"));
+					player.get().sendMessage(Text.of(TextColors.DARK_RED, "Destination does not exist or world is not loaded"));
 					return CommandResult.empty();
 				}			
 				Location<World> spawnLocation = optionalSpawnLocation.get();
 
-				Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, warp.getPrice(), Cause.of(NamedCause.source("warp")));
+				Local teleportEvent = new TeleportEvent.Local(player.get(), player.get().getLocation(), spawnLocation, warp.getPrice(), Cause.of(NamedCause.source("warp")));
 
 				if(!Main.getGame().getEventManager().post(teleportEvent)) {
 					spawnLocation = teleportEvent.getDestination();
 					
 					Vector3d rotation = warp.getRotation().toVector3d();
 
-					player.setLocationAndRotation(spawnLocation, rotation);
+					player.get().setLocationAndRotation(spawnLocation, rotation);
 				}
 			}
 

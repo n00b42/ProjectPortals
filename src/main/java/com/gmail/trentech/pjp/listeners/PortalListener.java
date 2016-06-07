@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockTypes;
@@ -217,19 +218,23 @@ public class PortalListener {
 				return;
 			}
 			
-			Server teleportEvent = new TeleportEvent.Server(player, "", portal.getServer(), portal.getPrice(), Cause.of(NamedCause.source(portal)));
+			Consumer<String> consumer = (server) -> {
+				Server teleportEvent = new TeleportEvent.Server(player, server, portal.getServer(), portal.getPrice(), Cause.of(NamedCause.source(portal)));
 
-			if(!Main.getGame().getEventManager().post(teleportEvent)) {
-				cache.add(uuid);
-
-				Spongee.API.connectPlayer(player, teleportEvent.getDestination());
+				if(!Main.getGame().getEventManager().post(teleportEvent)) {
+					cache.add(uuid);
+					
+					Spongee.API.connectPlayer(player, teleportEvent.getDestination());
+					
+					player.setLocation(player.getWorld().getSpawnLocation());
+					
+					Main.getGame().getScheduler().createTaskBuilder().delayTicks(20).execute(c -> {
+						cache.remove(uuid);				
+					}).submit(Main.getPlugin());
+				}
+			};
 				
-				player.setLocation(player.getWorld().getSpawnLocation());
-				
-				Main.getGame().getScheduler().createTaskBuilder().delayTicks(20).execute(c -> {
-					cache.remove(uuid);				
-				}).submit(Main.getPlugin());
-			}
+			Spongee.API.getServerName(consumer, player);
 		}else {
 			Optional<Location<World>> optionalSpawnLocation = portal.getDestination();
 			

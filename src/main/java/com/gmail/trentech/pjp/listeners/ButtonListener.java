@@ -3,6 +3,7 @@ package com.gmail.trentech.pjp.listeners;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
@@ -81,13 +82,17 @@ public class ButtonListener {
 			}
 
 			if(button.isBungee()) {
-				Server teleportEvent = new TeleportEvent.Server(player, "", button.getServer(), button.getPrice(), Cause.of(NamedCause.source(button)));
+				Consumer<String> consumer = (server) -> {
+					Server teleportEvent = new TeleportEvent.Server(player, server, button.getServer(), button.getPrice(), Cause.of(NamedCause.source(button)));
 
-				if(!Main.getGame().getEventManager().post(teleportEvent)) {
-					Spongee.API.connectPlayer(player, teleportEvent.getDestination());
+					if(!Main.getGame().getEventManager().post(teleportEvent)) {
+						Spongee.API.connectPlayer(player, teleportEvent.getDestination());
+						
+						player.setLocation(player.getWorld().getSpawnLocation());
+					}
+				};
 					
-					player.setLocation(player.getWorld().getSpawnLocation());
-				}
+				Spongee.API.getServerName(consumer, player);
 			}else {
 				Optional<Location<World>> optionalSpawnLocation = button.getDestination();
 				
