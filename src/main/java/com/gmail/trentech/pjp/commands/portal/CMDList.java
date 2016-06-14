@@ -10,6 +10,7 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.service.pagination.PaginationList.Builder;
 import org.spongepowered.api.service.pagination.PaginationService;
 import org.spongepowered.api.text.Text;
@@ -31,9 +32,7 @@ public class CMDList implements CommandExecutor {
 	
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		Builder pages = Main.getGame().getServiceManager().provide(PaginationService.class).get().builder();
-		
-		pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, "Portals")).build());
+
 		
 		List<Text> list = new ArrayList<>();
 		
@@ -58,9 +57,19 @@ public class CMDList implements CommandExecutor {
 			list.add(Text.of(TextColors.YELLOW, " No portals"));
 		}
 		
-		pages.contents(list);
-		
-		pages.sendTo(src);
+		if(src instanceof Player) {
+			Builder pages = Main.getGame().getServiceManager().provide(PaginationService.class).get().builder();
+			
+			pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, "Portals")).build());
+			
+			pages.contents(list);
+			
+			pages.sendTo(src);
+		}else{
+			for(Text text : list) {
+				src.sendMessage(text);
+			}
+		}
 
 		return CommandResult.success();
 	}

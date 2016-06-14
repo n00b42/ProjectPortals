@@ -26,8 +26,6 @@ import flavor.pie.spongee.Spongee;
 
 public class CMDSign implements CommandExecutor {
 
-	//private boolean exist = true;
-	
 	public CMDSign(){
 		Help help = new Help("sign", "sign", " Use this command to create a sign that will teleport you to other worlds");
 		help.setSyntax(" /sign <destination> [-b] [-c <x,y,z>] [-d <direction>] [-p <price>]\n /s <destination> [-b] [-c <x,y,z>] [-d <direction>] [-p <price>]");

@@ -25,8 +25,6 @@ import flavor.pie.spongee.Spongee;
 
 public class CMDButton implements CommandExecutor {
 
-	//private boolean exist = true;
-	
 	public CMDButton(){
 		Help help = new Help("button", "button", " Use this command to create a button that will teleport you to other worlds");
 		help.setSyntax(" /button <destination>  [-b] [-c <x,y,z>] [-d <direction>] [-p <price>]\n /b <destination> [-b] [-c <x,y,z>] [-d <direction>] [-p <price>]");

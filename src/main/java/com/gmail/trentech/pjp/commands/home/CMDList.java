@@ -43,11 +43,7 @@ public class CMDList implements CommandExecutor {
 			return CommandResult.empty();
 		}
 		Player player = (Player) src;
-		
-		PaginationList.Builder pages = Main.getGame().getServiceManager().provide(PaginationService.class).get().builder();
-		
-		pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.AQUA, "Homes")).build());
-		
+
 		Map<String, Home> homeList = new HashMap<>();
 
 		Optional<Map<String, Home>> optionalHomeList = player.get(Keys.HOMES);
@@ -87,9 +83,19 @@ public class CMDList implements CommandExecutor {
 			list.add(Text.of(TextColors.YELLOW, " No saved homes"));
 		}
 		
-		pages.contents(list);
-		
-		pages.sendTo(src);
+		if(src instanceof Player) {
+			PaginationList.Builder pages = Main.getGame().getServiceManager().provide(PaginationService.class).get().builder();
+			
+			pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, "Homes")).build());
+			
+			pages.contents(list);
+			
+			pages.sendTo(src);
+		}else{
+			for(Text text : list) {
+				src.sendMessage(text);
+			}
+		}
 
 		return CommandResult.success();
 	}
