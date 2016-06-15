@@ -14,7 +14,7 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
-import org.spongepowered.api.service.pagination.PaginationList.Builder;
+import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.service.pagination.PaginationService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
@@ -96,10 +96,6 @@ public class CMDHome implements CommandExecutor {
 			return CommandResult.success();
 		}
 
-		Builder pages = Main.getGame().getServiceManager().provide(PaginationService.class).get().builder();
-		
-		pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, "Command List")).build());
-		
 		List<Text> list = new ArrayList<>();
 		
 		if(src.hasPermission("pjp.cmd.home.others")) {
@@ -117,9 +113,20 @@ public class CMDHome implements CommandExecutor {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
 					.onClick(TextActions.executeCallback(Help.getHelp("hlist"))).append(Text.of(" /home list")).build());
 		}
-		pages.contents(list);
 		
-		pages.sendTo(src);
+		if(src instanceof Player) {
+			PaginationList.Builder pages = Main.getGame().getServiceManager().provide(PaginationService.class).get().builder();
+			
+			pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, "Command List")).build());
+			
+			pages.contents(list);
+			
+			pages.sendTo(src);
+		}else{
+			for(Text text : list) {
+				src.sendMessage(text);
+			}
+		}
 
 		return CommandResult.success();
 	}

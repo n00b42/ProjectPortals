@@ -83,19 +83,13 @@ public class CMDList implements CommandExecutor {
 			list.add(Text.of(TextColors.YELLOW, " No saved homes"));
 		}
 		
-		if(src instanceof Player) {
-			PaginationList.Builder pages = Main.getGame().getServiceManager().provide(PaginationService.class).get().builder();
-			
-			pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, "Homes")).build());
-			
-			pages.contents(list);
-			
-			pages.sendTo(src);
-		}else{
-			for(Text text : list) {
-				src.sendMessage(text);
-			}
-		}
+		PaginationList.Builder pages = Main.getGame().getServiceManager().provide(PaginationService.class).get().builder();
+		
+		pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, "Homes")).build());
+		
+		pages.contents(list);
+		
+		pages.sendTo(src);
 
 		return CommandResult.success();
 	}

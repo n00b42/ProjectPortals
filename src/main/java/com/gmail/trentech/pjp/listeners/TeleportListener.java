@@ -5,11 +5,12 @@ import java.text.DecimalFormat;
 import java.util.Optional;
 
 import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.Transform;
+import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
+import org.spongepowered.api.event.entity.DestructEntityEvent;
 import org.spongepowered.api.event.entity.DisplaceEntityEvent;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.economy.EconomyService;
@@ -26,7 +27,6 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.TeleportHelper;
 import org.spongepowered.api.world.World;
 
-import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.commands.CMDBack;
 import com.gmail.trentech.pjp.effects.Particle;
@@ -127,25 +127,22 @@ public class TeleportListener {
 		}
 		Player player = (Player) entity;
 
-		Transform<World> from = event.getFromTransform();
-		Transform<World> to = event.getToTransform();
+		if(player.hasPermission("pjp.cmd.back")) {
+			CMDBack.players.put(player, event.getFromTransform().getLocation());
+		}
+	}
+	
+	@Listener
+	public void onDestructEntityEvent(DestructEntityEvent.Death event) {
+		Living entity = event.getTargetEntity();
 		
-		if(!to.getExtent().equals(from.getExtent())) {
-			if(player.hasPermission("pjp.cmd.back")) {
-				CMDBack.players.put(player, from.getLocation());
-			}
+		if(!(entity instanceof Player)) {
 			return;
 		}
-		
-		Vector3d fromPos = from.getPosition();
-		Vector3d toPos = to.getPosition();
-		
-		double distance = fromPos.distance(toPos.getFloorX(), toPos.getFloorY(), toPos.getFloorZ());
-		
-		if(distance > 5) {
-			if(player.hasPermission("pjp.cmd.back")) {
-				CMDBack.players.put(player, player.getLocation().getExtent().getLocation(fromPos));
-			}
+		Player player = (Player) entity;
+
+		if(player.hasPermission("pjp.cmd.back")) {
+			CMDBack.players.put(player, player.getLocation());
 		}
 	}
 }

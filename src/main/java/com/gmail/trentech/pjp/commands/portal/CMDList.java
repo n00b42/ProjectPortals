@@ -32,8 +32,6 @@ public class CMDList implements CommandExecutor {
 	
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-
-		
 		List<Text> list = new ArrayList<>();
 		
 		ConcurrentHashMap<String, Portal> portals = Portal.all();
