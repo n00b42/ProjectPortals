@@ -12,6 +12,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
+import com.gmail.trentech.pjp.data.object.Portal;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 
 public class Particle {
@@ -41,6 +42,10 @@ public class Particle {
 	}
 	
 	public boolean isColorable() {
+		if(getType() == null) {
+			return false;
+		}
+		
 		if(getType() instanceof Colorable) {
 			return true;
 		}
@@ -48,18 +53,30 @@ public class Particle {
 	}
 
 	public void spawnParticle(Location<World> location, boolean player, Optional<ParticleColor> color) {
+		if(getType() == null) {
+			return;
+		}
+		
 		if(new ConfigManager().getConfig().getNode("options", "particles", "enable").getBoolean()) {
 			spawnNonRepeat(location, player, color);
 		}
 	}
 
 	public void createTask(String name, List<Location<World>> locations, Optional<ParticleColor> color) {
+		if(getType() == null) {
+			return;
+		}
+		
 		if(new ConfigManager().getConfig().getNode("options", "particles", "enable").getBoolean()) {
 			spawnRepeat(name, locations, color);
 		}
 	}
 
 	private void spawnNonRepeat(Location<World> location, boolean player, Optional<ParticleColor> color) {
+		if(getType() == null) {
+			return;
+		}
+
 		ParticleEffect particle = ParticleEffect.builder().type(getType()).build();
 
 		for(int i = 0; i < 9; i++) {
@@ -78,17 +95,29 @@ public class Particle {
 	}
 	
 	private void spawnRepeat(String name, List<Location<World>> locations, Optional<ParticleColor> color) {
-        Main.getGame().getScheduler().createTaskBuilder().interval(getTime(), TimeUnit.MILLISECONDS).name(name).execute(t -> {
-        	ParticleEffect particle = ParticleEffect.builder().type(getType()).build();
+		if(getType() == null) {
+			return;
+		}
+		
+		if(getName().equals("PORTAL2")) {
+			Portal portal = Portal.get(locations.get(0)).get();
 
-    		for(Location<World> location : locations) {	
-    			if(isColorable() && color.isPresent()) {
-    				particle = ColoredParticle.builder().color(color.get().getColor()).type((Colorable) getType()).build();
-    			}
-    			
-    			location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble(),random.nextDouble(),random.nextDouble()));
-    			location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble(),random.nextDouble(),random.nextDouble()));
-    		}
-        }).submit(Main.getPlugin());
+	        Main.getGame().getScheduler().createTaskBuilder().intervalTicks(getTime()).name(name).execute(t -> {
+	        	portal.update(false);
+	        }).submit(Main.getPlugin());
+		} else {
+	        Main.getGame().getScheduler().createTaskBuilder().interval(getTime(), TimeUnit.MILLISECONDS).name(name).execute(t -> {
+	        	ParticleEffect particle = ParticleEffect.builder().type(getType()).build();
+
+	    		for(Location<World> location : locations) {	
+	    			if(isColorable() && color.isPresent()) {
+	    				particle = ColoredParticle.builder().color(color.get().getColor()).type((Colorable) getType()).build();
+	    			}
+	    			
+	    			location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble(),random.nextDouble(),random.nextDouble()));
+	    			location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble(),random.nextDouble(),random.nextDouble()));
+	    		}
+	        }).submit(Main.getPlugin());
+		}
 	}
 }

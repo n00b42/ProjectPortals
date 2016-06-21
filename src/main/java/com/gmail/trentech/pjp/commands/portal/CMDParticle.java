@@ -7,7 +7,6 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
-import org.spongepowered.api.effect.particle.ParticleType.Colorable;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
@@ -55,11 +54,11 @@ public class CMDParticle implements CommandExecutor {
 			return CommandResult.empty();
 		}
 		Particle particle = optionalParticle.get();
-		
+
 		Optional<ParticleColor> color = Optional.empty();
 		
 		if(args.hasAny("color")) {
-			if(particle.getType() instanceof Colorable) {
+			if(particle.isColorable()) {
 				color = ParticleColor.get(args.<String>getOne("color").get().toUpperCase());
 				
 	    		if(!color.isPresent()) {
@@ -73,7 +72,7 @@ public class CMDParticle implements CommandExecutor {
 		}
 
 		portal.setParticle(particle);
-		portal.setParticleColor(color.get());
+		portal.setParticleColor(color);
 		portal.update();
 
 		return CommandResult.success();
@@ -81,10 +80,11 @@ public class CMDParticle implements CommandExecutor {
 	
 	private Text getUsage() {
 		Text usage = Text.of(TextColors.RED, "Usage: /portal particle <name>");
-		
-		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("CLOUD\nCRIT\nCRIT_MAGIC\nENCHANTMENT_TABLE\nFLAME\nHEART\nNOTE\nPORTAL"
-				+ "\nREDSTONE\nSLIME\nSNOWBALL\nSNOW_SHOVEL\nSMOKE_LARGE\nSPELL\nSPELL_WITCH\nSUSPENDED_DEPTH\nVILLAGER_HAPPY\nWATER_BUBBLE\nWATER_DROP\nWATER_SPLASH\nWATER_WAKE"))).append(Text.of(" <type>")).build());
-		
+
+		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of(
+				"CLOUD\nCRIT\nCRIT_MAGIC\nENCHANTMENT_TABLE\nFLAME\nHEART\nNOTE\nPORTAL\nPORTAL2"
+				+ "\nREDSTONE\nSLIME\nSNOWBALL\nSNOW_SHOVEL\nSMOKE_LARGE\nSPELL\nSPELL_WITCH\nSUSPENDED_DEPTH"
+				+ "\nVILLAGER_HAPPY\nWATER_BUBBLE\nWATER_DROP\nWATER_SPLASH\nWATER_WAKE\nNONE"))).append(Text.of(" <type>")).build());	
 		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("REDSTONE ONLY\n", TextColors.DARK_GRAY, "BLACK\n", TextColors.GRAY, "GRAY\n", TextColors.WHITE, "WHITE\n",
 				TextColors.BLUE, "BLUE\n", TextColors.GREEN, "GREEN\n", TextColors.GREEN, "LIME\n", TextColors.RED, "RED\n", TextColors.YELLOW, "YELLOW\n", TextColors.LIGHT_PURPLE, "MAGENTA\n",
 				TextColors.DARK_PURPLE, "PURPLE\n", TextColors.DARK_AQUA, "DARK_CYAN\n", TextColors.DARK_GREEN, "DARK_GREEN\n", TextColors.DARK_PURPLE, "DARK_MAGENTA\n",

@@ -15,6 +15,7 @@ import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
@@ -63,7 +64,7 @@ public class PortalListener {
         	return;
         }
         
-        if(locations.size() < 5) {
+        if(locations.size() < 9) {
         	player.sendMessage(Text.of(TextColors.DARK_RED, "Portal too small"));
         	event.setCancelled(true);        	
         	return;
@@ -155,7 +156,7 @@ public class PortalListener {
 				return;
 			}
 		}
-		
+
 		Location<World> location = entity.getLocation();		
 
 		Optional<Portal> optionalPortal = Portal.get(location);
@@ -181,7 +182,7 @@ public class PortalListener {
 	
 	private static List<UUID> cache = new ArrayList<>();
 	
-	@Listener
+	@Listener(order = Order.FIRST)
 	public void onDisplaceEntityEventMovePlayer(DisplaceEntityEvent.Move event) {
 		Entity entity = event.getTargetEntity();
 		
@@ -190,7 +191,7 @@ public class PortalListener {
 		}
 		Player player = (Player) entity;
 
-		Location<World> location = player.getLocation();		
+		Location<World> location = event.getFromTransform().getLocation();		
 
 		Optional<Portal> optionalPortal = Portal.get(location);
 
@@ -225,7 +226,7 @@ public class PortalListener {
 					cache.add(uuid);
 					
 					Spongee.API.connectPlayer(player, teleportEvent.getDestination());
-					
+
 					player.setLocation(player.getWorld().getSpawnLocation());
 					
 					Main.getGame().getScheduler().createTaskBuilder().delayTicks(20).execute(c -> {
