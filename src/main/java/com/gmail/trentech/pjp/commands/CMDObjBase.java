@@ -16,20 +16,16 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.data.object.Lever;
-import com.gmail.trentech.pjp.listeners.LeverListener;
-import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Rotation;
 
 import flavor.pie.spongee.Spongee;
 
-public class CMDLever implements CommandExecutor {
+public class CMDObjBase implements CommandExecutor {
 
-	public CMDLever(){
-		Help help = new Help("lever", "lever", " Use this command to create a lever that will teleport you to other worlds");
-		help.setSyntax(" /lever <destination> [-b] [-c <x,y,z>] [-d <direction>] [-p <price>]\n /l <destination> [-b] [-c <x,y,z>] [-d <direction>] [-p <price>]");
-		help.setExample(" /lever MyWorld\n /lever MyWorld -c -100,65,254\n /lever MyWorld -c random\n /lever MyWorld -c -100,65,254 -d south\n /lever MyWorld -d southeast\n /lever MyWorld -p 50");
-		help.save();
+	String name;
+	
+	public CMDObjBase(String name){
+		this.name = name;
 	}
 	
 	@Override
@@ -79,16 +75,16 @@ public class CMDLever implements CommandExecutor {
 						return;
 					}
 					
-					LeverListener.builders.put(player.getUniqueId(), new Lever(destination.get(), rotation.get(), price.get(), isBungee));
+					init(player, destination.get(), rotation.get(), price.get(), isBungee);
 					
-					player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place lever to create lever portal"));
+					player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place " + name + " to create " + name + " portal"));
 				};
 					
 				Spongee.API.getServerName(consumer2, player);
 			};
 
 			Spongee.API.getServerList(consumer1, player);
-		}else {			
+		}else {
 			if(!Main.getGame().getServer().getWorld(destination.get()).isPresent()) {
 				src.sendMessage(Text.of(TextColors.DARK_RED, destination, " is not loaded or does not exist"));
 				return CommandResult.empty();
@@ -133,16 +129,20 @@ public class CMDLever implements CommandExecutor {
 				rotation.set(optionalRotation.get());
 			}
 			
-			LeverListener.builders.put(player.getUniqueId(), new Lever(destination.get(), rotation.get(), price.get(), isBungee));
+			init(player, destination.get(), rotation.get(), price.get(), isBungee);
 
-			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place lever to create lever portal"));
+			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place " + name + " to create " + name + " portal"));
 		}
 
 		return CommandResult.success();
 	}
 	
+	protected void init(Player player, String destination, Rotation rotation, Double price, boolean isBungee) {
+		
+	}
+	
 	private Text getUsage() {
-		Text usage = Text.of(TextColors.RED, "Usage: /lever");
+		Text usage = Text.of(TextColors.RED, "Usage: /" + name.replace("pressure ", ""));
 		
 		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("Enter a world or bungee server"))).append(Text.of(" <destination>")).build());
 		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("Use this flag if <destination> is a bungee server"))).append(Text.of(" [-b]")).build());

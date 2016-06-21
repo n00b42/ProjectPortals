@@ -22,7 +22,7 @@ public enum Particles {
 	SNOW_SHOVEL(new Particle("SNOW_SHOVEL", ParticleTypes.SNOW_SHOVEL, 10)), SUSPENDED_DEPTH(new Particle("SUSPENDED_DEPTH", ParticleTypes.SUSPENDED_DEPTH, 5)),
 	VILLAGER_ANGRY(new Particle("VILLAGER_ANGRY", ParticleTypes.VILLAGER_ANGRY, 40)), WATER_SPLASH(new Particle("WATER_SPLASH", ParticleTypes.WATER_SPLASH, 7)),
 	WATER_WAKE(new Particle("WATER_WAKE", ParticleTypes.WATER_WAKE, 7)), WATER_DROP(new Particle("WATER_DROP", ParticleTypes.WATER_DROP, 7)), 
-	PORTAL2(new Particle("PORTAL2", ParticleTypes.PORTAL, 20)), NONE(new Particle("NONE", null, 0));
+	PORTAL2(new Particle("PORTAL2", ParticleTypes.PORTAL, 30)), NONE(new Particle("NONE", null, 0));
 
 	private final Particle particle;
 
