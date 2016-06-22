@@ -44,59 +44,59 @@ public class ButtonListener {
 			BlockSnapshot snapshot = transaction.getFinal();
 			BlockState block = snapshot.getExtendedState();
 			BlockType blockType = block.getType();
-			
-			if(!blockType.equals(BlockTypes.STONE_BUTTON) && !blockType.equals(BlockTypes.WOODEN_BUTTON)) {
-				continue;
-			}
-			
-			if(!block.get(Keys.POWERED).isPresent()) {
+
+			if (!blockType.equals(BlockTypes.STONE_BUTTON) && !blockType.equals(BlockTypes.WOODEN_BUTTON)) {
 				continue;
 			}
 
-			if(!block.get(Keys.POWERED).get()) {
+			if (!block.get(Keys.POWERED).isPresent()) {
 				continue;
 			}
 
-			Location<World> location = snapshot.getLocation().get();		
+			if (!block.get(Keys.POWERED).get()) {
+				continue;
+			}
+
+			Location<World> location = snapshot.getLocation().get();
 
 			Optional<Button> optionalButton = Button.get(location);
-			
-			if(!optionalButton.isPresent()) {
+
+			if (!optionalButton.isPresent()) {
 				continue;
 			}
-			
+
 			Button button = optionalButton.get();
 
-			if(new ConfigManager().getConfig().getNode("options", "advanced_permissions").getBoolean()) {
-				if(!player.hasPermission("pjp.button." + location.getExtent().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ())) {
+			if (new ConfigManager().getConfig().getNode("options", "advanced_permissions").getBoolean()) {
+				if (!player.hasPermission("pjp.button." + location.getExtent().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ())) {
 					player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use this button portal"));
 					event.setCancelled(true);
 					return;
 				}
-			}else{
-				if(!player.hasPermission("pjp.button.interact")) {
+			} else {
+				if (!player.hasPermission("pjp.button.interact")) {
 					player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with button portals"));
 					event.setCancelled(true);
 					return;
 				}
 			}
 
-			if(button.isBungee()) {
+			if (button.isBungee()) {
 				Consumer<String> consumer = (server) -> {
 					Server teleportEvent = new TeleportEvent.Server(player, server, button.getServer(), button.getPrice(), Cause.of(NamedCause.source(button)));
 
-					if(!Main.getGame().getEventManager().post(teleportEvent)) {
+					if (!Main.getGame().getEventManager().post(teleportEvent)) {
 						Spongee.API.connectPlayer(player, teleportEvent.getDestination());
-						
+
 						player.setLocation(player.getWorld().getSpawnLocation());
 					}
 				};
-					
+
 				Spongee.API.getServerName(consumer, player);
-			}else {
+			} else {
 				Optional<Location<World>> optionalSpawnLocation = button.getDestination();
-				
-				if(!optionalSpawnLocation.isPresent()) {
+
+				if (!optionalSpawnLocation.isPresent()) {
 					player.sendMessage(Text.of(TextColors.DARK_RED, "World does not exist"));
 					continue;
 				}
@@ -104,9 +104,9 @@ public class ButtonListener {
 
 				Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, button.getPrice(), Cause.of(NamedCause.source(button)));
 
-				if(!Main.getGame().getEventManager().post(teleportEvent)) {
+				if (!Main.getGame().getEventManager().post(teleportEvent)) {
 					spawnLocation = teleportEvent.getDestination();
-					
+
 					Vector3d rotation = button.getRotation().toVector3d();
 
 					player.setLocationAndRotation(spawnLocation, rotation);
@@ -114,26 +114,26 @@ public class ButtonListener {
 			}
 		}
 	}
-	
+
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Break event, @First Player player) {
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
-			Location<World> location = transaction.getFinal().getLocation().get();		
+			Location<World> location = transaction.getFinal().getLocation().get();
 
 			Optional<Button> optionalButton = Button.get(location);
-			
-			if(!optionalButton.isPresent()) {
+
+			if (!optionalButton.isPresent()) {
 				continue;
 			}
 			Button button = optionalButton.get();
-			
-			if(!player.hasPermission("pjp.button.break")) {
+
+			if (!player.hasPermission("pjp.button.break")) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to break button portals"));
 				event.setCancelled(true);
-			}else{
+			} else {
 				button.remove();
 				player.sendMessage(Text.of(TextColors.DARK_GREEN, "Broke button portal"));
-				
+
 			}
 			return;
 		}
@@ -141,23 +141,23 @@ public class ButtonListener {
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Place event, @First Player player) {
-		if(!builders.containsKey(player.getUniqueId())) {
+		if (!builders.containsKey(player.getUniqueId())) {
 			return;
 		}
 
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			BlockType blockType = transaction.getFinal().getState().getType();
-			
-			if(!blockType.equals(BlockTypes.STONE_BUTTON) && !blockType.equals(BlockTypes.WOODEN_BUTTON)) {
+
+			if (!blockType.equals(BlockTypes.STONE_BUTTON) && !blockType.equals(BlockTypes.WOODEN_BUTTON)) {
 				continue;
 			}
 
 			Location<World> location = transaction.getFinal().getLocation().get();
 
-			if(!player.hasPermission("pjp.button.place")) {
-	        	player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to place button portals"));
-	        	builders.remove(player.getUniqueId());
-	        	return;
+			if (!player.hasPermission("pjp.button.place")) {
+				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to place button portals"));
+				builders.remove(player.getUniqueId());
+				return;
 			}
 
 			Button button = builders.get(player.getUniqueId());
@@ -167,9 +167,9 @@ public class ButtonListener {
 			Particle particle = Particles.getDefaultEffect("creation");
 			particle.spawnParticle(location, false, Particles.getDefaultColor("creation", particle.isColorable()));
 
-            player.sendMessage(Text.of(TextColors.DARK_GREEN, "New button portal created"));
-            
-            builders.remove(player.getUniqueId());
+			player.sendMessage(Text.of(TextColors.DARK_GREEN, "New button portal created"));
+
+			builders.remove(player.getUniqueId());
 		}
 	}
 }

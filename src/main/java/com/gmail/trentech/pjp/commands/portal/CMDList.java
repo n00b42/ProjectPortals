@@ -29,42 +29,42 @@ public class CMDList implements CommandExecutor {
 		help.setSyntax(" /portal list\n /p l");
 		help.save();
 	}
-	
+
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		List<Text> list = new ArrayList<>();
-		
+
 		ConcurrentHashMap<String, Portal> portals = Portal.all();
 
-		for(Entry<String, Portal> entry : portals.entrySet()) {
+		for (Entry<String, Portal> entry : portals.entrySet()) {
 			String name = entry.getKey();
 			Portal portal = entry.getValue();
-			
+
 			Location<World> location = portal.getFrame().get(0);
 			String worldName = location.getExtent().getName();
+			
 			double price = portal.getPrice();
-			if(price == 0) {
+			if (price == 0) {
 				list.add(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Location: ", TextColors.WHITE, worldName, " ", location.getBlockX(), " ", location.getBlockY(), " ", location.getBlockZ()));
-			}else{
-				list.add(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Location: ", TextColors.WHITE, worldName, " ", location.getBlockX(), " ", location.getBlockY(), " ", location.getBlockZ(),
-						TextColors.GREEN, " Price: ", TextColors.WHITE, "$", portal.getPrice()));
+			} else {
+				list.add(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Location: ", TextColors.WHITE, worldName, " ", location.getBlockX(), " ", location.getBlockY(), " ", location.getBlockZ(), TextColors.GREEN, " Price: ", TextColors.WHITE, "$", portal.getPrice()));
 			}
 		}
 
-		if(list.isEmpty()) {
+		if (list.isEmpty()) {
 			list.add(Text.of(TextColors.YELLOW, " No portals"));
 		}
-		
-		if(src instanceof Player) {
+
+		if (src instanceof Player) {
 			Builder pages = Main.getGame().getServiceManager().provide(PaginationService.class).get().builder();
-			
+
 			pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, "Portals")).build());
-			
+
 			pages.contents(list);
-			
+
 			pages.sendTo(src);
-		}else{
-			for(Text text : list) {
+		} else {
+			for (Text text : list) {
 				src.sendMessage(text);
 			}
 		}

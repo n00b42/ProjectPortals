@@ -149,52 +149,40 @@ public class Portal extends PortalBase {
 			Location<World> up = location.getRelative(Direction.UP);
 			Location<World> down = location.getRelative(Direction.DOWN);
 
-			if (frameV.contains(east.getBlockPosition()) && frameV.contains(up.getBlockPosition())
-					&& !frameV.contains(north.getBlockPosition()) && !frameV.contains(south.getBlockPosition())) {
+			if (frameV.contains(east.getBlockPosition()) && frameV.contains(up.getBlockPosition()) && !frameV.contains(north.getBlockPosition()) && !frameV.contains(south.getBlockPosition())) {
 				blockState = BlockTypes.PORTAL.getDefaultState().with(Keys.AXIS, Axis.X).get();
 				break;
-			} else if (frameV.contains(west.getBlockPosition()) && frameV.contains(up.getBlockPosition())
-					&& !frameV.contains(north.getBlockPosition()) && !frameV.contains(south.getBlockPosition())) {
+			} else if (frameV.contains(west.getBlockPosition()) && frameV.contains(up.getBlockPosition()) && !frameV.contains(north.getBlockPosition()) && !frameV.contains(south.getBlockPosition())) {
 				blockState = BlockTypes.PORTAL.getDefaultState().with(Keys.AXIS, Axis.X).get();
 				break;
-			} else if (frameV.contains(east.getBlockPosition()) && frameV.contains(down.getBlockPosition())
-					&& !frameV.contains(north.getBlockPosition()) && !frameV.contains(south.getBlockPosition())) {
+			} else if (frameV.contains(east.getBlockPosition()) && frameV.contains(down.getBlockPosition()) && !frameV.contains(north.getBlockPosition()) && !frameV.contains(south.getBlockPosition())) {
 				blockState = BlockTypes.PORTAL.getDefaultState().with(Keys.AXIS, Axis.X).get();
 				break;
-			} else if (frameV.contains(west.getBlockPosition()) && frameV.contains(down.getBlockPosition())
-					&& !frameV.contains(north.getBlockPosition()) && !frameV.contains(south.getBlockPosition())) {
+			} else if (frameV.contains(west.getBlockPosition()) && frameV.contains(down.getBlockPosition()) && !frameV.contains(north.getBlockPosition()) && !frameV.contains(south.getBlockPosition())) {
 				blockState = BlockTypes.PORTAL.getDefaultState().with(Keys.AXIS, Axis.X).get();
 				break;
-			} else if (frameV.contains(north.getBlockPosition()) && frameV.contains(up.getBlockPosition())
-					&& !frameV.contains(east.getBlockPosition()) && !frameV.contains(west.getBlockPosition())) {
+			} else if (frameV.contains(north.getBlockPosition()) && frameV.contains(up.getBlockPosition()) && !frameV.contains(east.getBlockPosition()) && !frameV.contains(west.getBlockPosition())) {
 				blockState = BlockTypes.PORTAL.getDefaultState().with(Keys.AXIS, Axis.Z).get();
 				break;
-			} else if (frameV.contains(south.getBlockPosition()) && frameV.contains(up.getBlockPosition())
-					&& !frameV.contains(east.getBlockPosition()) && !frameV.contains(west.getBlockPosition())) {
+			} else if (frameV.contains(south.getBlockPosition()) && frameV.contains(up.getBlockPosition()) && !frameV.contains(east.getBlockPosition()) && !frameV.contains(west.getBlockPosition())) {
 				blockState = BlockTypes.PORTAL.getDefaultState().with(Keys.AXIS, Axis.Z).get();
 				break;
-			} else if (frameV.contains(north.getBlockPosition()) && frameV.contains(down.getBlockPosition())
-					&& !frameV.contains(east.getBlockPosition()) && !frameV.contains(west.getBlockPosition())) {
+			} else if (frameV.contains(north.getBlockPosition()) && frameV.contains(down.getBlockPosition()) && !frameV.contains(east.getBlockPosition()) && !frameV.contains(west.getBlockPosition())) {
 				blockState = BlockTypes.PORTAL.getDefaultState().with(Keys.AXIS, Axis.Z).get();
 				break;
-			} else if (frameV.contains(south.getBlockPosition()) && frameV.contains(down.getBlockPosition())
-					&& !frameV.contains(east.getBlockPosition()) && !frameV.contains(west.getBlockPosition())) {
+			} else if (frameV.contains(south.getBlockPosition()) && frameV.contains(down.getBlockPosition()) && !frameV.contains(east.getBlockPosition()) && !frameV.contains(west.getBlockPosition())) {
 				blockState = BlockTypes.PORTAL.getDefaultState().with(Keys.AXIS, Axis.Z).get();
 				break;
-			} else if (frameV.contains(east.getBlockPosition()) && frameV.contains(north.getBlockPosition())
-					&& !frameV.contains(up.getBlockPosition()) && !frameV.contains(down.getBlockPosition())) {
+			} else if (frameV.contains(east.getBlockPosition()) && frameV.contains(north.getBlockPosition()) && !frameV.contains(up.getBlockPosition()) && !frameV.contains(down.getBlockPosition())) {
 				blockState = BlockTypes.END_PORTAL.getDefaultState();
 				break;
-			} else if (frameV.contains(west.getBlockPosition()) && frameV.contains(north.getBlockPosition())
-					&& !frameV.contains(up.getBlockPosition()) && !frameV.contains(down.getBlockPosition())) {
+			} else if (frameV.contains(west.getBlockPosition()) && frameV.contains(north.getBlockPosition()) && !frameV.contains(up.getBlockPosition()) && !frameV.contains(down.getBlockPosition())) {
 				blockState = BlockTypes.END_PORTAL.getDefaultState();
 				break;
-			} else if (frameV.contains(east.getBlockPosition()) && frameV.contains(south.getBlockPosition())
-					&& !frameV.contains(up.getBlockPosition()) && !frameV.contains(down.getBlockPosition())) {
+			} else if (frameV.contains(east.getBlockPosition()) && frameV.contains(south.getBlockPosition()) && !frameV.contains(up.getBlockPosition()) && !frameV.contains(down.getBlockPosition())) {
 				blockState = BlockTypes.END_PORTAL.getDefaultState();
 				break;
-			} else if (frameV.contains(west.getBlockPosition()) && frameV.contains(south.getBlockPosition())
-					&& !frameV.contains(up.getBlockPosition()) && !frameV.contains(down.getBlockPosition())) {
+			} else if (frameV.contains(west.getBlockPosition()) && frameV.contains(south.getBlockPosition()) && !frameV.contains(up.getBlockPosition()) && !frameV.contains(down.getBlockPosition())) {
 				blockState = BlockTypes.END_PORTAL.getDefaultState();
 				break;
 			}
@@ -351,9 +339,7 @@ public class Portal extends PortalBase {
 	public DataContainer toContainer() {
 		DataContainer container = new MemoryDataContainer();
 
-		container.set(DataQueries.DESTINATION, destination).set(DataQueries.ROTATION, rotation.getName())
-				.set(DataQueries.PRICE, price).set(DataQueries.BUNGEE, bungee)
-				.set(DataQueries.PARTICLE, particle.getName());
+		container.set(DataQueries.DESTINATION, destination).set(DataQueries.ROTATION, rotation.getName()).set(DataQueries.PRICE, price).set(DataQueries.BUNGEE, bungee).set(DataQueries.PARTICLE, particle.getName());
 
 		List<String> frame = new ArrayList<>();
 
@@ -367,7 +353,7 @@ public class Portal extends PortalBase {
 		for (Location<World> location : this.fill) {
 			fill.add(location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ());
 		}
-		
+
 		container.set(DataQueries.FILL, fill);
 
 		if (color.isPresent()) {

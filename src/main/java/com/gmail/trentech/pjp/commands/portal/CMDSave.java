@@ -23,37 +23,36 @@ public class CMDSave implements CommandExecutor {
 		help.setSyntax(" /portal save\n /p s");
 		help.save();
 	}
-	
+
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if(!(src instanceof Player)) {
+		if (!(src instanceof Player)) {
 			src.sendMessage(Text.of(TextColors.DARK_RED, "Must be a player"));
 			return CommandResult.empty();
 		}
 		Player player = (Player) src;
 
-		if(!PortalListener.builders.containsKey(player.getUniqueId())) {
+		if (!PortalListener.builders.containsKey(player.getUniqueId())) {
 			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Not in build mode"));
 			return CommandResult.empty();
 		}
 		PortalBuilder builder = PortalListener.builders.get(player.getUniqueId());
 
-		if(!builder.isFill()) {
+		if (!builder.isFill()) {
 			builder.setFill(true);
 			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Portal frame saved"));
-			player.sendMessage(Text.builder().color(TextColors.DARK_GREEN).append(Text.of("Begin filling in portal frame, followed by "))
-					.onClick(TextActions.runCommand("/pjp:portal save")).append(Text.of(TextColors.YELLOW, TextStyles.UNDERLINE, "/portal save")).build());
+			player.sendMessage(Text.builder().color(TextColors.DARK_GREEN).append(Text.of("Begin filling in portal frame, followed by ")).onClick(TextActions.runCommand("/pjp:portal save")).append(Text.of(TextColors.YELLOW, TextStyles.UNDERLINE, "/portal save")).build());
 			return CommandResult.success();
 		}
-		
-		if(builder.build()) {
+
+		if (builder.build()) {
 			Main.getGame().getScheduler().createTaskBuilder().name("PJP" + builder.getName()).delayTicks(20).execute(t -> {
 				PortalListener.builders.remove(player.getUniqueId());
 			}).submit(Main.getPlugin());
 
 			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Portal ", builder.getName(), " created successfully"));
 		}
-		
+
 		return CommandResult.success();
 	}
 }

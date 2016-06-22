@@ -41,51 +41,51 @@ public class LeverListener {
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			BlockSnapshot snapshot = transaction.getFinal();
 			BlockType blockType = snapshot.getState().getType();
-			
-			if(!blockType.equals(BlockTypes.LEVER)) {
+
+			if (!blockType.equals(BlockTypes.LEVER)) {
 				continue;
 			}
 
-			Location<World> location = snapshot.getLocation().get();		
+			Location<World> location = snapshot.getLocation().get();
 
 			Optional<Lever> optionalLever = Lever.get(location);
-			
-			if(!optionalLever.isPresent()) {
+
+			if (!optionalLever.isPresent()) {
 				continue;
 			}
-			
+
 			Lever lever = optionalLever.get();
 
-			if(new ConfigManager().getConfig().getNode("options", "advanced_permissions").getBoolean()) {
-				if(!player.hasPermission("pjp.lever." + location.getExtent().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ())) {
+			if (new ConfigManager().getConfig().getNode("options", "advanced_permissions").getBoolean()) {
+				if (!player.hasPermission("pjp.lever." + location.getExtent().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ())) {
 					player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use this lever portal"));
 					event.setCancelled(true);
 					return;
 				}
-			}else{
-				if(!player.hasPermission("pjp.lever.interact")) {
+			} else {
+				if (!player.hasPermission("pjp.lever.interact")) {
 					player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with lever portals"));
 					event.setCancelled(true);
 					return;
 				}
 			}
-			
-			if(lever.isBungee()) {
+
+			if (lever.isBungee()) {
 				Consumer<String> consumer = (server) -> {
 					Server teleportEvent = new TeleportEvent.Server(player, server, lever.getServer(), lever.getPrice(), Cause.of(NamedCause.source(lever)));
 
-					if(!Main.getGame().getEventManager().post(teleportEvent)) {
+					if (!Main.getGame().getEventManager().post(teleportEvent)) {
 						Spongee.API.connectPlayer(player, teleportEvent.getDestination());
-						
+
 						player.setLocation(player.getWorld().getSpawnLocation());
 					}
 				};
-					
+
 				Spongee.API.getServerName(consumer, player);
-			}else {
+			} else {
 				Optional<Location<World>> optionalSpawnLocation = lever.getDestination();
-				
-				if(!optionalSpawnLocation.isPresent()) {
+
+				if (!optionalSpawnLocation.isPresent()) {
 					player.sendMessage(Text.of(TextColors.DARK_RED, "World does not exist"));
 					continue;
 				}
@@ -93,9 +93,9 @@ public class LeverListener {
 
 				Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, lever.getPrice(), Cause.of(NamedCause.source(lever)));
 
-				if(!Main.getGame().getEventManager().post(teleportEvent)) {
+				if (!Main.getGame().getEventManager().post(teleportEvent)) {
 					spawnLocation = teleportEvent.getDestination();
-					
+
 					Vector3d rotation = lever.getRotation().toVector3d();
 
 					player.setLocationAndRotation(spawnLocation, rotation);
@@ -103,23 +103,23 @@ public class LeverListener {
 			}
 		}
 	}
-	
+
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Break event, @First Player player) {
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
-			Location<World> location = transaction.getFinal().getLocation().get();		
+			Location<World> location = transaction.getFinal().getLocation().get();
 
 			Optional<Lever> optionalLever = Lever.get(location);
-			
-			if(!optionalLever.isPresent()) {
+
+			if (!optionalLever.isPresent()) {
 				continue;
 			}
 			Lever lever = optionalLever.get();
-			
-			if(!player.hasPermission("pjp.lever.break")) {
+
+			if (!player.hasPermission("pjp.lever.break")) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to break lever portals"));
 				event.setCancelled(true);
-			}else{
+			} else {
 				lever.remove();
 				player.sendMessage(Text.of(TextColors.DARK_GREEN, "Broke lever portal"));
 			}
@@ -129,24 +129,24 @@ public class LeverListener {
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Place event, @First Player player) {
-		if(!builders.containsKey(player.getUniqueId())) {
+		if (!builders.containsKey(player.getUniqueId())) {
 			return;
 		}
 
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			BlockType blockType = transaction.getFinal().getState().getType();
-			
-			if(!blockType.equals(BlockTypes.LEVER)) {
+
+			if (!blockType.equals(BlockTypes.LEVER)) {
 				continue;
 			}
 
 			Location<World> location = transaction.getFinal().getLocation().get();
 
-			if(!player.hasPermission("pjp.lever.place")) {
-	        	player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to place lever portals"));
-	        	builders.remove(player.getUniqueId());
-	        	event.setCancelled(true);
-	        	return;
+			if (!player.hasPermission("pjp.lever.place")) {
+				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to place lever portals"));
+				builders.remove(player.getUniqueId());
+				event.setCancelled(true);
+				return;
 			}
 
 			Lever lever = builders.get(player.getUniqueId());
@@ -156,9 +156,9 @@ public class LeverListener {
 			Particle particle = Particles.getDefaultEffect("creation");
 			particle.spawnParticle(location, false, Particles.getDefaultColor("creation", particle.isColorable()));
 
-            player.sendMessage(Text.of(TextColors.DARK_GREEN, "New button lever created"));
-            
-            builders.remove(player.getUniqueId());
+			player.sendMessage(Text.of(TextColors.DARK_GREEN, "New button lever created"));
+
+			builders.remove(player.getUniqueId());
 		}
 	}
 }

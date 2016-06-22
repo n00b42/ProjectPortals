@@ -24,41 +24,35 @@ public class CMDPortal implements CommandExecutor {
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		List<Text> list = new ArrayList<>();
 
-		if(src.hasPermission("pjp.cmd.portal.create")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
-					.onClick(TextActions.executeCallback(Help.getHelp("pcreate"))).append(Text.of(" /portal create")).build());
+		if (src.hasPermission("pjp.cmd.portal.create")) {
+			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("pcreate"))).append(Text.of(" /portal create")).build());
 		}
-		if(src.hasPermission("pjp.cmd.portal.remove")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
-					.onClick(TextActions.executeCallback(Help.getHelp("premove"))).append(Text.of(" /portal remove")).build());
+		if (src.hasPermission("pjp.cmd.portal.remove")) {
+			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("premove"))).append(Text.of(" /portal remove")).build());
 		}
-		if(src.hasPermission("pjp.cmd.portal.list")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
-					.onClick(TextActions.executeCallback(Help.getHelp("plist"))).append(Text.of(" /portal list")).build());
+		if (src.hasPermission("pjp.cmd.portal.list")) {
+			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("plist"))).append(Text.of(" /portal list")).build());
 		}
-		if(src.hasPermission("pjp.cmd.portal.save")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
-					.onClick(TextActions.executeCallback(Help.getHelp("save"))).append(Text.of(" /portal save")).build());
+		if (src.hasPermission("pjp.cmd.portal.save")) {
+			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("save"))).append(Text.of(" /portal save")).build());
 		}
-		if(src.hasPermission("pjp.cmd.portal.particle")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
-					.onClick(TextActions.executeCallback(Help.getHelp("particle"))).append(Text.of(" /portal particle")).build());
+		if (src.hasPermission("pjp.cmd.portal.particle")) {
+			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("particle"))).append(Text.of(" /portal particle")).build());
 		}
-		if(src.hasPermission("pjp.cmd.portal.price")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information ")))
-					.onClick(TextActions.executeCallback(Help.getHelp("pprice"))).append(Text.of(" /portal price")).build());
+		if (src.hasPermission("pjp.cmd.portal.price")) {
+			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("pprice"))).append(Text.of(" /portal price")).build());
 		}
-		
-		if(src instanceof Player) {
+
+		if (src instanceof Player) {
 			PaginationList.Builder pages = Main.getGame().getServiceManager().provide(PaginationService.class).get().builder();
-			
+
 			pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, "Command List")).build());
-			
+
 			pages.contents(list);
-			
+
 			pages.sendTo(src);
-		}else{
-			for(Text text : list) {
+		} else {
+			for (Text text : list) {
 				src.sendMessage(text);
 			}
 		}

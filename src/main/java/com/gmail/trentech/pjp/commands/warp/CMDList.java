@@ -30,50 +30,50 @@ public class CMDList implements CommandExecutor {
 		help.setSyntax(" /warp list\n /w l");
 		help.save();
 	}
-	
+
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		List<Text> list = new ArrayList<>();
-		
+
 		ConcurrentHashMap<String, Warp> warps = Warp.all();
 
-		for(Entry<String, Warp> entry : warps.entrySet()) {
+		for (Entry<String, Warp> entry : warps.entrySet()) {
 			String name = entry.getKey();
 			Warp warp = entry.getValue();
-			
-			if(!src.hasPermission("pjp.warps." + name)) {
+
+			if (!src.hasPermission("pjp.warps." + name)) {
 				continue;
 			}
-			
+
 			Optional<Location<World>> optionalLocation = warp.getDestination();
-			
-			if(!optionalLocation.isPresent()) {
+
+			if (!optionalLocation.isPresent()) {
 				continue;
 			}
 
 			double price = warp.getPrice();
-			if(price == 0) {
+			if (price == 0) {
 				list.add(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name));
-			}else{
+			} else {
 				list.add(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Price: ", TextColors.WHITE, "$", warp.getPrice()));
 			}
 
 		}
 
-		if(list.isEmpty()) {
+		if (list.isEmpty()) {
 			list.add(Text.of(TextColors.YELLOW, " No warp points"));
 		}
-		
-		if(src instanceof Player) {
+
+		if (src instanceof Player) {
 			PaginationList.Builder pages = Main.getGame().getServiceManager().provide(PaginationService.class).get().builder();
-			
+
 			pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, "Warps")).build());
-			
+
 			pages.contents(list);
-			
+
 			pages.sendTo(src);
-		}else{
-			for(Text text : list) {
+		} else {
+			for (Text text : list) {
 				src.sendMessage(text);
 			}
 		}

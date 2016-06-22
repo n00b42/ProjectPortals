@@ -46,38 +46,38 @@ public class PortalListener {
 	@Listener
 	public void onConstructPortalEvent(ConstructPortalEvent event, @First Player player) {
 		List<Location<World>> locations = event.getLocations();
-		
-		for(Location<World> location : event.getLocations()) {
-			if(Portal.get(location).isPresent()) {
-	        	player.sendMessage(Text.of(TextColors.DARK_RED, "Portals cannot over lap other portals"));
-	        	event.setCancelled(true);
-	        	return;
+
+		for (Location<World> location : event.getLocations()) {
+			if (Portal.get(location).isPresent()) {
+				player.sendMessage(Text.of(TextColors.DARK_RED, "Portals cannot over lap other portals"));
+				event.setCancelled(true);
+				return;
 			}
 		}
 
-        ConfigurationNode config = new ConfigManager().getConfig();
-        
-        int size = config.getNode("options", "portal", "size").getInt();
-        if(locations.size() > size) {
-        	player.sendMessage(Text.of(TextColors.DARK_RED, "Portals cannot be larger than ", size, " blocks"));
-        	event.setCancelled(true);
-        	return;
-        }
-        
-        if(locations.size() < 9) {
-        	player.sendMessage(Text.of(TextColors.DARK_RED, "Portal too small"));
-        	event.setCancelled(true);        	
-        	return;
-        }
+		ConfigurationNode config = new ConfigManager().getConfig();
+
+		int size = config.getNode("options", "portal", "size").getInt();
+		if (locations.size() > size) {
+			player.sendMessage(Text.of(TextColors.DARK_RED, "Portals cannot be larger than ", size, " blocks"));
+			event.setCancelled(true);
+			return;
+		}
+
+		if (locations.size() < 9) {
+			player.sendMessage(Text.of(TextColors.DARK_RED, "Portal too small"));
+			event.setCancelled(true);
+			return;
+		}
 	}
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Place event, @First Player player) {
-		if(!builders.containsKey(player.getUniqueId())) {
+		if (!builders.containsKey(player.getUniqueId())) {
 			for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
-				Location<World> location = transaction.getFinal().getLocation().get();		
+				Location<World> location = transaction.getFinal().getLocation().get();
 
-				if(!Portal.get(location).isPresent()) {
+				if (!Portal.get(location).isPresent()) {
 					continue;
 				}
 
@@ -87,30 +87,30 @@ public class PortalListener {
 			return;
 		}
 		PortalBuilder builder = builders.get(player.getUniqueId());
-		
+
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
-			if(transaction.getFinal().getState().getType().equals(BlockTypes.FIRE)) {
+			if (transaction.getFinal().getState().getType().equals(BlockTypes.FIRE)) {
 				event.setCancelled(true);
 				break;
 			}
-			
+
 			Location<World> location = transaction.getFinal().getLocation().get();
-			
-			if(builder.isFill()) {
+
+			if (builder.isFill()) {
 				builder.addFill(location);
-			}else{
+			} else {
 				builder.addFrame(location);
 			}
 		}
 	}
-	
+
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Break event, @First Player player) {
-		if(!builders.containsKey(player.getUniqueId())) {
+		if (!builders.containsKey(player.getUniqueId())) {
 			for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
-				Location<World> location = transaction.getFinal().getLocation().get();		
+				Location<World> location = transaction.getFinal().getLocation().get();
 
-				if(!Portal.get(location).isPresent()) {
+				if (!Portal.get(location).isPresent()) {
 					continue;
 				}
 
@@ -120,12 +120,12 @@ public class PortalListener {
 			return;
 		}
 		PortalBuilder builder = builders.get(player.getUniqueId());
-		
+
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			Location<World> location = transaction.getFinal().getLocation().get();
-			if(builder.isFill()) {
+			if (builder.isFill()) {
 				builder.removeFill(location);
-			}else{
+			} else {
 				builder.removeFrame(location);
 			}
 		}
@@ -134,112 +134,112 @@ public class PortalListener {
 	@Listener
 	public void onDisplaceEntityEventMoveOther(DisplaceEntityEvent.Move event) {
 		Entity entity = event.getTargetEntity();
-		
+
 		if (entity instanceof Player) {
 			return;
 		}
 
-		if(!(entity instanceof Living) && !(entity instanceof Item)) {
+		if (!(entity instanceof Living) && !(entity instanceof Item)) {
 			return;
 		}
-		
+
 		ConfigurationNode node = new ConfigManager().getConfig().getNode("options", "portal");
-		
-		if(entity instanceof Item) {
-			if(!node.getNode("teleport_item").getBoolean()) {
-				return;
-			}
-		}
-		
-		if(entity instanceof Living) {
-			if(!node.getNode("teleport_mob").getBoolean()) {
+
+		if (entity instanceof Item) {
+			if (!node.getNode("teleport_item").getBoolean()) {
 				return;
 			}
 		}
 
-		Location<World> location = entity.getLocation();		
+		if (entity instanceof Living) {
+			if (!node.getNode("teleport_mob").getBoolean()) {
+				return;
+			}
+		}
+
+		Location<World> location = entity.getLocation();
 
 		Optional<Portal> optionalPortal = Portal.get(location);
-		
-		if(!optionalPortal.isPresent()) {
+
+		if (!optionalPortal.isPresent()) {
 			return;
 		}
 		Portal portal = optionalPortal.get();
 
-		if(portal.isBungee()) {
+		if (portal.isBungee()) {
 			return;
 		}
-		
+
 		Optional<Location<World>> optionalSpawnLocation = portal.getDestination();
-		
-		if(!optionalSpawnLocation.isPresent()) {
+
+		if (!optionalSpawnLocation.isPresent()) {
 			return;
 		}
 		Location<World> spawnLocation = optionalSpawnLocation.get();
-		
-		entity.setLocation(spawnLocation);
+
+		entity.setLocationAndRotation(spawnLocation, portal.getRotation().toVector3d());
 	}
-	
+
 	private static List<UUID> cache = new ArrayList<>();
-	
+
 	@Listener(order = Order.FIRST)
 	public void onDisplaceEntityEventMovePlayer(DisplaceEntityEvent.Move event) {
 		Entity entity = event.getTargetEntity();
-		
+
 		if (!(entity instanceof Player)) {
 			return;
 		}
 		Player player = (Player) entity;
 
-		Location<World> location = event.getFromTransform().getLocation();		
+		Location<World> location = event.getFromTransform().getLocation();
 
 		Optional<Portal> optionalPortal = Portal.get(location);
 
-		if(!optionalPortal.isPresent()) {
+		if (!optionalPortal.isPresent()) {
 			return;
 		}
 		Portal portal = optionalPortal.get();
 
-		if(new ConfigManager().getConfig().getNode("options", "advanced_permissions").getBoolean()) {
-			if(!player.hasPermission("pjp.portal." + portal.getName())) {
+		if (new ConfigManager().getConfig().getNode("options", "advanced_permissions").getBoolean()) {
+			if (!player.hasPermission("pjp.portal." + portal.getName())) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use this portal"));
 				return;
 			}
-		}else{
-			if(!player.hasPermission("pjp.portal.interact")) {
+		} else {
+			if (!player.hasPermission("pjp.portal.interact")) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use portals"));
 				return;
 			}
 		}
 
-		if(portal.isBungee()) {
+		if (portal.isBungee()) {
 			UUID uuid = player.getUniqueId();
-			
-			if(cache.contains(uuid)) {
+
+			if (cache.contains(uuid)) {
 				return;
 			}
-			
+
 			Consumer<String> consumer = (server) -> {
 				Server teleportEvent = new TeleportEvent.Server(player, server, portal.getServer(), portal.getPrice(), Cause.of(NamedCause.source(portal)));
 
-				if(!Main.getGame().getEventManager().post(teleportEvent)) {
+				if (!Main.getGame().getEventManager().post(teleportEvent)) {
 					cache.add(uuid);
-					
+
 					Spongee.API.connectPlayer(player, teleportEvent.getDestination());
 
 					player.setLocation(player.getWorld().getSpawnLocation());
-					
+
 					Main.getGame().getScheduler().createTaskBuilder().delayTicks(20).execute(c -> {
-						cache.remove(uuid);				
+						cache.remove(uuid);
 					}).submit(Main.getPlugin());
 				}
 			};
-				
+
 			Spongee.API.getServerName(consumer, player);
-		}else {
+		} else {
 			Optional<Location<World>> optionalSpawnLocation = portal.getDestination();
-			
-			if(!optionalSpawnLocation.isPresent()) {
+
+			if (!optionalSpawnLocation.isPresent()) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "Spawn location does not exist or world is not loaded"));
 				return;
 			}
@@ -247,9 +247,9 @@ public class PortalListener {
 
 			Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, portal.getPrice(), Cause.of(NamedCause.source(portal)));
 
-			if(!Main.getGame().getEventManager().post(teleportEvent)) {
+			if (!Main.getGame().getEventManager().post(teleportEvent)) {
 				spawnLocation = teleportEvent.getDestination();
-				
+
 				Vector3d rotation = portal.getRotation().toVector3d();
 
 				player.setLocationAndRotation(spawnLocation, rotation);
