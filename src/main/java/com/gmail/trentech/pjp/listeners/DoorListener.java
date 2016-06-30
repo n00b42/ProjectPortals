@@ -43,19 +43,19 @@ public class DoorListener {
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Break event, @First Player player) {
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
-			Location<World> location = transaction.getFinal().getLocation().get();		
+			Location<World> location = transaction.getFinal().getLocation().get();
 
 			Optional<Door> optionalDoor = Door.get(location);
-			
-			if(!optionalDoor.isPresent()) {
+
+			if (!optionalDoor.isPresent()) {
 				continue;
 			}
 			Door door = optionalDoor.get();
-			
-			if(!player.hasPermission("pjp.door.break")) {
+
+			if (!player.hasPermission("pjp.door.break")) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to break door portals"));
 				event.setCancelled(true);
-			}else{
+			} else {
 				door.remove();
 				player.sendMessage(Text.of(TextColors.DARK_GREEN, "Broke door portal"));
 			}
@@ -65,102 +65,100 @@ public class DoorListener {
 
 	@Listener
 	public void onChangeBlockEvent(ChangeBlockEvent.Place event, @First Player player) {
-		if(!builders.containsKey(player.getUniqueId())) {
+		if (!builders.containsKey(player.getUniqueId())) {
 			return;
 		}
 
 		for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 			BlockType blockType = transaction.getFinal().getState().getType();
-			
-			if(!blockType.equals(BlockTypes.ACACIA_DOOR) && !blockType.equals(BlockTypes.BIRCH_DOOR) && !blockType.equals(BlockTypes.DARK_OAK_DOOR)
-					 && !blockType.equals(BlockTypes.IRON_DOOR) && !blockType.equals(BlockTypes.JUNGLE_DOOR) && !blockType.equals(BlockTypes.SPRUCE_DOOR)
-					 && !blockType.equals(BlockTypes.WOODEN_DOOR)) {
+
+			if (!blockType.equals(BlockTypes.ACACIA_DOOR) && !blockType.equals(BlockTypes.BIRCH_DOOR) && !blockType.equals(BlockTypes.DARK_OAK_DOOR) && !blockType.equals(BlockTypes.IRON_DOOR) && !blockType.equals(BlockTypes.JUNGLE_DOOR) && !blockType.equals(BlockTypes.SPRUCE_DOOR) && !blockType.equals(BlockTypes.WOODEN_DOOR)) {
 				continue;
 			}
 
 			Location<World> location = transaction.getFinal().getLocation().get();
 
-			if(!player.hasPermission("pjp.door.place")) {
-	        	player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to place door portals"));
-	        	builders.remove(player.getUniqueId());
-	        	event.setCancelled(true);
-	        	return;
+			if (!player.hasPermission("pjp.door.place")) {
+				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to place door portals"));
+				builders.remove(player.getUniqueId());
+				event.setCancelled(true);
+				return;
 			}
 
 			Door door = builders.get(player.getUniqueId());
 			door.setLocation(location);
 			door.create();
-			
+
 			Particle particle = Particles.getDefaultEffect("creation");
 			particle.spawnParticle(location, false, Particles.getDefaultColor("creation", particle.isColorable()));
 
-            player.sendMessage(Text.of(TextColors.DARK_GREEN, "New door portal created"));
-            
-            builders.remove(player.getUniqueId());
-            break;
+			player.sendMessage(Text.of(TextColors.DARK_GREEN, "New door portal created"));
+
+			builders.remove(player.getUniqueId());
+			break;
 		}
 	}
-	
+
 	private static List<UUID> cache = new ArrayList<>();
-	
+
 	@Listener
-	public void onMoveEntityEvent(MoveEntityEvent event) {
+	public void onDisplaceEntityEvent(MoveEntityEvent event) {
 		Entity entity = event.getTargetEntity();
-		
+
 		if (!(entity instanceof Player)) {
 			return;
 		}
 		Player player = (Player) entity;
 
-		Location<World> location = player.getLocation();		
+		Location<World> location = player.getLocation();
 
 		Optional<Door> optionalDoor = Door.get(location);
-		
-		if(!optionalDoor.isPresent()) {
+
+		if (!optionalDoor.isPresent()) {
 			return;
 		}
 		Door door = optionalDoor.get();
 
-		if(new ConfigManager().getConfig().getNode("options", "advanced_permissions").getBoolean()) {
-			if(!player.hasPermission("pjp.door." + location.getExtent().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ())) {
+		if (new ConfigManager().getConfig().getNode("options", "advanced_permissions").getBoolean()) {
+			if (!player.hasPermission("pjp.door." + location.getExtent().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ())) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use this door portal"));
 				return;
 			}
-		}else{
-			if(!player.hasPermission("pjp.door.interact")) {
+		} else {
+			if (!player.hasPermission("pjp.door.interact")) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with door portals"));
 				return;
 			}
 		}
 
-		if(door.isBungee()) {
+		if (door.isBungee()) {
 			UUID uuid = player.getUniqueId();
-			
-			if(cache.contains(uuid)) {
+
+			if (cache.contains(uuid)) {
 				return;
 			}
-			
+
 			Consumer<String> consumer = (server) -> {
 				Server teleportEvent = new TeleportEvent.Server(player, server, door.getServer(), door.getPrice(), Cause.of(NamedCause.source(door)));
 
-				if(!Main.getGame().getEventManager().post(teleportEvent)) {
+				if (!Main.getGame().getEventManager().post(teleportEvent)) {
 					cache.add(uuid);
-					
+
 					Spongee.API.connectPlayer(player, teleportEvent.getDestination());
-					
+
 					player.setLocation(player.getWorld().getSpawnLocation());
-					
+
 					Main.getGame().getScheduler().createTaskBuilder().delayTicks(20).execute(c -> {
-						cache.remove(uuid);				
+						cache.remove(uuid);
 					}).submit(Main.getPlugin());
 				}
 			};
-				
+
 			Spongee.API.getServerName(consumer, player);
-		}else {
+		} else {
 			Optional<Location<World>> optionalSpawnLocation = door.getDestination();
-			
-			if(!optionalSpawnLocation.isPresent()) {
+
+			if (!optionalSpawnLocation.isPresent()) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "World does not exist"));
 				return;
 			}
@@ -168,9 +166,9 @@ public class DoorListener {
 
 			Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, door.getPrice(), Cause.of(NamedCause.source(door)));
 
-			if(!Main.getGame().getEventManager().post(teleportEvent)) {
+			if (!Main.getGame().getEventManager().post(teleportEvent)) {
 				spawnLocation = teleportEvent.getDestination();
-				
+
 				Vector3d rotation = door.getRotation().toVector3d();
 
 				player.setLocationAndRotation(spawnLocation, rotation);

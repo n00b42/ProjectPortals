@@ -14,6 +14,7 @@ import org.spongepowered.api.world.World;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.ParticleColor;
+import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.events.ConstructPortalEvent;
 import com.gmail.trentech.pjp.utils.Rotation;
 
@@ -29,7 +30,7 @@ public class PortalBuilder {
 	private boolean fill = false;
 	private List<Location<World>> regionFrame;
 	private List<Location<World>> regionFill;
-	
+
 	public PortalBuilder(String name, String destination, Rotation rotation, Particle particle, Optional<ParticleColor> color, double price, boolean bungee) {
 		this.name = name;
 		this.destination = destination;
@@ -45,7 +46,7 @@ public class PortalBuilder {
 	public List<Location<World>> getRegionFill() {
 		return regionFill;
 	}
-	
+
 	public List<Location<World>> getRegionFrame() {
 		return regionFrame;
 	}
@@ -58,22 +59,22 @@ public class PortalBuilder {
 		regionFrame.add(location);
 		return this;
 	}
-	
+
 	public PortalBuilder removeFrame(Location<World> location) {
 		regionFrame.remove(location);
 		return this;
 	}
-	
+
 	public PortalBuilder addFill(Location<World> location) {
 		regionFill.add(location);
 		return this;
 	}
-	
+
 	public PortalBuilder removeFill(Location<World> location) {
 		regionFill.remove(location);
 		return this;
 	}
-	
+
 	public boolean isFill() {
 		return fill;
 	}
@@ -82,20 +83,24 @@ public class PortalBuilder {
 		this.fill = fill;
 		return this;
 	}
-	
+
 	public boolean build() {
-		if(regionFrame.isEmpty() || regionFill.isEmpty()) {
+		if (regionFrame.isEmpty() || regionFill.isEmpty()) {
 			return false;
 		}
 
-		if(!Main.getGame().getEventManager().post(new ConstructPortalEvent(regionFrame, regionFill, Cause.of(NamedCause.source(this))))) {
+		if (!Main.getGame().getEventManager().post(new ConstructPortalEvent(regionFrame, regionFill, Cause.of(NamedCause.source(this))))) {
 			BlockState block = BlockTypes.AIR.getDefaultState();
 
-			for(Location<World> location : regionFill) {
+			Particle particle = Particles.getDefaultEffect("creation");
+			Optional<ParticleColor> color = Particles.getDefaultColor("creation", particle.isColorable());
+
+			for (Location<World> location : regionFill) {
+				particle.spawnParticle(location, false, color);
 				location.getExtent().setBlock(location.getBlockX(), location.getBlockY(), location.getBlockZ(), block, false, Cause.of(NamedCause.source(Main.getPlugin())));
 			}
 
-			new Portal(getName(), destination, rotation, regionFrame, regionFill, particle, color, price, bungee).create();
+			new Portal(getName(), destination, rotation, regionFrame, regionFill, this.particle, this.color, price, bungee).create();
 
 			return true;
 		}
