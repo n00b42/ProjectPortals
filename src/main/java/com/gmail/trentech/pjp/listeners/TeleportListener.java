@@ -11,7 +11,7 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.event.entity.DestructEntityEvent;
-import org.spongepowered.api.event.entity.DisplaceEntityEvent;
+import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.economy.EconomyService;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
@@ -118,7 +118,7 @@ public class TeleportListener {
 	}
 
 	@Listener
-	public void onDisplaceEntityEvent(DisplaceEntityEvent.Teleport event) {
+	public void onMoveEntityEvent(MoveEntityEvent.Teleport event) {
 		Entity entity = event.getTargetEntity();
 
 		if (!(entity instanceof Player)) {

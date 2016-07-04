@@ -17,7 +17,7 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
-import org.spongepowered.api.event.entity.DisplaceEntityEvent;
+import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
@@ -34,7 +34,7 @@ import com.gmail.trentech.pjp.events.TeleportEvent.Local;
 import com.gmail.trentech.pjp.events.TeleportEvent.Server;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 
-import flavor.pie.spongee.Spongee;
+import flavor.pie.spongycord.SpongyCord;
 
 public class DoorListener {
 
@@ -102,7 +102,7 @@ public class DoorListener {
 	private static List<UUID> cache = new ArrayList<>();
 
 	@Listener
-	public void onDisplaceEntityEvent(DisplaceEntityEvent.Move event) {
+	public void onDisplaceEntityEvent(MoveEntityEvent event) {
 		Entity entity = event.getTargetEntity();
 
 		if (!(entity instanceof Player)) {
@@ -144,7 +144,7 @@ public class DoorListener {
 				if (!Main.getGame().getEventManager().post(teleportEvent)) {
 					cache.add(uuid);
 
-					Spongee.API.connectPlayer(player, teleportEvent.getDestination());
+					SpongyCord.API.connectPlayer(player, teleportEvent.getDestination());
 
 					player.setLocation(player.getWorld().getSpawnLocation());
 
@@ -154,7 +154,7 @@ public class DoorListener {
 				}
 			};
 
-			Spongee.API.getServerName(consumer, player);
+			SpongyCord.API.getServerName(consumer, player);
 		} else {
 			Optional<Location<World>> optionalSpawnLocation = door.getDestination();
 
