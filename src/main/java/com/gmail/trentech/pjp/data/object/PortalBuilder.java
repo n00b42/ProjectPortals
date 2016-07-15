@@ -8,6 +8,7 @@ import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
+import org.spongepowered.api.world.BlockChangeFlag;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -97,7 +98,7 @@ public class PortalBuilder {
 
 			for (Location<World> location : regionFill) {
 				particle.spawnParticle(location, false, color);
-				location.getExtent().setBlock(location.getBlockX(), location.getBlockY(), location.getBlockZ(), block, false, Cause.of(NamedCause.source(Main.getPlugin())));
+				location.getExtent().setBlock(location.getBlockX(), location.getBlockY(), location.getBlockZ(), block, BlockChangeFlag.NONE, Cause.of(NamedCause.source(Main.getPlugin())));
 			}
 
 			new Portal(getName(), destination, rotation, regionFrame, regionFill, this.particle, this.color, price, bungee).create();
