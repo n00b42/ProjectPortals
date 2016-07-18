@@ -32,7 +32,6 @@ import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.events.TeleportEvent.Local;
 import com.gmail.trentech.pjp.events.TeleportEvent.Server;
-import com.gmail.trentech.pjp.timings.DoorTimings;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 
 import flavor.pie.spongycord.SpongyCord;
@@ -40,12 +39,13 @@ import flavor.pie.spongycord.SpongyCord;
 public class DoorListener {
 
 	public static ConcurrentHashMap<UUID, Door> builders = new ConcurrentHashMap<>();
-	private DoorTimings timings;
 	
-	public DoorListener(Main plugin) {
-		this.timings = new DoorTimings(plugin);
+	private Timings timings;
+
+	public DoorListener(Timings timings) {
+		this.timings = timings;
 	}
-	
+
 	@Listener
 	public void onChangeBlockEventBreak(ChangeBlockEvent.Break event, @First Player player) {
 		timings.onChangeBlockEventBreak().startTimingIfSync();
@@ -119,9 +119,9 @@ public class DoorListener {
 	private static List<UUID> cache = new ArrayList<>();
 
 	@Listener
-	public void onDisplaceEntityEvent(MoveEntityEvent event) {
-		timings.onDisplaceEntityEventMove().startTimingIfSync();
-		
+	public void onDisplaceEntityEventMovePlayer(MoveEntityEvent event) {
+		timings.onDisplaceEntityEventMovePlayer().startTimingIfSync();
+
 		try {
 			Entity entity = event.getTargetEntity();
 
@@ -195,7 +195,7 @@ public class DoorListener {
 				}
 			}
 		} finally {
-			timings.onDisplaceEntityEventMove().stopTimingIfSync();
+			timings.onDisplaceEntityEventMovePlayer().stopTimingIfSync();
 		}
 	}
 }

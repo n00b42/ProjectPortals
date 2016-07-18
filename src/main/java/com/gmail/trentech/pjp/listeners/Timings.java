@@ -1,31 +1,35 @@
-package com.gmail.trentech.pjp.timings;
+package com.gmail.trentech.pjp.listeners;
 
 import com.gmail.trentech.pjp.Main;
 
 import co.aikar.timings.Timing;
 
-public class PortalTimings {
+public class Timings {
 
-	private final Main plugin;
-	private final Timing interactBlockEvent, constructPortalEvent, displaceEntityEventMoveItem, displaceEntityEventMoveLiving, displaceEntityEventMovePlayer, changeBlockEventPlace, changeBlockEventBreak;
+	private final Timing changeSignEvent, interactBlockEventSecondary, changeBlockEventModify, changeBlockEventPlace, changeBlockEventBreak, constructPortalEvent, displaceEntityEventMoveItem, displaceEntityEventMoveLiving, displaceEntityEventMovePlayer;
 
-	public PortalTimings(Main plugin) {
-		this.plugin = plugin;
-		this.interactBlockEvent = timing("onInteractBlockEvent");
+	public Timings() {
+		this.changeSignEvent = timing("onChangeSignEvent");
+		this.interactBlockEventSecondary = timing("onInteractBlockEventSecondary");
+		this.changeBlockEventModify = timing("onChangeBlockEventModify");
+		this.changeBlockEventPlace = timing("onChangeBlockEventPlace");
+		this.changeBlockEventBreak = timing("onChangeBlockEventBreak");
 		this.constructPortalEvent = timing("onConstructPortalEvent");
 		this.displaceEntityEventMoveItem = timing("onDisplaceEntityEventMoveItem");
 		this.displaceEntityEventMoveLiving = timing("onDisplaceEntityEventMoveLiving");
 		this.displaceEntityEventMovePlayer = timing("onDisplaceEntityEventMovePlayer");
-		this.changeBlockEventPlace = timing("onChangeBlockEventPlace");
-		this.changeBlockEventBreak = timing("onChangeBlockEventBreak");
 	}
 
 	private Timing timing(String key) {
-		return co.aikar.timings.Timings.of(this.plugin, key);
+		return co.aikar.timings.Timings.of(Main.getPlugin(), key);
 	}
 
-	public Timing onInteractBlockEvent() {
-		return interactBlockEvent;
+	public Timing onChangeSignEvent() {
+		return changeSignEvent;
+	}
+
+	public Timing onInteractBlockEventSecondary() {
+		return interactBlockEventSecondary;
 	}
 
 	public Timing onConstructPortalEvent() {
@@ -42,6 +46,10 @@ public class PortalTimings {
 
 	public Timing onDisplaceEntityEventMovePlayer() {
 		return displaceEntityEventMovePlayer;
+	}
+	
+	public Timing onChangeBlockEventModify() {
+		return changeBlockEventModify;
 	}
 	
 	public Timing onChangeBlockEventPlace() {
