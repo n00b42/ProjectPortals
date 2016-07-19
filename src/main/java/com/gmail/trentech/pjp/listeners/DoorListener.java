@@ -48,7 +48,7 @@ public class DoorListener {
 
 	@Listener
 	public void onChangeBlockEventBreak(ChangeBlockEvent.Break event, @First Player player) {
-		timings.onChangeBlockEventBreak().startTimingIfSync();
+		timings.onChangeBlockEventBreak().startTiming();
 		
 		try {
 			for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
@@ -70,13 +70,13 @@ public class DoorListener {
 				}
 			}
 		} finally {
-			timings.onChangeBlockEventBreak().stopTimingIfSync();
+			timings.onChangeBlockEventBreak().stopTiming();
 		}
 	}
 
 	@Listener
 	public void onChangeBlockEventPlace(ChangeBlockEvent.Place event, @First Player player) {
-		timings.onChangeBlockEventPlace().startTimingIfSync();
+		timings.onChangeBlockEventPlace().startTiming();
 		
 		try {
 			if (!builders.containsKey(player.getUniqueId())) {
@@ -112,7 +112,7 @@ public class DoorListener {
 				break;
 			}
 		} finally {
-			timings.onChangeBlockEventPlace().stopTimingIfSync();
+			timings.onChangeBlockEventPlace().stopTiming();
 		}
 	}
 
@@ -120,16 +120,16 @@ public class DoorListener {
 
 	@Listener
 	public void onDisplaceEntityEventMovePlayer(MoveEntityEvent event) {
+		Entity entity = event.getTargetEntity();
+
+		if (!(entity instanceof Player)) {
+			return;
+		}
+		Player player = (Player) entity;
+		
 		timings.onDisplaceEntityEventMovePlayer().startTimingIfSync();
 
 		try {
-			Entity entity = event.getTargetEntity();
-
-			if (!(entity instanceof Player)) {
-				return;
-			}
-			Player player = (Player) entity;
-
 			Location<World> location = player.getLocation();
 
 			Optional<Door> optionalDoor = Door.get(location);
@@ -195,7 +195,7 @@ public class DoorListener {
 				}
 			}
 		} finally {
-			timings.onDisplaceEntityEventMovePlayer().stopTimingIfSync();
+			timings.onDisplaceEntityEventMovePlayer().stopTiming();
 		}
 	}
 }
