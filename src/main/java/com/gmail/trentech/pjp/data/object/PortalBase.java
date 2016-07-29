@@ -2,13 +2,13 @@ package com.gmail.trentech.pjp.data.object;
 
 import java.util.Optional;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataSerializable;
 import org.spongepowered.api.data.MemoryDataContainer;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.DataQueries;
 import com.gmail.trentech.pjp.utils.Rotation;
 import com.gmail.trentech.pjp.utils.SQLUtils;
@@ -48,7 +48,7 @@ public class PortalBase extends SQLUtils implements DataSerializable {
 	public Optional<Location<World>> getLocation() {
 		String[] args = name.split(":");
 
-		Optional<World> optionalWorld = Main.getGame().getServer().getWorld(args[0]);
+		Optional<World> optionalWorld = Sponge.getServer().getWorld(args[0]);
 
 		if (!optionalWorld.isPresent()) {
 			return Optional.empty();
@@ -88,7 +88,7 @@ public class PortalBase extends SQLUtils implements DataSerializable {
 	public Optional<Location<World>> getDestination() {
 		String[] args = destination.split(":");
 
-		Optional<World> optionalWorld = Main.getGame().getServer().getWorld(args[0]);
+		Optional<World> optionalWorld = Sponge.getServer().getWorld(args[0]);
 
 		if (!optionalWorld.isPresent()) {
 			return Optional.empty();

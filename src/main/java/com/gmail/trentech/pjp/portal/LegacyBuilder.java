@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.event.cause.Cause;
@@ -91,7 +92,7 @@ public class LegacyBuilder {
 			return false;
 		}
 
-		if (!Main.getGame().getEventManager().post(new ConstructPortalEvent(regionFrame, regionFill, Cause.of(NamedCause.source(this))))) {
+		if (!Sponge.getEventManager().post(new ConstructPortalEvent(regionFrame, regionFill, Cause.of(NamedCause.source(this))))) {
 			BlockState block = BlockTypes.AIR.getDefaultState();
 
 			Particle particle = Particles.getDefaultEffect("creation");

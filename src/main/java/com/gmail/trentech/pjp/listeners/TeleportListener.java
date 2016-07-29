@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Optional;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
@@ -56,7 +57,7 @@ public class TeleportListener {
 
 			double price = event.getPrice();
 
-			Optional<EconomyService> optionalEconomy = Main.getGame().getServiceManager().provide(EconomyService.class);
+			Optional<EconomyService> optionalEconomy = Sponge.getServiceManager().provide(EconomyService.class);
 
 			if (price != 0 && optionalEconomy.isPresent()) {
 				EconomyService economy = optionalEconomy.get();
@@ -97,7 +98,7 @@ public class TeleportListener {
 				return;
 			}
 
-			TeleportHelper teleportHelper = Main.getGame().getTeleportHelper();
+			TeleportHelper teleportHelper = Sponge.getGame().getTeleportHelper();
 
 			Optional<Location<World>> optionalLocation = teleportHelper.getSafeLocation(dest);
 
@@ -129,7 +130,7 @@ public class TeleportListener {
 		try {
 			Player player = event.getPlayer();
 
-			Optional<PluginContainer> optionalPlugin = Main.getGame().getPluginManager().getPlugin("spongycord");
+			Optional<PluginContainer> optionalPlugin = Sponge.getPluginManager().getPlugin("spongycord");
 
 			if (!optionalPlugin.isPresent()) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "Bungee portals require Spongee plugin dependency"));

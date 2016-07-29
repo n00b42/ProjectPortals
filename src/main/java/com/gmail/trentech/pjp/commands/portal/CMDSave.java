@@ -1,5 +1,6 @@
 package com.gmail.trentech.pjp.commands.portal;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -46,7 +47,7 @@ public class CMDSave implements CommandExecutor {
 		}
 
 		if (builder.build()) {
-			Main.getGame().getScheduler().createTaskBuilder().name("PJP" + builder.getName()).delayTicks(20).execute(t -> {
+			Sponge.getScheduler().createTaskBuilder().name("PJP" + builder.getName()).delayTicks(20).execute(t -> {
 				LegacyListener.builders.remove(player.getUniqueId());
 			}).submit(Main.getPlugin());
 

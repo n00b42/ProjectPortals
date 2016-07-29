@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -17,7 +18,6 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.object.Warp;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Rotation;
@@ -107,7 +107,7 @@ public class CMDCreate implements CommandExecutor {
 
 				return CommandResult.success();
 			} else {
-				if (!Main.getGame().getServer().getWorld(destination.get()).isPresent()) {
+				if (!Sponge.getServer().getWorld(destination.get()).isPresent()) {
 					src.sendMessage(Text.of(TextColors.DARK_RED, destination, " is not loaded or does not exist"));
 					return CommandResult.empty();
 				}

@@ -5,6 +5,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
@@ -23,7 +24,6 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
-import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.immutable.ImmutableSignPortalData;
 import com.gmail.trentech.pjp.data.mutable.SignPortalData;
 import com.gmail.trentech.pjp.data.object.Sign;
@@ -113,7 +113,7 @@ public class SignListener {
 				Consumer<String> consumer = (server) -> {
 					Server teleportEvent = new TeleportEvent.Server(player, server, sign.getServer(), sign.getPrice(), Cause.of(NamedCause.source(sign)));
 
-					if (!Main.getGame().getEventManager().post(teleportEvent)) {
+					if (!Sponge.getEventManager().post(teleportEvent)) {
 						SpongyCord.API.connectPlayer(player, teleportEvent.getDestination());
 
 						player.setLocation(player.getWorld().getSpawnLocation());
@@ -132,7 +132,7 @@ public class SignListener {
 
 				Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, 0, Cause.of(NamedCause.source(sign)));
 
-				if (!Main.getGame().getEventManager().post(teleportEvent)) {
+				if (!Sponge.getEventManager().post(teleportEvent)) {
 					spawnLocation = teleportEvent.getDestination();
 
 					Vector3d rotation = portalData.sign().get().getRotation().toVector3d();

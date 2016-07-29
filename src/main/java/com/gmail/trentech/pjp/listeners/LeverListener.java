@@ -5,6 +5,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
@@ -21,7 +22,6 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
-import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.object.Lever;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.Particles;
@@ -83,7 +83,7 @@ public class LeverListener {
 					Consumer<String> consumer = (server) -> {
 						Server teleportEvent = new TeleportEvent.Server(player, server, lever.getServer(), lever.getPrice(), Cause.of(NamedCause.source(lever)));
 
-						if (!Main.getGame().getEventManager().post(teleportEvent)) {
+						if (!Sponge.getEventManager().post(teleportEvent)) {
 							SpongyCord.API.connectPlayer(player, teleportEvent.getDestination());
 
 							player.setLocation(player.getWorld().getSpawnLocation());
@@ -102,7 +102,7 @@ public class LeverListener {
 
 					Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, lever.getPrice(), Cause.of(NamedCause.source(lever)));
 
-					if (!Main.getGame().getEventManager().post(teleportEvent)) {
+					if (!Sponge.getEventManager().post(teleportEvent)) {
 						spawnLocation = teleportEvent.getDestination();
 
 						Vector3d rotation = lever.getRotation().toVector3d();

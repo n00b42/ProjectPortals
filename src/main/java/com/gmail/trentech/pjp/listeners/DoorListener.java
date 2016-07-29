@@ -7,6 +7,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
@@ -161,14 +162,14 @@ public class DoorListener {
 				Consumer<String> consumer = (server) -> {
 					Server teleportEvent = new TeleportEvent.Server(player, server, door.getServer(), door.getPrice(), Cause.of(NamedCause.source(door)));
 
-					if (!Main.getGame().getEventManager().post(teleportEvent)) {
+					if (!Sponge.getEventManager().post(teleportEvent)) {
 						cache.add(uuid);
 
 						SpongyCord.API.connectPlayer(player, teleportEvent.getDestination());
 
 						player.setLocation(player.getWorld().getSpawnLocation());
 
-						Main.getGame().getScheduler().createTaskBuilder().delayTicks(20).execute(c -> {
+						Sponge.getScheduler().createTaskBuilder().delayTicks(20).execute(c -> {
 							cache.remove(uuid);
 						}).submit(Main.getPlugin());
 					}
@@ -186,7 +187,7 @@ public class DoorListener {
 
 				Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, door.getPrice(), Cause.of(NamedCause.source(door)));
 
-				if (!Main.getGame().getEventManager().post(teleportEvent)) {
+				if (!Sponge.getEventManager().post(teleportEvent)) {
 					spawnLocation = teleportEvent.getDestination();
 
 					Vector3d rotation = door.getRotation().toVector3d();

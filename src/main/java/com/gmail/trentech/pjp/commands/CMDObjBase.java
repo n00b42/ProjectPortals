@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -15,7 +16,6 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
-import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.utils.Rotation;
 
 import flavor.pie.spongycord.SpongyCord;
@@ -85,7 +85,7 @@ public class CMDObjBase implements CommandExecutor {
 
 			SpongyCord.API.getServerList(consumer1, player);
 		} else {
-			if (!Main.getGame().getServer().getWorld(destination.get()).isPresent()) {
+			if (!Sponge.getServer().getWorld(destination.get()).isPresent()) {
 				src.sendMessage(Text.of(TextColors.DARK_RED, destination, " is not loaded or does not exist"));
 				return CommandResult.empty();
 			}

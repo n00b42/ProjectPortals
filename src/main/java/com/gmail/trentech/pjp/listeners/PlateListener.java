@@ -5,6 +5,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
@@ -23,7 +24,6 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
-import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.object.Plate;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.Particles;
@@ -93,7 +93,7 @@ public class PlateListener {
 					Consumer<String> consumer = (server) -> {
 						Server teleportEvent = new TeleportEvent.Server(player, server, plate.getServer(), plate.getPrice(), Cause.of(NamedCause.source(plate)));
 
-						if (!Main.getGame().getEventManager().post(teleportEvent)) {
+						if (!Sponge.getEventManager().post(teleportEvent)) {
 							SpongyCord.API.connectPlayer(player, teleportEvent.getDestination());
 
 							player.setLocation(player.getWorld().getSpawnLocation());
@@ -112,7 +112,7 @@ public class PlateListener {
 
 					Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, plate.getPrice(), Cause.of(NamedCause.source(plate)));
 
-					if (!Main.getGame().getEventManager().post(teleportEvent)) {
+					if (!Sponge.getEventManager().post(teleportEvent)) {
 						spawnLocation = teleportEvent.getDestination();
 
 						Vector3d rotation = plate.getRotation().toVector3d();

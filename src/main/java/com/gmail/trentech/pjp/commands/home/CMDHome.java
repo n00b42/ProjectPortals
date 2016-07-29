@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -22,7 +23,6 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.Keys;
 import com.gmail.trentech.pjp.data.mutable.HomeData;
 import com.gmail.trentech.pjp.data.object.Home;
@@ -75,7 +75,7 @@ public class CMDHome implements CommandExecutor {
 					return CommandResult.empty();
 				}
 
-				Optional<Player> optionalPlayer = Main.getGame().getServer().getPlayer(playerName);
+				Optional<Player> optionalPlayer = Sponge.getServer().getPlayer(playerName);
 
 				if (!optionalPlayer.isPresent()) {
 					player.sendMessage(Text.of(TextColors.DARK_RED, playerName, " does not exist"));
@@ -87,7 +87,7 @@ public class CMDHome implements CommandExecutor {
 
 			Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, 0, Cause.of(NamedCause.source("home")));
 
-			if (!Main.getGame().getEventManager().post(teleportEvent)) {
+			if (!Sponge.getEventManager().post(teleportEvent)) {
 				spawnLocation = teleportEvent.getDestination();
 
 				player.setLocationAndRotation(spawnLocation, home.getRotation().toVector3d());
@@ -112,7 +112,7 @@ public class CMDHome implements CommandExecutor {
 		}
 
 		if (src instanceof Player) {
-			PaginationList.Builder pages = Main.getGame().getServiceManager().provide(PaginationService.class).get().builder();
+			PaginationList.Builder pages = Sponge.getServiceManager().provide(PaginationService.class).get().builder();
 
 			pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, "Command List")).build());
 

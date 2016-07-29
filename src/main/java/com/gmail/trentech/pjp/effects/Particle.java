@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.effect.particle.ColoredParticle;
 import org.spongepowered.api.effect.particle.ParticleEffect;
 import org.spongepowered.api.effect.particle.ParticleType;
@@ -103,11 +104,11 @@ public class Particle {
 		if (getName().equals("PORTAL2")) {
 			Portal portal = Portal.get(locations.get(0)).get();
 
-			Main.getGame().getScheduler().createTaskBuilder().intervalTicks(getTime()).name(name).execute(t -> {
+			Sponge.getScheduler().createTaskBuilder().intervalTicks(getTime()).name(name).execute(t -> {
 				portal.update(false);
 			}).submit(Main.getPlugin());
 		} else {
-			Main.getGame().getScheduler().createTaskBuilder().interval(getTime(), TimeUnit.MILLISECONDS).name(name).execute(t -> {
+			Sponge.getScheduler().createTaskBuilder().interval(getTime(), TimeUnit.MILLISECONDS).name(name).execute(t -> {
 				ParticleEffect particle = ParticleEffect.builder().type(getType()).build();
 
 				for (Location<World> location : locations) {

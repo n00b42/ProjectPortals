@@ -7,6 +7,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.data.type.HandTypes;
@@ -85,7 +86,7 @@ public class PortalListener {
 				return;
 			}
 
-			Main.getGame().getScheduler().createTaskBuilder().delayTicks(20).execute(t -> {
+			Sponge.getScheduler().createTaskBuilder().delayTicks(20).execute(t -> {
 				props.remove(player.getUniqueId());
 			}).submit(Main.getPlugin());
 
@@ -256,14 +257,14 @@ public class PortalListener {
 				Consumer<String> consumer = (server) -> {
 					Server teleportEvent = new TeleportEvent.Server(player, server, portal.getServer(), portal.getPrice(), Cause.of(NamedCause.source(portal)));
 
-					if (!Main.getGame().getEventManager().post(teleportEvent)) {
+					if (!Sponge.getEventManager().post(teleportEvent)) {
 						cache.add(uuid);
 
 						SpongyCord.API.connectPlayer(player, teleportEvent.getDestination());
 
 						player.setLocation(player.getWorld().getSpawnLocation());
 
-						Main.getGame().getScheduler().createTaskBuilder().delayTicks(20).execute(c -> {
+						Sponge.getScheduler().createTaskBuilder().delayTicks(20).execute(c -> {
 							cache.remove(uuid);
 						}).submit(Main.getPlugin());
 					}
@@ -281,7 +282,7 @@ public class PortalListener {
 
 				Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, portal.getPrice(), Cause.of(NamedCause.source(portal)));
 
-				if (!Main.getGame().getEventManager().post(teleportEvent)) {
+				if (!Sponge.getEventManager().post(teleportEvent)) {
 					spawnLocation = teleportEvent.getDestination();
 
 					Vector3d rotation = portal.getRotation().toVector3d();

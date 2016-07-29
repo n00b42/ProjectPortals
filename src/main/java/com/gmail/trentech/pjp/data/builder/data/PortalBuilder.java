@@ -13,13 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.persistence.AbstractDataBuilder;
 import org.spongepowered.api.data.persistence.InvalidDataException;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.object.Portal;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
@@ -43,7 +43,7 @@ public class PortalBuilder extends AbstractDataBuilder<Portal> {
 			for (String loc : (List<String>) container.getList(FRAME).get()) {
 				String[] args = loc.split(":");
 
-				Optional<World> optionalWorld = Main.getGame().getServer().getWorld(args[0]);
+				Optional<World> optionalWorld = Sponge.getServer().getWorld(args[0]);
 
 				if (!optionalWorld.isPresent()) {
 					continue;
@@ -60,7 +60,7 @@ public class PortalBuilder extends AbstractDataBuilder<Portal> {
 			for (String loc : (List<String>) container.getList(FILL).get()) {
 				String[] args = loc.split(":");
 
-				Optional<World> optionalWorld = Main.getGame().getServer().getWorld(args[0]);
+				Optional<World> optionalWorld = Sponge.getServer().getWorld(args[0]);
 
 				if (!optionalWorld.isPresent()) {
 					continue;

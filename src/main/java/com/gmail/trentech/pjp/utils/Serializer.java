@@ -6,11 +6,11 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataManager;
 import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.translator.ConfigurateTranslator;
 
-import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.object.Button;
 import com.gmail.trentech.pjp.data.object.Door;
 import com.gmail.trentech.pjp.data.object.Lever;
@@ -45,7 +45,7 @@ public class Serializer {
 		}
 
 		ConfigurateTranslator translator = ConfigurateTranslator.instance();
-		DataManager manager = Main.getGame().getDataManager();
+		DataManager manager = Sponge.getDataManager();
 
 		DataView dataView = translator.translateFrom(node);
 
@@ -74,7 +74,7 @@ public class Serializer {
 		}
 
 		ConfigurateTranslator translator = ConfigurateTranslator.instance();
-		DataManager manager = Main.getGame().getDataManager();
+		DataManager manager = Sponge.getDataManager();
 
 		DataView dataView = translator.translateFrom(node);
 
@@ -103,7 +103,7 @@ public class Serializer {
 		}
 
 		ConfigurateTranslator translator = ConfigurateTranslator.instance();
-		DataManager manager = Main.getGame().getDataManager();
+		DataManager manager = Sponge.getDataManager();
 
 		DataView dataView = translator.translateFrom(node);
 
@@ -132,7 +132,7 @@ public class Serializer {
 		}
 
 		ConfigurateTranslator translator = ConfigurateTranslator.instance();
-		DataManager manager = Main.getGame().getDataManager();
+		DataManager manager = Sponge.getDataManager();
 
 		DataView dataView = translator.translateFrom(node);
 
@@ -161,7 +161,7 @@ public class Serializer {
 		}
 
 		ConfigurateTranslator translator = ConfigurateTranslator.instance();
-		DataManager manager = Main.getGame().getDataManager();
+		DataManager manager = Sponge.getDataManager();
 
 		DataView dataView = translator.translateFrom(node);
 
@@ -190,7 +190,7 @@ public class Serializer {
 		}
 
 		ConfigurateTranslator translator = ConfigurateTranslator.instance();
-		DataManager manager = Main.getGame().getDataManager();
+		DataManager manager = Sponge.getDataManager();
 
 		DataView dataView = translator.translateFrom(node);
 

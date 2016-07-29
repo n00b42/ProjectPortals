@@ -2,6 +2,7 @@ package com.gmail.trentech.pjp.commands;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -16,7 +17,6 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.events.TeleportEvent.Local;
 import com.gmail.trentech.pjp.utils.Help;
@@ -49,7 +49,7 @@ public class CMDBack implements CommandExecutor {
 
 		Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, 0, Cause.of(NamedCause.source("back")));
 
-		if (!Main.getGame().getEventManager().post(teleportEvent)) {
+		if (!Sponge.getEventManager().post(teleportEvent)) {
 			spawnLocation = teleportEvent.getDestination();
 			player.setLocation(spawnLocation);
 		}

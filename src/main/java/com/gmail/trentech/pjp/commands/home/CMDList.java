@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -22,7 +23,6 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.Keys;
 import com.gmail.trentech.pjp.data.mutable.HomeData;
 import com.gmail.trentech.pjp.data.object.Home;
@@ -83,7 +83,7 @@ public class CMDList implements CommandExecutor {
 			list.add(Text.of(TextColors.YELLOW, " No saved homes"));
 		}
 
-		PaginationList.Builder pages = Main.getGame().getServiceManager().provide(PaginationService.class).get().builder();
+		PaginationList.Builder pages = Sponge.getServiceManager().provide(PaginationService.class).get().builder();
 
 		pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, "Homes")).build());
 

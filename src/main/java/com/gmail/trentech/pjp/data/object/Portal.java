@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.DataContainer;
@@ -105,7 +106,7 @@ public class Portal extends PortalBase {
 	}
 
 	private void updateClient(Player player, boolean reset) {
-		Main.getGame().getScheduler().createTaskBuilder().delayTicks(5).execute(c -> {
+		Sponge.getScheduler().createTaskBuilder().delayTicks(5).execute(c -> {
 			for (Location<World> location : getFill()) {
 				if (reset) {
 					player.resetBlockChange(location.getBlockPosition());
@@ -265,7 +266,7 @@ public class Portal extends PortalBase {
 
 			cache.put(name, this);
 
-			for (Task task : Main.getGame().getScheduler().getScheduledTasks()) {
+			for (Task task : Sponge.getScheduler().getScheduledTasks()) {
 				if (task.getName().equals(name)) {
 					task.cancel();
 					break;
@@ -291,7 +292,7 @@ public class Portal extends PortalBase {
 
 			cache.remove(name);
 
-			for (Task task : Main.getGame().getScheduler().getScheduledTasks()) {
+			for (Task task : Sponge.getScheduler().getScheduledTasks()) {
 				if (task.getName().equals(name)) {
 					task.cancel();
 					break;
@@ -321,7 +322,7 @@ public class Portal extends PortalBase {
 					portal.setName(name);
 				} catch (Exception e) {
 					Main.getLog().error("Could not deserialize Portal: " + name);
-					portal = new Portal(name, Main.getGame().getServer().getDefaultWorldName() + ":spawn", Rotation.EAST, new ArrayList<Location<World>>(), new ArrayList<Location<World>>(), null, null, 0, false);
+					portal = new Portal(name, Sponge.getServer().getDefaultWorldName() + ":spawn", Rotation.EAST, new ArrayList<Location<World>>(), new ArrayList<Location<World>>(), null, null, 0, false);
 				}
 
 				cache.put(name, portal);

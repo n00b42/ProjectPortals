@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.command.CommandSource;
@@ -13,12 +14,10 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.TeleportHelper;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.Main;
-
 public class Utils {
 
 	public static Location<World> getRandomLocation(World world) {
-		TeleportHelper teleportHelper = Main.getGame().getTeleportHelper();
+		TeleportHelper teleportHelper = Sponge.getGame().getTeleportHelper();
 
 		ThreadLocalRandom random = ThreadLocalRandom.current();
 

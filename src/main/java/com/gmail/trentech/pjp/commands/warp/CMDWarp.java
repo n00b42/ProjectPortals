@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -23,7 +24,6 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
-import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.object.Warp;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.events.TeleportEvent.Local;
@@ -66,7 +66,7 @@ public class CMDWarp implements CommandExecutor {
 					return CommandResult.empty();
 				}
 
-				Optional<Player> optionalPlayer = Main.getGame().getServer().getPlayer(playerName);
+				Optional<Player> optionalPlayer = Sponge.getServer().getPlayer(playerName);
 
 				if (!optionalPlayer.isPresent()) {
 					player.get().sendMessage(Text.of(TextColors.DARK_RED, playerName, " does not exist"));
@@ -80,7 +80,7 @@ public class CMDWarp implements CommandExecutor {
 				Consumer<String> consumer = (server) -> {
 					Server teleportEvent = new TeleportEvent.Server(player.get(), server, warp.getServer(), warp.getPrice(), Cause.of(NamedCause.source(warp)));
 
-					if (!Main.getGame().getEventManager().post(teleportEvent)) {
+					if (!Sponge.getEventManager().post(teleportEvent)) {
 						SpongyCord.API.connectPlayer(player.get(), teleportEvent.getDestination());
 
 						player.get().setLocation(player.get().getWorld().getSpawnLocation());
@@ -99,7 +99,7 @@ public class CMDWarp implements CommandExecutor {
 
 				Local teleportEvent = new TeleportEvent.Local(player.get(), player.get().getLocation(), spawnLocation, warp.getPrice(), Cause.of(NamedCause.source("warp")));
 
-				if (!Main.getGame().getEventManager().post(teleportEvent)) {
+				if (!Sponge.getEventManager().post(teleportEvent)) {
 					spawnLocation = teleportEvent.getDestination();
 
 					Vector3d rotation = warp.getRotation().toVector3d();
@@ -130,7 +130,7 @@ public class CMDWarp implements CommandExecutor {
 		}
 
 		if (src instanceof Player) {
-			PaginationList.Builder pages = Main.getGame().getServiceManager().provide(PaginationService.class).get().builder();
+			PaginationList.Builder pages = Sponge.getServiceManager().provide(PaginationService.class).get().builder();
 
 			pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, "Command List")).build());
 
