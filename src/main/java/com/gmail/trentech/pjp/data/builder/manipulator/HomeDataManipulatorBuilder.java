@@ -9,16 +9,21 @@ import org.spongepowered.api.data.DataHolder;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.manipulator.DataManipulatorBuilder;
+import org.spongepowered.api.data.persistence.AbstractDataBuilder;
 import org.spongepowered.api.data.persistence.InvalidDataException;
 
 import com.gmail.trentech.pjp.data.immutable.ImmutableHomeData;
 import com.gmail.trentech.pjp.data.mutable.HomeData;
 import com.gmail.trentech.pjp.data.object.Home;
 
-public class HomeDataManipulatorBuilder implements DataManipulatorBuilder<HomeData, ImmutableHomeData> {
+public class HomeDataManipulatorBuilder extends AbstractDataBuilder<HomeData> implements DataManipulatorBuilder<HomeData, ImmutableHomeData> {
 
+	public HomeDataManipulatorBuilder() {
+		super(HomeData.class, 1);
+	}
+	
 	@Override
-	public Optional<HomeData> build(DataView container) throws InvalidDataException {
+	public Optional<HomeData> buildContent(DataView container) throws InvalidDataException {
 		if (!container.contains(HOMES)) {
 			return Optional.empty();
 		}

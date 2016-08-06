@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.spongepowered.api.data.DataHolder;
 import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.manipulator.DataManipulatorBuilder;
+import org.spongepowered.api.data.persistence.AbstractDataBuilder;
 import org.spongepowered.api.data.persistence.InvalidDataException;
 
 import com.gmail.trentech.pjp.data.immutable.ImmutableSignPortalData;
@@ -14,10 +15,14 @@ import com.gmail.trentech.pjp.data.mutable.SignPortalData;
 import com.gmail.trentech.pjp.data.object.Sign;
 import com.gmail.trentech.pjp.utils.Rotation;
 
-public class SignPortalDataManipulatorBuilder implements DataManipulatorBuilder<SignPortalData, ImmutableSignPortalData> {
+public class SignPortalDataManipulatorBuilder extends AbstractDataBuilder<SignPortalData> implements DataManipulatorBuilder<SignPortalData, ImmutableSignPortalData> {
 
+	public SignPortalDataManipulatorBuilder() {
+		super(SignPortalData.class, 1);
+	}
+	
 	@Override
-	public Optional<SignPortalData> build(DataView container) throws InvalidDataException {
+	public Optional<SignPortalData> buildContent(DataView container) throws InvalidDataException {
 		if (!container.contains(SIGN.getQuery())) {
 			return Optional.empty();
 		}
