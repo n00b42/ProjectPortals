@@ -13,6 +13,7 @@ import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.Item;
+import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
@@ -286,8 +287,9 @@ public class PortalListener {
 					spawnLocation = teleportEvent.getDestination();
 
 					Vector3d rotation = portal.getRotation().toVector3d();
-
-					player.setLocationAndRotation(spawnLocation, rotation);
+					
+					event.setToTransform(new Transform<World>(spawnLocation.getExtent(), spawnLocation.getPosition(), rotation));
+					//player.setLocationAndRotation(spawnLocation, rotation);
 				}
 			}
 		} finally {

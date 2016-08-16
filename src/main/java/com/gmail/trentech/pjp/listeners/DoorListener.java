@@ -13,6 +13,7 @@ import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
@@ -192,7 +193,8 @@ public class DoorListener {
 
 					Vector3d rotation = door.getRotation().toVector3d();
 
-					player.setLocationAndRotation(spawnLocation, rotation);
+					event.setToTransform(new Transform<World>(spawnLocation.getExtent(), spawnLocation.getPosition(), rotation));
+					//player.setLocationAndRotation(spawnLocation, rotation);
 				}
 			}
 		} finally {
