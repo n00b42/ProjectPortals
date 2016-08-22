@@ -61,7 +61,8 @@ public class Main {
 	private static Logger log;
 	private static PluginContainer plugin;
 	private static boolean legacy;
-
+	private static ConfigManager configManager;
+	
 	@Listener
 	public void onPreInitialization(GamePreInitializationEvent event) {
 		plugin = Sponge.getPluginManager().getPlugin(Resource.ID).get();
@@ -70,8 +71,7 @@ public class Main {
 
 	@Listener
 	public void onInitialization(GameInitializationEvent event) {
-		ConfigManager configManager = new ConfigManager();
-		configManager.init();
+		configManager = new ConfigManager().init();
 
 		legacy = configManager.getConfig().getNode("options", "portal", "legacy_builder").getBoolean();
 
@@ -152,7 +152,7 @@ public class Main {
 
 	@Listener
 	public void onStartedServer(GameStartedServerEvent event) {
-		ConfigurationNode modules = new ConfigManager().getConfig().getNode("settings", "modules");
+		ConfigurationNode modules = getConfigManager().getConfig().getNode("settings", "modules");
 
 		if (modules.getNode("portals").getBoolean()) {
 			Portal.init();
@@ -182,10 +182,9 @@ public class Main {
 			Sponge.getCommandManager().removeMapping(mapping);
 		}
 
-		ConfigManager configManager = new ConfigManager();
-		configManager.init();
+		configManager = new ConfigManager().init();
 
-		legacy = configManager.getConfig().getNode("options", "portal", "legacy_builder").getBoolean();
+		legacy = getConfigManager().getConfig().getNode("options", "portal", "legacy_builder").getBoolean();
 
 		Sponge.getCommandManager().register(this, new CMDBack().cmdBack, "back");
 		Sponge.getCommandManager().register(this, new CommandManager().cmdPJP, "pjp");
@@ -306,5 +305,9 @@ public class Main {
 
 	public static boolean isLegacy() {
 		return legacy;
+	}
+	
+	public static ConfigManager getConfigManager() {
+		return configManager;
 	}
 }

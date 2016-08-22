@@ -14,6 +14,8 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.TeleportHelper;
 import org.spongepowered.api.world.World;
 
+import com.gmail.trentech.pjp.Main;
+
 public class Utils {
 
 	public static Location<World> getRandomLocation(World world) {
@@ -23,7 +25,7 @@ public class Utils {
 
 		Location<World> location = world.getSpawnLocation();
 
-		long radius = new ConfigManager().getConfig().getNode("options", "random_spawn_radius").getLong();
+		long radius = Main.getConfigManager().getConfig().getNode("options", "random_spawn_radius").getLong();
 
 		for (int i = 0; i < 49; i++) {
 			int x = (int) (random.nextDouble() * ((radius * 2) + 1) - radius);
