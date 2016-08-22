@@ -35,6 +35,7 @@ import com.gmail.trentech.pjp.data.object.Sign;
 import com.gmail.trentech.pjp.data.object.Warp;
 import com.gmail.trentech.pjp.listeners.ButtonListener;
 import com.gmail.trentech.pjp.listeners.DoorListener;
+import com.gmail.trentech.pjp.listeners.HomeListener;
 import com.gmail.trentech.pjp.listeners.LegacyListener;
 import com.gmail.trentech.pjp.listeners.LeverListener;
 import com.gmail.trentech.pjp.listeners.PlateListener;
@@ -42,6 +43,7 @@ import com.gmail.trentech.pjp.listeners.PortalListener;
 import com.gmail.trentech.pjp.listeners.SignListener;
 import com.gmail.trentech.pjp.listeners.TeleportListener;
 import com.gmail.trentech.pjp.listeners.Timings;
+import com.gmail.trentech.pjp.listeners.WarpListener;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Resource;
 import com.gmail.trentech.pjp.utils.SQLUtils;
@@ -121,12 +123,14 @@ public class Main {
 			getLog().info("Lever module activated");
 		}
 		if (modules.getNode("homes").getBoolean()) {
+			Sponge.getEventManager().registerListeners(this, new HomeListener());
 			Sponge.getDataManager().register(HomeData.class, ImmutableHomeData.class, new HomeDataManipulatorBuilder());
 			Sponge.getDataManager().registerBuilder(Home.class, new HomeBuilder());
 			Sponge.getCommandManager().register(this, new CommandManager().cmdHome, "home", "h");
 			getLog().info("Home module activated");
 		}
 		if (modules.getNode("warps").getBoolean()) {
+			Sponge.getEventManager().registerListeners(this, new WarpListener());
 			Sponge.getDataManager().registerBuilder(Warp.class, new WarpBuilder());
 			Sponge.getEventManager().registerListeners(this, new SignListener(timings));
 			Sponge.getCommandManager().register(this, new CommandManager().cmdWarp, "warp", "w");
