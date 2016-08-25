@@ -11,7 +11,6 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.data.type.HandTypes;
-import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.Living;
@@ -23,6 +22,7 @@ import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
+import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.filter.type.Exclude;
 import org.spongepowered.api.text.Text;
@@ -132,17 +132,11 @@ public class PortalListener {
 	}
 
 	@Listener
-	public void onMoveEntityEventItem(MoveEntityEvent event) {
-		Entity entity = event.getTargetEntity();
-
-		if (!(entity instanceof Item)) {
-			return;
-		}
-
+	public void onMoveEntityEventItem(MoveEntityEvent event, @Getter("getTargetEntity") Item item) {
 		timings.onDisplaceEntityEventMoveItem().startTiming();
 
 		try {
-			Location<World> location = entity.getLocation();
+			Location<World> location = item.getLocation();
 
 			Optional<Portal> optionalPortal = Portal.get(location);
 
@@ -166,24 +160,25 @@ public class PortalListener {
 			}
 			Location<World> spawnLocation = optionalSpawnLocation.get();
 
-			entity.setLocationAndRotation(spawnLocation, portal.getRotation().toVector3d());
+			Vector3d rotation = portal.getRotation().toVector3d();
+			
+			event.setToTransform(new Transform<World>(spawnLocation.getExtent(), spawnLocation.getPosition(), rotation));
+			//item.setLocationAndRotation(spawnLocation, portal.getRotation().toVector3d());
 		} finally {
 			timings.onDisplaceEntityEventMoveItem().stopTiming();
 		}
 	}
 
 	@Listener
-	public void onDisplaceEntityEventMoveLiving(MoveEntityEvent event) {
-		Entity entity = event.getTargetEntity();
-
-		if (!(entity instanceof Living) || entity instanceof Player) {
+	public void onDisplaceEntityEventMoveLiving(MoveEntityEvent event, @Getter("getTargetEntity") Living living) {
+		if (living instanceof Player) {
 			return;
 		}
 
 		timings.onDisplaceEntityEventMoveLiving().startTiming();
 
 		try {
-			Location<World> location = entity.getLocation();
+			Location<World> location = living.getLocation();
 
 			Optional<Portal> optionalPortal = Portal.get(location);
 
@@ -207,7 +202,10 @@ public class PortalListener {
 			}
 			Location<World> spawnLocation = optionalSpawnLocation.get();
 
-			entity.setLocationAndRotation(spawnLocation, portal.getRotation().toVector3d());
+			Vector3d rotation = portal.getRotation().toVector3d();
+			
+			event.setToTransform(new Transform<World>(spawnLocation.getExtent(), spawnLocation.getPosition(), rotation));
+			//living.setLocationAndRotation(spawnLocation, portal.getRotation().toVector3d());
 		} finally {
 			timings.onDisplaceEntityEventMoveLiving().stopTiming();
 		}
@@ -216,14 +214,7 @@ public class PortalListener {
 	private static List<UUID> cache = new ArrayList<>();
 
 	@Listener(order = Order.FIRST)
-	public void onMoveEntityEventPlayer(MoveEntityEvent event) {
-		Entity entity = event.getTargetEntity();
-
-		if (!(entity instanceof Player)) {
-			return;
-		}
-		Player player = (Player) entity;
-
+	public void onMoveEntityEventPlayer(MoveEntityEvent event, @Getter("getTargetEntity") Player player) {
 		timings.onDisplaceEntityEventMovePlayer().startTiming();
 
 		try {
