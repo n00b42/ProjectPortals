@@ -5,7 +5,6 @@ import java.text.DecimalFormat;
 import java.util.Optional;
 
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
@@ -13,6 +12,7 @@ import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.event.entity.DestructEntityEvent;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
+import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.economy.EconomyService;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
@@ -143,22 +143,15 @@ public class TeleportListener {
 	}
 
 	@Listener
-	public void onMoveEntityEvent(MoveEntityEvent.Teleport event) {
-		Entity entity = event.getTargetEntity();
-
-		if (!(entity instanceof Player)) {
-			return;
-		}
-		Player player = (Player) entity;
-
-		timings.onDisplaceEntityEventTeleport().startTiming();
+	public void onMoveEntityEvent(MoveEntityEvent.Teleport event, @Getter("getTargetEntity") Player player) {
+		timings.onMoveEntityEvent().startTiming();
 
 		try {
 			if (player.hasPermission("pjp.cmd.back")) {
 				CMDBack.players.put(player, event.getFromTransform().getLocation());
 			}
 		} finally {
-			timings.onDisplaceEntityEventTeleport().stopTimingIfSync();
+			timings.onMoveEntityEvent().stopTimingIfSync();
 		}
 	}
 

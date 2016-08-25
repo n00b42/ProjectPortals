@@ -12,7 +12,6 @@ import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.Transaction;
-import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
@@ -21,6 +20,7 @@ import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.event.command.TabCompleteEvent;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
+import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
@@ -160,15 +160,8 @@ public class DoorListener {
 	private static List<UUID> cache = new ArrayList<>();
 
 	@Listener
-	public void onDisplaceEntityEventMovePlayer(MoveEntityEvent event) {
-		Entity entity = event.getTargetEntity();
-
-		if (!(entity instanceof Player)) {
-			return;
-		}
-		Player player = (Player) entity;
-
-		timings.onDisplaceEntityEventMovePlayer().startTimingIfSync();
+	public void onMoveEntityEventPlayer(MoveEntityEvent event, @Getter("getTargetEntity") Player player) {
+		timings.onMoveEntityEvent().startTimingIfSync();
 
 		try {
 			Location<World> location = player.getLocation();
@@ -233,11 +226,10 @@ public class DoorListener {
 					Vector3d rotation = door.getRotation().toVector3d();
 
 					event.setToTransform(new Transform<World>(spawnLocation.getExtent(), spawnLocation.getPosition(), rotation));
-					//player.setLocationAndRotation(spawnLocation, rotation);
 				}
 			}
 		} finally {
-			timings.onDisplaceEntityEventMovePlayer().stopTiming();
+			timings.onMoveEntityEvent().stopTiming();
 		}
 	}
 }

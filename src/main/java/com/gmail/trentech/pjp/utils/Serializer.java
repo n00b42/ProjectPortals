@@ -7,9 +7,8 @@ import java.io.StringReader;
 import java.io.StringWriter;
 
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.data.DataManager;
 import org.spongepowered.api.data.DataView;
-import org.spongepowered.api.data.translator.ConfigurateTranslator;
+import org.spongepowered.api.data.persistence.DataTranslators;
 
 import com.gmail.trentech.pjp.data.object.Button;
 import com.gmail.trentech.pjp.data.object.Door;
@@ -24,7 +23,7 @@ import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 public class Serializer {
 
 	public static String serialize(Warp warp) {
-		ConfigurationNode node = ConfigurateTranslator.instance().translateData(warp.toContainer());
+		ConfigurationNode node = DataTranslators.CONFIGURATION_NODE.translate(warp.toContainer());
 
 		StringWriter stringWriter = new StringWriter();
 		try {
@@ -43,17 +42,14 @@ public class Serializer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		DataView dataView = DataTranslators.CONFIGURATION_NODE.translate(node);
 
-		ConfigurateTranslator translator = ConfigurateTranslator.instance();
-		DataManager manager = Sponge.getDataManager();
-
-		DataView dataView = translator.translateFrom(node);
-
-		return manager.deserialize(Warp.class, dataView).get();
+		return Sponge.getDataManager().deserialize(Warp.class, dataView).get();
 	}
 
 	public static String serialize(Plate plate) {
-		ConfigurationNode node = ConfigurateTranslator.instance().translateData(plate.toContainer());
+		ConfigurationNode node = DataTranslators.CONFIGURATION_NODE.translate(plate.toContainer());
 
 		StringWriter stringWriter = new StringWriter();
 		try {
@@ -72,17 +68,14 @@ public class Serializer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		DataView dataView = DataTranslators.CONFIGURATION_NODE.translate(node);
 
-		ConfigurateTranslator translator = ConfigurateTranslator.instance();
-		DataManager manager = Sponge.getDataManager();
-
-		DataView dataView = translator.translateFrom(node);
-
-		return manager.deserialize(Plate.class, dataView).get();
+		return Sponge.getDataManager().deserialize(Plate.class, dataView).get();
 	}
 
 	public static String serialize(Lever lever) {
-		ConfigurationNode node = ConfigurateTranslator.instance().translateData(lever.toContainer());
+		ConfigurationNode node = DataTranslators.CONFIGURATION_NODE.translate(lever.toContainer());
 
 		StringWriter stringWriter = new StringWriter();
 		try {
@@ -101,17 +94,14 @@ public class Serializer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		DataView dataView = DataTranslators.CONFIGURATION_NODE.translate(node);
 
-		ConfigurateTranslator translator = ConfigurateTranslator.instance();
-		DataManager manager = Sponge.getDataManager();
-
-		DataView dataView = translator.translateFrom(node);
-
-		return manager.deserialize(Lever.class, dataView).get();
+		return Sponge.getDataManager().deserialize(Lever.class, dataView).get();
 	}
 
 	public static String serialize(Door door) {
-		ConfigurationNode node = ConfigurateTranslator.instance().translateData(door.toContainer());
+		ConfigurationNode node = DataTranslators.CONFIGURATION_NODE.translate(door.toContainer());
 
 		StringWriter stringWriter = new StringWriter();
 		try {
@@ -130,17 +120,14 @@ public class Serializer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		DataView dataView = DataTranslators.CONFIGURATION_NODE.translate(node);
 
-		ConfigurateTranslator translator = ConfigurateTranslator.instance();
-		DataManager manager = Sponge.getDataManager();
-
-		DataView dataView = translator.translateFrom(node);
-
-		return manager.deserialize(Door.class, dataView).get();
+		return Sponge.getDataManager().deserialize(Door.class, dataView).get();
 	}
 
 	public static String serialize(Button button) {
-		ConfigurationNode node = ConfigurateTranslator.instance().translateData(button.toContainer());
+		ConfigurationNode node = DataTranslators.CONFIGURATION_NODE.translate(button.toContainer());
 
 		StringWriter stringWriter = new StringWriter();
 		try {
@@ -159,17 +146,14 @@ public class Serializer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		DataView dataView = DataTranslators.CONFIGURATION_NODE.translate(node);
 
-		ConfigurateTranslator translator = ConfigurateTranslator.instance();
-		DataManager manager = Sponge.getDataManager();
-
-		DataView dataView = translator.translateFrom(node);
-
-		return manager.deserialize(Button.class, dataView).get();
+		return Sponge.getDataManager().deserialize(Button.class, dataView).get();
 	}
 
 	public static String serialize(Portal portal) {
-		ConfigurationNode node = ConfigurateTranslator.instance().translateData(portal.toContainer());
+		ConfigurationNode node = DataTranslators.CONFIGURATION_NODE.translate(portal.toContainer());
 
 		StringWriter stringWriter = new StringWriter();
 		try {
@@ -188,12 +172,9 @@ public class Serializer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		DataView dataView = DataTranslators.CONFIGURATION_NODE.translate(node);
 
-		ConfigurateTranslator translator = ConfigurateTranslator.instance();
-		DataManager manager = Sponge.getDataManager();
-
-		DataView dataView = translator.translateFrom(node);
-
-		return manager.deserialize(Portal.class, dataView).get();
+		return Sponge.getDataManager().deserialize(Portal.class, dataView).get();
 	}
 }

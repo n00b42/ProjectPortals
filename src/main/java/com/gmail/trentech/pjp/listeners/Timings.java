@@ -6,10 +6,19 @@ import co.aikar.timings.Timing;
 
 public class Timings {
 
-	private final Timing changeSignEvent, interactBlockEventSecondary, changeBlockEventModify, changeBlockEventPlace,
-		changeBlockEventBreak, constructPortalEvent, displaceEntityEventMoveItem, displaceEntityEventMoveLiving,
-		displaceEntityEventMovePlayer, displaceEntityEventTeleport, teleportEvent, teleportEventServer,
-		teleportEventLocal, destructEntityEventDeath;
+	private final Timing 
+		changeSignEvent, 
+		interactBlockEventSecondary, 
+		changeBlockEventModify, 
+		changeBlockEventPlace,
+		changeBlockEventBreak, 
+		constructPortalEvent,
+		moveEntityEvent, 
+		teleportEvent,
+		teleportEventServer, 
+		teleportEventLocal, 
+		destructEntityEventDeath, 
+		collideBlockEvent;
 
 	public Timings() {
 		this.changeSignEvent = timing("onChangeSignEvent");
@@ -18,14 +27,12 @@ public class Timings {
 		this.changeBlockEventPlace = timing("onChangeBlockEventPlace");
 		this.changeBlockEventBreak = timing("onChangeBlockEventBreak");
 		this.constructPortalEvent = timing("onConstructPortalEvent");
-		this.displaceEntityEventMoveItem = timing("onDisplaceEntityEventMoveItem");
-		this.displaceEntityEventMoveLiving = timing("onDisplaceEntityEventMoveLiving");
-		this.displaceEntityEventMovePlayer = timing("onDisplaceEntityEventMovePlayer");
-		this.displaceEntityEventTeleport = timing("onDisplaceEntityEventTeleport");
+		this.moveEntityEvent = timing("onMoveEntityEvent");
 		this.teleportEvent = timing("onTeleportEvent");
 		this.teleportEventServer = timing("onTeleportEventServer");
 		this.teleportEventLocal = timing("onTeleportEventLocal");
 		this.destructEntityEventDeath = timing("onDestructEntityEventDeath");
+		this.collideBlockEvent = timing("onCollideBlockEvent");
 	}
 
 	private Timing timing(String key) {
@@ -44,20 +51,8 @@ public class Timings {
 		return constructPortalEvent;
 	}
 
-	public Timing onDisplaceEntityEventMoveItem() {
-		return displaceEntityEventMoveItem;
-	}
-
-	public Timing onDisplaceEntityEventMoveLiving() {
-		return displaceEntityEventMoveLiving;
-	}
-
-	public Timing onDisplaceEntityEventMovePlayer() {
-		return displaceEntityEventMovePlayer;
-	}
-
-	public Timing onDisplaceEntityEventTeleport() {
-		return displaceEntityEventTeleport;
+	public Timing onMoveEntityEvent() {
+		return moveEntityEvent;
 	}
 
 	public Timing onTeleportEvent() {
@@ -86,5 +81,9 @@ public class Timings {
 
 	public Timing onDestructEntityEventDeath() {
 		return destructEntityEventDeath;
+	}
+
+	public Timing onCollideBlockEvent() {
+		return collideBlockEvent;
 	}
 }
