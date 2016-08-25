@@ -15,28 +15,6 @@ public class ConfigManager {
 	private CommentedConfigurationNode config;
 	private ConfigurationLoader<CommentedConfigurationNode> loader;
 
-	public ConfigManager(String folder, String configName) {
-		folder = "config" + File.separator + Resource.NAME.toLowerCase() + File.separator + folder;
-		if (!new File(folder).isDirectory()) {
-			new File(folder).mkdirs();
-		}
-		file = new File(folder, configName);
-
-		create();
-		load();
-	}
-
-	public ConfigManager(String configName) {
-		String folder = "config" + File.separator + Resource.NAME.toLowerCase();
-		if (!new File(folder).isDirectory()) {
-			new File(folder).mkdirs();
-		}
-		file = new File(folder, configName);
-
-		create();
-		load();
-	}
-
 	public ConfigManager() {
 		String folder = "config" + File.separator + Resource.NAME.toLowerCase();
 		if (!new File(folder).isDirectory()) {
@@ -56,7 +34,7 @@ public class ConfigManager {
 		return config;
 	}
 
-	public void init() {
+	public ConfigManager init() {
 		if (file.getName().equalsIgnoreCase("config.conf")) {
 			if (config.getNode("options", "portal", "size").isVirtual()) {
 				config.getNode("options", "portal", "size").setValue(100).setComment("Maximum number of blocks a portal can use");
@@ -94,11 +72,6 @@ public class ConfigManager {
 			if (config.getNode("options", "advanced_permissions").isVirtual()) {
 				config.getNode("options", "advanced_permissions").setValue(false).setComment("Require permission node for each portal. ex. 'pjp.portal.<name>', 'pjp.button.<world_x_y_z>'. If false use 'pjp.portal.interact' instead");
 			}
-			// UPDATE CONFIG
-			if (!config.getNode("settings", "commands").isVirtual()) {
-				config.getNode("settings").removeChild("commands");
-			}
-
 			if (config.getNode("settings", "modules").isVirtual()) {
 				config.getNode("settings", "modules").setComment("Toggle on and off specific features");
 			}
@@ -128,6 +101,8 @@ public class ConfigManager {
 			}
 			save();
 		}
+		
+		return this;
 	}
 
 	private void create() {

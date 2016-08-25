@@ -1,5 +1,6 @@
 package com.gmail.trentech.pjp.listeners;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,13 +18,16 @@ import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.event.block.tileentity.ChangeSignEvent;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
+import org.spongepowered.api.event.command.TabCompleteEvent;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.storage.WorldProperties;
 
 import com.flowpowered.math.vector.Vector3d;
+import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.immutable.ImmutableSignPortalData;
 import com.gmail.trentech.pjp.data.mutable.SignPortalData;
 import com.gmail.trentech.pjp.data.object.Sign;
@@ -32,7 +36,7 @@ import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.events.TeleportEvent.Local;
 import com.gmail.trentech.pjp.events.TeleportEvent.Server;
-import com.gmail.trentech.pjp.utils.ConfigManager;
+import com.gmail.trentech.pjp.utils.Rotation;
 
 import flavor.pie.spongycord.SpongyCord;
 
@@ -46,6 +50,43 @@ public class SignListener {
 		this.timings = timings;
 	}
 
+	@Listener
+	public void onTabCompleteEvent(TabCompleteEvent event, @First Player player) {
+		String rawMessage = event.getRawMessage();
+		
+		String[] args = rawMessage.split(" ");
+		
+		List<String> list = event.getTabCompletions();
+		
+		if((args[0].equalsIgnoreCase("sign") || args[0].equalsIgnoreCase("s"))) {			
+			if(args.length > 1 && (args[args.length - 1].equalsIgnoreCase("-d") || args[args.length - 2].equalsIgnoreCase("-d"))) {
+				for (Rotation rotation : Rotation.values()) {
+					String id = rotation.getName();
+					
+					if(args[args.length - 2].equalsIgnoreCase("-d")) {
+						if(id.contains(args[args.length - 1].toLowerCase()) && !id.equalsIgnoreCase(args[args.length - 1])) {
+							list.add(id);
+						}
+					} else if(rawMessage.substring(rawMessage.length() - 1).equalsIgnoreCase(" ")){
+						list.add(id);
+					}
+				}
+			} else if(args.length == 1 || args.length == 2) {
+				for(WorldProperties world : Sponge.getServer().getAllWorldProperties()) {
+					String name = world.getWorldName();
+					
+					if(args.length == 2) {
+						if(name.contains(args[1].toLowerCase()) && !name.equalsIgnoreCase(args[1])) {
+							list.add(name);
+						}
+					} else if(rawMessage.substring(rawMessage.length() - 1).equalsIgnoreCase(" ")){
+						list.add(name);
+					}
+				}
+			}
+		}
+	}
+	
 	@Listener
 	public void onChangeSignEvent(ChangeSignEvent event, @First Player player) {
 		timings.onChangeSignEvent().startTiming();
@@ -95,7 +136,7 @@ public class SignListener {
 			SignPortalData portalData = optionalSignPortalData.get();
 			Sign sign = portalData.sign().get();
 
-			if (new ConfigManager().getConfig().getNode("options", "advanced_permissions").getBoolean()) {
+			if (Main.getConfigManager().getConfig().getNode("options", "advanced_permissions").getBoolean()) {
 				if (!player.hasPermission("pjp.sign." + location.getExtent().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ())) {
 					player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use this sign portal"));
 					event.setCancelled(true);
