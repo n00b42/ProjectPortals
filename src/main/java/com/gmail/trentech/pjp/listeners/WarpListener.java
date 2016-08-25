@@ -1,25 +1,22 @@
 package com.gmail.trentech.pjp.listeners;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.command.TabCompleteEvent;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.world.storage.WorldProperties;
 
-import com.gmail.trentech.pjp.data.Keys;
-import com.gmail.trentech.pjp.data.object.Home;
+import com.gmail.trentech.pjp.data.object.Warp;
 
 public class WarpListener {
 
 	@Listener
-	public void onTabCompleteEvent(TabCompleteEvent event, @First Player player) {
+	public void onTabCompleteEvent(TabCompleteEvent event, @First CommandSource src) {
 		String rawMessage = event.getRawMessage();
 		
 		String[] args = rawMessage.split(" ");
@@ -35,23 +32,17 @@ public class WarpListener {
 		List<String> list = event.getTabCompletions();
 		
 		if(args.length > 1 && (args[1].equalsIgnoreCase("remove") || args[1].equalsIgnoreCase("r"))) {
-			Map<String, Home> homeList = new HashMap<>();
+			ConcurrentHashMap<String, Warp> optionalWarpList = Warp.all();
 
-			Optional<Map<String, Home>> optionalHomeList = player.get(Keys.HOMES);
-
-			if (optionalHomeList.isPresent()) {
-				homeList = optionalHomeList.get();
+			for(Entry<String, Warp> warp : optionalWarpList.entrySet()) {
+				String name = warp.getKey();
 				
-				for(Entry<String, Home> home : homeList.entrySet()) {
-					String name = home.getKey();
-					
-					if(args.length == 3) {
-						if(name.contains(args[2].toLowerCase()) && !name.equalsIgnoreCase(args[2])) {
-							list.add(name);
-						}
-					} else if(rawMessage.substring(rawMessage.length() - 1).equalsIgnoreCase(" ")){
+				if(args.length == 3) {
+					if(name.contains(args[2].toLowerCase()) && !name.equalsIgnoreCase(args[2])) {
 						list.add(name);
 					}
+				} else if(rawMessage.substring(rawMessage.length() - 1).equalsIgnoreCase(" ")){
+					list.add(name);
 				}
 			}
 		} else if(args.length > 1 && (args[1].equalsIgnoreCase("price") || args[1].equalsIgnoreCase("p"))) {
@@ -67,23 +58,17 @@ public class WarpListener {
 				}
 			}
 		} else if(args.length == 1 || args.length == 2) {
-			Map<String, Home> homeList = new HashMap<>();
+			ConcurrentHashMap<String, Warp> optionalWarpList = Warp.all();
 
-			Optional<Map<String, Home>> optionalHomeList = player.get(Keys.HOMES);
-
-			if (optionalHomeList.isPresent()) {
-				homeList = optionalHomeList.get();
+			for(Entry<String, Warp> warp : optionalWarpList.entrySet()) {
+				String name = warp.getKey();
 				
-				for(Entry<String, Home> home : homeList.entrySet()) {
-					String name = home.getKey();
-					
-					if(args.length == 2) {
-						if(name.contains(args[1].toLowerCase()) && !name.equalsIgnoreCase(args[1])) {
-							list.add(name);
-						}
-					} else if(rawMessage.substring(rawMessage.length() - 1).equalsIgnoreCase(" ")){
+				if(args.length == 2) {
+					if(name.contains(args[1].toLowerCase()) && !name.equalsIgnoreCase(args[1])) {
 						list.add(name);
 					}
+				} else if(rawMessage.substring(rawMessage.length() - 1).equalsIgnoreCase(" ")){
+					list.add(name);
 				}
 			}
 		}

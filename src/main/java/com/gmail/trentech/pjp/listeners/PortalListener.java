@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.Item;
@@ -60,7 +61,7 @@ public class PortalListener {
 	}
 	
 	@Listener
-	public void onTabCompleteEvent(TabCompleteEvent event, @First Player player) {
+	public void onTabCompleteEvent(TabCompleteEvent event, @First CommandSource src) {
 		String rawMessage = event.getRawMessage();
 		
 		String[] args = rawMessage.split(" ");

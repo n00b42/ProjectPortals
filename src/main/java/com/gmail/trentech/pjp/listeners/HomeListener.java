@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.command.TabCompleteEvent;
@@ -17,7 +18,7 @@ import com.gmail.trentech.pjp.data.object.Home;
 public class HomeListener {
 
 	@Listener
-	public void onTabCompleteEvent(TabCompleteEvent event, @First Player player) {
+	public void onTabCompleteEvent(TabCompleteEvent event, @First CommandSource src) {
 		String rawMessage = event.getRawMessage();
 		
 		String[] args = rawMessage.split(" ");
@@ -33,42 +34,47 @@ public class HomeListener {
 		List<String> list = event.getTabCompletions();
 		
 		if(args.length > 1 && (args[1].equalsIgnoreCase("remove") || args[1].equalsIgnoreCase("r"))) {
-			Map<String, Home> homeList = new HashMap<>();
+			if(src instanceof Player) {
+				Map<String, Home> homeList = new HashMap<>();
 
-			Optional<Map<String, Home>> optionalHomeList = player.get(Keys.HOMES);
+				Optional<Map<String, Home>> optionalHomeList = ((Player) src).get(Keys.HOMES);
 
-			if (optionalHomeList.isPresent()) {
-				homeList = optionalHomeList.get();
-				
-				for(Entry<String, Home> home : homeList.entrySet()) {
-					String name = home.getKey();
+				if (optionalHomeList.isPresent()) {
+					homeList = optionalHomeList.get();
 					
-					if(args.length == 3) {
-						if(name.contains(args[2].toLowerCase()) && !name.equalsIgnoreCase(args[2])) {
+					for(Entry<String, Home> home : homeList.entrySet()) {
+						String name = home.getKey();
+						
+						if(args.length == 3) {
+							if(name.contains(args[2].toLowerCase()) && !name.equalsIgnoreCase(args[2])) {
+								list.add(name);
+							}
+						} else if(rawMessage.substring(rawMessage.length() - 1).equalsIgnoreCase(" ")){
 							list.add(name);
 						}
-					} else if(rawMessage.substring(rawMessage.length() - 1).equalsIgnoreCase(" ")){
-						list.add(name);
 					}
 				}
 			}
+
 		} else if(args.length == 1 || args.length == 2) {
-			Map<String, Home> homeList = new HashMap<>();
+			if(src instanceof Player) {
+				Map<String, Home> homeList = new HashMap<>();
 
-			Optional<Map<String, Home>> optionalHomeList = player.get(Keys.HOMES);
+				Optional<Map<String, Home>> optionalHomeList = ((Player) src).get(Keys.HOMES);
 
-			if (optionalHomeList.isPresent()) {
-				homeList = optionalHomeList.get();
-				
-				for(Entry<String, Home> home : homeList.entrySet()) {
-					String name = home.getKey();
+				if (optionalHomeList.isPresent()) {
+					homeList = optionalHomeList.get();
 					
-					if(args.length == 2) {
-						if(name.contains(args[1].toLowerCase()) && !name.equalsIgnoreCase(args[1])) {
+					for(Entry<String, Home> home : homeList.entrySet()) {
+						String name = home.getKey();
+						
+						if(args.length == 2) {
+							if(name.contains(args[1].toLowerCase()) && !name.equalsIgnoreCase(args[1])) {
+								list.add(name);
+							}
+						} else if(rawMessage.substring(rawMessage.length() - 1).equalsIgnoreCase(" ")){
 							list.add(name);
 						}
-					} else if(rawMessage.substring(rawMessage.length() - 1).equalsIgnoreCase(" ")){
-						list.add(name);
 					}
 				}
 			}
