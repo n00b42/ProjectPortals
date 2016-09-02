@@ -1,7 +1,6 @@
 package com.gmail.trentech.pjp.commands;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
@@ -13,14 +12,13 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
 import com.gmail.trentech.pjp.utils.Rotation;
 
 import flavor.pie.spongycord.SpongyCord;
 
-public class CMDObjBase implements CommandExecutor {
+public abstract class CMDObjBase implements CommandExecutor {
 
 	String name;
 
@@ -36,27 +34,12 @@ public class CMDObjBase implements CommandExecutor {
 		}
 		Player player = (Player) src;
 
-		if (!args.hasAny("destination")) {
-			src.sendMessage(getUsage());
-			return CommandResult.empty();
-		}
 		AtomicReference<String> destination = new AtomicReference<>(args.<String> getOne("destination").get());
-
-		if (destination.get().equalsIgnoreCase("-c") || destination.get().equalsIgnoreCase("-d") || destination.get().equalsIgnoreCase("-p") || destination.get().equalsIgnoreCase("-b")) {
-			src.sendMessage(getUsage());
-			return CommandResult.empty();
-		}
 
 		AtomicReference<Double> price = new AtomicReference<>(0.0);
 
 		if (args.hasAny("price")) {
-			try {
-				price.set(Double.parseDouble(args.<String> getOne("price").get()));
-			} catch (Exception e) {
-				src.sendMessage(Text.of(TextColors.RED, "Incorrect price"));
-				src.sendMessage(getUsage());
-				return CommandResult.empty();
-			}
+			price.set(args.<Double> getOne("price").get());
 		}
 
 		AtomicReference<Rotation> rotation = new AtomicReference<>(Rotation.EAST);
@@ -108,7 +91,6 @@ public class CMDObjBase implements CommandExecutor {
 						z = Integer.parseInt(coords[2]);
 					} catch (Exception e) {
 						src.sendMessage(Text.of(TextColors.RED, "Incorrect coordinates"));
-						src.sendMessage(getUsage());
 						return CommandResult.empty();
 					}
 					destination.set(destination.get().replace("spawn", x + "." + y + "." + z));
@@ -116,17 +98,7 @@ public class CMDObjBase implements CommandExecutor {
 			}
 
 			if (args.hasAny("direction")) {
-				String direction = args.<String> getOne("direction").get();
-
-				Optional<Rotation> optionalRotation = Rotation.get(direction);
-
-				if (!optionalRotation.isPresent()) {
-					src.sendMessage(Text.of(TextColors.RED, "Incorrect direction"));
-					src.sendMessage(getUsage());
-					return CommandResult.empty();
-				}
-
-				rotation.set(optionalRotation.get());
+				rotation.set(args.<Rotation> getOne("direction").get());
 			}
 
 			init(player, destination.get(), rotation.get(), price.get(), isBungee);
@@ -137,19 +109,5 @@ public class CMDObjBase implements CommandExecutor {
 		return CommandResult.success();
 	}
 
-	protected void init(Player player, String destination, Rotation rotation, Double price, boolean isBungee) {
-
-	}
-
-	private Text getUsage() {
-		Text usage = Text.of(TextColors.RED, "Usage: /" + name.replace("pressure ", ""));
-
-		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("Enter a world or bungee server"))).append(Text.of(" <destination>")).build());
-		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("Use this flag if <destination> is a bungee server"))).append(Text.of(" [-b]")).build());
-		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("Enter x y z coordinates or \"random\""))).append(Text.of(" [-c <x,y,z>]")).build());
-		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("NORTH\nNORTHEAST\nEAST\nSOUTHEAST\nSOUTH\nSOUTHWEST\nWEST\nNORTHWEST"))).append(Text.of(" [-d <direction>]")).build());
-		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("Enter the cost to use portal or 0 to disable"))).append(Text.of(" [-p price]")).build());
-
-		return usage;
-	}
+	protected abstract void init(Player player, String destination, Rotation rotation, Double price, boolean isBungee);
 }

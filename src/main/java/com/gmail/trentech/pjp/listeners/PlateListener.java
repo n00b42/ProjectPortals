@@ -28,13 +28,13 @@ import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.storage.WorldProperties;
 
 import com.flowpowered.math.vector.Vector3d;
-import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.object.Plate;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.events.TeleportEvent.Local;
 import com.gmail.trentech.pjp.events.TeleportEvent.Server;
+import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Rotation;
 
 import flavor.pie.spongycord.SpongyCord;
@@ -49,7 +49,7 @@ public class PlateListener {
 		this.timings = timings;
 	}
 
-	@Listener
+	//@Listener
 	public void onTabCompleteEvent(TabCompleteEvent event, @First CommandSource src) {
 		String rawMessage = event.getRawMessage();
 		
@@ -117,7 +117,7 @@ public class PlateListener {
 				}
 				Plate plate = optionalPlate.get();
 
-				if (Main.getConfigManager().getConfig().getNode("options", "advanced_permissions").getBoolean()) {
+				if (ConfigManager.get().getConfig().getNode("options", "advanced_permissions").getBoolean()) {
 					if (!player.hasPermission("pjp.plate." + location.getExtent().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ())) {
 						player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use this pressure plate portal"));
 						event.setCancelled(true);

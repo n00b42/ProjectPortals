@@ -16,7 +16,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
-import com.gmail.trentech.pjp.Main;
+import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 
 import ninja.leaping.configurate.ConfigurationNode;
@@ -27,7 +27,7 @@ public class CMDPjp implements CommandExecutor {
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		List<Text> list = new ArrayList<>();
 
-		ConfigurationNode node = Main.getConfigManager().getConfig().getNode("settings", "modules");
+		ConfigurationNode node = ConfigManager.get().getConfig().getNode("settings", "modules");
 
 		if (src.hasPermission("pjp.cmd.portal") && node.getNode("portals").getBoolean()) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for list of sub commands "))).onClick(TextActions.runCommand("/pjp:portal")).append(Text.of(" /portal")).build());

@@ -28,10 +28,6 @@ public class CMDParticle implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if (!args.hasAny("name")) {
-			src.sendMessage(getUsage());
-			return CommandResult.empty();
-		}
 		String name = args.<String> getOne("name").get().toLowerCase();
 
 		if (!Portal.get(name).isPresent()) {
@@ -44,28 +40,13 @@ public class CMDParticle implements CommandExecutor {
 			src.sendMessage(getUsage());
 			return CommandResult.empty();
 		}
-		String type = args.<String> getOne("type").get().toUpperCase();
-
-		Optional<Particle> optionalParticle = Particles.get(type);
-
-		if (!optionalParticle.isPresent()) {
-			src.sendMessage(Text.of(TextColors.DARK_RED, "Incorrect particle"));
-			src.sendMessage(getUsage());
-			return CommandResult.empty();
-		}
-		Particle particle = optionalParticle.get();
+		Particle particle = args.<Particles> getOne("type").get().getParticle();
 
 		Optional<ParticleColor> color = Optional.empty();
 
 		if (args.hasAny("color")) {
 			if (particle.isColorable()) {
-				color = ParticleColor.get(args.<String> getOne("color").get().toUpperCase());
-
-				if (!color.isPresent()) {
-					src.sendMessage(Text.of(TextColors.RED, "Incorrect color"));
-					src.sendMessage(getUsage());
-					return CommandResult.empty();
-				}
+				color = Optional.of(args.<ParticleColor> getOne("color").get());
 			} else {
 				src.sendMessage(Text.of(TextColors.YELLOW, "Colors currently only works with REDSTONE type"));
 			}

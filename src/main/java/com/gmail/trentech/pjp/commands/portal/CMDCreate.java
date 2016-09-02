@@ -11,14 +11,12 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
-import org.spongepowered.api.effect.particle.ParticleType.Colorable;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 
-import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.object.Portal;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.ParticleColor;
@@ -27,6 +25,7 @@ import com.gmail.trentech.pjp.listeners.LegacyListener;
 import com.gmail.trentech.pjp.listeners.PortalListener;
 import com.gmail.trentech.pjp.portal.LegacyBuilder;
 import com.gmail.trentech.pjp.portal.PortalProperties;
+import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Rotation;
 
@@ -49,73 +48,30 @@ public class CMDCreate implements CommandExecutor {
 		}
 		Player player = (Player) src;
 
-		if (!args.hasAny("name")) {
-			src.sendMessage(getUsage());
-			return CommandResult.empty();
-		}
 		String name = args.<String> getOne("name").get().toLowerCase();
-
-		if (name.equalsIgnoreCase("-c") || name.equalsIgnoreCase("-d") || name.equalsIgnoreCase("-p") || name.equalsIgnoreCase("-e") || name.equalsIgnoreCase("-b")) {
-			src.sendMessage(getUsage());
-			return CommandResult.empty();
-		}
 
 		if (Portal.get(name).isPresent()) {
 			src.sendMessage(Text.of(TextColors.DARK_RED, name, " already exists"));
 			return CommandResult.empty();
 		}
 
-		if (!args.hasAny("destination")) {
-			src.sendMessage(getUsage());
-			return CommandResult.empty();
-		}
 		AtomicReference<String> destination = new AtomicReference<>(args.<String> getOne("destination").get());
-
-		if (destination.get().equalsIgnoreCase("-c") || destination.get().equalsIgnoreCase("-d") || destination.get().equalsIgnoreCase("-p") || destination.get().equalsIgnoreCase("-e") || destination.get().equalsIgnoreCase("-b")) {
-			src.sendMessage(getUsage());
-			return CommandResult.empty();
-		}
 
 		AtomicReference<Double> price = new AtomicReference<>(0.0);
 
 		if (args.hasAny("price")) {
-			try {
-				price.set(Double.parseDouble(args.<String> getOne("price").get()));
-			} catch (Exception e) {
-				src.sendMessage(Text.of(TextColors.RED, "Incorrect price"));
-				src.sendMessage(getUsage());
-				return CommandResult.empty();
-			}
+			price.set(args.<Double> getOne("price").get());
 		}
 
 		AtomicReference<Particle> particle = new AtomicReference<>(Particles.getDefaultEffect("portal"));
 
 		AtomicReference<Optional<ParticleColor>> color = new AtomicReference<>(Particles.getDefaultColor("portal", particle.get().isColorable()));
 
-		if (args.hasAny("particle[:color]")) {
-			String[] type = args.<String> getOne("particle[:color]").get().toUpperCase().split(":");
+		if (args.hasAny("particle")) {
+			particle.set(args.<Particles> getOne("particle").get().getParticle());
 
-			Optional<Particle> optionalParticle = Particles.get(type[0]);
-
-			if (!optionalParticle.isPresent()) {
-				src.sendMessage(Text.of(TextColors.DARK_RED, "Incorrect particle"));
-				src.sendMessage(getUsage());
-				return CommandResult.empty();
-			}
-			particle.set(optionalParticle.get());
-
-			if (type.length == 2) {
-				if (particle.get().getType() instanceof Colorable) {
-					color.set(ParticleColor.get(type[1]));
-
-					if (!color.get().isPresent()) {
-						src.sendMessage(Text.of(TextColors.RED, "Incorrect color"));
-						src.sendMessage(getUsage());
-						return CommandResult.empty();
-					}
-				} else {
-					src.sendMessage(Text.of(TextColors.YELLOW, "Colors currently only works with REDSTONE type"));
-				}
+			if (args.hasAny("color")) {
+				color.set(Optional.of(args.<ParticleColor> getOne("color").get()));
 			}
 		}
 
@@ -135,7 +91,7 @@ public class CMDCreate implements CommandExecutor {
 						return;
 					}
 
-					if (Main.isLegacy()) {
+					if (ConfigManager.get().getConfig().getNode("options", "portal", "legacy_builder").getBoolean()) {
 						LegacyListener.builders.put(player.getUniqueId(), new LegacyBuilder(name, destination.get(), rotation.get(), particle.get(), color.get(), price.get(), isBungee));
 						player.sendMessage(Text.builder().color(TextColors.DARK_GREEN).append(Text.of("Begin building your portal frame, followed by ")).onClick(TextActions.runCommand("/pjp:portal save")).append(Text.of(TextColors.YELLOW, TextStyles.UNDERLINE, "/portal save")).build());
 					} else {
@@ -182,20 +138,10 @@ public class CMDCreate implements CommandExecutor {
 			}
 
 			if (args.hasAny("direction")) {
-				String direction = args.<String> getOne("direction").get();
-
-				Optional<Rotation> optionalRotation = Rotation.get(direction);
-
-				if (!optionalRotation.isPresent()) {
-					src.sendMessage(Text.of(TextColors.RED, "Incorrect direction"));
-					src.sendMessage(getUsage());
-					return CommandResult.empty();
-				}
-
-				rotation.set(optionalRotation.get());
+				rotation.set(args.<Rotation> getOne("direction").get());
 			}
 
-			if (Main.isLegacy()) {
+			if (ConfigManager.get().getConfig().getNode("options", "portal", "legacy_builder").getBoolean()) {
 				LegacyListener.builders.put(player.getUniqueId(), new LegacyBuilder(name, destination.get(), rotation.get(), particle.get(), color.get(), price.get(), isBungee));
 				player.sendMessage(Text.builder().color(TextColors.DARK_GREEN).append(Text.of("Begin building your portal frame, followed by ")).onClick(TextActions.runCommand("/pjp:portal save")).append(Text.of(TextColors.YELLOW, TextStyles.UNDERLINE, "/portal save")).build());
 			} else {

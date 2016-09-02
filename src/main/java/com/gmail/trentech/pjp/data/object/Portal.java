@@ -114,7 +114,7 @@ public class Portal extends PortalBase {
 					player.sendBlockChange(location.getBlockPosition(), blockState);
 				}
 			}
-		}).submit(Main.getPlugin());
+		}).submit(Main.instance().getPlugin());
 	}
 
 	public void update(boolean reset) {
@@ -268,7 +268,7 @@ public class Portal extends PortalBase {
 
 			for (Task task : Sponge.getScheduler().getScheduledTasks()) {
 				if (task.getName().equals(name)) {
-					task.cancel();
+					System.out.println(task.cancel());
 					break;
 				}
 			}
@@ -321,7 +321,7 @@ public class Portal extends PortalBase {
 					portal = Serializer.deserializePortal(result.getString("Portal"));
 					portal.setName(name);
 				} catch (Exception e) {
-					Main.getLog().error("Could not deserialize Portal: " + name);
+					Main.instance().getLog().error("Could not deserialize Portal: " + name);
 					portal = new Portal(name, Sponge.getServer().getDefaultWorldName() + ":spawn", Rotation.EAST, new ArrayList<Location<World>>(), new ArrayList<Location<World>>(), null, null, 0, false);
 				}
 

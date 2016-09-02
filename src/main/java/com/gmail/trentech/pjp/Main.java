@@ -1,8 +1,13 @@
 package com.gmail.trentech.pjp;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandMapping;
+import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
@@ -51,6 +56,7 @@ import com.gmail.trentech.pjp.listeners.WorldListener;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Resource;
 import com.gmail.trentech.pjp.utils.SQLUtils;
+import com.google.inject.Inject;
 
 import me.flibio.updatifier.Updatifier;
 import ninja.leaping.configurate.ConfigurationNode;
@@ -59,22 +65,32 @@ import ninja.leaping.configurate.ConfigurationNode;
 @Plugin(id = Resource.ID, name = Resource.NAME, version = Resource.VERSION, description = Resource.DESCRIPTION, authors = Resource.AUTHOR, url = Resource.URL, dependencies = { @Dependency(id = "Updatifier", optional = true) })
 public class Main {
 
-	private static Logger log;
-	private static PluginContainer plugin;
-	private static boolean legacy;
-	private static ConfigManager configManager;
+	@Inject @ConfigDir(sharedRoot = false)
+    private Path path;
+
+	@Inject 
+	private PluginContainer plugin;
+	
+	@Inject
+	private Logger log;
+
+	private static Main instance;
 	
 	@Listener
-	public void onPreInitialization(GamePreInitializationEvent event) {
-		plugin = Sponge.getPluginManager().getPlugin(Resource.ID).get();
-		log = getPlugin().getLogger();
+	public void onPreInitializationEvent(GamePreInitializationEvent event) {
+		instance = this;
+
+		try {			
+			Files.createDirectories(path);		
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Listener
 	public void onInitialization(GameInitializationEvent event) {
-		configManager = new ConfigManager().init();
-
-		legacy = configManager.getConfig().getNode("options", "portal", "legacy_builder").getBoolean();
+		ConfigManager configManager = ConfigManager.init();
+		ConfigurationNode config = configManager.getConfig();
 
 		Timings timings = new Timings();
 
@@ -84,14 +100,14 @@ public class Main {
 		Sponge.getCommandManager().register(this, new CMDBack().cmdBack, "back");
 		Sponge.getCommandManager().register(this, new CommandManager().cmdPJP, "pjp");
 
-		ConfigurationNode modules = configManager.getConfig().getNode("settings", "modules");
+		ConfigurationNode modules = config.getNode("settings", "modules");
 
 		if (modules.getNode("portals").getBoolean()) {
 			Sponge.getDataManager().registerBuilder(Portal.class, new PortalBuilder());
 			Sponge.getEventManager().registerListeners(this, new PortalListener(timings));
 			Sponge.getCommandManager().register(this, new CommandManager().cmdPortal, "portal", "p");
 
-			if (isLegacy()) {
+			if (config.getNode("options", "portal", "legacy_builder").getBoolean()) {
 				Sponge.getEventManager().registerListeners(this, new LegacyListener(timings));
 			}
 
@@ -154,7 +170,7 @@ public class Main {
 
 	@Listener
 	public void onStartedServer(GameStartedServerEvent event) {
-		ConfigurationNode modules = getConfigManager().getConfig().getNode("settings", "modules");
+		ConfigurationNode modules = ConfigManager.get().getConfig().getNode("settings", "modules");
 
 		if (modules.getNode("portals").getBoolean()) {
 			Portal.init();
@@ -184,10 +200,9 @@ public class Main {
 			Sponge.getCommandManager().removeMapping(mapping);
 		}
 
-		configManager = new ConfigManager().init();
-
-		legacy = getConfigManager().getConfig().getNode("options", "portal", "legacy_builder").getBoolean();
-
+		ConfigManager configManager = ConfigManager.init();
+		ConfigurationNode config = configManager.getConfig();
+		
 		Sponge.getCommandManager().register(this, new CMDBack().cmdBack, "back");
 		Sponge.getCommandManager().register(this, new CommandManager().cmdPJP, "pjp");
 
@@ -196,7 +211,7 @@ public class Main {
 		Sponge.getEventManager().registerListeners(this, new TeleportListener(timings));
 		Sponge.getEventManager().registerListeners(this, new WorldListener());
 		
-		ConfigurationNode modules = configManager.getConfig().getNode("settings", "modules");
+		ConfigurationNode modules = config.getNode("settings", "modules");
 
 		if (modules.getNode("portals").getBoolean()) {
 			if (!Sponge.getDataManager().getBuilder(Portal.class).isPresent()) {
@@ -206,7 +221,7 @@ public class Main {
 			Sponge.getEventManager().registerListeners(this, new PortalListener(timings));
 			Sponge.getCommandManager().register(this, new CommandManager().cmdPortal, "portal", "p");
 
-			if (isLegacy()) {
+			if (config.getNode("options", "portal", "legacy_builder").getBoolean()) {
 				Sponge.getEventManager().registerListeners(this, new LegacyListener(timings));
 			}
 
@@ -298,19 +313,20 @@ public class Main {
 		}
 	}
 
-	public static Logger getLog() {
+	public Logger getLog() {
 		return log;
 	}
 
-	public static PluginContainer getPlugin() {
+	public PluginContainer getPlugin() {
 		return plugin;
 	}
 
-	public static boolean isLegacy() {
-		return legacy;
+	public Path getPath() {
+		return path;
 	}
 	
-	public static ConfigManager getConfigManager() {
-		return configManager;
+	public static Main instance() {
+		return instance;
 	}
+
 }

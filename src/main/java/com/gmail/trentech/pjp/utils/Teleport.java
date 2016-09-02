@@ -30,7 +30,7 @@ public class Teleport {
 
 			Location<World> spawnLocation = world.getSpawnLocation();
 
-			int radius = Main.getConfigManager().getConfig().getNode("options", "random_spawn_radius").getInt();
+			int radius = ConfigManager.get().getConfig().getNode("options", "random_spawn_radius").getInt();
 			
 			for(int i = 0;i < 49; i++) {
 				int x = (random.nextInt(radius * 2) - radius) + spawnLocation.getBlockX();
@@ -59,7 +59,7 @@ public class Teleport {
 				cache.put(world.getUniqueId(), unsafeLocation.getPosition());
 				break;
 			}
-		}).submit(Main.getPlugin());
+		}).submit(Main.instance().getPlugin());
 	}
 	
 	public static Location<World> getRandomLocation(World world) {

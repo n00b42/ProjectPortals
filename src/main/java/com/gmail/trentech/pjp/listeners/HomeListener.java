@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.command.TabCompleteEvent;
 import org.spongepowered.api.event.filter.cause.First;
 
@@ -17,7 +16,7 @@ import com.gmail.trentech.pjp.data.object.Home;
 
 public class HomeListener {
 
-	@Listener
+	//@Listener
 	public void onTabCompleteEvent(TabCompleteEvent event, @First CommandSource src) {
 		String rawMessage = event.getRawMessage();
 		

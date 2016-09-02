@@ -1,7 +1,6 @@
 package com.gmail.trentech.pjp.commands.warp;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
@@ -41,16 +40,7 @@ public class CMDCreate implements CommandExecutor {
 		}
 		Player player = (Player) src;
 
-		if (!args.hasAny("name")) {
-			src.sendMessage(getUsage());
-			return CommandResult.empty();
-		}
 		String name = args.<String> getOne("name").get().toLowerCase();
-
-		if (name.equalsIgnoreCase("-c") || name.equalsIgnoreCase("-d") || name.equalsIgnoreCase("-p") || name.equalsIgnoreCase("-b")) {
-			src.sendMessage(getUsage());
-			return CommandResult.empty();
-		}
 
 		if (Warp.get(name).isPresent()) {
 			src.sendMessage(Text.of(TextColors.DARK_RED, name, " already exists"));
@@ -62,13 +52,7 @@ public class CMDCreate implements CommandExecutor {
 		AtomicReference<Double> price = new AtomicReference<>(0.0);
 
 		if (args.hasAny("price")) {
-			try {
-				price.set(Double.parseDouble(args.<String> getOne("price").get()));
-			} catch (Exception e) {
-				src.sendMessage(Text.of(TextColors.RED, "Incorrect price"));
-				src.sendMessage(getUsage());
-				return CommandResult.empty();
-			}
+			price.set(args.<Double> getOne("price").get());
 		}
 
 		AtomicReference<Rotation> rotation = new AtomicReference<>(Rotation.EAST);
@@ -76,11 +60,6 @@ public class CMDCreate implements CommandExecutor {
 
 		if (args.hasAny("destination")) {
 			destination.set(args.<String> getOne("destination").get());
-
-			if (destination.get().equalsIgnoreCase("-c") || destination.get().equalsIgnoreCase("-d") || destination.get().equalsIgnoreCase("-p") || destination.get().equalsIgnoreCase("-b")) {
-				src.sendMessage(getUsage());
-				return CommandResult.empty();
-			}
 
 			if (isBungee) {
 				Consumer<List<String>> consumer1 = (list) -> {
@@ -137,17 +116,7 @@ public class CMDCreate implements CommandExecutor {
 				}
 
 				if (args.hasAny("direction")) {
-					String direction = args.<String> getOne("direction").get();
-
-					Optional<Rotation> optionalRotation = Rotation.get(direction);
-
-					if (!optionalRotation.isPresent()) {
-						src.sendMessage(Text.of(TextColors.RED, "Incorrect direction"));
-						src.sendMessage(getUsage());
-						return CommandResult.empty();
-					}
-
-					rotation.set(optionalRotation.get());
+					rotation.set(args.<Rotation> getOne("direction").get());
 				}
 			}
 		} else {

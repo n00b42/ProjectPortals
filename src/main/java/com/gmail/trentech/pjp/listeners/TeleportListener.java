@@ -33,6 +33,7 @@ import com.gmail.trentech.pjp.commands.CMDBack;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.events.TeleportEvent;
+import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Teleport;
 
 import ninja.leaping.configurate.ConfigurationNode;
@@ -63,7 +64,7 @@ public class TeleportListener {
 
 				UniqueAccount account = economy.getOrCreateAccount(player.getUniqueId()).get();
 
-				if (account.withdraw(economy.getDefaultCurrency(), new BigDecimal(price), Cause.of(NamedCause.source(Main.getPlugin()))).getResult() != ResultType.SUCCESS) {
+				if (account.withdraw(economy.getDefaultCurrency(), new BigDecimal(price), Cause.of(NamedCause.source(Main.instance().getPlugin()))).getResult() != ResultType.SUCCESS) {
 					player.sendMessage(Text.of(TextColors.DARK_RED, "Not enough money. You need $", new DecimalFormat("#,###,##0.00").format(price)));
 					event.setCancelled(true);
 					return;
@@ -108,7 +109,7 @@ public class TeleportListener {
 			}
 			event.setDestination(optionalLocation.get());
 			
-			ConfigurationNode config = Main.getConfigManager().getConfig();
+			ConfigurationNode config = ConfigManager.get().getConfig();
 
 			Text title = TextSerializers.FORMATTING_CODE.deserialize(config.getNode("options", "teleport_message", "title").getString().replaceAll("%WORLD%", dest.getExtent().getName()).replaceAll("\\%X%", Integer.toString(dest.getBlockX())).replaceAll("\\%Y%", Integer.toString(dest.getBlockY())).replaceAll("\\%Z%", Integer.toString(dest.getBlockZ())));
 			Text subTitle = TextSerializers.FORMATTING_CODE.deserialize(config.getNode("options", "teleport_message", "sub_title").getString().replaceAll("%WORLD%", dest.getExtent().getName()).replaceAll("\\%X%", Integer.toString(dest.getBlockX())).replaceAll("\\%Y%", Integer.toString(dest.getBlockY())).replaceAll("\\%Z%", Integer.toString(dest.getBlockZ())));

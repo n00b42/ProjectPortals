@@ -6,7 +6,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.command.TabCompleteEvent;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.world.storage.WorldProperties;
@@ -15,7 +14,7 @@ import com.gmail.trentech.pjp.data.object.Warp;
 
 public class WarpListener {
 
-	@Listener
+	//@Listener
 	public void onTabCompleteEvent(TabCompleteEvent event, @First CommandSource src) {
 		String rawMessage = event.getRawMessage();
 		

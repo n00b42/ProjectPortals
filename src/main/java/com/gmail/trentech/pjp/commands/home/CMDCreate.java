@@ -16,10 +16,10 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.Keys;
 import com.gmail.trentech.pjp.data.mutable.HomeData;
 import com.gmail.trentech.pjp.data.object.Home;
+import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Rotation;
 
@@ -40,10 +40,6 @@ public class CMDCreate implements CommandExecutor {
 		}
 		Player player = (Player) src;
 
-		if (!args.hasAny("name")) {
-			src.sendMessage(Text.of(TextColors.RED, "Usage: /home create <name>"));
-			return CommandResult.empty();
-		}
 		String homeName = args.<String> getOne("name").get().toLowerCase();
 
 		Map<String, Home> homeList = new HashMap<>();
@@ -54,7 +50,7 @@ public class CMDCreate implements CommandExecutor {
 			homeList = optionalHomeList.get();
 		}
 
-		int defaultAmount = Main.getConfigManager().getConfig().getNode("options", "homes").getInt();
+		int defaultAmount = ConfigManager.get().getConfig().getNode("options", "homes").getInt();
 
 		int amount = homeList.size();
 

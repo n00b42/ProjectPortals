@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.spongepowered.api.effect.particle.ParticleTypes;
 
 import com.gmail.trentech.pjp.Main;
+import com.gmail.trentech.pjp.utils.ConfigManager;
 
 import ninja.leaping.configurate.ConfigurationNode;
 
@@ -41,6 +42,10 @@ public enum Particles {
 		this.particle = particle;
 	}
 
+	public Particle getParticle() {
+		return particle;
+	}
+	
 	public static Optional<Particle> get(String name) {
 		Optional<Particle> optional = Optional.empty();
 
@@ -57,10 +62,10 @@ public enum Particles {
 	}
 
 	public static Particle getDefaultEffect(String key) {
-		ConfigurationNode node = Main.getConfigManager().getConfig().getNode("options", "particles", key);
+		ConfigurationNode node = ConfigManager.get().getConfig().getNode("options", "particles", key);
 
 		if (node.isVirtual()) {
-			Main.getLog().warn("Can't find config node for " + key);
+			Main.instance().getLog().warn("Can't find config node for " + key);
 			return get("BARRIER").get();
 		}
 		String type = node.getNode("type").getString().toUpperCase();
@@ -68,7 +73,7 @@ public enum Particles {
 		Optional<Particle> optionalParticle = get(type);
 
 		if (!optionalParticle.isPresent()) {
-			Main.getLog().warn("Can't find particle type for " + type);
+			Main.instance().getLog().warn("Can't find particle type for " + type);
 			return get("BARRIER").get();
 		}
 		Particle particle = optionalParticle.get();
@@ -81,10 +86,10 @@ public enum Particles {
 			return Optional.empty();
 		}
 
-		ConfigurationNode node = Main.getConfigManager().getConfig().getNode("options", "particles", key);
+		ConfigurationNode node = ConfigManager.get().getConfig().getNode("options", "particles", key);
 
 		if (node.isVirtual()) {
-			Main.getLog().warn("Can't find config node for " + key);
+			Main.instance().getLog().warn("Can't find config node for " + key);
 			return Optional.empty();
 		}
 		String color = node.getNode("color").getString().toUpperCase();

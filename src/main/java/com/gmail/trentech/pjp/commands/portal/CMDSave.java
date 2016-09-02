@@ -49,7 +49,7 @@ public class CMDSave implements CommandExecutor {
 		if (builder.build()) {
 			Sponge.getScheduler().createTaskBuilder().name("PJP" + builder.getName()).delayTicks(20).execute(t -> {
 				LegacyListener.builders.remove(player.getUniqueId());
-			}).submit(Main.getPlugin());
+			}).submit(Main.instance().getPlugin());
 
 			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Portal ", builder.getName(), " created successfully"));
 		}

@@ -20,7 +20,7 @@ public abstract class SQLUtils {
 			sql = Sponge.getServiceManager().provide(SqlService.class).get();
 		}
 
-		return sql.getDataSource("jdbc:h2:./config/projectportals/data");
+		return sql.getDataSource("jdbc:h2:./config/pjp/data");
 	}
 
 	public static void createTables(ConfigurationNode modules) {

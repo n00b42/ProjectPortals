@@ -16,7 +16,6 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.service.pagination.PaginationList;
-import org.spongepowered.api.service.pagination.PaginationService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
@@ -59,21 +58,12 @@ public class CMDWarp implements CommandExecutor {
 			}
 
 			if (args.hasAny("player")) {
-				String playerName = args.<String> getOne("player").get();
-
 				if (!src.hasPermission("pjp.cmd.warp.others")) {
 					player.get().sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to warp others"));
 					return CommandResult.empty();
 				}
 
-				Optional<Player> optionalPlayer = Sponge.getServer().getPlayer(playerName);
-
-				if (!optionalPlayer.isPresent()) {
-					player.get().sendMessage(Text.of(TextColors.DARK_RED, playerName, " does not exist"));
-					return CommandResult.empty();
-				}
-
-				player.set(optionalPlayer.get());
+				player.set(args.<Player> getOne("player").get());
 			}
 
 			if (warp.isBungee()) {
@@ -130,7 +120,7 @@ public class CMDWarp implements CommandExecutor {
 		}
 
 		if (src instanceof Player) {
-			PaginationList.Builder pages = Sponge.getServiceManager().provide(PaginationService.class).get().builder();
+			PaginationList.Builder pages = PaginationList.builder();
 
 			pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, "Command List")).build());
 

@@ -24,10 +24,6 @@ public class CMDRemove implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if (!args.hasAny("name")) {
-			src.sendMessage(Text.of(TextColors.YELLOW, "/portal remove <name>"));
-			return CommandResult.empty();
-		}
 		String name = args.<String> getOne("name").get().toLowerCase();
 
 		Optional<Portal> optionalPortal = Portal.get(name);

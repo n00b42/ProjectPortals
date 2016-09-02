@@ -1,7 +1,9 @@
 package com.gmail.trentech.pjp.utils;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.gmail.trentech.pjp.Main;
 
@@ -11,31 +13,44 @@ import ninja.leaping.configurate.loader.ConfigurationLoader;
 
 public class ConfigManager {
 
-	private File file;
+	private Path path;
 	private CommentedConfigurationNode config;
 	private ConfigurationLoader<CommentedConfigurationNode> loader;
+	
+	private static ConcurrentHashMap<String, ConfigManager> configManagers = new ConcurrentHashMap<>();
 
-	public ConfigManager() {
-		String folder = "config" + File.separator + Resource.NAME.toLowerCase();
-		if (!new File(folder).isDirectory()) {
-			new File(folder).mkdirs();
+	private ConfigManager(String configName) {
+		try {
+			path = Main.instance().getPath().resolve(configName + ".conf");
+			
+			if (!Files.exists(path)) {		
+				Files.createFile(path);
+				Main.instance().getLog().info("Creating new " + path.getFileName() + " file...");
+			}		
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		file = new File(folder, "config.conf");
 
-		create();
 		load();
 	}
-
-	public ConfigurationLoader<CommentedConfigurationNode> getLoader() {
-		return loader;
+	
+	public static ConfigManager get(String configName) {
+		return configManagers.get(configName);
+	}
+	
+	public static ConfigManager get() {
+		return configManagers.get("config");
 	}
 
-	public CommentedConfigurationNode getConfig() {
-		return config;
+	public static ConfigManager init() {
+		return init("config");
 	}
-
-	public ConfigManager init() {
-		if (file.getName().equalsIgnoreCase("config.conf")) {
+	
+	public static ConfigManager init(String configName) {
+		ConfigManager configManager = new ConfigManager(configName);
+		CommentedConfigurationNode config = configManager.getConfig();
+		
+		if (configName.equalsIgnoreCase("config")) {
 			if (config.getNode("options", "portal", "size").isVirtual()) {
 				config.getNode("options", "portal", "size").setValue(100).setComment("Maximum number of blocks a portal can use");
 			}
@@ -99,30 +114,29 @@ public class ConfigManager {
 			if (config.getNode("settings", "modules", "homes").isVirtual()) {
 				config.getNode("settings", "modules", "homes").setValue(true);
 			}
-			save();
 		}
 		
-		return this;
+		configManager.save();
+		
+		configManagers.put(configName, configManager);
+		
+		return configManager;
 	}
 
-	private void create() {
-		if (!file.exists()) {
-			try {
-				Main.getLog().info("Creating new " + file.getName() + " file...");
-				file.createNewFile();
-			} catch (IOException e) {
-				Main.getLog().error("Failed to create new config file");
-				e.printStackTrace();
-			}
-		}
+	public ConfigurationLoader<CommentedConfigurationNode> getLoader() {
+		return loader;
 	}
 
+	public CommentedConfigurationNode getConfig() {
+		return config;
+	}
+	
 	private void load() {
-		loader = HoconConfigurationLoader.builder().setFile(file).build();
+		loader = HoconConfigurationLoader.builder().setPath(path).build();
 		try {
 			config = loader.load();
 		} catch (IOException e) {
-			Main.getLog().error("Failed to load config");
+			Main.instance().getLog().error("Failed to load config");
 			e.printStackTrace();
 		}
 	}
@@ -131,7 +145,7 @@ public class ConfigManager {
 		try {
 			loader.save(config);
 		} catch (IOException e) {
-			Main.getLog().error("Failed to save config");
+			Main.instance().getLog().error("Failed to save config");
 			e.printStackTrace();
 		}
 	}

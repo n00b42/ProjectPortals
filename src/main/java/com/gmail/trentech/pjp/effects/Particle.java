@@ -15,6 +15,7 @@ import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.object.Portal;
+import com.gmail.trentech.pjp.utils.ConfigManager;
 
 public class Particle {
 
@@ -58,7 +59,7 @@ public class Particle {
 			return;
 		}
 
-		if (Main.getConfigManager().getConfig().getNode("options", "particles", "enable").getBoolean()) {
+		if (ConfigManager.get().getConfig().getNode("options", "particles", "enable").getBoolean()) {
 			spawnNonRepeat(location, player, color);
 		}
 	}
@@ -68,7 +69,7 @@ public class Particle {
 			return;
 		}
 
-		if (Main.getConfigManager().getConfig().getNode("options", "particles", "enable").getBoolean()) {
+		if (ConfigManager.get().getConfig().getNode("options", "particles", "enable").getBoolean()) {
 			spawnRepeat(name, locations, color);
 		}
 	}
@@ -105,7 +106,7 @@ public class Particle {
 
 			Sponge.getScheduler().createTaskBuilder().intervalTicks(getTime()).name(name).execute(t -> {
 				portal.update(false);
-			}).submit(Main.getPlugin());
+			}).submit(Main.instance().getPlugin());
 		} else {
 			Sponge.getScheduler().createTaskBuilder().interval(getTime(), TimeUnit.MILLISECONDS).name(name).execute(t -> {
 				ParticleEffect particle = ParticleEffect.builder().type(getType()).build();
@@ -118,7 +119,7 @@ public class Particle {
 					location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble(), random.nextDouble(), random.nextDouble()));
 					location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble(), random.nextDouble(), random.nextDouble()));
 				}
-			}).submit(Main.getPlugin());
+			}).submit(Main.instance().getPlugin());
 		}
 	}
 }

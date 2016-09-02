@@ -44,6 +44,7 @@ import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.events.TeleportEvent.Local;
 import com.gmail.trentech.pjp.events.TeleportEvent.Server;
 import com.gmail.trentech.pjp.portal.PortalProperties;
+import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.PlayerDirection;
 import com.gmail.trentech.pjp.utils.Rotation;
 
@@ -60,7 +61,7 @@ public class PortalListener {
 		this.timings = timings;
 	}
 	
-	@Listener
+	//@Listener
 	public void onTabCompleteEvent(TabCompleteEvent event, @First CommandSource src) {
 		String rawMessage = event.getRawMessage();
 		
@@ -205,7 +206,7 @@ public class PortalListener {
 
 			Sponge.getScheduler().createTaskBuilder().delayTicks(20).execute(t -> {
 				props.remove(player.getUniqueId());
-			}).submit(Main.getPlugin());
+			}).submit(Main.instance().getPlugin());
 
 			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Portal ", properties.getName(), " created successfully"));
 		} finally {
@@ -228,7 +229,7 @@ public class PortalListener {
 				}
 			}
 
-			ConfigurationNode config = Main.getConfigManager().getConfig();
+			ConfigurationNode config = ConfigManager.get().getConfig();
 
 			int size = config.getNode("options", "portal", "size").getInt();
 			if (locations.size() > size) {
@@ -265,7 +266,7 @@ public class PortalListener {
 				return;
 			}
 
-			if (!Main.getConfigManager().getConfig().getNode("options", "portal", "teleport_item").getBoolean()) {
+			if (!ConfigManager.get().getConfig().getNode("options", "portal", "teleport_item").getBoolean()) {
 				return;
 			}
 
@@ -306,7 +307,7 @@ public class PortalListener {
 				return;
 			}
 
-			if (!Main.getConfigManager().getConfig().getNode("options", "portal", "teleport_mob").getBoolean()) {
+			if (!ConfigManager.get().getConfig().getNode("options", "portal", "teleport_mob").getBoolean()) {
 				return;
 			}
 
@@ -342,7 +343,7 @@ public class PortalListener {
 			}
 			Portal portal = optionalPortal.get();
 
-			if (Main.getConfigManager().getConfig().getNode("options", "advanced_permissions").getBoolean()) {
+			if (ConfigManager.get().getConfig().getNode("options", "advanced_permissions").getBoolean()) {
 				if (!player.hasPermission("pjp.portal." + portal.getName())) {
 					player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use this portal"));
 					return;
@@ -373,7 +374,7 @@ public class PortalListener {
 
 						Sponge.getScheduler().createTaskBuilder().delayTicks(20).execute(c -> {
 							cache.remove(uuid);
-						}).submit(Main.getPlugin());
+						}).submit(Main.instance().getPlugin());
 					}
 				};
 
