@@ -68,18 +68,17 @@ public class Main {
 	@Inject @ConfigDir(sharedRoot = false)
     private Path path;
 
-	@Inject 
-	private PluginContainer plugin;
-	
 	@Inject
 	private Logger log;
 
+	private static PluginContainer plugin;
 	private static Main instance;
 	
 	@Listener
 	public void onPreInitializationEvent(GamePreInitializationEvent event) {
+		plugin = Sponge.getPluginManager().getPlugin(Resource.ID).get();
 		instance = this;
-
+		
 		try {			
 			Files.createDirectories(path);		
 		} catch (IOException e) {
@@ -269,7 +268,6 @@ public class Main {
 			if (!Sponge.getDataManager().getBuilder(Sign.class).isPresent()) {
 				Sponge.getDataManager().registerBuilder(Sign.class, new SignBuilder());
 			}
-			// Sponge.getDataManager().register(SignPortalData.class, ImmutableSignPortalData.class, new SignPortalDataManipulatorBuilder());
 
 			Sponge.getEventManager().registerListeners(this, new SignListener(timings));
 			Sponge.getCommandManager().register(this, new CommandManager().cmdSign, "sign", "s");
@@ -292,7 +290,6 @@ public class Main {
 			if (!Sponge.getDataManager().getBuilder(Home.class).isPresent()) {
 				Sponge.getDataManager().registerBuilder(Home.class, new HomeBuilder());
 			}
-			// Sponge.getDataManager().register(HomeData.class, ImmutableHomeData.class, new HomeDataManipulatorBuilder());
 
 			Sponge.getEventManager().registerListeners(this, new HomeListener());
 			Sponge.getCommandManager().register(this, new CommandManager().cmdHome, "home", "h");
@@ -316,13 +313,13 @@ public class Main {
 	public Logger getLog() {
 		return log;
 	}
-
-	public PluginContainer getPlugin() {
-		return plugin;
-	}
-
+	
 	public Path getPath() {
 		return path;
+	}
+	
+	public static PluginContainer getPlugin() {
+		return plugin;
 	}
 	
 	public static Main instance() {

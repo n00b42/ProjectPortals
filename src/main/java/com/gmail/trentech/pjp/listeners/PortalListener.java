@@ -206,7 +206,7 @@ public class PortalListener {
 
 			Sponge.getScheduler().createTaskBuilder().delayTicks(20).execute(t -> {
 				props.remove(player.getUniqueId());
-			}).submit(Main.instance().getPlugin());
+			}).submit(Main.getPlugin());
 
 			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Portal ", properties.getName(), " created successfully"));
 		} finally {
@@ -374,7 +374,7 @@ public class PortalListener {
 
 						Sponge.getScheduler().createTaskBuilder().delayTicks(20).execute(c -> {
 							cache.remove(uuid);
-						}).submit(Main.instance().getPlugin());
+						}).submit(Main.getPlugin());
 					}
 				};
 

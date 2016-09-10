@@ -108,24 +108,22 @@ public class Portal extends PortalBase {
 	private void updateClient(Player player, boolean reset) {
 		Sponge.getScheduler().createTaskBuilder().delayTicks(5).execute(c -> {
 			for (Location<World> location : getFill()) {
-				if (reset) {
-					player.resetBlockChange(location.getBlockPosition());
-				} else {
-					player.sendBlockChange(location.getBlockPosition(), blockState);
+				if(location.getExtent().getChunk(location.getChunkPosition()).get().isLoaded()) {
+					if (reset) {
+						player.resetBlockChange(location.getBlockPosition());
+					} else {
+						player.sendBlockChange(location.getBlockPosition(), blockState);
+					}
 				}
 			}
-		}).submit(Main.instance().getPlugin());
+		}).submit(Main.getPlugin());
 	}
 
 	public void update(boolean reset) {
 		World world = getFrame().get(0).getExtent();
 
-		Predicate<Entity> filter = new Predicate<Entity>() {
-
-			@Override
-			public boolean test(Entity entity) {
-				return entity.getType().equals(EntityTypes.PLAYER);
-			}
+		Predicate<Entity> filter = e -> {
+			return e.getType().equals(EntityTypes.PLAYER);
 		};
 
 		for (Entity entity : world.getEntities(filter)) {
@@ -268,7 +266,6 @@ public class Portal extends PortalBase {
 
 			for (Task task : Sponge.getScheduler().getScheduledTasks()) {
 				if (task.getName().equals(name)) {
-					System.out.println(task.cancel());
 					break;
 				}
 			}

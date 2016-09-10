@@ -36,7 +36,7 @@ public class Timings {
 	}
 
 	private Timing timing(String key) {
-		return co.aikar.timings.Timings.of(Main.instance().getPlugin(), key);
+		return co.aikar.timings.Timings.of(Main.getPlugin(), key);
 	}
 
 	public Timing onChangeSignEvent() {

@@ -64,7 +64,7 @@ public class TeleportListener {
 
 				UniqueAccount account = economy.getOrCreateAccount(player.getUniqueId()).get();
 
-				if (account.withdraw(economy.getDefaultCurrency(), new BigDecimal(price), Cause.of(NamedCause.source(Main.instance().getPlugin()))).getResult() != ResultType.SUCCESS) {
+				if (account.withdraw(economy.getDefaultCurrency(), new BigDecimal(price), Cause.of(NamedCause.source(Main.getPlugin()))).getResult() != ResultType.SUCCESS) {
 					player.sendMessage(Text.of(TextColors.DARK_RED, "Not enough money. You need $", new DecimalFormat("#,###,##0.00").format(price)));
 					event.setCancelled(true);
 					return;

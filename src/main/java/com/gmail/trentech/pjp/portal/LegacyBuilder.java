@@ -100,7 +100,7 @@ public class LegacyBuilder {
 
 			for (Location<World> location : regionFill) {
 				particle.spawnParticle(location, false, color);
-				location.getExtent().setBlock(location.getBlockX(), location.getBlockY(), location.getBlockZ(), block, BlockChangeFlag.NONE, Cause.of(NamedCause.source(Main.instance().getPlugin())));
+				location.getExtent().setBlock(location.getBlockX(), location.getBlockY(), location.getBlockZ(), block, BlockChangeFlag.NONE, Cause.of(NamedCause.source(Main.getPlugin())));
 			}
 
 			new Portal(getName(), destination, rotation, regionFrame, regionFill, this.particle, this.color, price, bungee).create();

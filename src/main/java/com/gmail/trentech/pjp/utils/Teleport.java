@@ -59,7 +59,7 @@ public class Teleport {
 				cache.put(world.getUniqueId(), unsafeLocation.getPosition());
 				break;
 			}
-		}).submit(Main.instance().getPlugin());
+		}).submit(Main.getPlugin());
 	}
 	
 	public static Location<World> getRandomLocation(World world) {

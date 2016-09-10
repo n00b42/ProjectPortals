@@ -206,7 +206,7 @@ public class DoorListener {
 
 						Sponge.getScheduler().createTaskBuilder().delayTicks(20).execute(c -> {
 							cache.remove(uuid);
-						}).submit(Main.instance().getPlugin());
+						}).submit(Main.getPlugin());
 					}
 				};
 

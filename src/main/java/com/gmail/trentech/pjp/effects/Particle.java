@@ -106,20 +106,22 @@ public class Particle {
 
 			Sponge.getScheduler().createTaskBuilder().intervalTicks(getTime()).name(name).execute(t -> {
 				portal.update(false);
-			}).submit(Main.instance().getPlugin());
+			}).submit(Main.getPlugin());
 		} else {
 			Sponge.getScheduler().createTaskBuilder().interval(getTime(), TimeUnit.MILLISECONDS).name(name).execute(t -> {
 				ParticleEffect particle = ParticleEffect.builder().type(getType()).build();
 
 				for (Location<World> location : locations) {
-					if (isColorable() && color.isPresent()) {
-						particle = ColoredParticle.builder().color(color.get().getColor()).type((Colorable) getType()).build();
-					}
+					if(location.getExtent().getChunk(location.getChunkPosition()).get().isLoaded()) {
+						if (isColorable() && color.isPresent()) {
+							particle = ColoredParticle.builder().color(color.get().getColor()).type((Colorable) getType()).build();
+						}
 
-					location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble(), random.nextDouble(), random.nextDouble()));
-					location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble(), random.nextDouble(), random.nextDouble()));
+						location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble(), random.nextDouble(), random.nextDouble()));
+						location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble(), random.nextDouble(), random.nextDouble()));
+					}
 				}
-			}).submit(Main.instance().getPlugin());
+			}).submit(Main.getPlugin());
 		}
 	}
 }
