@@ -29,8 +29,7 @@ public abstract class CMDObjBase implements CommandExecutor {
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if (!(src instanceof Player)) {
-			src.sendMessage(Text.of(TextColors.DARK_RED, "Must be a player"));
-			return CommandResult.empty();
+			throw new CommandException(Text.of(TextColors.RED, "Must be a player"));
 		}
 		Player player = (Player) src;
 
@@ -48,14 +47,20 @@ public abstract class CMDObjBase implements CommandExecutor {
 		if (isBungee) {
 			Consumer<List<String>> consumer1 = (list) -> {
 				if (!list.contains(destination.get())) {
-					player.sendMessage(Text.of(TextColors.DARK_RED, destination.get(), " does not exist"));
-					return;
+					try {
+						throw new CommandException(Text.of(TextColors.RED, destination.get(), " does not exist"));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 
 				Consumer<String> consumer2 = (s) -> {
 					if (destination.get().equalsIgnoreCase(s)) {
-						player.sendMessage(Text.of(TextColors.DARK_RED, "Destination cannot be the server you are currently on"));
-						return;
+						try {
+							throw new CommandException(Text.of(TextColors.RED, "Destination cannot be the server you are currently on"));
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					}
 
 					init(player, destination.get(), rotation.get(), price.get(), isBungee);
@@ -69,8 +74,7 @@ public abstract class CMDObjBase implements CommandExecutor {
 			SpongyCord.API.getServerList(consumer1, player);
 		} else {
 			if (!Sponge.getServer().getWorld(destination.get()).isPresent()) {
-				src.sendMessage(Text.of(TextColors.DARK_RED, destination, " is not loaded or does not exist"));
-				return CommandResult.empty();
+				throw new CommandException(Text.of(TextColors.RED, destination, " is not loaded or does not exist"));
 			}
 
 			destination.set(destination.get() + ":spawn");
@@ -90,8 +94,7 @@ public abstract class CMDObjBase implements CommandExecutor {
 						y = Integer.parseInt(coords[1]);
 						z = Integer.parseInt(coords[2]);
 					} catch (Exception e) {
-						src.sendMessage(Text.of(TextColors.RED, "Incorrect coordinates"));
-						return CommandResult.empty();
+						throw new CommandException(Text.of(TextColors.RED, "Incorrect coordinates"));
 					}
 					destination.set(destination.get().replace("spawn", x + "." + y + "." + z));
 				}

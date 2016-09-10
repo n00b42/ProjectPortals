@@ -29,8 +29,7 @@ public class CMDRemove implements CommandExecutor {
 		Optional<Portal> optionalPortal = Portal.get(name);
 
 		if (!optionalPortal.isPresent()) {
-			src.sendMessage(Text.of(TextColors.DARK_RED, name, " does not exist"));
-			return CommandResult.empty();
+			throw new CommandException(Text.of(TextColors.RED, name, " does not exist"));
 		}
 		Portal portal = optionalPortal.get();
 		portal.remove();

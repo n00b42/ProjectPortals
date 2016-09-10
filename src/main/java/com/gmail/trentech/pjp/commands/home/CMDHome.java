@@ -34,8 +34,7 @@ public class CMDHome implements CommandExecutor {
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if (!(src instanceof Player)) {
-			src.sendMessage(Text.of(TextColors.DARK_RED, "Must be a player"));
-			return CommandResult.empty();
+			throw new CommandException(Text.of(TextColors.RED, "Must be a player"));
 		}
 		Player player = (Player) src;
 
@@ -53,23 +52,20 @@ public class CMDHome implements CommandExecutor {
 			}
 
 			if (!homeList.containsKey(homeName)) {
-				src.sendMessage(Text.of(TextColors.DARK_RED, homeName, " does not exist"));
-				return CommandResult.empty();
+				throw new CommandException(Text.of(TextColors.RED, homeName, " does not exist"));
 			}
 			Home home = homeList.get(homeName);
 
 			Optional<Location<World>> optionalSpawnLocation = home.getDestination();
 
 			if (!optionalSpawnLocation.isPresent()) {
-				src.sendMessage(Text.of(TextColors.DARK_RED, homeName, " is invalid"));
-				return CommandResult.empty();
+				throw new CommandException(Text.of(TextColors.RED, homeName, " is invalid"));
 			}
 			Location<World> spawnLocation = optionalSpawnLocation.get();
 
 			if (args.hasAny("player")) {
 				if (!src.hasPermission("pjp.cmd.home.others")) {
-					player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to warp others"));
-					return CommandResult.empty();
+					throw new CommandException(Text.of(TextColors.RED, "you do not have permission to warp others"));
 				}
 
 				player = args.<Player> getOne("player").get();

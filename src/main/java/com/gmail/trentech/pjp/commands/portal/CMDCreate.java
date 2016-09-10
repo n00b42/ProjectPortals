@@ -43,16 +43,14 @@ public class CMDCreate implements CommandExecutor {
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if (!(src instanceof Player)) {
-			src.sendMessage(Text.of(TextColors.DARK_RED, "Must be a player"));
-			return CommandResult.empty();
+			throw new CommandException(Text.of(TextColors.RED, "Must be a player"));
 		}
 		Player player = (Player) src;
 
 		String name = args.<String> getOne("name").get().toLowerCase();
 
 		if (Portal.get(name).isPresent()) {
-			src.sendMessage(Text.of(TextColors.DARK_RED, name, " already exists"));
-			return CommandResult.empty();
+			throw new CommandException(Text.of(TextColors.RED, name, " already exists"));
 		}
 
 		AtomicReference<String> destination = new AtomicReference<>(args.<String> getOne("destination").get());
@@ -81,14 +79,20 @@ public class CMDCreate implements CommandExecutor {
 		if (isBungee) {
 			Consumer<List<String>> consumer1 = (list) -> {
 				if (!list.contains(destination.get())) {
-					player.sendMessage(Text.of(TextColors.DARK_RED, destination.get(), " does not exist"));
-					return;
+					try {
+						throw new CommandException(Text.of(TextColors.RED, destination.get(), " does not exist"));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 
 				Consumer<String> consumer2 = (s) -> {
 					if (destination.get().equalsIgnoreCase(s)) {
-						player.sendMessage(Text.of(TextColors.DARK_RED, "Destination cannot be the server you are currently on"));
-						return;
+						try {
+							throw new CommandException(Text.of(TextColors.RED, "Destination cannot be the server you are currently on"));
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					}
 
 					if (ConfigManager.get().getConfig().getNode("options", "portal", "legacy_builder").getBoolean()) {
@@ -108,8 +112,7 @@ public class CMDCreate implements CommandExecutor {
 			SpongyCord.API.getServerList(consumer1, player);
 		} else {
 			if (!Sponge.getServer().getWorld(destination.get()).isPresent()) {
-				src.sendMessage(Text.of(TextColors.DARK_RED, destination.get(), " is not loaded or does not exist"));
-				return CommandResult.empty();
+				throw new CommandException(Text.of(TextColors.RED, destination.get(), " is not loaded or does not exist"));
 			}
 
 			destination.set(destination.get() + ":spawn");
@@ -129,9 +132,7 @@ public class CMDCreate implements CommandExecutor {
 						y = Integer.parseInt(coords[1]);
 						z = Integer.parseInt(coords[2]);
 					} catch (Exception e) {
-						src.sendMessage(Text.of(TextColors.RED, "Incorrect coordinates"));
-						src.sendMessage(getUsage());
-						return CommandResult.empty();
+						throw new CommandException(Text.of(TextColors.RED, "Incorrect coordinates"));
 					}
 					destination.set(destination.get().replace("spawn", x + "." + y + "." + z));
 				}
@@ -153,17 +154,4 @@ public class CMDCreate implements CommandExecutor {
 		return CommandResult.success();
 	}
 
-	private Text getUsage() {
-		Text usage = Text.of(TextColors.RED, "Usage: /portal create <name>");
-
-		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("Enter a world or bungee server"))).append(Text.of(" <destination>")).build());
-		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("Use this flag if <destination> is a bungee server"))).append(Text.of(" [-b]")).build());
-		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("Enter x y z coordinates or \"random\""))).append(Text.of(" [-c <x,y,z>]")).build());
-		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("NORTH\nNORTHEAST\nEAST\nSOUTHEAST\nSOUTH\nSOUTHWEST\nWEST\nNORTHWEST"))).append(Text.of(" [-d <direction>]")).build());
-		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("CLOUD\nCRIT\nCRIT_MAGIC\nENCHANTMENT_TABLE\nFLAME\nHEART\nNOTE\nPORTAL\nPORTAL2" + "\nREDSTONE\nSLIME\nSNOWBALL\nSNOW_SHOVEL\nSMOKE_LARGE\nSPELL\nSPELL_WITCH\nSUSPENDED_DEPTH\nVILLAGER_HAPPY\nWATER_BUBBLE\nWATER_DROP\nWATER_SPLASH\nWATER_WAKE\nNONE"))).append(Text.of(" [-e <particle")).build());
-		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("REDSTONE ONLY\n", TextColors.DARK_GRAY, "BLACK\n", TextColors.GRAY, "GRAY\n", TextColors.WHITE, "WHITE\n", TextColors.BLUE, "BLUE\n", TextColors.GREEN, "GREEN\n", TextColors.GREEN, "LIME\n", TextColors.RED, "RED\n", TextColors.YELLOW, "YELLOW\n", TextColors.LIGHT_PURPLE, "MAGENTA\n", TextColors.DARK_PURPLE, "PURPLE\n", TextColors.DARK_AQUA, "DARK_CYAN\n", TextColors.DARK_GREEN, "DARK_GREEN\n", TextColors.DARK_PURPLE, "DARK_MAGENTA\n", TextColors.AQUA, "CYAN\n", TextColors.DARK_BLUE, "NAVY\n", TextColors.LIGHT_PURPLE, "PINK\n", TextColors.RED, "R", TextColors.YELLOW, "A", TextColors.GREEN, "I", TextColors.BLUE, "N", TextColors.DARK_PURPLE, "B", TextColors.RED, "O", TextColors.YELLOW, "W"))).append(Text.of("[:color]>]")).build());
-		usage = Text.join(usage, Text.builder().color(TextColors.RED).onHover(TextActions.showText(Text.of("Enter the cost to use portal or 0 to disable"))).append(Text.of(" [-p price]")).build());
-
-		return usage;
-	}
 }

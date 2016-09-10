@@ -35,8 +35,7 @@ public class CMDCreate implements CommandExecutor {
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if (!(src instanceof Player)) {
-			src.sendMessage(Text.of(TextColors.DARK_RED, "Must be a player"));
-			return CommandResult.empty();
+			throw new CommandException(Text.of(TextColors.RED, "Must be a player"));
 		}
 		Player player = (Player) src;
 
@@ -64,15 +63,13 @@ public class CMDCreate implements CommandExecutor {
 
 		if (!player.hasPermission("pjp.homes.unlimited")) {
 			if (amount >= (defaultAmount + extra)) {
-				src.sendMessage(Text.of(TextColors.DARK_RED, "You have reached the maximum number of homes you can have"));
-				return CommandResult.empty();
+				throw new CommandException(Text.of(TextColors.RED, "You have reached the maximum number of homes you can have"));
 			}
 			amount++;
 		}
 
 		if (homeList.containsKey(homeName)) {
-			src.sendMessage(Text.of(TextColors.DARK_RED, homeName, " already exists."));
-			return CommandResult.empty();
+			throw new CommandException(Text.of(TextColors.RED, homeName, " already exists."));
 		}
 
 		Location<World> location = player.getLocation();

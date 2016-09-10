@@ -25,8 +25,7 @@ public class CMDPrice implements CommandExecutor {
 		String name = args.<String> getOne("name").get().toLowerCase();
 
 		if (!Portal.get(name).isPresent()) {
-			src.sendMessage(Text.of(TextColors.DARK_RED, name, " does not exist"));
-			return CommandResult.empty();
+			throw new CommandException(Text.of(TextColors.RED, name, " does not exist"));
 		}
 		Portal portal = Portal.get(name).get();
 
