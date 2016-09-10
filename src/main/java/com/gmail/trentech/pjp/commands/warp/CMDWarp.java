@@ -37,8 +37,7 @@ public class CMDWarp implements CommandExecutor {
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if (args.hasAny("name")) {
 			if (!(src instanceof Player)) {
-				src.sendMessage(Text.of(TextColors.DARK_RED, "Must be a player"));
-				return CommandResult.empty();
+				throw new CommandException(Text.of(TextColors.RED, "Must be a player"));
 			}
 			AtomicReference<Player> player = new AtomicReference<>((Player) src);
 
@@ -47,20 +46,17 @@ public class CMDWarp implements CommandExecutor {
 			Optional<Warp> optionalWarp = Warp.get(warpName);
 
 			if (!optionalWarp.isPresent()) {
-				src.sendMessage(Text.of(TextColors.DARK_RED, warpName, " does not exist"));
-				return CommandResult.empty();
+				throw new CommandException(Text.of(TextColors.RED, warpName, " does not exist"));
 			}
 			Warp warp = optionalWarp.get();
 
 			if (!player.get().hasPermission("pjp.warps." + warpName)) {
-				player.get().sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to warp here"));
-				return CommandResult.empty();
+				throw new CommandException(Text.of(TextColors.RED, "you do not have permission to warp here"));
 			}
 
 			if (args.hasAny("player")) {
 				if (!src.hasPermission("pjp.cmd.warp.others")) {
-					player.get().sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to warp others"));
-					return CommandResult.empty();
+					throw new CommandException(Text.of(TextColors.RED, "you do not have permission to warp others"));
 				}
 
 				player.set(args.<Player> getOne("player").get());
@@ -82,8 +78,7 @@ public class CMDWarp implements CommandExecutor {
 				Optional<Location<World>> optionalSpawnLocation = warp.getDestination();
 
 				if (!optionalSpawnLocation.isPresent()) {
-					player.get().sendMessage(Text.of(TextColors.DARK_RED, "Destination does not exist or world is not loaded"));
-					return CommandResult.empty();
+					throw new CommandException(Text.of(TextColors.RED, "Destination does not exist or world is not loaded"));
 				}
 				Location<World> spawnLocation = optionalSpawnLocation.get();
 
