@@ -10,6 +10,7 @@ import com.gmail.trentech.pjp.commands.portal.CMDSave;
 import com.gmail.trentech.pjp.commands.warp.CMDWarp;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
+import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Rotation;
 
 public class CommandManager {
@@ -200,9 +201,17 @@ public class CommandManager {
 		    .executor(new CMDObj.Sign())
 		    .build();
 	
+	private CommandSpec cmdHelp = CommandSpec.builder()
+		    .description(Text.of(" I need help with Project Portals"))
+		    .permission("pjp.cmd")
+		    .arguments(GenericArguments.choices(Text.of("command"), Help.all()))
+		    .executor(new CMDHelp())
+		    .build();
+	
 	public CommandSpec cmdPJP = CommandSpec.builder()
 		    .description(Text.of("Lists all Project Worlds commands"))
 		    .permission("pjp.cmd")
+		    .child(cmdHelp, "help", "h")
 		    .executor(new CMDPjp())
 		    .build();
 }
