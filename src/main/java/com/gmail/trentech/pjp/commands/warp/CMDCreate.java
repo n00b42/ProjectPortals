@@ -26,6 +26,7 @@ public class CMDCreate implements CommandExecutor {
 
 	public CMDCreate() {
 		Help help = new Help("wcreate", "create", " Use this command to create a warp that will teleport you to other worlds");
+		help.setPermission("pjp.cmd.warp.create");
 		help.setSyntax(" /warp create <name> [<destination> [-b] [-c <x,y,z>] [-d <direction>]] [-p <price>]\n /w <name> [<destination> [-b] [-c <x,y,z>] [-d <direction>]] [-p <price>]");
 		help.setExample(" /warp create Lobby\n /warp create Lobby MyWorld\n /warp create Lobby MyWorld -c -100,65,254\n /warp create Random MyWorld -c random\n /warp create Lobby MyWorld -c -100,65,254 -d south\n /warp create Lobby MyWorld -d southeast\n /warp Lobby MyWorld -p 50\n /warp Lobby -p 50");
 		help.save();
@@ -34,14 +35,14 @@ public class CMDCreate implements CommandExecutor {
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if (!(src instanceof Player)) {
-			throw new CommandException(Text.of(TextColors.RED, "Must be a player"));
+			throw new CommandException(Text.of(TextColors.RED, "Must be a player"), false);
 		}
 		Player player = (Player) src;
 
 		String name = args.<String> getOne("name").get().toLowerCase();
 
 		if (Warp.get(name).isPresent()) {
-			throw new CommandException(Text.of(TextColors.RED, name, " already exists"));
+			throw new CommandException(Text.of(TextColors.RED, name, " already exists"), false);
 		}
 
 		AtomicReference<String> destination = new AtomicReference<>(player.getWorld().getName());
@@ -62,7 +63,7 @@ public class CMDCreate implements CommandExecutor {
 				Consumer<List<String>> consumer1 = (list) -> {
 					if (!list.contains(destination.get())) {
 						try {
-							throw new CommandException(Text.of(TextColors.RED, destination.get(), " does not exist"));
+							throw new CommandException(Text.of(TextColors.RED, destination.get(), " does not exist"), false);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -71,7 +72,7 @@ public class CMDCreate implements CommandExecutor {
 					Consumer<String> consumer2 = (s) -> {
 						if (destination.get().equalsIgnoreCase(s)) {
 							try {
-								throw new CommandException(Text.of(TextColors.RED, "Destination cannot be the server you are currently on"));
+								throw new CommandException(Text.of(TextColors.RED, "Destination cannot be the server you are currently on"), false);
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
@@ -90,7 +91,7 @@ public class CMDCreate implements CommandExecutor {
 				return CommandResult.success();
 			} else {
 				if (!Sponge.getServer().getWorld(destination.get()).isPresent()) {
-					throw new CommandException(Text.of(TextColors.RED, destination, " is not loaded or does not exist"));
+					throw new CommandException(Text.of(TextColors.RED, destination, " is not loaded or does not exist"), false);
 				}
 				destination.set(destination.get() + ":spawn");
 
@@ -109,7 +110,7 @@ public class CMDCreate implements CommandExecutor {
 							y = Integer.parseInt(coords[1]);
 							z = Integer.parseInt(coords[2]);
 						} catch (Exception e) {
-							throw new CommandException(Text.of(TextColors.RED, "Incorrect coordinates"));
+							throw new CommandException(Text.of(TextColors.RED, coords.toString(), " is not valid"));
 						}
 						destination.set(destination.get().replace("spawn", x + "." + y + "." + z));
 					}

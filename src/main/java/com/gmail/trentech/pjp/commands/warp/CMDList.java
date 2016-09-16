@@ -25,6 +25,7 @@ public class CMDList implements CommandExecutor {
 
 	public CMDList() {
 		Help help = new Help("wlist", "list", " List all warp points");
+		help.setPermission("pjp.cmd.warp.list");
 		help.setSyntax(" /warp list\n /w l");
 		help.save();
 	}

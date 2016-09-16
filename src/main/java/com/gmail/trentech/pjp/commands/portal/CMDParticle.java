@@ -20,6 +20,7 @@ public class CMDParticle implements CommandExecutor {
 
 	public CMDParticle() {
 		Help help = new Help("particle", "particle", " change a portals particle effect. Color currently only available for REDSTONE");
+		help.setPermission("pjp.cmd.portal.particle");
 		help.setSyntax(" /portal particle <name> <type> [color]\n /p p <name> <type> [color]");
 		help.setExample(" /portal particle MyPortal CRIT\n /portal particle MyPortal REDSTONE BLUE");
 		help.save();
@@ -30,7 +31,7 @@ public class CMDParticle implements CommandExecutor {
 		String name = args.<String> getOne("name").get().toLowerCase();
 
 		if (!Portal.get(name).isPresent()) {
-			throw new CommandException(Text.of(TextColors.RED, name, " does not exist"));
+			throw new CommandException(Text.of(TextColors.RED, name, " does not exist"), false);
 		}
 		Portal portal = Portal.get(name).get();
 

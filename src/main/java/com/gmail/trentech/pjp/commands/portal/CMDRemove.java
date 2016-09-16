@@ -17,6 +17,7 @@ public class CMDRemove implements CommandExecutor {
 
 	public CMDRemove() {
 		Help help = new Help("premove", "remove", " Remove an existing portal");
+		help.setPermission("pjp.cmd.portal.remove");
 		help.setSyntax(" /portal remove <name>\n /p r <name>");
 		help.setExample(" /portal remove MyPortal");
 		help.save();
@@ -29,7 +30,7 @@ public class CMDRemove implements CommandExecutor {
 		Optional<Portal> optionalPortal = Portal.get(name);
 
 		if (!optionalPortal.isPresent()) {
-			throw new CommandException(Text.of(TextColors.RED, name, " does not exist"));
+			throw new CommandException(Text.of(TextColors.RED, name, " does not exist"), false);
 		}
 		Portal portal = optionalPortal.get();
 		portal.remove();

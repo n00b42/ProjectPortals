@@ -35,6 +35,7 @@ public class CMDCreate implements CommandExecutor {
 
 	public CMDCreate() {
 		Help help = new Help("pcreate", "create", " Use this command to create a portal that will teleport you to other worlds");
+		help.setPermission("pjp.cmd.portal.create");
 		help.setSyntax(" /portal create <name> <destination> [-b] [-c <x,y,z>] [-d <direction>] [-e <particle[:color]>] [-p <price>]\n /p <name> <destination> [-b] [-c <x,y,z>] [-d <direction>] [-e <particle[:color]>] [-p <price>]");
 		help.setExample(" /portal create MyPortal MyWorld\n /portal create MyPortal MyWorld -c -100,65,254\n /portal create MyPortal MyWorld -c random\n /portal create MyPortal MyWorld -c -100,65,254 -d south\n /portal create MyPortal MyWorld -d southeast\n /portal create MyPortal MyWorld -p 50\n /portal create MyPortal MyWorld -e REDSTONE:BLUE");
 		help.save();
@@ -43,14 +44,14 @@ public class CMDCreate implements CommandExecutor {
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if (!(src instanceof Player)) {
-			throw new CommandException(Text.of(TextColors.RED, "Must be a player"));
+			throw new CommandException(Text.of(TextColors.RED, "Must be a player"), false);
 		}
 		Player player = (Player) src;
 
 		String name = args.<String> getOne("name").get().toLowerCase();
 
 		if (Portal.get(name).isPresent()) {
-			throw new CommandException(Text.of(TextColors.RED, name, " already exists"));
+			throw new CommandException(Text.of(TextColors.RED, name, " already exists"), false);
 		}
 
 		AtomicReference<String> destination = new AtomicReference<>(args.<String> getOne("destination").get());
@@ -80,7 +81,7 @@ public class CMDCreate implements CommandExecutor {
 			Consumer<List<String>> consumer1 = (list) -> {
 				if (!list.contains(destination.get())) {
 					try {
-						throw new CommandException(Text.of(TextColors.RED, destination.get(), " does not exist"));
+						throw new CommandException(Text.of(TextColors.RED, destination.get(), " does not exist"), false);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -89,7 +90,7 @@ public class CMDCreate implements CommandExecutor {
 				Consumer<String> consumer2 = (s) -> {
 					if (destination.get().equalsIgnoreCase(s)) {
 						try {
-							throw new CommandException(Text.of(TextColors.RED, "Destination cannot be the server you are currently on"));
+							throw new CommandException(Text.of(TextColors.RED, "Destination cannot be the server you are currently on"), false);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -112,7 +113,7 @@ public class CMDCreate implements CommandExecutor {
 			SpongyCord.API.getServerList(consumer1, player);
 		} else {
 			if (!Sponge.getServer().getWorld(destination.get()).isPresent()) {
-				throw new CommandException(Text.of(TextColors.RED, destination.get(), " is not loaded or does not exist"));
+				throw new CommandException(Text.of(TextColors.RED, destination.get(), " is not loaded or does not exist"), false);
 			}
 
 			destination.set(destination.get() + ":spawn");
@@ -132,7 +133,7 @@ public class CMDCreate implements CommandExecutor {
 						y = Integer.parseInt(coords[1]);
 						z = Integer.parseInt(coords[2]);
 					} catch (Exception e) {
-						throw new CommandException(Text.of(TextColors.RED, "Incorrect coordinates"));
+						throw new CommandException(Text.of(TextColors.RED, coords.toString(), " is not valid"), false);
 					}
 					destination.set(destination.get().replace("spawn", x + "." + y + "." + z));
 				}

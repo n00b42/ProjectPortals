@@ -25,6 +25,7 @@ public class CMDList implements CommandExecutor {
 
 	public CMDList() {
 		Help help = new Help("plist", "list", " List all portals");
+		help.setPermission("pjp.cmd.portal.list");
 		help.setSyntax(" /portal list\n /p l");
 		help.save();
 	}

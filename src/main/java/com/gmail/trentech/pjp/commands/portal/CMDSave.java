@@ -21,6 +21,7 @@ public class CMDSave implements CommandExecutor {
 
 	public CMDSave() {
 		Help help = new Help("save", "save", " Saves generated portal");
+		help.setPermission("pjp.cmd.portal.save");
 		help.setSyntax(" /portal save\n /p s");
 		help.save();
 	}
@@ -28,12 +29,12 @@ public class CMDSave implements CommandExecutor {
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if (!(src instanceof Player)) {
-			throw new CommandException(Text.of(TextColors.RED, "Must be a player"));
+			throw new CommandException(Text.of(TextColors.RED, "Must be a player"), false);
 		}
 		Player player = (Player) src;
 
 		if (!LegacyListener.builders.containsKey(player.getUniqueId())) {
-			throw new CommandException(Text.of(TextColors.DARK_GREEN, "Not in build mode"));
+			throw new CommandException(Text.of(TextColors.DARK_GREEN, "Not in build mode"), false);
 		}
 		LegacyBuilder builder = LegacyListener.builders.get(player.getUniqueId());
 

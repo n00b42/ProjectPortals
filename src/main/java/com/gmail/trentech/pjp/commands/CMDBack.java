@@ -29,6 +29,7 @@ public class CMDBack implements CommandExecutor {
 
 	public CMDBack() {
 		Help help = new Help("back", "back", " Use this command to teleport you to the location you previously came from");
+		help.setPermission("pjp.cmd.back");
 		help.setSyntax(" /back");
 		help.save();
 	}

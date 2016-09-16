@@ -23,6 +23,7 @@ public class CMDRemove implements CommandExecutor {
 
 	public CMDRemove() {
 		Help help = new Help("hremove", "remove", "Remove an existing home");
+		help.setPermission("pjp.cmd.home.remove");
 		help.setSyntax(" /home remove <name>\n /h r <name>");
 		help.setExample(" /home remove OldHome");
 		help.save();
@@ -31,7 +32,7 @@ public class CMDRemove implements CommandExecutor {
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if (!(src instanceof Player)) {
-			throw new CommandException(Text.of(TextColors.RED, "Must be a player"));
+			throw new CommandException(Text.of(TextColors.RED, "Must be a player"), false);
 		}
 		Player player = (Player) src;
 
@@ -46,14 +47,14 @@ public class CMDRemove implements CommandExecutor {
 		}
 
 		if (!homeList.containsKey(homeName)) {
-			throw new CommandException(Text.of(TextColors.RED, homeName, " does not exist"));
+			throw new CommandException(Text.of(TextColors.RED, homeName, " does not exist"), false);
 		}
 
 		homeList.remove(homeName);
 
 		DataTransactionResult result = player.offer(new HomeData(homeList));
 		if (!result.isSuccessful()) {
-			System.out.println("FAILED");
+			throw new CommandException(Text.of(TextColors.RED, "Could not remove ", homeName), false);
 		} else {
 			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Home ", homeName, " removed"));
 		}

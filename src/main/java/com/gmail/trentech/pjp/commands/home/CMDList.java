@@ -30,6 +30,7 @@ public class CMDList implements CommandExecutor {
 
 	public CMDList() {
 		Help help = new Help("hlist", "list", " List all homes");
+		help.setPermission("pjp.cmd.home.list");
 		help.setSyntax(" /home list\n /h l");
 		help.save();
 	}
@@ -37,7 +38,7 @@ public class CMDList implements CommandExecutor {
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if (!(src instanceof Player)) {
-			throw new CommandException(Text.of(TextColors.RED, "Must be a player"));
+			throw new CommandException(Text.of(TextColors.RED, "Must be a player"), false);
 		}
 		Player player = (Player) src;
 

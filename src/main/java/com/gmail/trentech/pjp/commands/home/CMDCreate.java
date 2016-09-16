@@ -27,6 +27,7 @@ public class CMDCreate implements CommandExecutor {
 
 	public CMDCreate() {
 		Help help = new Help("hcreate", "create", " Create a new home");
+		help.setPermission("pjp.cmd.home.create");
 		help.setSyntax(" /home create <name>\n /h c <name>");
 		help.setExample(" /home create MyHome");
 		help.save();
@@ -35,7 +36,7 @@ public class CMDCreate implements CommandExecutor {
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if (!(src instanceof Player)) {
-			throw new CommandException(Text.of(TextColors.RED, "Must be a player"));
+			throw new CommandException(Text.of(TextColors.RED, "Must be a player"), false);
 		}
 		Player player = (Player) src;
 
@@ -63,13 +64,13 @@ public class CMDCreate implements CommandExecutor {
 
 		if (!player.hasPermission("pjp.homes.unlimited")) {
 			if (amount >= (defaultAmount + extra)) {
-				throw new CommandException(Text.of(TextColors.RED, "You have reached the maximum number of homes you can have"));
+				throw new CommandException(Text.of(TextColors.RED, "You have reached the maximum number of homes you can have"), false);
 			}
 			amount++;
 		}
 
 		if (homeList.containsKey(homeName)) {
-			throw new CommandException(Text.of(TextColors.RED, homeName, " already exists."));
+			throw new CommandException(Text.of(TextColors.RED, homeName, " already exists."), false);
 		}
 
 		Location<World> location = player.getLocation();
@@ -80,7 +81,7 @@ public class CMDCreate implements CommandExecutor {
 
 		DataTransactionResult result = player.offer(new HomeData(homeList));
 		if (!result.isSuccessful()) {
-			System.out.println("FAILED");
+			throw new CommandException(Text.of(TextColors.RED, "Could not create ", homeName), false);
 		} else {
 			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Home ", homeName, " create"));
 		}

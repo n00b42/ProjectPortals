@@ -15,6 +15,7 @@ public class CMDPrice implements CommandExecutor {
 
 	public CMDPrice() {
 		Help help = new Help("pprice", "price", " Charge players for using portals. 0 to disable");
+		help.setPermission("pjp.cmd.portal.price");
 		help.setSyntax(" /portal price <name> <price>\n /p pr <name> <price>");
 		help.setExample(" /portal price MyPortal 50\n /portal price MyPortal 0");
 		help.save();
@@ -25,7 +26,7 @@ public class CMDPrice implements CommandExecutor {
 		String name = args.<String> getOne("name").get().toLowerCase();
 
 		if (!Portal.get(name).isPresent()) {
-			throw new CommandException(Text.of(TextColors.RED, name, " does not exist"));
+			throw new CommandException(Text.of(TextColors.RED, name, " does not exist"), false);
 		}
 		Portal portal = Portal.get(name).get();
 

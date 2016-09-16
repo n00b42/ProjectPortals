@@ -17,6 +17,7 @@ public class CMDRemove implements CommandExecutor {
 
 	public CMDRemove() {
 		Help help = new Help("wremove", "remove", " Remove an existing  warp point");
+		help.setPermission("pjp.cmd.warp.remove");
 		help.setSyntax(" /warp remove <name>\n /w r <name>");
 		help.setExample(" /warp remove OldSpawn");
 		help.save();
@@ -29,7 +30,7 @@ public class CMDRemove implements CommandExecutor {
 		Optional<Warp> optionalWarp = Warp.get(name);
 
 		if (!optionalWarp.isPresent()) {
-			throw new CommandException(Text.of(TextColors.RED, name, " does not exist"));
+			throw new CommandException(Text.of(TextColors.RED, name, " does not exist"), false);
 		}
 		Warp warp = optionalWarp.get();
 		warp.remove();

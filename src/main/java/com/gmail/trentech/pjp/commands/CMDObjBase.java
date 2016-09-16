@@ -29,7 +29,7 @@ public abstract class CMDObjBase implements CommandExecutor {
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if (!(src instanceof Player)) {
-			throw new CommandException(Text.of(TextColors.RED, "Must be a player"));
+			throw new CommandException(Text.of(TextColors.RED, "Must be a player"), false);
 		}
 		Player player = (Player) src;
 
@@ -48,7 +48,7 @@ public abstract class CMDObjBase implements CommandExecutor {
 			Consumer<List<String>> consumer1 = (list) -> {
 				if (!list.contains(destination.get())) {
 					try {
-						throw new CommandException(Text.of(TextColors.RED, destination.get(), " does not exist"));
+						throw new CommandException(Text.of(TextColors.RED, destination.get(), " does not exist"), false);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -57,7 +57,7 @@ public abstract class CMDObjBase implements CommandExecutor {
 				Consumer<String> consumer2 = (s) -> {
 					if (destination.get().equalsIgnoreCase(s)) {
 						try {
-							throw new CommandException(Text.of(TextColors.RED, "Destination cannot be the server you are currently on"));
+							throw new CommandException(Text.of(TextColors.RED, "Destination cannot be the server you are currently on"), false);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -74,7 +74,7 @@ public abstract class CMDObjBase implements CommandExecutor {
 			SpongyCord.API.getServerList(consumer1, player);
 		} else {
 			if (!Sponge.getServer().getWorld(destination.get()).isPresent()) {
-				throw new CommandException(Text.of(TextColors.RED, destination, " is not loaded or does not exist"));
+				throw new CommandException(Text.of(TextColors.RED, destination, " is not loaded or does not exist"), false);
 			}
 
 			destination.set(destination.get() + ":spawn");
@@ -94,7 +94,7 @@ public abstract class CMDObjBase implements CommandExecutor {
 						y = Integer.parseInt(coords[1]);
 						z = Integer.parseInt(coords[2]);
 					} catch (Exception e) {
-						throw new CommandException(Text.of(TextColors.RED, "Incorrect coordinates"));
+						throw new CommandException(Text.of(TextColors.RED, coords.toString(), " is not valid"));
 					}
 					destination.set(destination.get().replace("spawn", x + "." + y + "." + z));
 				}
