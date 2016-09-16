@@ -1,4 +1,4 @@
-package com.gmail.trentech.pjp.commands;
+package com.gmail.trentech.pjp.commands.portal;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -14,16 +14,19 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-import com.gmail.trentech.pjp.utils.Rotation;
+import com.gmail.trentech.pjp.data.object.Portal;
+import com.gmail.trentech.pjp.utils.Help;
 
 import flavor.pie.spongycord.SpongyCord;
 
-public abstract class CMDObjBase implements CommandExecutor {
+public class CMDDestination implements CommandExecutor {
 
-	String name;
-
-	public CMDObjBase(String name) {
-		this.name = name;
+	public CMDDestination() {
+		Help help = new Help("destination", "destination", " change a portals destination");
+		help.setPermission("pjp.cmd.portal.destination");
+		help.setSyntax(" /portal destination <name> <destination> [x,y,z]\n /p d <name> <destination> [x,y,z]");
+		help.setExample(" /portal destination MyPortal DIM1\n /portal destination Skyland 100,65,400");
+		help.save();
 	}
 
 	@Override
@@ -32,19 +35,17 @@ public abstract class CMDObjBase implements CommandExecutor {
 			throw new CommandException(Text.of(TextColors.RED, "Must be a player"), false);
 		}
 		Player player = (Player) src;
+		
+		String name = args.<String> getOne("name").get().toLowerCase();
+
+		if (!Portal.get(name).isPresent()) {
+			throw new CommandException(Text.of(TextColors.RED, name, " does not exist"), false);
+		}
+		Portal portal = Portal.get(name).get();
 
 		AtomicReference<String> destination = new AtomicReference<>(args.<String> getOne("destination").get());
 
-		AtomicReference<Double> price = new AtomicReference<>(0.0);
-
-		if (args.hasAny("price")) {
-			price.set(args.<Double> getOne("price").get());
-		}
-
-		AtomicReference<Rotation> rotation = new AtomicReference<>(Rotation.EAST);
-		final boolean isBungee = args.hasAny("b");
-
-		if (isBungee) {
+		if (portal.isBungee()) {
 			Consumer<List<String>> consumer1 = (list) -> {
 				if (!list.contains(destination.get())) {
 					try {
@@ -62,10 +63,6 @@ public abstract class CMDObjBase implements CommandExecutor {
 							e.printStackTrace();
 						}
 					}
-
-					init(player, destination.get(), rotation.get(), price.get(), isBungee);
-
-					player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place " + name + " to create " + name + " portal"));
 				};
 
 				SpongyCord.API.getServerName(consumer2, player);
@@ -74,7 +71,7 @@ public abstract class CMDObjBase implements CommandExecutor {
 			SpongyCord.API.getServerList(consumer1, player);
 		} else {
 			if (!Sponge.getServer().getWorld(destination.get()).isPresent()) {
-				throw new CommandException(Text.of(TextColors.RED, destination, " is not loaded or does not exist"), false);
+				throw new CommandException(Text.of(TextColors.RED, destination.get(), " is not loaded or does not exist"), false);
 			}
 
 			destination.set(destination.get() + ":spawn");
@@ -99,18 +96,12 @@ public abstract class CMDObjBase implements CommandExecutor {
 					destination.set(destination.get().replace("spawn", x + "." + y + "." + z));
 				}
 			}
-
-			if (args.hasAny("direction")) {
-				rotation.set(args.<Rotation> getOne("direction").get());
-			}
-
-			init(player, destination.get(), rotation.get(), price.get(), isBungee);
-
-			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place " + name + " to create " + name + " portal"));
 		}
+		
+		portal.setDestination(destination.get());
+		portal.update();
 
 		return CommandResult.success();
 	}
 
-	protected abstract void init(Player player, String destination, Rotation rotation, Double price, boolean isBungee);
 }

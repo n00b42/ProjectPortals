@@ -88,11 +88,6 @@ public class HomeData extends AbstractMappedData<String, Home, HomeData, Immutab
 	}
 
 	@Override
-	public int compareTo(HomeData data) {
-		return this.compareTo(data);
-	}
-
-	@Override
 	public int getContentVersion() {
 		return 1;
 	}

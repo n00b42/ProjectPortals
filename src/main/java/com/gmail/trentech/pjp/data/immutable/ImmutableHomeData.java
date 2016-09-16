@@ -23,11 +23,6 @@ public class ImmutableHomeData extends AbstractImmutableMappedData<String, Home,
 	}
 
 	@Override
-	public int compareTo(ImmutableHomeData data) {
-		return this.compareTo(data);
-	}
-
-	@Override
 	public int getContentVersion() {
 		return 1;
 	}

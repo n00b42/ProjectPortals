@@ -55,11 +55,6 @@ public class SignPortalData extends AbstractSingleData<Sign, SignPortalData, Imm
 	}
 
 	@Override
-	public int compareTo(SignPortalData value) {
-		return value.compareTo(this);
-	}
-
-	@Override
 	protected Value<Sign> getValueGetter() {
 		return Sponge.getRegistry().getValueFactory().createValue(SIGN, getValue(), getValue());
 	}

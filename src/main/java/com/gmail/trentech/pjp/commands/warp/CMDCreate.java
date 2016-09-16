@@ -110,7 +110,7 @@ public class CMDCreate implements CommandExecutor {
 							y = Integer.parseInt(coords[1]);
 							z = Integer.parseInt(coords[2]);
 						} catch (Exception e) {
-							throw new CommandException(Text.of(TextColors.RED, coords.toString(), " is not valid"));
+							throw new CommandException(Text.of(TextColors.RED, coords.toString(), " is not valid"), true);
 						}
 						destination.set(destination.get().replace("spawn", x + "." + y + "." + z));
 					}

@@ -33,11 +33,6 @@ public class ImmutableSignPortalData extends AbstractImmutableSingleData<Sign, I
 	}
 
 	@Override
-	public int compareTo(ImmutableSignPortalData arg0) {
-		return 0;
-	}
-
-	@Override
 	public int getContentVersion() {
 		return 1;
 	}

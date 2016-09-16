@@ -1,6 +1,8 @@
 package com.gmail.trentech.pjp.commands;
 
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
@@ -17,6 +19,8 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import com.gmail.trentech.pjp.data.object.Door;
+import com.gmail.trentech.pjp.data.object.Portal;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.events.TeleportEvent.Local;
 import com.gmail.trentech.pjp.utils.Help;
@@ -45,6 +49,19 @@ public class CMDBack implements CommandExecutor {
 			throw new CommandException(Text.of(TextColors.RED, "No position to teleport to"));
 		}
 		Location<World> spawnLocation = players.get(player);
+		
+		while(Portal.get(spawnLocation).isPresent() || Door.get(spawnLocation).isPresent()) {
+			ThreadLocalRandom random = ThreadLocalRandom.current();
+			
+			int x = (random.nextInt(5 * 2) - 5) + spawnLocation.getBlockX();
+			int z = (random.nextInt(5 * 2) - 5) + spawnLocation.getBlockZ();
+
+			Optional<Location<World>> optionalLocation = Sponge.getGame().getTeleportHelper().getSafeLocation(spawnLocation.getExtent().getLocation(x, spawnLocation.getBlockY(), z));
+			
+			if(optionalLocation.isPresent()) {
+				spawnLocation = optionalLocation.get();
+			}
+		}
 
 		Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, 0, Cause.of(NamedCause.source("back")));
 
