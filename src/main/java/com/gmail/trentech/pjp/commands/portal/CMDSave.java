@@ -45,7 +45,7 @@ public class CMDSave implements CommandExecutor {
 			return CommandResult.success();
 		}
 
-		if (builder.build()) {
+		if (builder.build(player)) {
 			Sponge.getScheduler().createTaskBuilder().name("PJP" + builder.getName()).delayTicks(20).execute(t -> {
 				LegacyListener.builders.remove(player.getUniqueId());
 			}).submit(Main.getPlugin());

@@ -30,12 +30,12 @@ public class Teleport {
 
 			Location<World> spawnLocation = world.getSpawnLocation();
 
-			int radius = ConfigManager.get().getConfig().getNode("options", "random_spawn_radius").getInt();
+			int radius = ConfigManager.get().getConfig().getNode("options", "random_spawn_radius").getInt() / 2;
 			
 			for(int i = 0;i < 49; i++) {
-				int x = (random.nextInt(radius * 2) - radius) + spawnLocation.getBlockX();
+				int x = random.nextInt((radius * 2) - radius) + spawnLocation.getBlockX();
 				int y = random.nextInt(59, 200 + 1);
-				int z = (random.nextInt(radius * 2) - radius) + spawnLocation.getBlockZ();		
+				int z = random.nextInt((radius * 2) - radius) + spawnLocation.getBlockZ();		
 
 				Optional<Location<World>> optionalLocation = teleportHelper.getSafeLocation(world.getLocation(x, y, z));
 

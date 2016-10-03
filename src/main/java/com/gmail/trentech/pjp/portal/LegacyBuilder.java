@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.world.BlockChangeFlag;
@@ -87,20 +88,23 @@ public class LegacyBuilder {
 		return this;
 	}
 
-	public boolean build() {
-		if (regionFrame.isEmpty() || regionFill.isEmpty()) {
+	public boolean build(Player player) {
+		if (regionFill.isEmpty()) {
 			return false;
 		}
 
-		if (!Sponge.getEventManager().post(new ConstructPortalEvent(regionFrame, regionFill, Cause.of(NamedCause.source(this))))) {
+		if (!Sponge.getEventManager().post(new ConstructPortalEvent(regionFrame, regionFill, Cause.source(Main.getPlugin()).named(NamedCause.simulated(player)).build()))) {
 			BlockState block = BlockTypes.AIR.getDefaultState();
 
 			Particle particle = Particles.getDefaultEffect("creation");
 			Optional<ParticleColor> color = Particles.getDefaultColor("creation", particle.isColorable());
 
-			for (Location<World> location : regionFill) {
+			for (Location<World> location : regionFill) {				
+				if(!location.getExtent().setBlock(location.getBlockX(), location.getBlockY(), location.getBlockZ(), block, BlockChangeFlag.NONE, Cause.source(Main.getPlugin()).named(NamedCause.simulated(player)).build())) {
+					return false;
+				}
+				
 				particle.spawnParticle(location, false, color);
-				location.getExtent().setBlock(location.getBlockX(), location.getBlockY(), location.getBlockZ(), block, BlockChangeFlag.NONE, Cause.of(NamedCause.source(Main.getPlugin())));
 			}
 
 			new Portal(getName(), destination, rotation, regionFrame, regionFill, this.particle, this.color, price, bungee).create();

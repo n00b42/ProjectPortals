@@ -21,6 +21,7 @@ import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.event.command.TabCompleteEvent;
 import org.spongepowered.api.event.filter.cause.First;
+import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
@@ -89,7 +90,7 @@ public class SignListener {
 	}
 	
 	@Listener
-	public void onChangeSignEvent(ChangeSignEvent event, @First Player player) {
+	public void onChangeSignEvent(ChangeSignEvent event, @Root Player player) {
 		timings.onChangeSignEvent().startTiming();
 
 		try {
@@ -118,7 +119,7 @@ public class SignListener {
 	}
 
 	@Listener
-	public void onInteractBlockEventSecondary(InteractBlockEvent.Secondary event, @First Player player) {
+	public void onInteractBlockEventSecondary(InteractBlockEvent.Secondary event, @Root Player player) {
 		timings.onChangeSignEvent().startTiming();
 
 		try {
@@ -188,7 +189,7 @@ public class SignListener {
 	}
 
 	@Listener
-	public void onChangeBlockEventBreak(ChangeBlockEvent.Break event, @First Player player) {
+	public void onChangeBlockEventBreak(ChangeBlockEvent.Break event, @Root Player player) {
 		timings.onChangeBlockEventBreak().startTiming();
 
 		try {

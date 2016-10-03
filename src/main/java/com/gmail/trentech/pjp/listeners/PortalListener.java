@@ -26,6 +26,7 @@ import org.spongepowered.api.event.command.TabCompleteEvent;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.filter.cause.First;
+import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.event.filter.type.Exclude;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
@@ -174,7 +175,7 @@ public class PortalListener {
 	
 	@Listener
 	@Exclude(value = { ChangeBlockEvent.Place.class })
-	public void onInteractBlockEventSecondary(InteractBlockEvent.Secondary event, @First Player player) {
+	public void onInteractBlockEventSecondary(InteractBlockEvent.Secondary event, @Root Player player) {
 		timings.onInteractBlockEventSecondary().startTiming();
 
 		try {
@@ -215,7 +216,7 @@ public class PortalListener {
 	}
 
 	@Listener
-	public void onConstructPortalEvent(ConstructPortalEvent event, @First Player player) {
+	public void onConstructPortalEvent(ConstructPortalEvent event, @Root Player player) {
 		timings.onConstructPortalEvent().startTiming();
 
 		try {
@@ -405,7 +406,7 @@ public class PortalListener {
 	}
 
 	@Listener
-	public void onChangeBlockEventPlace(ChangeBlockEvent.Place event, @First Player player) {
+	public void onChangeBlockEventPlace(ChangeBlockEvent.Place event, @Root Player player) {
 		timings.onChangeBlockEventPlace().startTiming();
 
 		try {
@@ -425,7 +426,7 @@ public class PortalListener {
 	}
 
 	@Listener
-	public void onChangeBlockEventBreak(ChangeBlockEvent.Break event, @First Player player) {
+	public void onChangeBlockEventBreak(ChangeBlockEvent.Break event, @Root Player player) {
 		timings.onChangeBlockEventBreak().startTiming();
 
 		try {

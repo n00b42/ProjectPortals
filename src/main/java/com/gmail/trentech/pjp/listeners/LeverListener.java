@@ -19,6 +19,7 @@ import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.event.command.TabCompleteEvent;
 import org.spongepowered.api.event.filter.cause.First;
+import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
@@ -85,7 +86,7 @@ public class LeverListener {
 	}
 	
 	@Listener
-	public void onChangeBlockEventModify(ChangeBlockEvent.Modify event, @First Player player) {
+	public void onChangeBlockEventModify(ChangeBlockEvent.Modify event, @Root Player player) {
 		timings.onChangeBlockEventModify().startTiming();
 
 		try {
@@ -159,7 +160,7 @@ public class LeverListener {
 	}
 
 	@Listener
-	public void onChangeBlockEventBreak(ChangeBlockEvent.Break event, @First Player player) {
+	public void onChangeBlockEventBreak(ChangeBlockEvent.Break event, @Root Player player) {
 		timings.onChangeBlockEventBreak().startTiming();
 
 		try {
@@ -187,7 +188,7 @@ public class LeverListener {
 	}
 
 	@Listener
-	public void onChangeBlockEventPlace(ChangeBlockEvent.Place event, @First Player player) {
+	public void onChangeBlockEventPlace(ChangeBlockEvent.Place event, @Root Player player) {
 		timings.onChangeBlockEventPlace().startTiming();
 
 		try {
