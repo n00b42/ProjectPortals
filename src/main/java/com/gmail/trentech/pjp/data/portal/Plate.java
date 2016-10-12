@@ -1,4 +1,4 @@
-package com.gmail.trentech.pjp.data.object;
+package com.gmail.trentech.pjp.data.portal;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,22 +10,18 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.utils.Rotation;
+import com.gmail.trentech.pjp.rotation.Rotation;
 import com.gmail.trentech.pjp.utils.Serializer;
 
-public class Door extends PortalBase {
+public class Plate extends PortalBase {
 
-	private static ConcurrentHashMap<String, Door> cache = new ConcurrentHashMap<>();
+	private static ConcurrentHashMap<String, Plate> cache = new ConcurrentHashMap<>();
 
-	public Door(String destination, Rotation rotation, double price, boolean bungee) {
-		super(destination, rotation, price, bungee);
+	public Plate(Optional<String> server, Optional<World> world, Optional<Location<World>> location, Rotation rotation, double price) {
+		super(server, world, location, rotation, price);
 	}
 
-	public Door(String name, String destination, Rotation rotation, double price, boolean bungee) {
-		super(name, destination, rotation, price, bungee);
-	}
-
-	public static Optional<Door> get(Location<World> location) {
+	public static Optional<Plate> get(Location<World> location) {
 		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 
 		if (cache.containsKey(name)) {
@@ -35,11 +31,13 @@ public class Door extends PortalBase {
 		return Optional.empty();
 	}
 
-	public void create() {
+	public void create(Location<World> location) {
+		name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
+		
 		try {
 			Connection connection = getDataSource().getConnection();
 
-			PreparedStatement statement = connection.prepareStatement("INSERT into Doors (Name, Door) VALUES (?, ?)");
+			PreparedStatement statement = connection.prepareStatement("INSERT into Plates (Name, Plate) VALUES (?, ?)");
 
 			statement.setString(1, name);
 			statement.setString(2, Serializer.serialize(this));
@@ -58,7 +56,7 @@ public class Door extends PortalBase {
 		try {
 			Connection connection = getDataSource().getConnection();
 
-			PreparedStatement statement = connection.prepareStatement("UPDATE Doors SET Door = ? WHERE Name = ?");
+			PreparedStatement statement = connection.prepareStatement("UPDATE Plates SET Plate = ? WHERE Name = ?");
 
 			statement.setString(1, Serializer.serialize(this));
 			statement.setString(2, name);
@@ -77,7 +75,7 @@ public class Door extends PortalBase {
 		try {
 			Connection connection = getDataSource().getConnection();
 
-			PreparedStatement statement = connection.prepareStatement("DELETE from Doors WHERE Name = ?");
+			PreparedStatement statement = connection.prepareStatement("DELETE from Plates WHERE Name = ?");
 
 			statement.setString(1, name);
 			statement.executeUpdate();
@@ -94,17 +92,16 @@ public class Door extends PortalBase {
 		try {
 			Connection connection = getDataSource().getConnection();
 
-			PreparedStatement statement = connection.prepareStatement("SELECT * FROM Doors");
+			PreparedStatement statement = connection.prepareStatement("SELECT * FROM Plates");
 
 			ResultSet result = statement.executeQuery();
 
 			while (result.next()) {
 				String name = result.getString("Name");
 
-				Door door = Serializer.deserializeDoor(result.getString("Door"));
-				door.setName(name);
-
-				cache.put(name, door);
+				Plate plate = Serializer.deserializePlate(result.getString("Plate"));
+				plate.setName(name);
+				cache.put(name, plate);
 			}
 
 			connection.close();

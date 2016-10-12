@@ -1,6 +1,10 @@
 package com.gmail.trentech.pjp.commands;
 
+import java.util.Optional;
+
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.data.mutable.SignPortalData;
 import com.gmail.trentech.pjp.listeners.ButtonListener;
@@ -8,8 +12,8 @@ import com.gmail.trentech.pjp.listeners.DoorListener;
 import com.gmail.trentech.pjp.listeners.LeverListener;
 import com.gmail.trentech.pjp.listeners.PlateListener;
 import com.gmail.trentech.pjp.listeners.SignListener;
+import com.gmail.trentech.pjp.rotation.Rotation;
 import com.gmail.trentech.pjp.utils.Help;
-import com.gmail.trentech.pjp.utils.Rotation;
 
 public class CMDObj {
 
@@ -20,14 +24,14 @@ public class CMDObj {
 
 			Help help = new Help("button", "button", " Use this command to create a button that will teleport you to other worlds");
 			help.setPermission("pjp.cmd.button");
-			help.setSyntax(" /button <destination>  [-b] [-c <x,y,z>] [-d <direction>] [-p <price>]\n /b <destination> [-b] [-c <x,y,z>] [-d <direction>] [-p <price>]");
+			help.setSyntax(" /button <destination>  [-b] [-c <x,y,z>] [-d <rotation>] [-p <price>]\n /b <destination> [-b] [-c <x,y,z>] [-d <rotation>] [-p <price>]");
 			help.setExample(" /button MyWorld\n /button MyWorld -c -100,65,254\n /button MyWorld -c random\n /button MyWorld -c -100,65,254 -d south\n /button MyWorld -d southeast\n /button MyWorld -p 50");
 			help.save();
 		}
 
 		@Override
-		protected void init(Player player, String destination, Rotation rotation, Double price, boolean isBungee) {
-			ButtonListener.builders.put(player.getUniqueId(), new com.gmail.trentech.pjp.data.object.Button(destination, rotation, price, isBungee));
+		protected void init(Player player, Optional<String> server, Optional<World> world, Optional<Location<World>> location, Rotation rotation, double price) {
+			ButtonListener.builders.put(player.getUniqueId(), new com.gmail.trentech.pjp.data.portal.Button(server, world, location, rotation, price));
 		}
 	}
 
@@ -38,14 +42,14 @@ public class CMDObj {
 
 			Help help = new Help("door", "door", " Use this command to create a door that will teleport you to other worlds");
 			help.setPermission("pjp.cmd.door");
-			help.setSyntax(" /door <destination> [-b] [-c <x,y,z>] [-d <direction>] [-p <price>]\n /d <destination> [-b] [-c <x,y,z>] [-d <direction>] [-p <price>]");
+			help.setSyntax(" /door <destination> [-b] [-c <x,y,z>] [-d <rotation>] [-p <price>]\n /d <destination> [-b] [-c <x,y,z>] [-d <rotation>] [-p <price>]");
 			help.setExample(" /door MyWorld\n /door MyWorld -c -100,65,254\n /door MyWorld -c random\n /door MyWorld -c -100,65,254 -d south\n /door MyWorld -d southeast\n /door MyWorld -p 50");
 			help.save();
 		}
 
 		@Override
-		protected void init(Player player, String destination, Rotation rotation, Double price, boolean isBungee) {
-			DoorListener.builders.put(player.getUniqueId(), new com.gmail.trentech.pjp.data.object.Door(destination, rotation, price, isBungee));
+		protected void init(Player player, Optional<String> server, Optional<World> world, Optional<Location<World>> location, Rotation rotation, double price) {
+			DoorListener.builders.put(player.getUniqueId(), new com.gmail.trentech.pjp.data.portal.Door(server, world, location, rotation, price));
 		}
 	}
 
@@ -56,14 +60,14 @@ public class CMDObj {
 
 			Help help = new Help("lever", "lever", " Use this command to create a lever that will teleport you to other worlds");
 			help.setPermission("pjp.cmd.lever");
-			help.setSyntax(" /lever <destination> [-b] [-c <x,y,z>] [-d <direction>] [-p <price>]\n /l <destination> [-b] [-c <x,y,z>] [-d <direction>] [-p <price>]");
+			help.setSyntax(" /lever <destination> [-b] [-c <x,y,z>] [-d <rotation>] [-p <price>]\n /l <destination> [-b] [-c <x,y,z>] [-d <rotation>] [-p <price>]");
 			help.setExample(" /lever MyWorld\n /lever MyWorld -c -100,65,254\n /lever MyWorld -c random\n /lever MyWorld -c -100,65,254 -d south\n /lever MyWorld -d southeast\n /lever MyWorld -p 50");
 			help.save();
 		}
 
 		@Override
-		protected void init(Player player, String destination, Rotation rotation, Double price, boolean isBungee) {
-			LeverListener.builders.put(player.getUniqueId(), new com.gmail.trentech.pjp.data.object.Lever(destination, rotation, price, isBungee));
+		protected void init(Player player, Optional<String> server, Optional<World> world, Optional<Location<World>> location, Rotation rotation, double price) {
+			LeverListener.builders.put(player.getUniqueId(), new com.gmail.trentech.pjp.data.portal.Lever(server, world, location, rotation, price));
 		}
 	}
 
@@ -74,14 +78,14 @@ public class CMDObj {
 
 			Help help = new Help("plate", "plate", " Use this command to create a pressure plate that will teleport you to other worlds");
 			help.setPermission("pjp.cmd.plate");
-			help.setSyntax(" /plate <destination> [-b] [-c <x,y,z>] [-d <direction>] [-p <price>]\n /pp <destination> [-b] [-c <x,y,z>] [-d <direction>] [-p <price>]");
+			help.setSyntax(" /plate <destination> [-b] [-c <x,y,z>] [-d <rotation>] [-p <price>]\n /pp <destination> [-b] [-c <x,y,z>] [-d <rotation>] [-p <price>]");
 			help.setExample(" /plate MyWorld\n /plate MyWorld -c -100,65,254\n /plate MyWorld -c random\n /plate MyWorld -c -100,65,254 -d south\n /plate MyWorld -d southeast\n /plate MyWorld -p 50");
 			help.save();
 		}
 
 		@Override
-		protected void init(Player player, String destination, Rotation rotation, Double price, boolean isBungee) {
-			PlateListener.builders.put(player.getUniqueId(), new com.gmail.trentech.pjp.data.object.Plate(destination, rotation, price, isBungee));
+		protected void init(Player player, Optional<String> server, Optional<World> world, Optional<Location<World>> location, Rotation rotation, double price) {
+			PlateListener.builders.put(player.getUniqueId(), new com.gmail.trentech.pjp.data.portal.Plate(server, world, location, rotation, price));
 		}
 	}
 
@@ -92,14 +96,14 @@ public class CMDObj {
 
 			Help help = new Help("sign", "sign", " Use this command to create a sign that will teleport you to other worlds");
 			help.setPermission("pjp.cmd.sign");
-			help.setSyntax(" /sign <destination> [-b] [-c <x,y,z>] [-d <direction>] [-p <price>]\n /s <destination> [-b] [-c <x,y,z>] [-d <direction>] [-p <price>]");
+			help.setSyntax(" /sign <destination> [-b] [-c <x,y,z>] [-d <rotation>] [-p <price>]\n /s <destination> [-b] [-c <x,y,z>] [-d <rotation>] [-p <price>]");
 			help.setExample(" /sign MyWorld\n /sign MyWorld -c -100,65,254\n /sign MyWorld -c random\n /sign MyWorld -c -100,65,254 -d south\n /sign MyWorld -d southeast\n /sign MyWorld -p 50");
 			help.save();
 		}
 
 		@Override
-		protected void init(Player player, String destination, Rotation rotation, Double price, boolean isBungee) {
-			SignListener.builders.put(player.getUniqueId(), new SignPortalData(new com.gmail.trentech.pjp.data.object.Sign(destination, rotation, price, isBungee)));
+		protected void init(Player player, Optional<String> server, Optional<World> world, Optional<Location<World>> location, Rotation rotation, double price) {
+			SignListener.builders.put(player.getUniqueId(), new SignPortalData(new com.gmail.trentech.pjp.data.portal.Sign(server, world, location, rotation, price)));
 		}
 	}
 }

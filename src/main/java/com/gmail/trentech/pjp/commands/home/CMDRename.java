@@ -19,24 +19,24 @@ import com.gmail.trentech.pjp.data.mutable.HomeData;
 import com.gmail.trentech.pjp.data.portal.Home;
 import com.gmail.trentech.pjp.utils.Help;
 
-public class CMDRemove implements CommandExecutor {
+public class CMDRename implements CommandExecutor {
 
-	public CMDRemove() {
-		Help help = new Help("hremove", "remove", "Remove an existing home");
-		help.setPermission("pjp.cmd.home.remove");
-		help.setSyntax(" /home remove <name>\n /h r <name>");
-		help.setExample(" /home remove OldHome");
+	public CMDRename() {
+		Help help = new Help("hrename", "rename", " Rename portal");
+		help.setPermission("pjp.cmd.home.rename");
+		help.setSyntax(" /home rename <oldName> <newName>\n /h rn <oldName> <newName>");
+		help.setExample(" /home rename MyPortal ThisPortal");
 		help.save();
 	}
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if (!(src instanceof Player)) {
-			throw new CommandException(Text.of(TextColors.RED, "Must be a player"), false);
+			throw new CommandException(Text.of(TextColors.RED, "Must be a player"));
 		}
 		Player player = (Player) src;
-
-		String homeName = args.<String> getOne("name").get().toLowerCase();
+		
+		String oldName = args.<String> getOne("oldName").get().toLowerCase();
 
 		Map<String, Home> homeList = new HashMap<>();
 
@@ -44,21 +44,32 @@ public class CMDRemove implements CommandExecutor {
 
 		if (optionalHomeList.isPresent()) {
 			homeList = optionalHomeList.get();
+		} else {
+			player.offer(new HomeData(new HashMap<String, Home>()));
 		}
 
-		if (!homeList.containsKey(homeName)) {
-			throw new CommandException(Text.of(TextColors.RED, homeName, " does not exist"), false);
+		if (!homeList.containsKey(oldName)) {
+			throw new CommandException(Text.of(TextColors.RED, oldName, " does not exist"));
+		}
+		Home home = homeList.get(oldName);
+
+		String newName = args.<String> getOne("newName").get().toLowerCase();
+
+		if (homeList.containsKey(newName)) {
+			throw new CommandException(Text.of(TextColors.RED, newName, " already exists"), false);
 		}
 
-		homeList.remove(homeName);
+		homeList.remove(oldName);
+		homeList.put(newName, home);
 
 		DataTransactionResult result = player.offer(new HomeData(homeList));
 		if (!result.isSuccessful()) {
-			throw new CommandException(Text.of(TextColors.RED, "Could not remove ", homeName), false);
+			throw new CommandException(Text.of(TextColors.RED, "Could not rename ", oldName), false);
 		} else {
-			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Home ", homeName, " removed"));
+			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Home renamed to ", newName));
 		}
-
+		
 		return CommandResult.success();
 	}
+
 }

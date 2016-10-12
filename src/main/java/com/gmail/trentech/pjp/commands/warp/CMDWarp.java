@@ -23,7 +23,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
-import com.gmail.trentech.pjp.data.object.Warp;
+import com.gmail.trentech.pjp.data.portal.Warp;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.events.TeleportEvent.Local;
 import com.gmail.trentech.pjp.events.TeleportEvent.Server;
@@ -62,9 +62,9 @@ public class CMDWarp implements CommandExecutor {
 				player.set(args.<Player> getOne("player").get());
 			}
 
-			if (warp.isBungee()) {
+			if (warp.getServer().isPresent()) {
 				Consumer<String> consumer = (server) -> {
-					Server teleportEvent = new TeleportEvent.Server(player.get(), server, warp.getServer(), warp.getPrice(), Cause.of(NamedCause.source(warp)));
+					Server teleportEvent = new TeleportEvent.Server(player.get(), server, warp.getServer().get(), warp.getPrice(), Cause.of(NamedCause.source(warp)));
 
 					if (!Sponge.getEventManager().post(teleportEvent)) {
 						SpongyCord.API.connectPlayer(player.get(), teleportEvent.getDestination());
@@ -75,7 +75,7 @@ public class CMDWarp implements CommandExecutor {
 
 				SpongyCord.API.getServerName(consumer, player.get());
 			} else {
-				Optional<Location<World>> optionalSpawnLocation = warp.getDestination();
+				Optional<Location<World>> optionalSpawnLocation = warp.getLocation();
 
 				if (!optionalSpawnLocation.isPresent()) {
 					throw new CommandException(Text.of(TextColors.RED, "Destination does not exist or world is not loaded"));
@@ -106,6 +106,9 @@ public class CMDWarp implements CommandExecutor {
 		}
 		if (src.hasPermission("pjp.cmd.warp.remove")) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("wremove"))).append(Text.of(" /warp remove")).build());
+		}
+		if (src.hasPermission("pjp.cmd.warp.rename")) {
+			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("wrename"))).append(Text.of(" /warp rename")).build());
 		}
 		if (src.hasPermission("pjp.cmd.warp.list")) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("wlist"))).append(Text.of(" /warp list")).build());

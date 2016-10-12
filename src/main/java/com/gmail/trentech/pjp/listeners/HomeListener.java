@@ -12,7 +12,7 @@ import org.spongepowered.api.event.command.TabCompleteEvent;
 import org.spongepowered.api.event.filter.cause.First;
 
 import com.gmail.trentech.pjp.data.Keys;
-import com.gmail.trentech.pjp.data.object.Home;
+import com.gmail.trentech.pjp.data.portal.Home;
 
 public class HomeListener {
 

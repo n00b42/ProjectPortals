@@ -14,11 +14,13 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.Text.Builder;
+import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.data.object.Warp;
+import com.gmail.trentech.pjp.data.portal.Warp;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDList implements CommandExecutor {
@@ -44,19 +46,36 @@ public class CMDList implements CommandExecutor {
 				continue;
 			}
 
-			Optional<Location<World>> optionalLocation = warp.getDestination();
+			Builder builder = Text.builder().onHover(TextActions.showText(Text.of(TextColors.WHITE, "Click to teleport to home")));
+			
+			Optional<Location<World>> optionalLocation = warp.getLocation();
+			
+			if (optionalLocation.isPresent()) {
+				Location<World> location = optionalLocation.get();
 
-			if (!optionalLocation.isPresent()) {
-				continue;
-			}
+				if(!location.equals(warp.getLocation().get())) {
+					String worldName = location.getExtent().getName();
 
-			double price = warp.getPrice();
-			if (price == 0) {
-				list.add(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name));
+					builder.onClick(TextActions.runCommand("/warp " + name)).append(Text.of(TextColors.GREEN, name, ": ", TextColors.WHITE, worldName, ", Random location"));
+				} else {
+					String worldName = location.getExtent().getName();
+					int x = location.getBlockX();
+					int y = location.getBlockY();
+					int z = location.getBlockZ();
+
+					builder.onClick(TextActions.runCommand("/warp " + name)).append(Text.of(TextColors.GREEN, name, ": ", TextColors.WHITE, worldName, ", ", x, ", ", y, ", ", z));
+				}
 			} else {
-				list.add(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Price: ", TextColors.WHITE, "$", warp.getPrice()));
+				builder.onClick(TextActions.runCommand("/warp " + name)).append(Text.of(TextColors.GREEN, name, ": ", TextColors.RED, "INVALID DESTINATION"));
 			}
-
+			
+			double price = warp.getPrice();
+			
+			if (price != 0) {
+				builder.append(Text.of(TextColors.GREEN, " Price: ", TextColors.WHITE, "$", warp.getPrice()));
+			}
+			
+			list.add(builder.build());
 		}
 
 		if (list.isEmpty()) {

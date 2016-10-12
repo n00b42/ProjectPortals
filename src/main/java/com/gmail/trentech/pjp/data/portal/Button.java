@@ -1,4 +1,4 @@
-package com.gmail.trentech.pjp.data.object;
+package com.gmail.trentech.pjp.data.portal;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,21 +10,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.utils.Rotation;
+import com.gmail.trentech.pjp.rotation.Rotation;
 import com.gmail.trentech.pjp.utils.Serializer;
 
 public class Button extends PortalBase {
 
 	private static ConcurrentHashMap<String, Button> cache = new ConcurrentHashMap<>();
 
-	public Button(String destination, Rotation rotation, double price, boolean bungee) {
-		super(destination, rotation, price, bungee);
+	public Button(Optional<String> server, Optional<World> world, Optional<Location<World>> location, Rotation rotation, double price) {
+		super(server, world, location, rotation, price);
 	}
-
-	public Button(String name, String destination, Rotation rotation, double price, boolean bungee) {
-		super(name, destination, rotation, price, bungee);
-	}
-
+	
 	public static Optional<Button> get(Location<World> location) {
 		String name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
 
@@ -35,7 +31,9 @@ public class Button extends PortalBase {
 		return Optional.empty();
 	}
 
-	public void create() {
+	public void create(Location<World> location) {
+		name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
+		
 		try {
 			Connection connection = getDataSource().getConnection();
 
@@ -103,7 +101,6 @@ public class Button extends PortalBase {
 
 				Button button = Serializer.deserializeButton(result.getString("Button"));
 				button.setName(name);
-
 				cache.put(name, button);
 			}
 

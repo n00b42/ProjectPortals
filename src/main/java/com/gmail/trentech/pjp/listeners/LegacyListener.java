@@ -13,8 +13,9 @@ import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.data.object.Portal;
+import com.gmail.trentech.pjp.data.portal.Portal;
 import com.gmail.trentech.pjp.portal.LegacyBuilder;
+import com.gmail.trentech.pjp.utils.Timings;
 
 public class LegacyListener {
 

@@ -34,7 +34,7 @@ public class Teleport {
 			
 			for(int i = 0;i < 49; i++) {
 				double x = (random.nextDouble() * (radius * 2) - radius) + spawnLocation.getBlockX();
-				int y = random.nextInt(59, 200 + 1);
+				double y = random.nextDouble(59, 200 + 1);
 	            double z = (random.nextDouble() * (radius * 2) - radius) + spawnLocation.getBlockZ();
 
 				Optional<Location<World>> optionalLocation = teleportHelper.getSafeLocation(world.getLocation(x, y, z));
@@ -55,6 +55,8 @@ public class Teleport {
 				if (floorBlockType.equals(BlockTypes.WATER) || floorBlockType.equals(BlockTypes.LAVA) || floorBlockType.equals(BlockTypes.FLOWING_WATER) || floorBlockType.equals(BlockTypes.FLOWING_LAVA) || floorBlockType.equals(BlockTypes.FIRE)) {
 					continue;
 				}
+				
+				unsafeLocation.getExtent().loadChunk(unsafeLocation.getChunkPosition(), true);
 
 				cache.put(world.getUniqueId(), unsafeLocation.getPosition());
 				break;

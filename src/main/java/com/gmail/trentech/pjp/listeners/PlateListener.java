@@ -1,6 +1,5 @@
 package com.gmail.trentech.pjp.listeners;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -11,7 +10,6 @@ import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
-import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
@@ -19,24 +17,21 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
-import org.spongepowered.api.event.command.TabCompleteEvent;
-import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
-import org.spongepowered.api.world.storage.WorldProperties;
 
 import com.flowpowered.math.vector.Vector3d;
-import com.gmail.trentech.pjp.data.object.Plate;
+import com.gmail.trentech.pjp.data.portal.Plate;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.events.TeleportEvent.Local;
 import com.gmail.trentech.pjp.events.TeleportEvent.Server;
 import com.gmail.trentech.pjp.utils.ConfigManager;
-import com.gmail.trentech.pjp.utils.Rotation;
+import com.gmail.trentech.pjp.utils.Timings;
 
 import flavor.pie.spongycord.SpongyCord;
 
@@ -48,43 +43,6 @@ public class PlateListener {
 
 	public PlateListener(Timings timings) {
 		this.timings = timings;
-	}
-
-	//@Listener
-	public void onTabCompleteEvent(TabCompleteEvent event, @First CommandSource src) {
-		String rawMessage = event.getRawMessage();
-		
-		String[] args = rawMessage.split(" ");
-		
-		List<String> list = event.getTabCompletions();
-		
-		if((args[0].equalsIgnoreCase("plate") || args[0].equalsIgnoreCase("p"))) {			
-			if(args.length > 1 && (args[args.length - 1].equalsIgnoreCase("-d") || args[args.length - 2].equalsIgnoreCase("-d"))) {
-				for (Rotation rotation : Rotation.values()) {
-					String id = rotation.getName();
-					
-					if(args[args.length - 2].equalsIgnoreCase("-d")) {
-						if(id.contains(args[args.length - 1].toLowerCase()) && !id.equalsIgnoreCase(args[args.length - 1])) {
-							list.add(id);
-						}
-					} else if(rawMessage.substring(rawMessage.length() - 1).equalsIgnoreCase(" ")){
-						list.add(id);
-					}
-				}
-			} else if(args.length == 1 || args.length == 2) {
-				for(WorldProperties world : Sponge.getServer().getAllWorldProperties()) {
-					String name = world.getWorldName();
-					
-					if(args.length == 2) {
-						if(name.contains(args[1].toLowerCase()) && !name.equalsIgnoreCase(args[1])) {
-							list.add(name);
-						}
-					} else if(rawMessage.substring(rawMessage.length() - 1).equalsIgnoreCase(" ")){
-						list.add(name);
-					}
-				}
-			}
-		}
 	}
 	
 	@Listener
@@ -132,9 +90,9 @@ public class PlateListener {
 					}
 				}
 
-				if (plate.isBungee()) {
+				if (plate.getServer().isPresent()) {
 					Consumer<String> consumer = (server) -> {
-						Server teleportEvent = new TeleportEvent.Server(player, server, plate.getServer(), plate.getPrice(), Cause.of(NamedCause.source(plate)));
+						Server teleportEvent = new TeleportEvent.Server(player, server, plate.getServer().get(), plate.getPrice(), Cause.of(NamedCause.source(plate)));
 
 						if (!Sponge.getEventManager().post(teleportEvent)) {
 							SpongyCord.API.connectPlayer(player, teleportEvent.getDestination());
@@ -145,7 +103,7 @@ public class PlateListener {
 
 					SpongyCord.API.getServerName(consumer, player);
 				} else {
-					Optional<Location<World>> optionalSpawnLocation = plate.getDestination();
+					Optional<Location<World>> optionalSpawnLocation = plate.getLocation();
 
 					if (!optionalSpawnLocation.isPresent()) {
 						player.sendMessage(Text.of(TextColors.DARK_RED, "World does not exist"));
@@ -222,8 +180,8 @@ public class PlateListener {
 				}
 
 				Plate plate = builders.get(player.getUniqueId());
-				plate.setLocation(location);
-				plate.create();
+
+				plate.create(location);
 
 				Particle particle = Particles.getDefaultEffect("creation");
 				particle.spawnParticle(location, false, Particles.getDefaultColor("creation", particle.isColorable()));

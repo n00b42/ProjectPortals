@@ -1,4 +1,4 @@
-package com.gmail.trentech.pjp.data.object;
+package com.gmail.trentech.pjp.data.portal;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,19 +7,18 @@ import java.sql.SQLException;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.gmail.trentech.pjp.utils.Rotation;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
+
+import com.gmail.trentech.pjp.rotation.Rotation;
 import com.gmail.trentech.pjp.utils.Serializer;
 
 public class Warp extends PortalBase {
 
 	private static ConcurrentHashMap<String, Warp> cache = new ConcurrentHashMap<>();
 
-	public Warp(String destination, Rotation rotation, double price, boolean bungee) {
-		super(destination, rotation, price, bungee);
-	}
-
-	public Warp(String name, String destination, Rotation rotation, double price, boolean bungee) {
-		super(name, destination, rotation, price, bungee);
+	public Warp(Optional<String> server, Optional<World> world, Optional<Location<World>> location, Rotation rotation, double price) {
+		super(server, world, location, rotation, price);
 	}
 
 	public static Optional<Warp> get(String name) {
@@ -34,7 +33,8 @@ public class Warp extends PortalBase {
 		return cache;
 	}
 
-	public void create() {
+	public void create(String name) {
+		this.name = name;
 		try {
 			Connection connection = getDataSource().getConnection();
 
@@ -102,7 +102,6 @@ public class Warp extends PortalBase {
 
 				Warp warp = Serializer.deserializeWarp(result.getString("Warp"));
 				warp.setName(name);
-
 				cache.put(name, warp);
 			}
 

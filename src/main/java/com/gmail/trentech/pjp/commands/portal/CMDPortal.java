@@ -28,6 +28,12 @@ public class CMDPortal implements CommandExecutor {
 		if (src.hasPermission("pjp.cmd.portal.remove")) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("premove"))).append(Text.of(" /portal remove")).build());
 		}
+		if (src.hasPermission("pjp.cmd.portal.rename")) {
+			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("prename"))).append(Text.of(" /portal rename")).build());
+		}
+		if (src.hasPermission("pjp.cmd.portal.destination")) {
+			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("destination"))).append(Text.of(" /portal destination")).build());
+		}
 		if (src.hasPermission("pjp.cmd.portal.list")) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("plist"))).append(Text.of(" /portal list")).build());
 		}

@@ -10,15 +10,15 @@ import com.gmail.trentech.pjp.commands.portal.CMDSave;
 import com.gmail.trentech.pjp.commands.warp.CMDWarp;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
+import com.gmail.trentech.pjp.rotation.Rotation;
 import com.gmail.trentech.pjp.utils.Help;
-import com.gmail.trentech.pjp.utils.Rotation;
 
 public class CommandManager {
 	
 	private CommandSpec cmdWarpCreate = CommandSpec.builder()
 		    .description(Text.of("Create a new warp point"))
 		    .permission("pjp.cmd.warp.create")
-		    .arguments(GenericArguments.string(Text.of("name")), GenericArguments.string(Text.of("destination")), GenericArguments.flags().flag("b")
+		    .arguments(GenericArguments.string(Text.of("name")), GenericArguments.optional(GenericArguments.string(Text.of("destination"))), GenericArguments.flags().flag("b")
 		    		.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
 		    		.valueFlag(GenericArguments.enumValue(Text.of("direction"), Rotation.class), "d")
     				.valueFlag(GenericArguments.string(Text.of("price")), "p").buildWith(GenericArguments.none()))
@@ -30,6 +30,13 @@ public class CommandManager {
 		    .permission("pjp.cmd.warp.remove")
 		    .arguments(GenericArguments.string(Text.of("name")))
 		    .executor(new com.gmail.trentech.pjp.commands.warp.CMDRemove())
+		    .build();
+	
+	private CommandSpec cmdWarpRename = CommandSpec.builder()
+		    .description(Text.of("Rename an existing warp point"))
+		    .permission("pjp.cmd.warp.rename")
+		    .arguments(GenericArguments.string(Text.of("oldName")), GenericArguments.string(Text.of("newName")))
+		    .executor(new com.gmail.trentech.pjp.commands.warp.CMDRename())
 		    .build();
 	
 	private CommandSpec cmdWarpPrice = CommandSpec.builder()
@@ -51,6 +58,7 @@ public class CommandManager {
 		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))), GenericArguments.optional(GenericArguments.player(Text.of("player"))))
 		    .child(cmdWarpCreate, "create", "c")
 		    .child(cmdWarpRemove, "remove", "r")
+		    .child(cmdWarpRename, "rename", "rn")
 		    .child(cmdWarpList, "list", "l")
 		    .child(cmdWarpPrice, "price", "p")
 		    .executor(new CMDWarp())
@@ -71,6 +79,13 @@ public class CommandManager {
 		    .executor(new com.gmail.trentech.pjp.commands.home.CMDRemove())
 		    .build();
 	
+	private CommandSpec cmdHomeRename = CommandSpec.builder()
+		    .description(Text.of("Rename an existing home"))
+		    .permission("pjp.cmd.home.rename")
+		    .arguments(GenericArguments.string(Text.of("oldName")), GenericArguments.string(Text.of("newName")))
+		    .executor(new com.gmail.trentech.pjp.commands.home.CMDRename())
+		    .build();
+	
 	private CommandSpec cmdHomeList = CommandSpec.builder()
 		    .description(Text.of("List all homes"))
 		    .permission("pjp.cmd.home.list")
@@ -83,6 +98,7 @@ public class CommandManager {
 		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))), GenericArguments.optional(GenericArguments.string(Text.of("player"))))
 		    .child(cmdHomeCreate, "create", "c")
 		    .child(cmdHomeRemove, "remove", "r")
+		    .child(cmdHomeRename, "rename", "rn")
 		    .child(cmdHomeList, "list", "l")
 		    .executor(new CMDHome())
 		    .build();
@@ -104,6 +120,13 @@ public class CommandManager {
 		    .permission("pjp.cmd.portal.remove")
 		    .arguments(GenericArguments.string(Text.of("name")))
 		    .executor(new com.gmail.trentech.pjp.commands.portal.CMDRemove())
+		    .build();
+	
+	private CommandSpec cmdPortalRename = CommandSpec.builder()
+		    .description(Text.of("Rename an existing portal"))
+		    .permission("pjp.cmd.portal.rename")
+		    .arguments(GenericArguments.string(Text.of("oldName")), GenericArguments.string(Text.of("newName")))
+		    .executor(new com.gmail.trentech.pjp.commands.portal.CMDRename())
 		    .build();
 	
 	private CommandSpec cmdPortalParticle = CommandSpec.builder()
@@ -138,6 +161,7 @@ public class CommandManager {
 		    .permission("pjp.cmd.portal")
 		    .child(cmdPortalCreate, "create", "c")
 		    .child(cmdPortalRemove, "remove", "r")
+		    .child(cmdPortalRename, "rename", "rn")
 		    .child(cmdPortalParticle, "particle", "p")
 		    .child(cmdPortalPrice, "price", "pr")
 		    .child(cmdPortalList, "list", "l")

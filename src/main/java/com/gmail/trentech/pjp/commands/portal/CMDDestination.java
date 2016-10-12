@@ -1,7 +1,7 @@
 package com.gmail.trentech.pjp.commands.portal;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.spongepowered.api.Sponge;
@@ -13,8 +13,10 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.data.object.Portal;
+import com.gmail.trentech.pjp.data.portal.Portal;
 import com.gmail.trentech.pjp.utils.Help;
 
 import flavor.pie.spongycord.SpongyCord;
@@ -43,20 +45,20 @@ public class CMDDestination implements CommandExecutor {
 		}
 		Portal portal = Portal.get(name).get();
 
-		AtomicReference<String> destination = new AtomicReference<>(args.<String> getOne("destination").get());
+		String destination = args.<String> getOne("destination").get();
 
-		if (portal.isBungee()) {
+		if (portal.getServer().isPresent()) {
 			Consumer<List<String>> consumer1 = (list) -> {
-				if (!list.contains(destination.get())) {
+				if (!list.contains(destination)) {
 					try {
-						throw new CommandException(Text.of(TextColors.RED, destination.get(), " does not exist"), false);
+						throw new CommandException(Text.of(TextColors.RED, destination, " does not exist"), false);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
 
 				Consumer<String> consumer2 = (s) -> {
-					if (destination.get().equalsIgnoreCase(s)) {
+					if (destination.equalsIgnoreCase(s)) {
 						try {
 							throw new CommandException(Text.of(TextColors.RED, "Destination cannot be the server you are currently on"), false);
 						} catch (Exception e) {
@@ -69,38 +71,40 @@ public class CMDDestination implements CommandExecutor {
 			};
 
 			SpongyCord.API.getServerList(consumer1, player);
+			
+			portal.setServer(destination);
 		} else {
-			if (!Sponge.getServer().getWorld(destination.get()).isPresent()) {
-				throw new CommandException(Text.of(TextColors.RED, destination.get(), " is not loaded or does not exist"), false);
+			Optional<World> world = Sponge.getServer().getWorld(destination);
+
+			if (!world.isPresent()) {
+				throw new CommandException(Text.of(TextColors.RED, destination, " is not loaded or does not exist"), false);
 			}
 
-			destination.set(destination.get() + ":spawn");
-
+			portal.setWorld(world.get());
+			
 			if (args.hasAny("x,y,z")) {
+				Location<World> location;
+				
 				String[] coords = args.<String> getOne("x,y,z").get().split(",");
 
 				if (coords[0].equalsIgnoreCase("random")) {
-					destination.set(destination.get().replace("spawn", "random"));
+					location = world.get().getLocation(0, 0, 0);
 				} else {
-					int x;
-					int y;
-					int z;
-
 					try {
-						x = Integer.parseInt(coords[0]);
-						y = Integer.parseInt(coords[1]);
-						z = Integer.parseInt(coords[2]);
+						location = world.get().getLocation(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2]));
 					} catch (Exception e) {
 						throw new CommandException(Text.of(TextColors.RED, coords.toString(), " is not valid"), true);
 					}
-					destination.set(destination.get().replace("spawn", x + "." + y + "." + z));
 				}
+				
+				portal.setLocation(location);
 			}
 		}
-		
-		portal.setDestination(destination.get());
-		portal.update();
 
+		portal.update();
+		
+		src.sendMessage(Text.of(TextColors.DARK_GREEN, "Portal destination updated"));
+		
 		return CommandResult.success();
 	}
 

@@ -9,7 +9,6 @@ import java.util.function.Consumer;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
-import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.Item;
@@ -22,10 +21,8 @@ import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
-import org.spongepowered.api.event.command.TabCompleteEvent;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.filter.Getter;
-import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.event.filter.type.Exclude;
 import org.spongepowered.api.text.Text;
@@ -33,21 +30,18 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
-import org.spongepowered.api.world.storage.WorldProperties;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.data.object.Portal;
-import com.gmail.trentech.pjp.effects.ParticleColor;
-import com.gmail.trentech.pjp.effects.Particles;
+import com.gmail.trentech.pjp.data.portal.Portal;
 import com.gmail.trentech.pjp.events.ConstructPortalEvent;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.events.TeleportEvent.Local;
 import com.gmail.trentech.pjp.events.TeleportEvent.Server;
 import com.gmail.trentech.pjp.portal.PortalProperties;
+import com.gmail.trentech.pjp.rotation.PlayerRotation;
 import com.gmail.trentech.pjp.utils.ConfigManager;
-import com.gmail.trentech.pjp.utils.PlayerDirection;
-import com.gmail.trentech.pjp.utils.Rotation;
+import com.gmail.trentech.pjp.utils.Timings;
 
 import flavor.pie.spongycord.SpongyCord;
 import ninja.leaping.configurate.ConfigurationNode;
@@ -60,117 +54,6 @@ public class PortalListener {
 
 	public PortalListener(Timings timings) {
 		this.timings = timings;
-	}
-	
-	//@Listener
-	public void onTabCompleteEvent(TabCompleteEvent event, @First CommandSource src) {
-		String rawMessage = event.getRawMessage();
-		
-		String[] args = rawMessage.split(" ");
-		
-		if(args.length <= 1) {
-			return;
-		}
-
-		if(!args[0].equalsIgnoreCase("portal") && !args[0].equalsIgnoreCase("p")) {
-			return;
-		}
-		
-		List<String> list = event.getTabCompletions();
-		
-		if(args[1].equalsIgnoreCase("create") || args[1].equalsIgnoreCase("c")) {
-			if(args[args.length - 1].equalsIgnoreCase("-d") || args[args.length - 2].equalsIgnoreCase("-d")) {
-				for (Rotation rotation : Rotation.values()) {
-					String id = rotation.getName();
-					
-					if(args[args.length - 2].equalsIgnoreCase("-d")) {
-						if(id.contains(args[args.length - 1].toLowerCase()) && !id.equalsIgnoreCase(args[args.length - 1])) {
-							list.add(id);
-						}
-					} else if(rawMessage.substring(rawMessage.length() - 1).equalsIgnoreCase(" ")){
-						list.add(id);
-					}
-				}
-			} else if(args[args.length - 1].equalsIgnoreCase("-e") || args[args.length - 2].equalsIgnoreCase("-e")) {
-				for (Particles particle : Particles.values()) {
-					String id = particle.name();
-					
-					if(args[args.length - 2].equalsIgnoreCase("-e")) {
-						if(id.contains(args[args.length - 1].toUpperCase()) && !id.equalsIgnoreCase(args[args.length - 1])) {
-							list.add(id);
-						}
-					} else if(rawMessage.substring(rawMessage.length() - 1).equalsIgnoreCase(" ")){
-						list.add(id);
-					}
-				}
-			}
-		} else if(args[1].equalsIgnoreCase("remove") || args[1].equalsIgnoreCase("r")) {
-			for(WorldProperties world : Sponge.getServer().getAllWorldProperties()) {
-				String name = world.getWorldName();
-				
-				if(args.length == 3) {
-					if(name.contains(args[2].toLowerCase()) && !name.equalsIgnoreCase(args[2])) {
-						list.add(name);
-					}
-				} else if(rawMessage.substring(rawMessage.length() - 1).equalsIgnoreCase(" ")){
-					list.add(name);
-				}
-			}
-		} else if(args[1].equalsIgnoreCase("particle") || args[1].equalsIgnoreCase("p")) {
-			if(args.length == 2 || args.length == 3) {
-				for(WorldProperties world : Sponge.getServer().getAllWorldProperties()) {
-					String name = world.getWorldName();
-					
-					if(args.length == 3) {
-						if(name.contains(args[2].toLowerCase()) && !name.equalsIgnoreCase(args[2])) {
-							list.add(name);
-						}
-					} else if(rawMessage.substring(rawMessage.length() - 1).equalsIgnoreCase(" ")){
-						list.add(name);
-					}
-				}
-			}
-			if(args.length == 3 || args.length == 4) {
-				for(Particles particle : Particles.values()) {
-					String name = particle.name();
-					
-					if(args.length == 4) {
-						if(name.contains(args[3].toUpperCase()) && !name.equalsIgnoreCase(args[3])) {
-							list.add(name);
-						}
-					} else if(rawMessage.substring(rawMessage.length() - 1).equalsIgnoreCase(" ")){
-						list.add(name);
-					}
-				}
-			}
-			if(args.length == 4 || args.length == 5) {
-				for(ParticleColor color : ParticleColor.values()) {
-					String name = color.getName();
-					
-					if(args.length == 5) {
-						if(name.contains(args[4].toUpperCase()) && !name.equalsIgnoreCase(args[4])) {
-							list.add(name);
-						}
-					} else if(rawMessage.substring(rawMessage.length() - 1).equalsIgnoreCase(" ")){
-						list.add(name);
-					}
-				}
-			}
-		} else if(args[1].equalsIgnoreCase("price") || args[1].equalsIgnoreCase("pr")) {
-			if(args.length == 2 || args.length == 3) {
-				for(WorldProperties world : Sponge.getServer().getAllWorldProperties()) {
-					String name = world.getWorldName();
-					
-					if(args.length == 3) {
-						if(name.contains(args[2].toLowerCase()) && !name.equalsIgnoreCase(args[2])) {
-							list.add(name);
-						}
-					} else if(rawMessage.substring(rawMessage.length() - 1).equalsIgnoreCase(" ")){
-						list.add(name);
-					}
-				}
-			}
-		}
 	}
 	
 	@Listener
@@ -196,7 +79,7 @@ public class PortalListener {
 			}
 			Location<World> location = optionalLocation.get();
 
-			Direction direction = PlayerDirection.getClosest(player.getRotation().getFloorY()).getDirection();
+			Direction direction = PlayerRotation.getClosest(player.getRotation().getFloorY()).getDirection();
 
 			com.gmail.trentech.pjp.portal.PortalBuilder builder = new com.gmail.trentech.pjp.portal.PortalBuilder(location, direction);
 
@@ -205,9 +88,7 @@ public class PortalListener {
 				return;
 			}
 
-			Sponge.getScheduler().createTaskBuilder().delayTicks(20).execute(t -> {
-				props.remove(player.getUniqueId());
-			}).submit(Main.getPlugin());
+			props.remove(player.getUniqueId());
 
 			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Portal ", properties.getName(), " created successfully"));
 		} finally {
@@ -263,7 +144,7 @@ public class PortalListener {
 			}
 			Portal portal = optionalPortal.get();
 
-			if (portal.isBungee()) {
+			if (portal.getServer().isPresent()) {
 				return;
 			}
 
@@ -271,7 +152,7 @@ public class PortalListener {
 				return;
 			}
 
-			Optional<Location<World>> optionalSpawnLocation = portal.getDestination();
+			Optional<Location<World>> optionalSpawnLocation = portal.getLocation();
 
 			if (!optionalSpawnLocation.isPresent()) {
 				return;
@@ -304,7 +185,7 @@ public class PortalListener {
 			}
 			Portal portal = optionalPortal.get();
 
-			if (portal.isBungee()) {
+			if (portal.getServer().isPresent()) {
 				return;
 			}
 
@@ -312,7 +193,7 @@ public class PortalListener {
 				return;
 			}
 
-			Optional<Location<World>> optionalSpawnLocation = portal.getDestination();
+			Optional<Location<World>> optionalSpawnLocation = portal.getLocation();
 
 			if (!optionalSpawnLocation.isPresent()) {
 				return;
@@ -322,7 +203,6 @@ public class PortalListener {
 			Vector3d rotation = portal.getRotation().toVector3d();
 			
 			event.setToTransform(new Transform<World>(spawnLocation.getExtent(), spawnLocation.getPosition(), rotation));
-			//living.setLocationAndRotation(spawnLocation, portal.getRotation().toVector3d());
 		} finally {
 			timings.onMoveEntityEvent().stopTiming();
 		}
@@ -356,7 +236,7 @@ public class PortalListener {
 				}
 			}
 
-			if (portal.isBungee()) {
+			if (portal.getServer().isPresent()) {
 				UUID uuid = player.getUniqueId();
 
 				if (cache.contains(uuid)) {
@@ -364,7 +244,7 @@ public class PortalListener {
 				}
 
 				Consumer<String> consumer = (server) -> {
-					Server teleportEvent = new TeleportEvent.Server(player, server, portal.getServer(), portal.getPrice(), Cause.of(NamedCause.source(portal)));
+					Server teleportEvent = new TeleportEvent.Server(player, server, portal.getServer().get(), portal.getPrice(), Cause.of(NamedCause.source(portal)));
 
 					if (!Sponge.getEventManager().post(teleportEvent)) {
 						cache.add(uuid);
@@ -381,7 +261,7 @@ public class PortalListener {
 
 				SpongyCord.API.getServerName(consumer, player);
 			} else {
-				Optional<Location<World>> optionalSpawnLocation = portal.getDestination();
+				Optional<Location<World>> optionalSpawnLocation = portal.getLocation();
 
 				if (!optionalSpawnLocation.isPresent()) {
 					player.sendMessage(Text.of(TextColors.DARK_RED, "Spawn location does not exist or world is not loaded"));
@@ -397,7 +277,6 @@ public class PortalListener {
 					Vector3d rotation = portal.getRotation().toVector3d();
 					
 					event.setToTransform(new Transform<World>(spawnLocation.getExtent(), spawnLocation.getPosition(), rotation));
-					//player.setLocationAndRotation(spawnLocation, rotation);
 				}
 			}
 		} finally {

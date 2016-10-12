@@ -23,7 +23,7 @@ import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.data.Keys;
 import com.gmail.trentech.pjp.data.mutable.HomeData;
-import com.gmail.trentech.pjp.data.object.Home;
+import com.gmail.trentech.pjp.data.portal.Home;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDList implements CommandExecutor {
@@ -58,9 +58,10 @@ public class CMDList implements CommandExecutor {
 			String homeName = entry.getKey().toString();
 			Home home = entry.getValue();
 
-			Builder builder = Text.builder().color(TextColors.AQUA).onHover(TextActions.showText(Text.of(TextColors.WHITE, "Click to remove home")));
+			Builder builder = Text.builder().onHover(TextActions.showText(Text.of(TextColors.WHITE, "Click to teleport to home")));
 
-			Optional<Location<World>> optionalDestination = home.getDestination();
+			Optional<Location<World>> optionalDestination = home.getLocation();
+			
 			if (optionalDestination.isPresent()) {
 				Location<World> destination = optionalDestination.get();
 
@@ -69,9 +70,9 @@ public class CMDList implements CommandExecutor {
 				int y = destination.getBlockY();
 				int z = destination.getBlockZ();
 
-				builder.onClick(TextActions.runCommand("/home remove " + homeName)).append(Text.of(TextColors.AQUA, homeName, ": ", TextColors.GREEN, worldName, ", ", x, ", ", y, ", ", z));
+				builder.onClick(TextActions.runCommand("/home " + homeName)).append(Text.of(TextColors.GREEN, homeName, ": ", TextColors.WHITE, worldName, ", ", x, ", ", y, ", ", z));
 			} else {
-				builder.onClick(TextActions.runCommand("/home remove " + homeName)).append(Text.of(TextColors.AQUA, homeName, ": ", TextColors.RED, "INVALID DESTINATION"));
+				builder.onClick(TextActions.runCommand("/home " + homeName)).append(Text.of(TextColors.GREEN, homeName, ": ", TextColors.RED, "INVALID DESTINATION"));
 			}
 
 			list.add(builder.build());

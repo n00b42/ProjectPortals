@@ -18,10 +18,10 @@ import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.data.Keys;
 import com.gmail.trentech.pjp.data.mutable.HomeData;
-import com.gmail.trentech.pjp.data.object.Home;
+import com.gmail.trentech.pjp.data.portal.Home;
+import com.gmail.trentech.pjp.rotation.Rotation;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
-import com.gmail.trentech.pjp.utils.Rotation;
 
 public class CMDCreate implements CommandExecutor {
 
@@ -75,9 +75,7 @@ public class CMDCreate implements CommandExecutor {
 
 		Location<World> location = player.getLocation();
 
-		String destination = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
-
-		homeList.put(homeName, new Home(destination, Rotation.getClosest(player.getRotation().getFloorY())));
+		homeList.put(homeName, new Home(location, Rotation.getClosest(player.getRotation().getFloorY())));
 
 		DataTransactionResult result = player.offer(new HomeData(homeList));
 		if (!result.isSuccessful()) {

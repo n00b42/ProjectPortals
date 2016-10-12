@@ -11,7 +11,7 @@ import org.spongepowered.api.data.value.BaseValue;
 import org.spongepowered.api.data.value.immutable.ImmutableValue;
 
 import com.gmail.trentech.pjp.data.mutable.SignPortalData;
-import com.gmail.trentech.pjp.data.object.Sign;
+import com.gmail.trentech.pjp.data.portal.Sign;
 
 public class ImmutableSignPortalData extends AbstractImmutableSingleData<Sign, ImmutableSignPortalData, SignPortalData> {
 

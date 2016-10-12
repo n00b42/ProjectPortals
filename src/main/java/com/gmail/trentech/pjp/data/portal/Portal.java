@@ -1,4 +1,4 @@
-package com.gmail.trentech.pjp.data.object;
+package com.gmail.trentech.pjp.data.portal;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,6 +17,7 @@ import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.MemoryDataContainer;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.persistence.DataTranslators;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.living.player.Player;
@@ -26,57 +27,39 @@ import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.DataQueries;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
-import com.gmail.trentech.pjp.utils.Rotation;
+import com.gmail.trentech.pjp.rotation.Rotation;
 import com.gmail.trentech.pjp.utils.Serializer;
 
 public class Portal extends PortalBase {
 
 	private static ConcurrentHashMap<String, Portal> cache = new ConcurrentHashMap<>();
 
-	private final List<Location<World>> frame;
-	private final List<Location<World>> fill;
+	private List<Location<World>> frame;
+	private List<Location<World>> fill;
 	private Particle particle = Particles.getDefaultEffect("portal");
 	private Optional<ParticleColor> color = Particles.getDefaultColor("portal", particle.isColorable());
 	private BlockState blockState = BlockTypes.PORTAL.getDefaultState().with(Keys.AXIS, Axis.Z).get();
 
-	public Portal(String destination, Rotation rotation, List<Location<World>> frame, List<Location<World>> fill, Particle particle, Optional<ParticleColor> color, double price, boolean bungee) {
-		super(destination, rotation, price, bungee);
-
-		this.frame = frame;
-		this.fill = fill;
-
-		if (this.particle != null) {
-			this.particle = particle;
-		}
-
-		if (this.color != null) {
-			this.color = color;
-		}
-
-		this.blockState = getBlock();
+	public Portal(Optional<String> server, Optional<World> world, Optional<Location<World>> location, List<Location<World>> frame, List<Location<World>> fill, Particle particle, Optional<ParticleColor> color, Rotation rotation, double price) {
+		super(server, world, location, rotation, price);
+		init(frame, fill, particle, color);
 	}
 
-	public Portal(String name, String destination, Rotation rotation, List<Location<World>> frame, List<Location<World>> fill, Particle particle, Optional<ParticleColor> color, double price, boolean bungee) {
-		super(name, destination, rotation, price, bungee);
-
+	private void init(List<Location<World>> frame, List<Location<World>> fill, Particle particle, Optional<ParticleColor> color) {
 		this.frame = frame;
 		this.fill = fill;
+		this.particle = particle;
 
-		if (this.particle != null) {
-			this.particle = particle;
-		}
-
-		if (this.color != null) {
+		if (!this.color.isPresent()) {
 			this.color = color;
 		}
-
-		this.color = color;
 
 		this.blockState = getBlock();
 	}
@@ -228,7 +211,9 @@ public class Portal extends PortalBase {
 		return cache;
 	}
 
-	public void create() {
+	public void create(String name) {
+		this.name = name;
+		
 		try {
 			Connection connection = getDataSource().getConnection();
 
@@ -317,14 +302,13 @@ public class Portal extends PortalBase {
 				try {
 					portal = Serializer.deserializePortal(result.getString("Portal"));
 					portal.setName(name);
+					
+					cache.put(name, portal);
+
+					portal.getParticle().createTask(name, portal.getFill(), portal.getParticleColor());
 				} catch (Exception e) {
 					Main.instance().getLog().error("Could not deserialize Portal: " + name);
-					portal = new Portal(name, Sponge.getServer().getDefaultWorldName() + ":spawn", Rotation.EAST, new ArrayList<Location<World>>(), new ArrayList<Location<World>>(), null, null, 0, false);
 				}
-
-				cache.put(name, portal);
-
-				portal.getParticle().createTask(name, portal.getFill(), portal.getParticleColor());
 			}
 
 			connection.close();
@@ -335,9 +319,22 @@ public class Portal extends PortalBase {
 
 	@Override
 	public DataContainer toContainer() {
-		DataContainer container = new MemoryDataContainer();
+		DataContainer container = new MemoryDataContainer().set(DataQueries.ROTATION, rotation.getName()).set(DataQueries.PRICE, price);
 
-		container.set(DataQueries.DESTINATION, destination).set(DataQueries.ROTATION, rotation.getName()).set(DataQueries.PRICE, price).set(DataQueries.BUNGEE, bungee).set(DataQueries.PARTICLE, particle.getName());
+		if(server.isPresent()) {
+			container.set(DataQueries.SERVER, server.get());
+		}
+		
+		if(world.isPresent()) {
+			container.set(DataQueries.WORLD, world.get().getName());
+		}
+		
+		if(vector3d.isPresent()) {
+			Vector3d vector3d = this.vector3d.get();
+			container.set(DataQueries.VECTOR3D, DataTranslators.VECTOR_3_D.translate(vector3d));
+		}
+		
+		container.set(DataQueries.PARTICLE, particle.getName());
 
 		List<String> frame = new ArrayList<>();
 

@@ -12,7 +12,7 @@ import org.spongepowered.api.data.merge.MergeFunction;
 import org.spongepowered.api.data.value.mutable.Value;
 
 import com.gmail.trentech.pjp.data.immutable.ImmutableSignPortalData;
-import com.gmail.trentech.pjp.data.object.Sign;
+import com.gmail.trentech.pjp.data.portal.Sign;
 import com.google.common.base.Preconditions;
 
 public class SignPortalData extends AbstractSingleData<Sign, SignPortalData, ImmutableSignPortalData> {

@@ -81,6 +81,10 @@ public class ConfigManager {
 			}
 			if (config.getNode("options", "teleport_message").isVirtual()) {
 				config.getNode("options", "teleport_message").setComment("Set message that displays when player teleports.");
+				// UPDATE CONFIG
+				if(config.getNode("options", "teleport_message", "enable").isVirtual()) {
+					config.getNode("options", "teleport_message", "enable").setValue(true);
+				}
 				config.getNode("options", "teleport_message", "title").setValue("&2%WORLD%");
 				config.getNode("options", "teleport_message", "sub_title").setValue("&bx: %X%, y: %Y%, z: %Z%");
 			}

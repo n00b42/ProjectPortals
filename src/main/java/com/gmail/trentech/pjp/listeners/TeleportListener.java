@@ -13,6 +13,7 @@ import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.event.entity.DestructEntityEvent;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.filter.Getter;
+import org.spongepowered.api.event.world.LoadWorldEvent;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.economy.EconomyService;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
@@ -35,6 +36,7 @@ import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Teleport;
+import com.gmail.trentech.pjp.utils.Timings;
 
 import ninja.leaping.configurate.ConfigurationNode;
 
@@ -46,6 +48,11 @@ public class TeleportListener {
 		this.timings = timings;
 	}
 
+	@Listener
+	public void onLoadWorldEvent(LoadWorldEvent event) {
+		Teleport.cacheRandom(event.getTargetWorld());	
+	}
+	
 	@Listener
 	public void onTeleportEvent(TeleportEvent event) {
 		timings.onTeleportEvent().startTiming();
@@ -109,13 +116,17 @@ public class TeleportListener {
 			}
 			event.setDestination(optionalLocation.get());
 			
-			ConfigurationNode config = ConfigManager.get().getConfig();
+			ConfigurationNode node = ConfigManager.get().getConfig().getNode("options", "teleport_message");
+			
+			if(node.getNode("enable").getBoolean()) {
+				Text title = TextSerializers.FORMATTING_CODE.deserialize(node.getNode("title").getString().replaceAll("%WORLD%", dest.getExtent().getName()).replaceAll("\\%X%", Integer.toString(dest.getBlockX())).replaceAll("\\%Y%", Integer.toString(dest.getBlockY())).replaceAll("\\%Z%", Integer.toString(dest.getBlockZ())));
+				Text subTitle = TextSerializers.FORMATTING_CODE.deserialize(node.getNode("sub_title").getString().replaceAll("%WORLD%", dest.getExtent().getName()).replaceAll("\\%X%", Integer.toString(dest.getBlockX())).replaceAll("\\%Y%", Integer.toString(dest.getBlockY())).replaceAll("\\%Z%", Integer.toString(dest.getBlockZ())));
 
-			Text title = TextSerializers.FORMATTING_CODE.deserialize(config.getNode("options", "teleport_message", "title").getString().replaceAll("%WORLD%", dest.getExtent().getName()).replaceAll("\\%X%", Integer.toString(dest.getBlockX())).replaceAll("\\%Y%", Integer.toString(dest.getBlockY())).replaceAll("\\%Z%", Integer.toString(dest.getBlockZ())));
-			Text subTitle = TextSerializers.FORMATTING_CODE.deserialize(config.getNode("options", "teleport_message", "sub_title").getString().replaceAll("%WORLD%", dest.getExtent().getName()).replaceAll("\\%X%", Integer.toString(dest.getBlockX())).replaceAll("\\%Y%", Integer.toString(dest.getBlockY())).replaceAll("\\%Z%", Integer.toString(dest.getBlockZ())));
+				player.sendTitle(Title.of(title, subTitle));
+			}
 
-			player.sendTitle(Title.of(title, subTitle));
-
+			event.getDestination().getExtent().loadChunk(event.getDestination().getChunkPosition(), true);
+			
 			if (player.hasPermission("pjp.cmd.back")) {
 				CMDBack.players.put(player, src);
 			}

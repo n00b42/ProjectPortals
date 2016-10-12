@@ -10,12 +10,12 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.persistence.DataTranslators;
 
-import com.gmail.trentech.pjp.data.object.Button;
-import com.gmail.trentech.pjp.data.object.Door;
-import com.gmail.trentech.pjp.data.object.Lever;
-import com.gmail.trentech.pjp.data.object.Plate;
-import com.gmail.trentech.pjp.data.object.Portal;
-import com.gmail.trentech.pjp.data.object.Warp;
+import com.gmail.trentech.pjp.data.portal.Button;
+import com.gmail.trentech.pjp.data.portal.Door;
+import com.gmail.trentech.pjp.data.portal.Lever;
+import com.gmail.trentech.pjp.data.portal.Plate;
+import com.gmail.trentech.pjp.data.portal.Portal;
+import com.gmail.trentech.pjp.data.portal.Warp;
 
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;

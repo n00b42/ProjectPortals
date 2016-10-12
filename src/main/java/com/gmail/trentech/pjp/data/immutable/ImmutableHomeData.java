@@ -10,7 +10,7 @@ import org.spongepowered.api.data.manipulator.immutable.common.AbstractImmutable
 import org.spongepowered.api.data.value.immutable.ImmutableMapValue;
 
 import com.gmail.trentech.pjp.data.mutable.HomeData;
-import com.gmail.trentech.pjp.data.object.Home;
+import com.gmail.trentech.pjp.data.portal.Home;
 
 public class ImmutableHomeData extends AbstractImmutableMappedData<String, Home, ImmutableHomeData, HomeData> {
 

@@ -14,7 +14,7 @@ import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.data.object.Portal;
+import com.gmail.trentech.pjp.data.portal.Portal;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
@@ -79,7 +79,7 @@ public class PortalBuilder {
 					effect.spawnParticle(location, false, effectColor);
 				}
 
-				new Portal(properties.getName(), properties.getDestination(), properties.getRotation(), frameList, fillList, properties.getParticle(), properties.getColor(), properties.getPrice(), properties.isBungee()).create();
+				new Portal(properties.getServer(), properties.getWorld(), properties.getLocation(), frameList, fillList, properties.getParticle(), properties.getColor(), properties.getRotation(), properties.getPrice()).create(properties.getName());
 
 				return true;
 			}

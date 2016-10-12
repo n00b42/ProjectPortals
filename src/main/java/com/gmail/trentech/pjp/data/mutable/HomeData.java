@@ -17,7 +17,7 @@ import org.spongepowered.api.data.merge.MergeFunction;
 import org.spongepowered.api.data.value.mutable.MapValue;
 
 import com.gmail.trentech.pjp.data.immutable.ImmutableHomeData;
-import com.gmail.trentech.pjp.data.object.Home;
+import com.gmail.trentech.pjp.data.portal.Home;
 import com.google.common.base.Preconditions;
 
 public class HomeData extends AbstractMappedData<String, Home, HomeData, ImmutableHomeData> {

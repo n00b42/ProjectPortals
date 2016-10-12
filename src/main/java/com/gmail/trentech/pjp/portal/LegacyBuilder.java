@@ -15,32 +15,34 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.data.object.Portal;
+import com.gmail.trentech.pjp.data.portal.Portal;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.events.ConstructPortalEvent;
-import com.gmail.trentech.pjp.utils.Rotation;
+import com.gmail.trentech.pjp.rotation.Rotation;
 
 public class LegacyBuilder {
 
 	private final String name;
-	private final String destination;
+	private final Optional<String> server;
+	private final Optional<World> world;
+	private final Optional<Location<World>> location;
 	private final Rotation rotation;
-	private final double price;
-	private final boolean bungee;
+	private final double price;	
 	private final Particle particle;
 	private final Optional<ParticleColor> color;
 	private boolean fill = false;
 	private List<Location<World>> regionFrame;
 	private List<Location<World>> regionFill;
 
-	public LegacyBuilder(String name, String destination, Rotation rotation, Particle particle, Optional<ParticleColor> color, double price, boolean bungee) {
+	public LegacyBuilder(String name, Optional<String> server, Optional<World> world, Optional<Location<World>> location, Rotation rotation, Particle particle, Optional<ParticleColor> color, double price) {
 		this.name = name;
-		this.destination = destination;
+		this.server = server;
+		this.world = world;
+		this.location = location;
 		this.rotation = rotation;
 		this.price = price;
-		this.bungee = bungee;
 		this.particle = particle;
 		this.color = color;
 		this.regionFrame = new ArrayList<>();
@@ -107,7 +109,7 @@ public class LegacyBuilder {
 				particle.spawnParticle(location, false, color);
 			}
 
-			new Portal(getName(), destination, rotation, regionFrame, regionFill, this.particle, this.color, price, bungee).create();
+			new Portal(server, world, location, regionFrame, regionFill, this.particle, this.color, rotation, price).create(name);
 
 			return true;
 		}

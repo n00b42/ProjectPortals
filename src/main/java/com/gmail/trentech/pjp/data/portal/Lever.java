@@ -1,4 +1,4 @@
-package com.gmail.trentech.pjp.data.object;
+package com.gmail.trentech.pjp.data.portal;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,19 +10,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.utils.Rotation;
+import com.gmail.trentech.pjp.rotation.Rotation;
 import com.gmail.trentech.pjp.utils.Serializer;
 
 public class Lever extends PortalBase {
 
 	private static ConcurrentHashMap<String, Lever> cache = new ConcurrentHashMap<>();
 
-	public Lever(String destination, Rotation rotation, double price, boolean bungee) {
-		super(destination, rotation, price, bungee);
-	}
-
-	public Lever(String name, String destination, Rotation rotation, double price, boolean bungee) {
-		super(name, destination, rotation, price, bungee);
+	public Lever(Optional<String> server, Optional<World> world, Optional<Location<World>> location, Rotation rotation, double price) {
+		super(server, world, location, rotation, price);
 	}
 
 	public static Optional<Lever> get(Location<World> location) {
@@ -35,7 +31,9 @@ public class Lever extends PortalBase {
 		return Optional.empty();
 	}
 
-	public void create() {
+	public void create(Location<World> location) {
+		name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
+		
 		try {
 			Connection connection = getDataSource().getConnection();
 
@@ -103,7 +101,6 @@ public class Lever extends PortalBase {
 
 				Lever lever = Serializer.deserializeLever(result.getString("Lever"));
 				lever.setName(name);
-
 				cache.put(name, lever);
 			}
 

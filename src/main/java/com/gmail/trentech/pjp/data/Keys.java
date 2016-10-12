@@ -8,8 +8,8 @@ import org.spongepowered.api.data.key.KeyFactory;
 import org.spongepowered.api.data.value.mutable.MapValue;
 import org.spongepowered.api.data.value.mutable.Value;
 
-import com.gmail.trentech.pjp.data.object.Home;
-import com.gmail.trentech.pjp.data.object.Sign;
+import com.gmail.trentech.pjp.data.portal.Home;
+import com.gmail.trentech.pjp.data.portal.Sign;
 import com.google.common.reflect.TypeToken;
 
 public class Keys {

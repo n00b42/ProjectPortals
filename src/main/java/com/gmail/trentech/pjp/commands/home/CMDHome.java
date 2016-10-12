@@ -24,7 +24,7 @@ import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.data.Keys;
 import com.gmail.trentech.pjp.data.mutable.HomeData;
-import com.gmail.trentech.pjp.data.object.Home;
+import com.gmail.trentech.pjp.data.portal.Home;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.events.TeleportEvent.Local;
 import com.gmail.trentech.pjp.utils.Help;
@@ -56,12 +56,12 @@ public class CMDHome implements CommandExecutor {
 			}
 			Home home = homeList.get(homeName);
 
-			Optional<Location<World>> optionalSpawnLocation = home.getDestination();
+			Optional<Location<World>> optionalLocation = home.getLocation();
 
-			if (!optionalSpawnLocation.isPresent()) {
-				throw new CommandException(Text.of(TextColors.RED, homeName, " is invalid"));
+			if (!optionalLocation.isPresent()) {
+				throw new CommandException(Text.of(TextColors.RED, homeName, " has invalid location"));
 			}
-			Location<World> spawnLocation = optionalSpawnLocation.get();
+			Location<World> location = optionalLocation.get();
 
 			if (args.hasAny("player")) {
 				if (!src.hasPermission("pjp.cmd.home.others")) {
@@ -71,12 +71,12 @@ public class CMDHome implements CommandExecutor {
 				player = args.<Player> getOne("player").get();
 			}
 
-			Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, 0, Cause.of(NamedCause.source("home")));
+			Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), location, 0, Cause.of(NamedCause.source("home")));
 
 			if (!Sponge.getEventManager().post(teleportEvent)) {
-				spawnLocation = teleportEvent.getDestination();
+				location = teleportEvent.getDestination();
 
-				player.setLocationAndRotation(spawnLocation, home.getRotation().toVector3d());
+				player.setLocationAndRotation(location, home.getRotation().toVector3d());
 			}
 
 			return CommandResult.success();
@@ -92,6 +92,9 @@ public class CMDHome implements CommandExecutor {
 		}
 		if (src.hasPermission("pjp.cmd.home.remove")) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("hremove"))).append(Text.of(" /home remove")).build());
+		}
+		if (src.hasPermission("pjp.cmd.home.rename")) {
+			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("hrename"))).append(Text.of(" /home rename")).build());
 		}
 		if (src.hasPermission("pjp.cmd.home.list")) {
 			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("hlist"))).append(Text.of(" /home list")).build());

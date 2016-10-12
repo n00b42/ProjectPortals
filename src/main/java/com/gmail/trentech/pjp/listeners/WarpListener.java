@@ -10,7 +10,7 @@ import org.spongepowered.api.event.command.TabCompleteEvent;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.world.storage.WorldProperties;
 
-import com.gmail.trentech.pjp.data.object.Warp;
+import com.gmail.trentech.pjp.data.portal.Warp;
 
 public class WarpListener {
 

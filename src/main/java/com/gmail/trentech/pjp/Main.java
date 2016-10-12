@@ -33,14 +33,14 @@ import com.gmail.trentech.pjp.data.immutable.ImmutableHomeData;
 import com.gmail.trentech.pjp.data.immutable.ImmutableSignPortalData;
 import com.gmail.trentech.pjp.data.mutable.HomeData;
 import com.gmail.trentech.pjp.data.mutable.SignPortalData;
-import com.gmail.trentech.pjp.data.object.Button;
-import com.gmail.trentech.pjp.data.object.Door;
-import com.gmail.trentech.pjp.data.object.Home;
-import com.gmail.trentech.pjp.data.object.Lever;
-import com.gmail.trentech.pjp.data.object.Plate;
-import com.gmail.trentech.pjp.data.object.Portal;
-import com.gmail.trentech.pjp.data.object.Sign;
-import com.gmail.trentech.pjp.data.object.Warp;
+import com.gmail.trentech.pjp.data.portal.Button;
+import com.gmail.trentech.pjp.data.portal.Door;
+import com.gmail.trentech.pjp.data.portal.Home;
+import com.gmail.trentech.pjp.data.portal.Lever;
+import com.gmail.trentech.pjp.data.portal.Plate;
+import com.gmail.trentech.pjp.data.portal.Portal;
+import com.gmail.trentech.pjp.data.portal.Sign;
+import com.gmail.trentech.pjp.data.portal.Warp;
 import com.gmail.trentech.pjp.listeners.ButtonListener;
 import com.gmail.trentech.pjp.listeners.DoorListener;
 import com.gmail.trentech.pjp.listeners.HomeListener;
@@ -50,12 +50,11 @@ import com.gmail.trentech.pjp.listeners.PlateListener;
 import com.gmail.trentech.pjp.listeners.PortalListener;
 import com.gmail.trentech.pjp.listeners.SignListener;
 import com.gmail.trentech.pjp.listeners.TeleportListener;
-import com.gmail.trentech.pjp.listeners.Timings;
 import com.gmail.trentech.pjp.listeners.WarpListener;
-import com.gmail.trentech.pjp.listeners.WorldListener;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Resource;
 import com.gmail.trentech.pjp.utils.SQLUtils;
+import com.gmail.trentech.pjp.utils.Timings;
 import com.google.inject.Inject;
 
 import me.flibio.updatifier.Updatifier;
@@ -94,7 +93,6 @@ public class Main {
 		Timings timings = new Timings();
 
 		Sponge.getEventManager().registerListeners(this, new TeleportListener(timings));
-		Sponge.getEventManager().registerListeners(this, new WorldListener());
 
 		Sponge.getCommandManager().register(this, new CMDBack().cmdBack, "back");
 		Sponge.getCommandManager().register(this, new CommandManager().cmdPJP, "pjp");
@@ -208,8 +206,7 @@ public class Main {
 		Timings timings = new Timings();
 
 		Sponge.getEventManager().registerListeners(this, new TeleportListener(timings));
-		Sponge.getEventManager().registerListeners(this, new WorldListener());
-		
+
 		ConfigurationNode modules = config.getNode("settings", "modules");
 
 		if (modules.getNode("portals").getBoolean()) {
