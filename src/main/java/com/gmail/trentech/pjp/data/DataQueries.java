@@ -6,6 +6,7 @@ import org.spongepowered.api.data.DataQuery;
 
 public class DataQueries {
 
+	public static final DataQuery PROPERTIES = of("properties");
 	public static final DataQuery PORTAL_TYPE = of("type");
 	public static final DataQuery SERVER = of("server");
 	public static final DataQuery WORLD = of("world");

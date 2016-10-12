@@ -3,9 +3,7 @@ package com.gmail.trentech.pjp.listeners;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
@@ -15,31 +13,24 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.event.block.tileentity.ChangeSignEvent;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.flowpowered.math.vector.Vector3d;
-import com.gmail.trentech.pjp.data.immutable.ImmutableSignPortalData;
+import com.gmail.trentech.pjp.data.Keys;
 import com.gmail.trentech.pjp.data.mutable.SignPortalData;
-import com.gmail.trentech.pjp.data.portal.Sign;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.Particles;
-import com.gmail.trentech.pjp.events.TeleportEvent;
-import com.gmail.trentech.pjp.events.TeleportEvent.Local;
-import com.gmail.trentech.pjp.events.TeleportEvent.Server;
+import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.utils.ConfigManager;
+import com.gmail.trentech.pjp.utils.Teleport;
 import com.gmail.trentech.pjp.utils.Timings;
-
-import flavor.pie.spongycord.SpongyCord;
 
 public class SignListener {
 
-	public static ConcurrentHashMap<UUID, SignPortalData> builders = new ConcurrentHashMap<>();
+	public static ConcurrentHashMap<UUID, Portal> builders = new ConcurrentHashMap<>();
 
 	private Timings timings;
 
@@ -55,7 +46,7 @@ public class SignListener {
 			if (!builders.containsKey(player.getUniqueId())) {
 				return;
 			}
-			SignPortalData portalData = builders.get(player.getUniqueId());
+			Portal portal = builders.get(player.getUniqueId());
 
 			if (!player.hasPermission("pjp.sign.place")) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to place sign portals"));
@@ -63,7 +54,7 @@ public class SignListener {
 				return;
 			}
 
-			event.getTargetTile().offer(portalData);
+			event.getTargetTile().offer(new SignPortalData(portal));
 
 			Particle particle = Particles.getDefaultEffect("creation");
 			particle.spawnParticle(event.getTargetTile().getLocation(), false, Particles.getDefaultColor("creation", particle.isColorable()));
@@ -88,13 +79,12 @@ public class SignListener {
 
 			Location<World> location = snapshot.getLocation().get();
 
-			Optional<SignPortalData> optionalSignPortalData = location.get(SignPortalData.class);
+			Optional<Portal> optionalPortal = location.get(Keys.PORTAL);
 
-			if (!optionalSignPortalData.isPresent()) {
+			if (!optionalPortal.isPresent()) {
 				return;
 			}
-			SignPortalData portalData = optionalSignPortalData.get();
-			Sign sign = portalData.sign().get();
+			Portal portal = optionalPortal.get();
 
 			if (ConfigManager.get().getConfig().getNode("options", "advanced_permissions").getBoolean()) {
 				if (!player.hasPermission("pjp.sign." + location.getExtent().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ())) {
@@ -110,37 +100,7 @@ public class SignListener {
 				}
 			}
 
-			if (sign.getServer().isPresent()) {
-				Consumer<String> consumer = (server) -> {
-					Server teleportEvent = new TeleportEvent.Server(player, server, sign.getServer().get(), sign.getPrice(), Cause.of(NamedCause.source(sign)));
-
-					if (!Sponge.getEventManager().post(teleportEvent)) {
-						SpongyCord.API.connectPlayer(player, teleportEvent.getDestination());
-
-						player.setLocation(player.getWorld().getSpawnLocation());
-					}
-				};
-
-				SpongyCord.API.getServerName(consumer, player);
-			} else {
-				Optional<Location<World>> optionalSpawnLocation = sign.getLocation();
-
-				if (!optionalSpawnLocation.isPresent()) {
-					player.sendMessage(Text.of(TextColors.DARK_RED, "Destination does not exist"));
-					return;
-				}
-				Location<World> spawnLocation = optionalSpawnLocation.get();
-
-				Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, 0, Cause.of(NamedCause.source(sign)));
-
-				if (!Sponge.getEventManager().post(teleportEvent)) {
-					spawnLocation = teleportEvent.getDestination();
-
-					Vector3d rotation = portalData.sign().get().getRotation().toVector3d();
-
-					player.setLocationAndRotation(spawnLocation, rotation);
-				}
-			}
+			Teleport.teleport(player, portal);
 		} finally {
 			timings.onChangeSignEvent().stopTiming();
 		}
@@ -160,9 +120,9 @@ public class SignListener {
 					continue;
 				}
 
-				Optional<ImmutableSignPortalData> optionalSignPortalData = snapshot.get(ImmutableSignPortalData.class);
+				Optional<Portal> optionalPortal = snapshot.get(Keys.PORTAL);
 
-				if (!optionalSignPortalData.isPresent()) {
+				if (!optionalPortal.isPresent()) {
 					continue;
 				}
 

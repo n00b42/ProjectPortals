@@ -16,7 +16,7 @@ import org.spongepowered.api.text.format.TextColors;
 
 import com.gmail.trentech.pjp.data.Keys;
 import com.gmail.trentech.pjp.data.mutable.HomeData;
-import com.gmail.trentech.pjp.data.portal.Home;
+import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDRemove implements CommandExecutor {
@@ -36,27 +36,28 @@ public class CMDRemove implements CommandExecutor {
 		}
 		Player player = (Player) src;
 
-		String homeName = args.<String> getOne("name").get().toLowerCase();
+		String name = args.<String> getOne("name").get().toLowerCase();
 
-		Map<String, Home> homeList = new HashMap<>();
+		Map<String, Portal> list = new HashMap<>();
 
-		Optional<Map<String, Home>> optionalHomeList = player.get(Keys.HOMES);
+		Optional<Map<String, Portal>> optionalList = player.get(Keys.PORTALS);
 
-		if (optionalHomeList.isPresent()) {
-			homeList = optionalHomeList.get();
+		if (optionalList.isPresent()) {
+			list = optionalList.get();
 		}
 
-		if (!homeList.containsKey(homeName)) {
-			throw new CommandException(Text.of(TextColors.RED, homeName, " does not exist"), false);
+		if (!list.containsKey(name)) {
+			throw new CommandException(Text.of(TextColors.RED, name, " does not exist"), false);
 		}
 
-		homeList.remove(homeName);
+		list.remove(name);
 
-		DataTransactionResult result = player.offer(new HomeData(homeList));
+		DataTransactionResult result = player.offer(new HomeData(list));
+		
 		if (!result.isSuccessful()) {
-			throw new CommandException(Text.of(TextColors.RED, "Could not remove ", homeName), false);
+			throw new CommandException(Text.of(TextColors.RED, "Could not remove ", name), false);
 		} else {
-			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Home ", homeName, " removed"));
+			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Home ", name, " removed"));
 		}
 
 		return CommandResult.success();

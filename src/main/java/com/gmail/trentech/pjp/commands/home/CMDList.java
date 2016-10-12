@@ -21,9 +21,9 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.data.Keys;
-import com.gmail.trentech.pjp.data.mutable.HomeData;
-import com.gmail.trentech.pjp.data.portal.Home;
+import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDList implements CommandExecutor {
@@ -42,53 +42,53 @@ public class CMDList implements CommandExecutor {
 		}
 		Player player = (Player) src;
 
-		Map<String, Home> homeList = new HashMap<>();
+		Map<String, Portal> list = new HashMap<>();
 
-		Optional<Map<String, Home>> optionalHomeList = player.get(Keys.HOMES);
+		Optional<Map<String, Portal>> optionalHomeList = player.get(Keys.PORTALS);
 
 		if (optionalHomeList.isPresent()) {
-			homeList = optionalHomeList.get();
-		} else {
-			player.offer(new HomeData(new HashMap<String, Home>()));
+			list = optionalHomeList.get();
 		}
 
-		List<Text> list = new ArrayList<>();
+		List<Text> pages = new ArrayList<>();
 
-		for (Entry<String, Home> entry : homeList.entrySet()) {
-			String homeName = entry.getKey().toString();
-			Home home = entry.getValue();
+		for (Entry<String, Portal> entry : list.entrySet()) {
+			String name = entry.getKey().toString();
+			Portal.Local local = (Portal.Local) entry.getValue();
 
 			Builder builder = Text.builder().onHover(TextActions.showText(Text.of(TextColors.WHITE, "Click to teleport to home")));
 
-			Optional<Location<World>> optionalDestination = home.getLocation();
+			Optional<Location<World>> optionalLocation = local.getLocation();
 			
-			if (optionalDestination.isPresent()) {
-				Location<World> destination = optionalDestination.get();
-
-				String worldName = destination.getExtent().getName();
-				int x = destination.getBlockX();
-				int y = destination.getBlockY();
-				int z = destination.getBlockZ();
-
-				builder.onClick(TextActions.runCommand("/home " + homeName)).append(Text.of(TextColors.GREEN, homeName, ": ", TextColors.WHITE, worldName, ", ", x, ", ", y, ", ", z));
+			if (optionalLocation.isPresent()) {
+				Location<World> location = optionalLocation.get();
+				
+				String worldName = location.getExtent().getName();
+				
+				if(!location.equals(local.getLocation().get())) {
+					builder.onClick(TextActions.runCommand("/home " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Destination: ", TextColors.WHITE, worldName, ", random"));
+				} else {
+					Vector3d vector3d = local.getVector3d().get();
+					builder.onClick(TextActions.runCommand("/home " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Destination: ", TextColors.WHITE, worldName, ", ", vector3d.getFloorX(), ", ", vector3d.getFloorY(), ", ", vector3d.getFloorZ()));
+				}
 			} else {
-				builder.onClick(TextActions.runCommand("/home " + homeName)).append(Text.of(TextColors.GREEN, homeName, ": ", TextColors.RED, "INVALID DESTINATION"));
+				builder.onClick(TextActions.runCommand("/home " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.RED, " - DESTINATION ERROR"));
 			}
-
-			list.add(builder.build());
+			
+			pages.add(builder.build());
 		}
 
-		if (list.isEmpty()) {
-			list.add(Text.of(TextColors.YELLOW, " No saved homes"));
+		if (pages.isEmpty()) {
+			pages.add(Text.of(TextColors.YELLOW, " No saved homes"));
 		}
 
-		PaginationList.Builder pages = PaginationList.builder();
+		PaginationList.Builder paginationList = PaginationList.builder();
 
-		pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, "Homes")).build());
+		paginationList.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, "Homes")).build());
 
-		pages.contents(list);
+		paginationList.contents(pages);
 
-		pages.sendTo(src);
+		paginationList.sendTo(src);
 
 		return CommandResult.success();
 	}

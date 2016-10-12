@@ -6,15 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
@@ -23,11 +20,9 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.data.Keys;
-import com.gmail.trentech.pjp.data.mutable.HomeData;
-import com.gmail.trentech.pjp.data.portal.Home;
-import com.gmail.trentech.pjp.events.TeleportEvent;
-import com.gmail.trentech.pjp.events.TeleportEvent.Local;
+import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.utils.Help;
+import com.gmail.trentech.pjp.utils.Teleport;
 
 public class CMDHome implements CommandExecutor {
 
@@ -39,29 +34,26 @@ public class CMDHome implements CommandExecutor {
 		Player player = (Player) src;
 
 		if (args.hasAny("name")) {
-			String homeName = args.<String> getOne("name").get().toLowerCase();
+			String name = args.<String> getOne("name").get().toLowerCase();
 
-			Map<String, Home> homeList = new HashMap<>();
+			Map<String, Portal> list = new HashMap<>();
 
-			Optional<Map<String, Home>> optionalHomeList = player.get(Keys.HOMES);
+			Optional<Map<String, Portal>> optionalList = player.get(Keys.PORTALS);
 
-			if (optionalHomeList.isPresent()) {
-				homeList = optionalHomeList.get();
-			} else {
-				player.offer(new HomeData(new HashMap<String, Home>()));
+			if (optionalList.isPresent()) {
+				list = optionalList.get();
 			}
 
-			if (!homeList.containsKey(homeName)) {
-				throw new CommandException(Text.of(TextColors.RED, homeName, " does not exist"));
+			if (!list.containsKey(name)) {
+				throw new CommandException(Text.of(TextColors.RED, name, " does not exist"));
 			}
-			Home home = homeList.get(homeName);
+			Portal.Local local = (Portal.Local) list.get(name);
 
-			Optional<Location<World>> optionalLocation = home.getLocation();
+			Optional<Location<World>> optionalLocation = local.getLocation();
 
 			if (!optionalLocation.isPresent()) {
-				throw new CommandException(Text.of(TextColors.RED, homeName, " has invalid location"));
+				throw new CommandException(Text.of(TextColors.RED, name, " has invalid location"));
 			}
-			Location<World> location = optionalLocation.get();
 
 			if (args.hasAny("player")) {
 				if (!src.hasPermission("pjp.cmd.home.others")) {
@@ -70,14 +62,8 @@ public class CMDHome implements CommandExecutor {
 
 				player = args.<Player> getOne("player").get();
 			}
-
-			Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), location, 0, Cause.of(NamedCause.source("home")));
-
-			if (!Sponge.getEventManager().post(teleportEvent)) {
-				location = teleportEvent.getDestination();
-
-				player.setLocationAndRotation(location, home.getRotation().toVector3d());
-			}
+			
+			Teleport.teleport(player, local);
 
 			return CommandResult.success();
 		}

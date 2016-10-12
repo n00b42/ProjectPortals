@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 import org.spongepowered.api.Sponge;
@@ -11,6 +12,8 @@ import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.TeleportHelper;
@@ -18,6 +21,12 @@ import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
+import com.gmail.trentech.pjp.events.TeleportEvent;
+import com.gmail.trentech.pjp.events.TeleportEvent.Local;
+import com.gmail.trentech.pjp.events.TeleportEvent.Server;
+import com.gmail.trentech.pjp.portal.Portal;
+
+import flavor.pie.spongycord.SpongyCord;
 
 public class Teleport {
 
@@ -75,5 +84,49 @@ public class Teleport {
 			Player player = (Player) src;
 			player.setLocation(location);
 		};
+	}
+	
+	public static boolean teleport(Player player, Portal portal) {
+		AtomicReference<Boolean> bool = new AtomicReference<>(false);
+		
+		if (portal instanceof Portal.Server) {
+			Portal.Server server = (Portal.Server) portal;
+			
+			Consumer<String> consumer = (serverName) -> {
+				Server teleportEvent = new TeleportEvent.Server(player, serverName, server.getServer(), server.getPrice(), Cause.of(NamedCause.source(server)));
+
+				if (!Sponge.getEventManager().post(teleportEvent)) {
+					SpongyCord.API.connectPlayer(player, teleportEvent.getDestination());
+
+					player.setLocation(player.getWorld().getSpawnLocation());
+					
+					bool.set(true);
+				}
+			};
+
+			SpongyCord.API.getServerName(consumer, player);
+		} else {
+			Portal.Local local = (Portal.Local) portal;
+			
+			Optional<Location<World>> optionalSpawnLocation = local.getLocation();
+
+			if (optionalSpawnLocation.isPresent()) {
+				Location<World> spawnLocation = optionalSpawnLocation.get();
+
+				Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, local.getPrice(), Cause.of(NamedCause.source(local)));
+
+				if (!Sponge.getEventManager().post(teleportEvent)) {
+					spawnLocation = teleportEvent.getDestination();
+
+					Vector3d rotation = local.getRotation().toVector3d();
+
+					player.setLocationAndRotation(spawnLocation, rotation);
+					
+					bool.set(true);
+				}
+			}
+		}
+		
+		return bool.get();
 	}
 }

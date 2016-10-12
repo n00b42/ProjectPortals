@@ -1,73 +1,63 @@
-package com.gmail.trentech.pjp.data.portal;
+package com.gmail.trentech.pjp.portal;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import static com.gmail.trentech.pjp.data.DataQueries.COLOR;
+import static com.gmail.trentech.pjp.data.DataQueries.FILL;
+import static com.gmail.trentech.pjp.data.DataQueries.FRAME;
+import static com.gmail.trentech.pjp.data.DataQueries.PARTICLE;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataSerializable;
+import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.MemoryDataContainer;
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.persistence.DataTranslators;
+import org.spongepowered.api.data.persistence.AbstractDataBuilder;
+import org.spongepowered.api.data.persistence.InvalidDataException;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.util.Axis;
 import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.DataQueries;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
-import com.gmail.trentech.pjp.rotation.Rotation;
-import com.gmail.trentech.pjp.utils.Serializer;
 
-public class Portal extends PortalBase {
+public class Properties implements DataSerializable {
 
-	private static ConcurrentHashMap<String, Portal> cache = new ConcurrentHashMap<>();
+	private List<Location<World>> frame = new ArrayList<>();
+	private List<Location<World>> fill = new ArrayList<>();
+	private Particle particle;
+	private Optional<ParticleColor> color;
 
-	private List<Location<World>> frame;
-	private List<Location<World>> fill;
-	private Particle particle = Particles.getDefaultEffect("portal");
-	private Optional<ParticleColor> color = Particles.getDefaultColor("portal", particle.isColorable());
-	private BlockState blockState = BlockTypes.PORTAL.getDefaultState().with(Keys.AXIS, Axis.Z).get();
-
-	public Portal(Optional<String> server, Optional<World> world, Optional<Location<World>> location, List<Location<World>> frame, List<Location<World>> fill, Particle particle, Optional<ParticleColor> color, Rotation rotation, double price) {
-		super(server, world, location, rotation, price);
-		init(frame, fill, particle, color);
+	public Properties(Particle particle, Optional<ParticleColor> color) {
+		this.particle = particle;
+		this.color = color;
 	}
 
-	private void init(List<Location<World>> frame, List<Location<World>> fill, Particle particle, Optional<ParticleColor> color) {
+	public Properties(List<Location<World>> frame, List<Location<World>> fill, Particle particle, Optional<ParticleColor> color) {
 		this.frame = frame;
 		this.fill = fill;
 		this.particle = particle;
-
-		if (!this.color.isPresent()) {
-			this.color = color;
-		}
-
-		this.blockState = getBlock();
+		this.color = color;
 	}
-
+	
 	public Particle getParticle() {
 		return particle;
 	}
-
+	
 	public void setParticle(Particle particle) {
 		this.particle = particle;
 	}
@@ -79,23 +69,41 @@ public class Portal extends PortalBase {
 	public void setParticleColor(Optional<ParticleColor> color) {
 		this.color = color;
 	}
-
+	
 	public List<Location<World>> getFrame() {
 		return frame;
+	}
+
+	public void addFrame(Location<World> location) {
+		frame.add(location);
+	}
+
+	public void removeFrame(Location<World> location) {
+		frame.remove(location);
 	}
 
 	public List<Location<World>> getFill() {
 		return fill;
 	}
+	
+	public void addFill(Location<World> location) {
+		fill.add(location);
+	}
 
+	public void removeFill(Location<World> location) {
+		fill.remove(location);
+	}
+	
 	private void updateClient(Player player, boolean reset) {
+		BlockState state = getBlock();
+		
 		Sponge.getScheduler().createTaskBuilder().delayTicks(5).execute(c -> {
 			for (Location<World> location : getFill()) {
 				if(location.getExtent().getChunk(location.getChunkPosition()).get().isLoaded()) {
 					if (reset) {
 						player.resetBlockChange(location.getBlockPosition());
 					} else {
-						player.sendBlockChange(location.getBlockPosition(), blockState);
+						player.sendBlockChange(location.getBlockPosition(), state);
 					}
 				}
 			}
@@ -172,170 +180,20 @@ public class Portal extends PortalBase {
 
 		return blockState;
 	}
-
-	public static Optional<Portal> get(String name) {
-		if (cache.containsKey(name)) {
-			return Optional.of(cache.get(name));
-		}
-
-		return Optional.empty();
-	}
-
-	public static Optional<Portal> get(Location<World> location) {
-		for (Entry<String, Portal> entry : cache.entrySet()) {
-			Portal portal = entry.getValue();
-
-			List<Location<World>> frame = portal.getFrame();
-
-			if (!frame.get(0).getExtent().equals(location.getExtent())) {
-				continue;
-			}
-
-			for (Location<World> loc : frame) {
-				if (loc.getBlockPosition().equals(location.getBlockPosition())) {
-					return Optional.of(portal);
-				}
-			}
-
-			for (Location<World> loc : portal.getFill()) {
-				if (loc.getBlockPosition().equals(location.getBlockPosition())) {
-					return Optional.of(portal);
-				}
-			}
-		}
-
-		return Optional.empty();
-	}
-
-	public static ConcurrentHashMap<String, Portal> all() {
-		return cache;
-	}
-
-	public void create(String name) {
-		this.name = name;
-		
-		try {
-			Connection connection = getDataSource().getConnection();
-
-			PreparedStatement statement = connection.prepareStatement("INSERT into Portals (Name, Portal) VALUES (?, ?)");
-
-			statement.setString(1, name);
-			statement.setString(2, Serializer.serialize(this));
-
-			statement.executeUpdate();
-
-			connection.close();
-
-			cache.put(name, this);
-
-			particle.createTask(name, this.getFill(), getParticleColor());
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void update() {
-		try {
-			Connection connection = getDataSource().getConnection();
-
-			PreparedStatement statement = connection.prepareStatement("UPDATE Portals SET Portal = ? WHERE Name = ?");
-
-			statement.setString(1, Serializer.serialize(this));
-			statement.setString(2, name);
-
-			statement.executeUpdate();
-
-			connection.close();
-
-			cache.put(name, this);
-
-			for (Task task : Sponge.getScheduler().getScheduledTasks()) {
-				if (task.getName().equals(name)) {
-					break;
-				}
-			}
-			update(true);
-			particle.createTask(name, this.getFill(), getParticleColor());
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void remove() {
-		try {
-			Connection connection = getDataSource().getConnection();
-
-			PreparedStatement statement = connection.prepareStatement("DELETE from Portals WHERE Name = ?");
-
-			statement.setString(1, name);
-			statement.executeUpdate();
-
-			connection.close();
-
-			cache.remove(name);
-
-			for (Task task : Sponge.getScheduler().getScheduledTasks()) {
-				if (task.getName().equals(name)) {
-					task.cancel();
-					break;
-				}
-			}
-
-			update(true);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public static void init() {
-		try {
-			Connection connection = getDataSource().getConnection();
-
-			PreparedStatement statement = connection.prepareStatement("SELECT * FROM Portals");
-
-			ResultSet result = statement.executeQuery();
-
-			while (result.next()) {
-				String name = result.getString("Name");
-
-				Portal portal;
-				try {
-					portal = Serializer.deserializePortal(result.getString("Portal"));
-					portal.setName(name);
-					
-					cache.put(name, portal);
-
-					portal.getParticle().createTask(name, portal.getFill(), portal.getParticleColor());
-				} catch (Exception e) {
-					Main.instance().getLog().error("Could not deserialize Portal: " + name);
-				}
-			}
-
-			connection.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	
+	@Override
+	public int getContentVersion() {
+		return 0;
 	}
 
 	@Override
 	public DataContainer toContainer() {
-		DataContainer container = new MemoryDataContainer().set(DataQueries.ROTATION, rotation.getName()).set(DataQueries.PRICE, price);
-
-		if(server.isPresent()) {
-			container.set(DataQueries.SERVER, server.get());
+		DataContainer container = new MemoryDataContainer().set(DataQueries.PARTICLE, particle.getName());
+		
+		if (color.isPresent()) {
+			container.set(DataQueries.COLOR, color.get().getName());
 		}
 		
-		if(world.isPresent()) {
-			container.set(DataQueries.WORLD, world.get().getName());
-		}
-		
-		if(vector3d.isPresent()) {
-			Vector3d vector3d = this.vector3d.get();
-			container.set(DataQueries.VECTOR3D, DataTranslators.VECTOR_3_D.translate(vector3d));
-		}
-		
-		container.set(DataQueries.PARTICLE, particle.getName());
-
 		List<String> frame = new ArrayList<>();
 
 		for (Location<World> location : this.frame) {
@@ -348,15 +206,64 @@ public class Portal extends PortalBase {
 		for (Location<World> location : this.fill) {
 			fill.add(location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ());
 		}
-
 		container.set(DataQueries.FILL, fill);
+		
+		return container;
+	}
+	
+	public static class Builder extends AbstractDataBuilder<Properties> {
 
-		if (color.isPresent()) {
-			container.set(DataQueries.COLOR, color.get().getName());
-		} else {
-			container.set(DataQueries.COLOR, "NONE");
+		public Builder() {
+			super(Properties.class, 0);
 		}
 
-		return container;
+		@SuppressWarnings("unchecked")
+		@Override
+		protected Optional<Properties> buildContent(DataView container) throws InvalidDataException {
+			if (container.contains(FRAME, FILL, PARTICLE)) {
+				Particle particle = Particles.get(container.getString(PARTICLE).get()).get();
+				Optional<ParticleColor> color = Optional.empty();
+				List<Location<World>> frame = new ArrayList<>();
+				List<Location<World>> fill = new ArrayList<>();
+				
+				if(container.contains(COLOR)) {
+					color = ParticleColor.get(container.getString(COLOR).get());
+				}
+				
+				for (String loc : (List<String>) container.getList(FRAME).get()) {
+					String[] args = loc.split(":");
+
+					Optional<World> optional = Sponge.getServer().getWorld(args[0]);
+
+					if (!optional.isPresent()) {
+						continue;
+					}
+					World extent = optional.get();
+
+					String[] coords = args[1].split("\\.");
+
+					frame.add(new Location<World>(extent, Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2])));
+				}
+
+				for (String loc : (List<String>) container.getList(FILL).get()) {
+					String[] args = loc.split(":");
+
+					Optional<World> optional = Sponge.getServer().getWorld(args[0]);
+
+					if (!optional.isPresent()) {
+						continue;
+					}
+					World extent = optional.get();
+
+					String[] coords = args[1].split("\\.");
+
+					fill.add(new Location<World>(extent, Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2])));
+				}
+
+				return Optional.of(new Properties(frame, fill, particle, color));
+			}
+
+			return Optional.empty();
+		}
 	}
 }

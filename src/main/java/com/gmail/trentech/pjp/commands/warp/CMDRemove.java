@@ -10,7 +10,8 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-import com.gmail.trentech.pjp.data.portal.Warp;
+import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.Portal.PortalType;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDRemove implements CommandExecutor {
@@ -27,13 +28,14 @@ public class CMDRemove implements CommandExecutor {
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		String name = args.<String> getOne("name").get().toLowerCase();
 
-		Optional<Warp> optionalWarp = Warp.get(name);
-
-		if (!optionalWarp.isPresent()) {
+		Optional<Portal> optionalPortal = Portal.get(name, PortalType.WARP);
+		
+		if (!optionalPortal.isPresent()) {
 			throw new CommandException(Text.of(TextColors.RED, name, " does not exist"), false);
 		}
-		Warp warp = optionalWarp.get();
-		warp.remove();
+		Portal portal = optionalPortal.get();
+		
+		portal.remove();
 
 		src.sendMessage(Text.of(TextColors.DARK_GREEN, "Warp ", name, " removed"));
 

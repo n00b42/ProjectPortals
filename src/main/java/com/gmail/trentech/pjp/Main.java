@@ -19,38 +19,20 @@ import org.spongepowered.api.plugin.PluginContainer;
 
 import com.gmail.trentech.pjp.commands.CMDBack;
 import com.gmail.trentech.pjp.commands.CommandManager;
-import com.gmail.trentech.pjp.data.builder.data.ButtonBuilder;
-import com.gmail.trentech.pjp.data.builder.data.DoorBuilder;
-import com.gmail.trentech.pjp.data.builder.data.HomeBuilder;
-import com.gmail.trentech.pjp.data.builder.data.LeverBuilder;
-import com.gmail.trentech.pjp.data.builder.data.PlateBuilder;
-import com.gmail.trentech.pjp.data.builder.data.PortalBuilder;
-import com.gmail.trentech.pjp.data.builder.data.SignBuilder;
-import com.gmail.trentech.pjp.data.builder.data.WarpBuilder;
-import com.gmail.trentech.pjp.data.builder.manipulator.HomeDataManipulatorBuilder;
-import com.gmail.trentech.pjp.data.builder.manipulator.SignPortalDataManipulatorBuilder;
 import com.gmail.trentech.pjp.data.immutable.ImmutableHomeData;
 import com.gmail.trentech.pjp.data.immutable.ImmutableSignPortalData;
 import com.gmail.trentech.pjp.data.mutable.HomeData;
 import com.gmail.trentech.pjp.data.mutable.SignPortalData;
-import com.gmail.trentech.pjp.data.portal.Button;
-import com.gmail.trentech.pjp.data.portal.Door;
-import com.gmail.trentech.pjp.data.portal.Home;
-import com.gmail.trentech.pjp.data.portal.Lever;
-import com.gmail.trentech.pjp.data.portal.Plate;
-import com.gmail.trentech.pjp.data.portal.Portal;
-import com.gmail.trentech.pjp.data.portal.Sign;
-import com.gmail.trentech.pjp.data.portal.Warp;
 import com.gmail.trentech.pjp.listeners.ButtonListener;
 import com.gmail.trentech.pjp.listeners.DoorListener;
-import com.gmail.trentech.pjp.listeners.HomeListener;
 import com.gmail.trentech.pjp.listeners.LegacyListener;
 import com.gmail.trentech.pjp.listeners.LeverListener;
 import com.gmail.trentech.pjp.listeners.PlateListener;
 import com.gmail.trentech.pjp.listeners.PortalListener;
 import com.gmail.trentech.pjp.listeners.SignListener;
 import com.gmail.trentech.pjp.listeners.TeleportListener;
-import com.gmail.trentech.pjp.listeners.WarpListener;
+import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.Properties;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Resource;
 import com.gmail.trentech.pjp.utils.SQLUtils;
@@ -92,6 +74,10 @@ public class Main {
 
 		Timings timings = new Timings();
 
+		Sponge.getDataManager().registerBuilder(Properties.class, new Properties.Builder());
+		Sponge.getDataManager().registerBuilder(Portal.Local.class, new Portal.Local.Builder());
+		Sponge.getDataManager().registerBuilder(Portal.Server.class, new Portal.Server.Builder());
+		
 		Sponge.getEventManager().registerListeners(this, new TeleportListener(timings));
 
 		Sponge.getCommandManager().register(this, new CMDBack().cmdBack, "back");
@@ -100,7 +86,6 @@ public class Main {
 		ConfigurationNode modules = config.getNode("settings", "modules");
 
 		if (modules.getNode("portals").getBoolean()) {
-			Sponge.getDataManager().registerBuilder(Portal.class, new PortalBuilder());
 			Sponge.getEventManager().registerListeners(this, new PortalListener(timings));
 			Sponge.getCommandManager().register(this, new CommandManager().cmdPortal, "portal", "p");
 
@@ -111,82 +96,54 @@ public class Main {
 			getLog().info("Portal module activated");
 		}
 		if (modules.getNode("buttons").getBoolean()) {
-			Sponge.getDataManager().registerBuilder(Button.class, new ButtonBuilder());
 			Sponge.getEventManager().registerListeners(this, new ButtonListener(timings));
 			Sponge.getCommandManager().register(this, new CommandManager().cmdButton, "button", "b");
 
 			getLog().info("Button module activated");
 		}
 		if (modules.getNode("doors").getBoolean()) {
-			Sponge.getDataManager().registerBuilder(Door.class, new DoorBuilder());
 			Sponge.getEventManager().registerListeners(this, new DoorListener(timings));
 			Sponge.getCommandManager().register(this, new CommandManager().cmdDoor, "door", "d");
 
 			getLog().info("Door module activated");
 		}
 		if (modules.getNode("plates").getBoolean()) {
-			Sponge.getDataManager().registerBuilder(Plate.class, new PlateBuilder());
 			Sponge.getEventManager().registerListeners(this, new PlateListener(timings));
 			Sponge.getCommandManager().register(this, new CommandManager().cmdPlate, "plate", "pp");
 
 			getLog().info("Pressure plate module activated");
 		}
 		if (modules.getNode("signs").getBoolean()) {
-			Sponge.getDataManager().register(SignPortalData.class, ImmutableSignPortalData.class, new SignPortalDataManipulatorBuilder());
-			Sponge.getDataManager().registerBuilder(Sign.class, new SignBuilder());
+			Sponge.getDataManager().register(SignPortalData.class, ImmutableSignPortalData.class, new SignPortalData.Builder());
 			Sponge.getEventManager().registerListeners(this, new SignListener(timings));
 			Sponge.getCommandManager().register(this, new CommandManager().cmdSign, "sign", "s");
 
 			getLog().info("Sign module activated");
 		}
 		if (modules.getNode("levers").getBoolean()) {
-			Sponge.getDataManager().registerBuilder(Lever.class, new LeverBuilder());
 			Sponge.getEventManager().registerListeners(this, new LeverListener(timings));
 			Sponge.getCommandManager().register(this, new CommandManager().cmdLever, "lever", "l");
 
 			getLog().info("Lever module activated");
 		}
 		if (modules.getNode("homes").getBoolean()) {
-			Sponge.getEventManager().registerListeners(this, new HomeListener());
-			Sponge.getDataManager().register(HomeData.class, ImmutableHomeData.class, new HomeDataManipulatorBuilder());
-			Sponge.getDataManager().registerBuilder(Home.class, new HomeBuilder());
+			Sponge.getDataManager().register(HomeData.class, ImmutableHomeData.class, new HomeData.Builder());
 			Sponge.getCommandManager().register(this, new CommandManager().cmdHome, "home", "h");
 
 			getLog().info("Home module activated");
 		}
 		if (modules.getNode("warps").getBoolean()) {
-			Sponge.getEventManager().registerListeners(this, new WarpListener());
-			Sponge.getDataManager().registerBuilder(Warp.class, new WarpBuilder());
 			Sponge.getCommandManager().register(this, new CommandManager().cmdWarp, "warp", "w");
 
 			getLog().info("Warp module activated");
 		}
 
-		SQLUtils.createTables(modules);
+		SQLUtils.createTables();
 	}
 
 	@Listener
 	public void onStartedServer(GameStartedServerEvent event) {
-		ConfigurationNode modules = ConfigManager.get().getConfig().getNode("settings", "modules");
-
-		if (modules.getNode("portals").getBoolean()) {
-			Portal.init();
-		}
-		if (modules.getNode("buttons").getBoolean()) {
-			Button.init();
-		}
-		if (modules.getNode("doors").getBoolean()) {
-			Door.init();
-		}
-		if (modules.getNode("plates").getBoolean()) {
-			Plate.init();
-		}
-		if (modules.getNode("levers").getBoolean()) {
-			Lever.init();
-		}
-		if (modules.getNode("warps").getBoolean()) {
-			Warp.init();
-		}
+		Portal.init();
 	}
 
 	@Listener
@@ -200,20 +157,16 @@ public class Main {
 		ConfigManager configManager = ConfigManager.init();
 		ConfigurationNode config = configManager.getConfig();
 		
-		Sponge.getCommandManager().register(this, new CMDBack().cmdBack, "back");
-		Sponge.getCommandManager().register(this, new CommandManager().cmdPJP, "pjp");
-
 		Timings timings = new Timings();
 
 		Sponge.getEventManager().registerListeners(this, new TeleportListener(timings));
+		
+		Sponge.getCommandManager().register(this, new CMDBack().cmdBack, "back");
+		Sponge.getCommandManager().register(this, new CommandManager().cmdPJP, "pjp");
 
 		ConfigurationNode modules = config.getNode("settings", "modules");
 
 		if (modules.getNode("portals").getBoolean()) {
-			if (!Sponge.getDataManager().getBuilder(Portal.class).isPresent()) {
-				Sponge.getDataManager().registerBuilder(Portal.class, new PortalBuilder());
-			}
-
 			Sponge.getEventManager().registerListeners(this, new PortalListener(timings));
 			Sponge.getCommandManager().register(this, new CommandManager().cmdPortal, "portal", "p");
 
@@ -221,90 +174,50 @@ public class Main {
 				Sponge.getEventManager().registerListeners(this, new LegacyListener(timings));
 			}
 
-			Portal.init();
-
 			getLog().info("Portal module activated");
 		}
 		if (modules.getNode("buttons").getBoolean()) {
-			if (!Sponge.getDataManager().getBuilder(Button.class).isPresent()) {
-				Sponge.getDataManager().registerBuilder(Button.class, new ButtonBuilder());
-			}
-
 			Sponge.getEventManager().registerListeners(this, new ButtonListener(timings));
 			Sponge.getCommandManager().register(this, new CommandManager().cmdButton, "button", "b");
-
-			Button.init();
-
+			
 			getLog().info("Button module activated");
 		}
 		if (modules.getNode("doors").getBoolean()) {
-			if (!Sponge.getDataManager().getBuilder(Door.class).isPresent()) {
-				Sponge.getDataManager().registerBuilder(Door.class, new DoorBuilder());
-			}
-
 			Sponge.getEventManager().registerListeners(this, new DoorListener(timings));
 			Sponge.getCommandManager().register(this, new CommandManager().cmdDoor, "door", "d");
-
-			Door.init();
 
 			getLog().info("Door module activated");
 		}
 		if (modules.getNode("plates").getBoolean()) {
-			if (!Sponge.getDataManager().getBuilder(Plate.class).isPresent()) {
-				Sponge.getDataManager().registerBuilder(Plate.class, new PlateBuilder());
-			}
-
 			Sponge.getEventManager().registerListeners(this, new PlateListener(timings));
 			Sponge.getCommandManager().register(this, new CommandManager().cmdPlate, "plate", "pp");
-
-			Plate.init();
 
 			getLog().info("Pressure plate module activated");
 		}
 		if (modules.getNode("signs").getBoolean()) {
-			if (!Sponge.getDataManager().getBuilder(Sign.class).isPresent()) {
-				Sponge.getDataManager().registerBuilder(Sign.class, new SignBuilder());
-			}
-
 			Sponge.getEventManager().registerListeners(this, new SignListener(timings));
 			Sponge.getCommandManager().register(this, new CommandManager().cmdSign, "sign", "s");
 
 			getLog().info("Sign module activated");
 		}
 		if (modules.getNode("levers").getBoolean()) {
-			if (!Sponge.getDataManager().getBuilder(Lever.class).isPresent()) {
-				Sponge.getDataManager().registerBuilder(Lever.class, new LeverBuilder());
-			}
-
 			Sponge.getEventManager().registerListeners(this, new LeverListener(timings));
 			Sponge.getCommandManager().register(this, new CommandManager().cmdLever, "lever", "l");
-
-			Lever.init();
 
 			getLog().info("Lever module activated");
 		}
 		if (modules.getNode("homes").getBoolean()) {
-			if (!Sponge.getDataManager().getBuilder(Home.class).isPresent()) {
-				Sponge.getDataManager().registerBuilder(Home.class, new HomeBuilder());
-			}
-
-			Sponge.getEventManager().registerListeners(this, new HomeListener());
 			Sponge.getCommandManager().register(this, new CommandManager().cmdHome, "home", "h");
 
 			getLog().info("Home module activated");
 		}
 		if (modules.getNode("warps").getBoolean()) {
-			if (!Sponge.getDataManager().getBuilder(Warp.class).isPresent()) {
-				Sponge.getDataManager().registerBuilder(Warp.class, new WarpBuilder());
-			}
-
-			Sponge.getEventManager().registerListeners(this, new WarpListener());
 			Sponge.getCommandManager().register(this, new CommandManager().cmdWarp, "warp", "w");
-
-			Warp.init();
 
 			getLog().info("Warp module activated");
 		}
+		
+		Portal.init();
 	}
 
 	public Logger getLog() {

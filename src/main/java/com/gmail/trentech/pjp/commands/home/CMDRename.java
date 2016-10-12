@@ -16,7 +16,7 @@ import org.spongepowered.api.text.format.TextColors;
 
 import com.gmail.trentech.pjp.data.Keys;
 import com.gmail.trentech.pjp.data.mutable.HomeData;
-import com.gmail.trentech.pjp.data.portal.Home;
+import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDRename implements CommandExecutor {
@@ -38,31 +38,30 @@ public class CMDRename implements CommandExecutor {
 		
 		String oldName = args.<String> getOne("oldName").get().toLowerCase();
 
-		Map<String, Home> homeList = new HashMap<>();
+		Map<String, Portal> list = new HashMap<>();
 
-		Optional<Map<String, Home>> optionalHomeList = player.get(Keys.HOMES);
+		Optional<Map<String, Portal>> optionalList = player.get(Keys.PORTALS);
 
-		if (optionalHomeList.isPresent()) {
-			homeList = optionalHomeList.get();
-		} else {
-			player.offer(new HomeData(new HashMap<String, Home>()));
+		if (optionalList.isPresent()) {
+			list = optionalList.get();
 		}
 
-		if (!homeList.containsKey(oldName)) {
+		if (!list.containsKey(oldName)) {
 			throw new CommandException(Text.of(TextColors.RED, oldName, " does not exist"));
 		}
-		Home home = homeList.get(oldName);
+		Portal.Local local = (Portal.Local) list.get(oldName);
 
 		String newName = args.<String> getOne("newName").get().toLowerCase();
 
-		if (homeList.containsKey(newName)) {
+		if (list.containsKey(newName)) {
 			throw new CommandException(Text.of(TextColors.RED, newName, " already exists"), false);
 		}
 
-		homeList.remove(oldName);
-		homeList.put(newName, home);
+		list.remove(oldName);
+		list.put(newName, local);
 
-		DataTransactionResult result = player.offer(new HomeData(homeList));
+		DataTransactionResult result = player.offer(new HomeData(list));
+		
 		if (!result.isSuccessful()) {
 			throw new CommandException(Text.of(TextColors.RED, "Could not rename ", oldName), false);
 		} else {

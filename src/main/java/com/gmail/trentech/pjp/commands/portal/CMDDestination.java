@@ -13,10 +13,12 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.data.portal.Portal;
+import com.flowpowered.math.vector.Vector3d;
+import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.Portal.PortalType;
+import com.gmail.trentech.pjp.portal.Portal.Server;
 import com.gmail.trentech.pjp.utils.Help;
 
 import flavor.pie.spongycord.SpongyCord;
@@ -40,14 +42,18 @@ public class CMDDestination implements CommandExecutor {
 		
 		String name = args.<String> getOne("name").get().toLowerCase();
 
-		if (!Portal.get(name).isPresent()) {
+		Optional<Portal> optionalPortal = Portal.get(name, PortalType.PORTAL);
+		
+		if (!optionalPortal.isPresent()) {
 			throw new CommandException(Text.of(TextColors.RED, name, " does not exist"), false);
 		}
-		Portal portal = Portal.get(name).get();
+		Portal portal = optionalPortal.get();
 
 		String destination = args.<String> getOne("destination").get();
 
-		if (portal.getServer().isPresent()) {
+		if (portal instanceof Portal.Server) {
+			Portal.Server server = (Server) portal;
+			
 			Consumer<List<String>> consumer1 = (list) -> {
 				if (!list.contains(destination)) {
 					try {
@@ -72,32 +78,34 @@ public class CMDDestination implements CommandExecutor {
 
 			SpongyCord.API.getServerList(consumer1, player);
 			
-			portal.setServer(destination);
+			server.setServer(destination);
 		} else {
+			Portal.Local local = (Portal.Local) portal;
+			
 			Optional<World> world = Sponge.getServer().getWorld(destination);
 
 			if (!world.isPresent()) {
 				throw new CommandException(Text.of(TextColors.RED, destination, " is not loaded or does not exist"), false);
 			}
 
-			portal.setWorld(world.get());
+			local.setWorld(world.get());
 			
 			if (args.hasAny("x,y,z")) {
-				Location<World> location;
+				Vector3d vector3d;
 				
 				String[] coords = args.<String> getOne("x,y,z").get().split(",");
 
 				if (coords[0].equalsIgnoreCase("random")) {
-					location = world.get().getLocation(0, 0, 0);
+					vector3d = new Vector3d(0, 0, 0);
 				} else {
 					try {
-						location = world.get().getLocation(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2]));
+						vector3d = new Vector3d(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2]));
 					} catch (Exception e) {
 						throw new CommandException(Text.of(TextColors.RED, coords.toString(), " is not valid"), true);
 					}
 				}
 				
-				portal.setLocation(location);
+				local.setVector3d(vector3d);
 			}
 		}
 

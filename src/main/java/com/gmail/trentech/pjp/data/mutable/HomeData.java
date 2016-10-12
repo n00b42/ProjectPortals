@@ -1,6 +1,6 @@
 package com.gmail.trentech.pjp.data.mutable;
 
-import static com.gmail.trentech.pjp.data.Keys.HOMES;
+import static com.gmail.trentech.pjp.data.Keys.PORTALS;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,26 +12,33 @@ import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataHolder;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.DataView;
+import org.spongepowered.api.data.manipulator.DataManipulatorBuilder;
 import org.spongepowered.api.data.manipulator.mutable.common.AbstractMappedData;
 import org.spongepowered.api.data.merge.MergeFunction;
+import org.spongepowered.api.data.persistence.AbstractDataBuilder;
+import org.spongepowered.api.data.persistence.InvalidDataException;
 import org.spongepowered.api.data.value.mutable.MapValue;
 
 import com.gmail.trentech.pjp.data.immutable.ImmutableHomeData;
-import com.gmail.trentech.pjp.data.portal.Home;
+import com.gmail.trentech.pjp.portal.Portal;
 import com.google.common.base.Preconditions;
 
-public class HomeData extends AbstractMappedData<String, Home, HomeData, ImmutableHomeData> {
+public class HomeData extends AbstractMappedData<String, Portal, HomeData, ImmutableHomeData> {
 
-	public HomeData(Map<String, Home> value) {
-		super(value, HOMES);
+	public HomeData(Map<String, Portal> value) {
+		super(value, PORTALS);
 	}
-
-	public MapValue<String, Home> homes() {
-		return Sponge.getRegistry().getValueFactory().createMapValue(HOMES, getValue());
+	
+	public HomeData() {
+		super(new HashMap<>(), PORTALS);
+	}
+	
+	public MapValue<String, Portal> portals() {
+		return Sponge.getRegistry().getValueFactory().createMapValue(PORTALS, getValue());
 	}
 
 	@Override
-	public Optional<Home> get(String key) {
+	public Optional<Portal> get(String key) {
 		if (getValue().containsKey(key)) {
 			return Optional.of(getValue().get(key));
 		}
@@ -44,13 +51,13 @@ public class HomeData extends AbstractMappedData<String, Home, HomeData, Immutab
 	}
 
 	@Override
-	public HomeData put(String key, Home value) {
+	public HomeData put(String key, Portal value) {
 		getValue().put(key, value);
 		return this;
 	}
 
 	@Override
-	public HomeData putAll(Map<? extends String, ? extends Home> map) {
+	public HomeData putAll(Map<? extends String, ? extends Portal> map) {
 		getValue().putAll(map);
 		return this;
 	}
@@ -64,18 +71,18 @@ public class HomeData extends AbstractMappedData<String, Home, HomeData, Immutab
 	@Override
 	public Optional<HomeData> fill(DataHolder dataHolder, MergeFunction mergeFn) {
 		HomeData homeData = Preconditions.checkNotNull(mergeFn).merge(copy(), dataHolder.get(HomeData.class).orElse(copy()));
-		return Optional.of(set(HOMES, homeData.get(HOMES).get()));
+		return Optional.of(set(PORTALS, homeData.get(PORTALS).get()));
 	}
 
 	@Override
 	public Optional<HomeData> from(DataContainer container) {
-		if (container.contains(HOMES.getQuery())) {
-			HashMap<String, Home> homeList = new HashMap<>();
+		if (container.contains(PORTALS.getQuery())) {
+			HashMap<String, Portal> homeList = new HashMap<>();
 
-			DataView homes = container.getView(HOMES.getQuery()).get();
+			DataView homes = container.getView(PORTALS.getQuery()).get();
 
 			for (DataQuery home : homes.getKeys(false)) {
-				homeList.put(home.toString(), homes.getSerializable(home, Home.class).get());
+				homeList.put(home.toString(), homes.getSerializable(home, Portal.class).get());
 			}
 			return Optional.of(new HomeData(homeList));
 		}
@@ -89,7 +96,7 @@ public class HomeData extends AbstractMappedData<String, Home, HomeData, Immutab
 
 	@Override
 	public int getContentVersion() {
-		return 1;
+		return 0;
 	}
 
 	@Override
@@ -99,6 +106,39 @@ public class HomeData extends AbstractMappedData<String, Home, HomeData, Immutab
 
 	@Override
 	public DataContainer toContainer() {
-		return super.toContainer().set(HOMES, getValue());
+		return super.toContainer().set(PORTALS, getValue());
+	}
+	
+	public static class Builder extends AbstractDataBuilder<HomeData> implements DataManipulatorBuilder<HomeData, ImmutableHomeData> {
+
+		public Builder() {
+			super(HomeData.class, 0);
+		}
+		
+		@Override
+		public Optional<HomeData> buildContent(DataView container) throws InvalidDataException {
+			if (container.contains(PORTALS.getQuery())) {
+				HashMap<String, Portal> homeList = new HashMap<>();
+
+				DataView homes = container.getView(PORTALS.getQuery()).get();
+
+				for (DataQuery home : homes.getKeys(false)) {
+					homeList.put(home.toString(), homes.getSerializable(home, Portal.class).get());
+				}
+				return Optional.of(new HomeData(homeList));
+			}
+			return Optional.empty();
+		}
+
+		@Override
+		public HomeData create() {
+			return new HomeData(new HashMap<String, Portal>());
+		}
+
+		@Override
+		public Optional<HomeData> createFrom(DataHolder dataHolder) {
+			return create().fill(dataHolder);
+		}
+
 	}
 }

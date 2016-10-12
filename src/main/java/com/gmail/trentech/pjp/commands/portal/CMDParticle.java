@@ -10,10 +10,12 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-import com.gmail.trentech.pjp.data.portal.Portal;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
+import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.Properties;
+import com.gmail.trentech.pjp.portal.Portal.PortalType;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDParticle implements CommandExecutor {
@@ -30,10 +32,12 @@ public class CMDParticle implements CommandExecutor {
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		String name = args.<String> getOne("name").get().toLowerCase();
 
-		if (!Portal.get(name).isPresent()) {
+		Optional<Portal> optionalPortal = Portal.get(name, PortalType.PORTAL);
+		
+		if (!optionalPortal.isPresent()) {
 			throw new CommandException(Text.of(TextColors.RED, name, " does not exist"), false);
 		}
-		Portal portal = Portal.get(name).get();
+		Portal portal = optionalPortal.get();
 
 		Particle particle = args.<Particles> getOne("type").get().getParticle();
 
@@ -47,8 +51,11 @@ public class CMDParticle implements CommandExecutor {
 			}
 		}
 
-		portal.setParticle(particle);
-		portal.setParticleColor(color);
+		Properties properties = portal.getProperties().get();
+		properties.setParticle(particle);
+		properties.setParticleColor(color);
+		
+		portal.setProperties(properties);
 		portal.update();
 
 		return CommandResult.success();

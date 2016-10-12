@@ -19,10 +19,10 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.data.portal.Door;
-import com.gmail.trentech.pjp.data.portal.Portal;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.events.TeleportEvent.Local;
+import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.Portal.PortalType;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDBack implements CommandExecutor {
@@ -50,7 +50,7 @@ public class CMDBack implements CommandExecutor {
 		}
 		Location<World> spawnLocation = players.get(player);
 		
-		while(Portal.get(spawnLocation).isPresent() || Door.get(spawnLocation).isPresent()) {
+		while(Portal.get(spawnLocation, PortalType.PORTAL).isPresent() || Portal.get(spawnLocation, PortalType.DOOR).isPresent()) {
 			ThreadLocalRandom random = ThreadLocalRandom.current();
 			
 			int x = (random.nextInt(5 * 2) - 5) + spawnLocation.getBlockX();

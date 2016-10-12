@@ -14,10 +14,11 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.data.portal.Warp;
+import com.flowpowered.math.vector.Vector3d;
+import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.Portal.PortalType;
 import com.gmail.trentech.pjp.rotation.Rotation;
 import com.gmail.trentech.pjp.utils.Help;
 
@@ -42,12 +43,12 @@ public class CMDCreate implements CommandExecutor {
 
 		String name = args.<String> getOne("name").get().toLowerCase();
 
-		if (Warp.get(name).isPresent()) {
+		if (Portal.get(name, PortalType.WARP).isPresent()) {
 			throw new CommandException(Text.of(TextColors.RED, name, " already exists"), false);
 		}
 
 		Optional<World> world = Optional.empty();
-		Optional<Location<World>> location = Optional.empty();
+		Optional<Vector3d> vector3d = Optional.empty();
 		AtomicReference<Rotation> rotation = new AtomicReference<>(Rotation.EAST);
 		AtomicReference<Double> price = new AtomicReference<>(0.0);
 
@@ -79,7 +80,7 @@ public class CMDCreate implements CommandExecutor {
 							}
 						}
 
-						new Warp(Optional.of(destination), Optional.empty(), Optional.empty(), rotation.get(), price.get()).create(name);
+						new Portal.Server(PortalType.WARP, destination, rotation.get(), price.get()).create(name);
 
 						player.sendMessage(Text.of(TextColors.DARK_GREEN, "Warp ", name, " create"));
 					};
@@ -105,10 +106,10 @@ public class CMDCreate implements CommandExecutor {
 					String[] coords = args.<String> getOne("x,y,z").get().split(",");
 
 					if (coords[0].equalsIgnoreCase("random")) {
-						location = Optional.of(world.get().getLocation(0, 0, 0));
+						vector3d = Optional.of(new Vector3d(0, 0, 0));
 					} else {
 						try {
-							location = Optional.of(world.get().getLocation(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2])));
+							vector3d = Optional.of(new Vector3d(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2])));
 						} catch (Exception e) {
 							throw new CommandException(Text.of(TextColors.RED, coords.toString(), " is not valid"), true);
 						}
@@ -121,11 +122,11 @@ public class CMDCreate implements CommandExecutor {
 			}
 		} else {
 			world = Optional.of(player.getWorld());
-			location = Optional.of(player.getLocation());
+			vector3d = Optional.of(player.getLocation().getPosition());
 			rotation.set(Rotation.getClosest(player.getRotation().getFloorY()));
 		}
 
-		new Warp(Optional.empty(), world, location, rotation.get(), price.get()).create(name);
+		new Portal.Local(PortalType.WARP, world.get(), vector3d, rotation.get(), price.get()).create(name);
 
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Warp ", name, " create"));
 

@@ -3,33 +3,22 @@ package com.gmail.trentech.pjp.commands.warp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.world.Location;
-import org.spongepowered.api.world.World;
 
-import com.flowpowered.math.vector.Vector3d;
-import com.gmail.trentech.pjp.data.portal.Warp;
-import com.gmail.trentech.pjp.events.TeleportEvent;
-import com.gmail.trentech.pjp.events.TeleportEvent.Local;
-import com.gmail.trentech.pjp.events.TeleportEvent.Server;
+import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.Portal.PortalType;
 import com.gmail.trentech.pjp.utils.Help;
-
-import flavor.pie.spongycord.SpongyCord;
+import com.gmail.trentech.pjp.utils.Teleport;
 
 public class CMDWarp implements CommandExecutor {
 
@@ -39,18 +28,18 @@ public class CMDWarp implements CommandExecutor {
 			if (!(src instanceof Player)) {
 				throw new CommandException(Text.of(TextColors.RED, "Must be a player"));
 			}
-			AtomicReference<Player> player = new AtomicReference<>((Player) src);
+			Player player = ((Player) src);
 
-			String warpName = args.<String> getOne("name").get().toLowerCase();
+			String name = args.<String> getOne("name").get().toLowerCase();
 
-			Optional<Warp> optionalWarp = Warp.get(warpName);
-
-			if (!optionalWarp.isPresent()) {
-				throw new CommandException(Text.of(TextColors.RED, warpName, " does not exist"));
+			Optional<Portal> optionalPortal = Portal.get(name, PortalType.WARP);
+			
+			if (!optionalPortal.isPresent()) {
+				throw new CommandException(Text.of(TextColors.RED, name, " does not exist"), false);
 			}
-			Warp warp = optionalWarp.get();
+			Portal portal = optionalPortal.get();
 
-			if (!player.get().hasPermission("pjp.warps." + warpName)) {
+			if (!player.hasPermission("pjp.warps." + name)) {
 				throw new CommandException(Text.of(TextColors.RED, "you do not have permission to warp here"));
 			}
 
@@ -59,39 +48,10 @@ public class CMDWarp implements CommandExecutor {
 					throw new CommandException(Text.of(TextColors.RED, "you do not have permission to warp others"));
 				}
 
-				player.set(args.<Player> getOne("player").get());
+				player = args.<Player> getOne("player").get();
 			}
 
-			if (warp.getServer().isPresent()) {
-				Consumer<String> consumer = (server) -> {
-					Server teleportEvent = new TeleportEvent.Server(player.get(), server, warp.getServer().get(), warp.getPrice(), Cause.of(NamedCause.source(warp)));
-
-					if (!Sponge.getEventManager().post(teleportEvent)) {
-						SpongyCord.API.connectPlayer(player.get(), teleportEvent.getDestination());
-
-						player.get().setLocation(player.get().getWorld().getSpawnLocation());
-					}
-				};
-
-				SpongyCord.API.getServerName(consumer, player.get());
-			} else {
-				Optional<Location<World>> optionalSpawnLocation = warp.getLocation();
-
-				if (!optionalSpawnLocation.isPresent()) {
-					throw new CommandException(Text.of(TextColors.RED, "Destination does not exist or world is not loaded"));
-				}
-				Location<World> spawnLocation = optionalSpawnLocation.get();
-
-				Local teleportEvent = new TeleportEvent.Local(player.get(), player.get().getLocation(), spawnLocation, warp.getPrice(), Cause.of(NamedCause.source("warp")));
-
-				if (!Sponge.getEventManager().post(teleportEvent)) {
-					spawnLocation = teleportEvent.getDestination();
-
-					Vector3d rotation = warp.getRotation().toVector3d();
-
-					player.get().setLocationAndRotation(spawnLocation, rotation);
-				}
-			}
+			Teleport.teleport(player, portal);
 
 			return CommandResult.success();
 		}

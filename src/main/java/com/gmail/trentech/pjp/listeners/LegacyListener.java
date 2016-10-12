@@ -13,8 +13,9 @@ import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.data.portal.Portal;
 import com.gmail.trentech.pjp.portal.LegacyBuilder;
+import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.Portal.PortalType;
 import com.gmail.trentech.pjp.utils.Timings;
 
 public class LegacyListener {
@@ -36,7 +37,7 @@ public class LegacyListener {
 				for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 					Location<World> location = transaction.getFinal().getLocation().get();
 
-					if (!Portal.get(location).isPresent()) {
+					if (!Portal.get(location, PortalType.PORTAL).isPresent()) {
 						continue;
 					}
 
@@ -75,7 +76,7 @@ public class LegacyListener {
 				for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 					Location<World> location = transaction.getFinal().getLocation().get();
 
-					if (!Portal.get(location).isPresent()) {
+					if (!Portal.get(location, PortalType.PORTAL).isPresent()) {
 						continue;
 					}
 

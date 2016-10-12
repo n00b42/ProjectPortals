@@ -14,7 +14,8 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.data.portal.Portal;
+import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.Portal.PortalType;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 
 public class Particle {
@@ -102,10 +103,10 @@ public class Particle {
 		}
 
 		if (getName().equals("PORTAL2")) {
-			Portal portal = Portal.get(locations.get(0)).get();
+			Portal portal = Portal.get(locations.get(0), PortalType.PORTAL).get();
 
 			Sponge.getScheduler().createTaskBuilder().intervalTicks(getTime()).name(portal.getName()).execute(t -> {
-				portal.update(false);
+				portal.getProperties().get().update(false);
 			}).submit(Main.getPlugin());
 		} else {
 			Sponge.getScheduler().createTaskBuilder().interval(getTime(), TimeUnit.MILLISECONDS).name(name).execute(t -> {

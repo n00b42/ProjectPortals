@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
@@ -19,8 +18,6 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.block.InteractBlockEvent;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.filter.cause.Root;
@@ -33,22 +30,19 @@ import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.data.portal.Portal;
 import com.gmail.trentech.pjp.events.ConstructPortalEvent;
-import com.gmail.trentech.pjp.events.TeleportEvent;
-import com.gmail.trentech.pjp.events.TeleportEvent.Local;
-import com.gmail.trentech.pjp.events.TeleportEvent.Server;
-import com.gmail.trentech.pjp.portal.PortalProperties;
+import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.Portal.PortalType;
 import com.gmail.trentech.pjp.rotation.PlayerRotation;
 import com.gmail.trentech.pjp.utils.ConfigManager;
+import com.gmail.trentech.pjp.utils.Teleport;
 import com.gmail.trentech.pjp.utils.Timings;
 
-import flavor.pie.spongycord.SpongyCord;
 import ninja.leaping.configurate.ConfigurationNode;
 
 public class PortalListener {
 
-	public static ConcurrentHashMap<UUID, PortalProperties> props = new ConcurrentHashMap<>();
+	public static ConcurrentHashMap<UUID, Portal> builders = new ConcurrentHashMap<>();
 
 	private Timings timings;
 
@@ -62,10 +56,10 @@ public class PortalListener {
 		timings.onInteractBlockEventSecondary().startTiming();
 
 		try {
-			if (!props.containsKey(player.getUniqueId())) {
+			if (!builders.containsKey(player.getUniqueId())) {
 				return;
 			}
-			PortalProperties properties = props.get(player.getUniqueId());
+			Portal portal = builders.get(player.getUniqueId());
 
 			if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent()) {
 				player.sendMessage(Text.of(TextColors.YELLOW, "Hand must be empty"));
@@ -81,16 +75,16 @@ public class PortalListener {
 
 			Direction direction = PlayerRotation.getClosest(player.getRotation().getFloorY()).getDirection();
 
-			com.gmail.trentech.pjp.portal.PortalBuilder builder = new com.gmail.trentech.pjp.portal.PortalBuilder(location, direction);
+			com.gmail.trentech.pjp.portal.PortalBuilder builder = new com.gmail.trentech.pjp.portal.PortalBuilder(portal, location, direction);
 
-			if (!builder.spawnPortal(properties)) {
+			if (!builder.spawnPortal()) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "Not a valid portal shape"));
 				return;
 			}
 
-			props.remove(player.getUniqueId());
+			builders.remove(player.getUniqueId());
 
-			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Portal ", properties.getName(), " created successfully"));
+			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Portal ", portal.getName(), " created successfully"));
 		} finally {
 			timings.onInteractBlockEventSecondary().stopTiming();
 		}
@@ -104,7 +98,7 @@ public class PortalListener {
 			List<Location<World>> locations = event.getLocations();
 
 			for (Location<World> location : event.getLocations()) {
-				if (Portal.get(location).isPresent()) {
+				if (Portal.get(location, PortalType.PORTAL).isPresent()) {
 					player.sendMessage(Text.of(TextColors.DARK_RED, "Portals cannot over lap other portals"));
 					event.setCancelled(true);
 					return;
@@ -137,22 +131,23 @@ public class PortalListener {
 		try {
 			Location<World> location = item.getLocation();
 
-			Optional<Portal> optionalPortal = Portal.get(location);
+			Optional<Portal> optionalPortal = Portal.get(location, PortalType.PORTAL);
 
 			if (!optionalPortal.isPresent()) {
 				return;
 			}
 			Portal portal = optionalPortal.get();
 
-			if (portal.getServer().isPresent()) {
+			if (portal instanceof Portal.Server) {
 				return;
 			}
-
+			Portal.Local local = (Portal.Local) portal;
+			
 			if (!ConfigManager.get().getConfig().getNode("options", "portal", "teleport_item").getBoolean()) {
 				return;
 			}
 
-			Optional<Location<World>> optionalSpawnLocation = portal.getLocation();
+			Optional<Location<World>> optionalSpawnLocation = local.getLocation();
 
 			if (!optionalSpawnLocation.isPresent()) {
 				return;
@@ -178,22 +173,23 @@ public class PortalListener {
 		try {
 			Location<World> location = living.getLocation();
 
-			Optional<Portal> optionalPortal = Portal.get(location);
+			Optional<Portal> optionalPortal = Portal.get(location, PortalType.PORTAL);
 
 			if (!optionalPortal.isPresent()) {
 				return;
 			}
 			Portal portal = optionalPortal.get();
 
-			if (portal.getServer().isPresent()) {
+			if (portal instanceof Portal.Server) {
 				return;
 			}
+			Portal.Local local = (Portal.Local) portal;
 
 			if (!ConfigManager.get().getConfig().getNode("options", "portal", "teleport_mob").getBoolean()) {
 				return;
 			}
 
-			Optional<Location<World>> optionalSpawnLocation = portal.getLocation();
+			Optional<Location<World>> optionalSpawnLocation = local.getLocation();
 
 			if (!optionalSpawnLocation.isPresent()) {
 				return;
@@ -217,7 +213,7 @@ public class PortalListener {
 		try {
 			Location<World> location = event.getFromTransform().getLocation();
 
-			Optional<Portal> optionalPortal = Portal.get(location);
+			Optional<Portal> optionalPortal = Portal.get(location, PortalType.PORTAL);
 
 			if (!optionalPortal.isPresent()) {
 				return;
@@ -236,49 +232,18 @@ public class PortalListener {
 				}
 			}
 
-			if (portal.getServer().isPresent()) {
-				UUID uuid = player.getUniqueId();
+			UUID uuid = player.getUniqueId();
 
-				if (cache.contains(uuid)) {
-					return;
-				}
-
-				Consumer<String> consumer = (server) -> {
-					Server teleportEvent = new TeleportEvent.Server(player, server, portal.getServer().get(), portal.getPrice(), Cause.of(NamedCause.source(portal)));
-
-					if (!Sponge.getEventManager().post(teleportEvent)) {
-						cache.add(uuid);
-
-						SpongyCord.API.connectPlayer(player, teleportEvent.getDestination());
-
-						player.setLocation(player.getWorld().getSpawnLocation());
-
-						Sponge.getScheduler().createTaskBuilder().delayTicks(20).execute(c -> {
-							cache.remove(uuid);
-						}).submit(Main.getPlugin());
-					}
-				};
-
-				SpongyCord.API.getServerName(consumer, player);
-			} else {
-				Optional<Location<World>> optionalSpawnLocation = portal.getLocation();
-
-				if (!optionalSpawnLocation.isPresent()) {
-					player.sendMessage(Text.of(TextColors.DARK_RED, "Spawn location does not exist or world is not loaded"));
-					return;
-				}
-				Location<World> spawnLocation = optionalSpawnLocation.get();
-
-				Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, portal.getPrice(), Cause.of(NamedCause.source(portal)));
-
-				if (!Sponge.getEventManager().post(teleportEvent)) {
-					spawnLocation = teleportEvent.getDestination();
-
-					Vector3d rotation = portal.getRotation().toVector3d();
-					
-					event.setToTransform(new Transform<World>(spawnLocation.getExtent(), spawnLocation.getPosition(), rotation));
-				}
+			if (cache.contains(uuid)) {
+				return;
 			}
+			cache.add(uuid);
+			
+			Teleport.teleport(player, portal);
+			
+			Sponge.getScheduler().createTaskBuilder().delayTicks(20).execute(c -> {
+				cache.remove(uuid);
+			}).submit(Main.getPlugin());
 		} finally {
 			timings.onMoveEntityEvent().stopTiming();
 		}
@@ -292,7 +257,7 @@ public class PortalListener {
 			for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 				Location<World> location = transaction.getFinal().getLocation().get();
 
-				if (!Portal.get(location).isPresent()) {
+				if (!Portal.get(location, PortalType.PORTAL).isPresent()) {
 					continue;
 				}
 
@@ -312,7 +277,7 @@ public class PortalListener {
 			for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 				Location<World> location = transaction.getFinal().getLocation().get();
 
-				if (!Portal.get(location).isPresent()) {
+				if (!Portal.get(location, PortalType.PORTAL).isPresent()) {
 					continue;
 				}
 

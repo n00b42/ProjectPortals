@@ -1,28 +1,36 @@
 package com.gmail.trentech.pjp.data.mutable;
 
-import static com.gmail.trentech.pjp.data.Keys.SIGN;
+import static com.gmail.trentech.pjp.data.Keys.PORTAL;
 
 import java.util.Optional;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataHolder;
+import org.spongepowered.api.data.DataView;
+import org.spongepowered.api.data.manipulator.DataManipulatorBuilder;
 import org.spongepowered.api.data.manipulator.mutable.common.AbstractSingleData;
 import org.spongepowered.api.data.merge.MergeFunction;
+import org.spongepowered.api.data.persistence.AbstractDataBuilder;
+import org.spongepowered.api.data.persistence.InvalidDataException;
 import org.spongepowered.api.data.value.mutable.Value;
 
 import com.gmail.trentech.pjp.data.immutable.ImmutableSignPortalData;
-import com.gmail.trentech.pjp.data.portal.Sign;
+import com.gmail.trentech.pjp.portal.Portal;
 import com.google.common.base.Preconditions;
 
-public class SignPortalData extends AbstractSingleData<Sign, SignPortalData, ImmutableSignPortalData> {
+public class SignPortalData extends AbstractSingleData<Portal, SignPortalData, ImmutableSignPortalData> {
 
-	public SignPortalData(Sign value) {
-		super(value, SIGN);
+	public SignPortalData() {
+		super(null, PORTAL);
+	}
+	
+	public SignPortalData(Portal value) {
+		super(value, PORTAL);
 	}
 
-	public Value<Sign> sign() {
-		return Sponge.getRegistry().getValueFactory().createValue(SIGN, getValue(), getValue());
+	public Value<Portal> portal() {
+		return Sponge.getRegistry().getValueFactory().createValue(PORTAL, getValue(), getValue());
 	}
 
 	@Override
@@ -33,20 +41,20 @@ public class SignPortalData extends AbstractSingleData<Sign, SignPortalData, Imm
 	@Override
 	public Optional<SignPortalData> fill(DataHolder dataHolder, MergeFunction mergeFn) {
 		SignPortalData signData = Preconditions.checkNotNull(mergeFn).merge(copy(), dataHolder.get(SignPortalData.class).orElse(copy()));
-		return Optional.of(set(SIGN, signData.get(SIGN).get()));
+		return Optional.of(set(PORTAL, signData.get(PORTAL).get()));
 	}
 
 	@Override
 	public Optional<SignPortalData> from(DataContainer container) {
-		if (container.contains(SIGN.getQuery())) {
-			return Optional.of(set(SIGN, container.getSerializable(SIGN.getQuery(), Sign.class).orElse(getValue())));
+		if (container.contains(PORTAL.getQuery())) {
+			return Optional.of(set(PORTAL, container.getSerializable(PORTAL.getQuery(), Portal.class).orElse(getValue())));
 		}
 		return Optional.empty();
 	}
 
 	@Override
 	public int getContentVersion() {
-		return 1;
+		return 0;
 	}
 
 	@Override
@@ -55,13 +63,44 @@ public class SignPortalData extends AbstractSingleData<Sign, SignPortalData, Imm
 	}
 
 	@Override
-	protected Value<Sign> getValueGetter() {
-		return Sponge.getRegistry().getValueFactory().createValue(SIGN, getValue(), getValue());
+	protected Value<Portal> getValueGetter() {
+		return Sponge.getRegistry().getValueFactory().createValue(PORTAL, getValue(), getValue());
 	}
 
 	@Override
 	public DataContainer toContainer() {
-		return super.toContainer().set(SIGN, getValue());
+		return super.toContainer().set(PORTAL, getValue());
 	}
 
+	public static class Builder extends AbstractDataBuilder<SignPortalData> implements DataManipulatorBuilder<SignPortalData, ImmutableSignPortalData> {
+
+		public Builder() {
+			super(SignPortalData.class, 1);
+		}
+		
+		@Override
+		public Optional<SignPortalData> buildContent(DataView container) throws InvalidDataException {
+			if (container.contains(PORTAL.getQuery())) {
+				Portal portal = container.getSerializable(PORTAL.getQuery(), Portal.class).get();
+				return Optional.of(new SignPortalData(portal));
+			}
+			
+			return Optional.empty();
+		}
+
+		@Override
+		public SignPortalData create() {
+			return new SignPortalData();
+		}
+
+		@Override
+		public Optional<SignPortalData> createFrom(DataHolder dataHolder) {
+			return create().fill(dataHolder);
+		}
+
+		public SignPortalData createFrom(Portal portal) {
+			return new SignPortalData(portal);
+		}
+
+	}
 }

@@ -14,9 +14,9 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.rotation.Rotation;
 
 import flavor.pie.spongycord.SpongyCord;
@@ -38,8 +38,7 @@ public abstract class CMDObjBase implements CommandExecutor {
 
 		String destination = args.<String> getOne("destination").get();
 
-		Optional<World> world = Optional.empty();
-		Optional<Location<World>> location = Optional.empty();
+		Optional<Vector3d> vector3d = Optional.empty();
 		AtomicReference<Rotation> direction = new AtomicReference<>(Rotation.EAST);
 		AtomicReference<Double> price = new AtomicReference<>(0.0);
 
@@ -78,7 +77,7 @@ public abstract class CMDObjBase implements CommandExecutor {
 
 			SpongyCord.API.getServerList(consumer1, player);
 		} else {
-			world = Sponge.getServer().getWorld(destination);
+			Optional<World> world = Sponge.getServer().getWorld(destination);
 			
 			if (!world.isPresent()) {
 				throw new CommandException(Text.of(TextColors.RED, destination, " is not loaded or does not exist"), false);
@@ -88,10 +87,10 @@ public abstract class CMDObjBase implements CommandExecutor {
 				String[] coords = args.<String> getOne("x,y,z").get().split(",");
 
 				if (coords[0].equalsIgnoreCase("random")) {
-					location = Optional.of(world.get().getLocation(0, 0, 0));
+					vector3d = Optional.of(new Vector3d(0, 0, 0));
 				} else {
 					try {
-						location = Optional.of(world.get().getLocation(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2])));
+						vector3d = Optional.of(new Vector3d(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2])));
 					} catch (Exception e) {
 						throw new CommandException(Text.of(TextColors.RED, coords.toString(), " is not valid"), true);
 					}		
@@ -102,7 +101,7 @@ public abstract class CMDObjBase implements CommandExecutor {
 				direction.set(args.<Rotation> getOne("direction").get());
 			}
 
-			init(player, Optional.of(destination), world, location, direction.get(), price.get());
+			init(player, Optional.empty(), world, vector3d, direction.get(), price.get());
 
 			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place " + name + " to create " + name + " portal"));
 		}
@@ -110,5 +109,5 @@ public abstract class CMDObjBase implements CommandExecutor {
 		return CommandResult.success();
 	}
 
-	protected abstract void init(Player player, Optional<String> server, Optional<World> world, Optional<Location<World>> location, Rotation rotation, double price);
+	protected abstract void init(Player player, Optional<String> server, Optional<World> world, Optional<Vector3d> vector3d, Rotation rotation, double price);
 }

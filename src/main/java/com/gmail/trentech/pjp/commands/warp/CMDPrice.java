@@ -1,5 +1,7 @@
 package com.gmail.trentech.pjp.commands.warp;
 
+import java.util.Optional;
+
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -8,7 +10,8 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-import com.gmail.trentech.pjp.data.portal.Warp;
+import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.Portal.PortalType;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDPrice implements CommandExecutor {
@@ -25,15 +28,17 @@ public class CMDPrice implements CommandExecutor {
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		String name = args.<String> getOne("name").get().toLowerCase();
 
-		if (!Warp.get(name).isPresent()) {
+		Optional<Portal> optionalPortal = Portal.get(name, PortalType.WARP);
+		
+		if (!optionalPortal.isPresent()) {
 			throw new CommandException(Text.of(TextColors.RED, name, " does not exist"), false);
 		}
-		Warp warp = Warp.get(name).get();
+		Portal portal = optionalPortal.get();
 
 		double price = args.<Double> getOne("price").get();
 
-		warp.setPrice(price);
-		warp.update();
+		portal.setPrice(price);
+		portal.update();
 
 		src.sendMessage(Text.of(TextColors.DARK_GREEN, "Set price of warp ", name, " to $", price));
 
