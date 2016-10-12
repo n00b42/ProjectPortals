@@ -59,13 +59,13 @@ public class CMDList implements CommandExecutor {
 			Builder builder = Text.builder().onHover(TextActions.showText(Text.of(TextColors.WHITE, "Click to teleport to home")));
 
 			Optional<Location<World>> optionalLocation = local.getLocation();
-			
+
 			if (optionalLocation.isPresent()) {
 				Location<World> location = optionalLocation.get();
-				
+
 				String worldName = location.getExtent().getName();
-				
-				if(!location.equals(local.getLocation().get())) {
+
+				if (!location.equals(local.getLocation().get())) {
 					builder.onClick(TextActions.runCommand("/home " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Destination: ", TextColors.WHITE, worldName, ", random"));
 				} else {
 					Vector3d vector3d = local.getVector3d().get();
@@ -74,7 +74,7 @@ public class CMDList implements CommandExecutor {
 			} else {
 				builder.onClick(TextActions.runCommand("/home " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.RED, " - DESTINATION ERROR"));
 			}
-			
+
 			pages.add(builder.build());
 		}
 

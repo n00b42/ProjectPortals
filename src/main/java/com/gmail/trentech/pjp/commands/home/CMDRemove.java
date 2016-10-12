@@ -36,7 +36,7 @@ public class CMDRemove implements CommandExecutor {
 		}
 		Player player = (Player) src;
 
-		String name = args.<String> getOne("name").get().toLowerCase();
+		String name = args.<String>getOne("name").get().toLowerCase();
 
 		Map<String, Portal> list = new HashMap<>();
 
@@ -53,7 +53,7 @@ public class CMDRemove implements CommandExecutor {
 		list.remove(name);
 
 		DataTransactionResult result = player.offer(new HomeData(list));
-		
+
 		if (!result.isSuccessful()) {
 			throw new CommandException(Text.of(TextColors.RED, "Could not remove ", name), false);
 		} else {

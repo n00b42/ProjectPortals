@@ -6,11 +6,11 @@ import com.flowpowered.math.vector.Vector3d;
 
 public enum PlayerRotation {
 
-	EAST(Direction.EAST, -90), 
-	NORTH(Direction.NORTH, -180), 
+	EAST(Direction.EAST, -90),
+	NORTH(Direction.NORTH, -180),
 	WEST(Direction.WEST, 90),
 	SOUTH(Direction.SOUTH, 0);
-	
+
 	private final Direction direction;
 	private final int value;
 

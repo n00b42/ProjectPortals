@@ -49,16 +49,16 @@ public class CMDBack implements CommandExecutor {
 			throw new CommandException(Text.of(TextColors.RED, "No position to teleport to"));
 		}
 		Location<World> spawnLocation = players.get(player);
-		
-		while(Portal.get(spawnLocation, PortalType.PORTAL).isPresent() || Portal.get(spawnLocation, PortalType.DOOR).isPresent()) {
+
+		while (Portal.get(spawnLocation, PortalType.PORTAL).isPresent() || Portal.get(spawnLocation, PortalType.DOOR).isPresent()) {
 			ThreadLocalRandom random = ThreadLocalRandom.current();
-			
+
 			int x = (random.nextInt(5 * 2) - 5) + spawnLocation.getBlockX();
 			int z = (random.nextInt(5 * 2) - 5) + spawnLocation.getBlockZ();
 
 			Optional<Location<World>> optionalLocation = Sponge.getGame().getTeleportHelper().getSafeLocation(spawnLocation.getExtent().getLocation(x, spawnLocation.getBlockY(), z));
-			
-			if(optionalLocation.isPresent()) {
+
+			if (optionalLocation.isPresent()) {
 				spawnLocation = optionalLocation.get();
 			}
 		}

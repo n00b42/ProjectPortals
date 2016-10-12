@@ -46,22 +46,23 @@ import ninja.leaping.configurate.ConfigurationNode;
 @Plugin(id = Resource.ID, name = Resource.NAME, version = Resource.VERSION, description = Resource.DESCRIPTION, authors = Resource.AUTHOR, url = Resource.URL, dependencies = { @Dependency(id = "Updatifier", optional = true) })
 public class Main {
 
-	@Inject @ConfigDir(sharedRoot = false)
-    private Path path;
+	@Inject
+	@ConfigDir(sharedRoot = false)
+	private Path path;
 
 	@Inject
 	private Logger log;
 
 	private static PluginContainer plugin;
 	private static Main instance;
-	
+
 	@Listener
 	public void onPreInitializationEvent(GamePreInitializationEvent event) {
 		plugin = Sponge.getPluginManager().getPlugin(Resource.ID).get();
 		instance = this;
-		
-		try {			
-			Files.createDirectories(path);		
+
+		try {
+			Files.createDirectories(path);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -77,7 +78,7 @@ public class Main {
 		Sponge.getDataManager().registerBuilder(Properties.class, new Properties.Builder());
 		Sponge.getDataManager().registerBuilder(Portal.Local.class, new Portal.Local.Builder());
 		Sponge.getDataManager().registerBuilder(Portal.Server.class, new Portal.Server.Builder());
-		
+
 		Sponge.getEventManager().registerListeners(this, new TeleportListener(timings));
 
 		Sponge.getCommandManager().register(this, new CMDBack().cmdBack, "back");
@@ -156,11 +157,11 @@ public class Main {
 
 		ConfigManager configManager = ConfigManager.init();
 		ConfigurationNode config = configManager.getConfig();
-		
+
 		Timings timings = new Timings();
 
 		Sponge.getEventManager().registerListeners(this, new TeleportListener(timings));
-		
+
 		Sponge.getCommandManager().register(this, new CMDBack().cmdBack, "back");
 		Sponge.getCommandManager().register(this, new CommandManager().cmdPJP, "pjp");
 
@@ -179,7 +180,7 @@ public class Main {
 		if (modules.getNode("buttons").getBoolean()) {
 			Sponge.getEventManager().registerListeners(this, new ButtonListener(timings));
 			Sponge.getCommandManager().register(this, new CommandManager().cmdButton, "button", "b");
-			
+
 			getLog().info("Button module activated");
 		}
 		if (modules.getNode("doors").getBoolean()) {
@@ -216,22 +217,22 @@ public class Main {
 
 			getLog().info("Warp module activated");
 		}
-		
+
 		Portal.init();
 	}
 
 	public Logger getLog() {
 		return log;
 	}
-	
+
 	public Path getPath() {
 		return path;
 	}
-	
+
 	public static PluginContainer getPlugin() {
 		return plugin;
 	}
-	
+
 	public static Main instance() {
 		return instance;
 	}

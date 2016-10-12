@@ -22,9 +22,9 @@ public class LegacyBuilder {
 
 	private boolean fill = false;
 	private Portal portal;
-	
+
 	public LegacyBuilder(Portal portal) {
-		if(portal.getProperties().isPresent()) {
+		if (portal.getProperties().isPresent()) {
 			this.portal = portal;
 		}
 	}
@@ -32,7 +32,7 @@ public class LegacyBuilder {
 	public Portal getPortal() {
 		return portal;
 	}
-	
+
 	public LegacyBuilder addFrame(Location<World> location) {
 		portal.getProperties().get().addFrame(location);
 		return this;
@@ -73,20 +73,19 @@ public class LegacyBuilder {
 			Particle particle = Particles.getDefaultEffect("creation");
 			Optional<ParticleColor> color = Particles.getDefaultColor("creation", particle.isColorable());
 
-			for (Location<World> location : portal.getProperties().get().getFill()) {				
-				if(!location.getExtent().setBlock(location.getBlockX(), location.getBlockY(), location.getBlockZ(), block, BlockChangeFlag.NONE, Cause.source(Main.getPlugin()).named(NamedCause.simulated(player)).build())) {
+			for (Location<World> location : portal.getProperties().get().getFill()) {
+				if (!location.getExtent().setBlock(location.getBlockX(), location.getBlockY(), location.getBlockZ(), block, BlockChangeFlag.NONE, Cause.source(Main.getPlugin()).named(NamedCause.simulated(player)).build())) {
 					return false;
 				}
-				
+
 				particle.spawnParticle(location, false, color);
 			}
-			
+
 			portal.create(portal.getName());
 
 			return true;
 		}
 		return false;
 	}
-
 
 }

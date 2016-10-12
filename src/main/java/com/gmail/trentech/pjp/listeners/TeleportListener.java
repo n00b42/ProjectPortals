@@ -50,9 +50,9 @@ public class TeleportListener {
 
 	@Listener
 	public void onLoadWorldEvent(LoadWorldEvent event) {
-		Teleport.cacheRandom(event.getTargetWorld());	
+		Teleport.cacheRandom(event.getTargetWorld());
 	}
-	
+
 	@Listener
 	public void onTeleportEvent(TeleportEvent event) {
 		timings.onTeleportEvent().startTiming();
@@ -115,10 +115,10 @@ public class TeleportListener {
 				return;
 			}
 			event.setDestination(optionalLocation.get());
-			
+
 			ConfigurationNode node = ConfigManager.get().getConfig().getNode("options", "teleport_message");
-			
-			if(node.getNode("enable").getBoolean()) {
+
+			if (node.getNode("enable").getBoolean()) {
 				Text title = TextSerializers.FORMATTING_CODE.deserialize(node.getNode("title").getString().replaceAll("%WORLD%", dest.getExtent().getName()).replaceAll("\\%X%", Integer.toString(dest.getBlockX())).replaceAll("\\%Y%", Integer.toString(dest.getBlockY())).replaceAll("\\%Z%", Integer.toString(dest.getBlockZ())));
 				Text subTitle = TextSerializers.FORMATTING_CODE.deserialize(node.getNode("sub_title").getString().replaceAll("%WORLD%", dest.getExtent().getName()).replaceAll("\\%X%", Integer.toString(dest.getBlockX())).replaceAll("\\%Y%", Integer.toString(dest.getBlockY())).replaceAll("\\%Z%", Integer.toString(dest.getBlockZ())));
 
@@ -126,7 +126,7 @@ public class TeleportListener {
 			}
 
 			event.getDestination().getExtent().loadChunk(event.getDestination().getChunkPosition(), true);
-			
+
 			if (player.hasPermission("pjp.cmd.back")) {
 				CMDBack.players.put(player, src);
 			}

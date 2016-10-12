@@ -16,28 +16,28 @@ public class ConfigManager {
 	private Path path;
 	private CommentedConfigurationNode config;
 	private ConfigurationLoader<CommentedConfigurationNode> loader;
-	
+
 	private static ConcurrentHashMap<String, ConfigManager> configManagers = new ConcurrentHashMap<>();
 
 	private ConfigManager(String configName) {
 		try {
 			path = Main.instance().getPath().resolve(configName + ".conf");
-			
-			if (!Files.exists(path)) {		
+
+			if (!Files.exists(path)) {
 				Files.createFile(path);
 				Main.instance().getLog().info("Creating new " + path.getFileName() + " file...");
-			}		
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		load();
 	}
-	
+
 	public static ConfigManager get(String configName) {
 		return configManagers.get(configName);
 	}
-	
+
 	public static ConfigManager get() {
 		return configManagers.get("config");
 	}
@@ -45,11 +45,11 @@ public class ConfigManager {
 	public static ConfigManager init() {
 		return init("config");
 	}
-	
+
 	public static ConfigManager init(String configName) {
 		ConfigManager configManager = new ConfigManager(configName);
 		CommentedConfigurationNode config = configManager.getConfig();
-		
+
 		if (configName.equalsIgnoreCase("config")) {
 			if (config.getNode("options", "portal", "size").isVirtual()) {
 				config.getNode("options", "portal", "size").setValue(100).setComment("Maximum number of blocks a portal can use");
@@ -82,7 +82,7 @@ public class ConfigManager {
 			if (config.getNode("options", "teleport_message").isVirtual()) {
 				config.getNode("options", "teleport_message").setComment("Set message that displays when player teleports.");
 				// UPDATE CONFIG
-				if(config.getNode("options", "teleport_message", "enable").isVirtual()) {
+				if (config.getNode("options", "teleport_message", "enable").isVirtual()) {
 					config.getNode("options", "teleport_message", "enable").setValue(true);
 				}
 				config.getNode("options", "teleport_message", "title").setValue("&2%WORLD%");
@@ -119,11 +119,11 @@ public class ConfigManager {
 				config.getNode("settings", "modules", "homes").setValue(true);
 			}
 		}
-		
+
 		configManager.save();
-		
+
 		configManagers.put(configName, configManager);
-		
+
 		return configManager;
 	}
 
@@ -134,7 +134,7 @@ public class ConfigManager {
 	public CommentedConfigurationNode getConfig() {
 		return config;
 	}
-	
+
 	private void load() {
 		loader = HoconConfigurationLoader.builder().setPath(path).build();
 		try {

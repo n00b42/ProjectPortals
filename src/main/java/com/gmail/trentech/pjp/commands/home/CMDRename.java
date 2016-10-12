@@ -35,8 +35,8 @@ public class CMDRename implements CommandExecutor {
 			throw new CommandException(Text.of(TextColors.RED, "Must be a player"));
 		}
 		Player player = (Player) src;
-		
-		String oldName = args.<String> getOne("oldName").get().toLowerCase();
+
+		String oldName = args.<String>getOne("oldName").get().toLowerCase();
 
 		Map<String, Portal> list = new HashMap<>();
 
@@ -51,7 +51,7 @@ public class CMDRename implements CommandExecutor {
 		}
 		Portal.Local local = (Portal.Local) list.get(oldName);
 
-		String newName = args.<String> getOne("newName").get().toLowerCase();
+		String newName = args.<String>getOne("newName").get().toLowerCase();
 
 		if (list.containsKey(newName)) {
 			throw new CommandException(Text.of(TextColors.RED, newName, " already exists"), false);
@@ -61,13 +61,13 @@ public class CMDRename implements CommandExecutor {
 		list.put(newName, local);
 
 		DataTransactionResult result = player.offer(new HomeData(list));
-		
+
 		if (!result.isSuccessful()) {
 			throw new CommandException(Text.of(TextColors.RED, "Could not rename ", oldName), false);
 		} else {
 			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Home renamed to ", newName));
 		}
-		
+
 		return CommandResult.success();
 	}
 

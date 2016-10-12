@@ -26,16 +26,16 @@ public class CMDPrice implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		String name = args.<String> getOne("name").get().toLowerCase();
+		String name = args.<String>getOne("name").get().toLowerCase();
 
 		Optional<Portal> optionalPortal = Portal.get(name, PortalType.WARP);
-		
+
 		if (!optionalPortal.isPresent()) {
 			throw new CommandException(Text.of(TextColors.RED, name, " does not exist"), false);
 		}
 		Portal portal = optionalPortal.get();
 
-		double price = args.<Double> getOne("price").get();
+		double price = args.<Double>getOne("price").get();
 
 		portal.setPrice(price);
 		portal.update();

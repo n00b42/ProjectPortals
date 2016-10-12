@@ -28,7 +28,7 @@ public class CMDPjp implements CommandExecutor {
 		List<Text> list = new ArrayList<>();
 
 		list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click to execute command "))).onClick(TextActions.runCommand("/pjp:pjp help")).append(Text.of(" /pjp help")).build());
-		
+
 		ConfigurationNode node = ConfigManager.get().getConfig().getNode("settings", "modules");
 
 		if (src.hasPermission("pjp.cmd.portal") && node.getNode("portals").getBoolean()) {

@@ -32,7 +32,7 @@ public class LeverListener {
 	public LeverListener(Timings timings) {
 		this.timings = timings;
 	}
-	
+
 	@Listener
 	public void onChangeBlockEventModify(ChangeBlockEvent.Modify event, @Root Player player) {
 		timings.onChangeBlockEventModify().startTiming();

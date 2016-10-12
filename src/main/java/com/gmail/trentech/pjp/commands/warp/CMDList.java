@@ -41,21 +41,21 @@ public class CMDList implements CommandExecutor {
 			throw new CommandException(Text.of(TextColors.RED, "Must be a player"), false);
 		}
 		Player player = (Player) src;
-		
+
 		List<Text> list = new ArrayList<>();
 
 		for (Portal portal : Portal.all(PortalType.WARP)) {
 			String name = portal.getName();
-			
+
 			if (!src.hasPermission("pjp.warps." + name)) {
 				continue;
 			}
 
 			Builder builder = Text.builder().onHover(TextActions.showText(Text.of(TextColors.WHITE, "Click to teleport to warp")));
-			
-			if(portal instanceof Portal.Server) {
+
+			if (portal instanceof Portal.Server) {
 				Portal.Server server = (Portal.Server) portal;
-				
+
 				Consumer<List<String>> consumer = (s) -> {
 					if (!s.contains(server.getServer())) {
 						try {
@@ -65,7 +65,7 @@ public class CMDList implements CommandExecutor {
 						}
 					}
 				};
-				
+
 				SpongyCord.API.getServerList(consumer, player);
 
 				builder.onClick(TextActions.runCommand("/warp " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Server Destination: ", TextColors.WHITE, server.getServer()));
@@ -73,13 +73,13 @@ public class CMDList implements CommandExecutor {
 				Portal.Local local = (Portal.Local) portal;
 
 				Optional<Location<World>> optionalLocation = local.getLocation();
-				
+
 				if (optionalLocation.isPresent()) {
 					Location<World> location = optionalLocation.get();
-					
+
 					String worldName = location.getExtent().getName();
-					
-					if(!location.equals(local.getLocation().get())) {
+
+					if (!location.equals(local.getLocation().get())) {
 						builder.onClick(TextActions.runCommand("/warp " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Destination: ", TextColors.WHITE, worldName, ", random"));
 					} else {
 						Vector3d vector3d = local.getVector3d().get();
@@ -91,11 +91,11 @@ public class CMDList implements CommandExecutor {
 			}
 
 			double price = portal.getPrice();
-			
+
 			if (price != 0) {
 				builder.append(Text.of(TextColors.GREEN, " Price: ", TextColors.WHITE, "$", price));
 			}
-			
+
 			list.add(builder.build());
 		}
 

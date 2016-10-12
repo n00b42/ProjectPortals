@@ -28,11 +28,11 @@ public class HomeData extends AbstractMappedData<String, Portal, HomeData, Immut
 	public HomeData(Map<String, Portal> value) {
 		super(value, PORTALS);
 	}
-	
+
 	public HomeData() {
 		super(new HashMap<>(), PORTALS);
 	}
-	
+
 	public MapValue<String, Portal> portals() {
 		return Sponge.getRegistry().getValueFactory().createMapValue(PORTALS, getValue());
 	}
@@ -108,13 +108,13 @@ public class HomeData extends AbstractMappedData<String, Portal, HomeData, Immut
 	public DataContainer toContainer() {
 		return super.toContainer().set(PORTALS, getValue());
 	}
-	
+
 	public static class Builder extends AbstractDataBuilder<HomeData> implements DataManipulatorBuilder<HomeData, ImmutableHomeData> {
 
 		public Builder() {
 			super(HomeData.class, 0);
 		}
-		
+
 		@Override
 		public Optional<HomeData> buildContent(DataView container) throws InvalidDataException {
 			if (container.contains(PORTALS.getQuery())) {

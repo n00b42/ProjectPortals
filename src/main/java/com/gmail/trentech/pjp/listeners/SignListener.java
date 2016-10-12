@@ -37,7 +37,7 @@ public class SignListener {
 	public SignListener(Timings timings) {
 		this.timings = timings;
 	}
-	
+
 	@Listener
 	public void onChangeSignEvent(ChangeSignEvent event, @Root Player player) {
 		timings.onChangeSignEvent().startTiming();

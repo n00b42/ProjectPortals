@@ -53,11 +53,11 @@ public class Properties implements DataSerializable {
 		this.particle = particle;
 		this.color = color;
 	}
-	
+
 	public Particle getParticle() {
 		return particle;
 	}
-	
+
 	public void setParticle(Particle particle) {
 		this.particle = particle;
 	}
@@ -69,7 +69,7 @@ public class Properties implements DataSerializable {
 	public void setParticleColor(Optional<ParticleColor> color) {
 		this.color = color;
 	}
-	
+
 	public List<Location<World>> getFrame() {
 		return frame;
 	}
@@ -85,7 +85,7 @@ public class Properties implements DataSerializable {
 	public List<Location<World>> getFill() {
 		return fill;
 	}
-	
+
 	public void addFill(Location<World> location) {
 		fill.add(location);
 	}
@@ -93,13 +93,13 @@ public class Properties implements DataSerializable {
 	public void removeFill(Location<World> location) {
 		fill.remove(location);
 	}
-	
+
 	private void updateClient(Player player, boolean reset) {
 		BlockState state = getBlock();
-		
+
 		Sponge.getScheduler().createTaskBuilder().delayTicks(5).execute(c -> {
 			for (Location<World> location : getFill()) {
-				if(location.getExtent().getChunk(location.getChunkPosition()).get().isLoaded()) {
+				if (location.getExtent().getChunk(location.getChunkPosition()).get().isLoaded()) {
 					if (reset) {
 						player.resetBlockChange(location.getBlockPosition());
 					} else {
@@ -180,7 +180,7 @@ public class Properties implements DataSerializable {
 
 		return blockState;
 	}
-	
+
 	@Override
 	public int getContentVersion() {
 		return 0;
@@ -189,11 +189,11 @@ public class Properties implements DataSerializable {
 	@Override
 	public DataContainer toContainer() {
 		DataContainer container = new MemoryDataContainer().set(DataQueries.PARTICLE, particle.getName());
-		
+
 		if (color.isPresent()) {
 			container.set(DataQueries.COLOR, color.get().getName());
 		}
-		
+
 		List<String> frame = new ArrayList<>();
 
 		for (Location<World> location : this.frame) {
@@ -207,10 +207,10 @@ public class Properties implements DataSerializable {
 			fill.add(location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ());
 		}
 		container.set(DataQueries.FILL, fill);
-		
+
 		return container;
 	}
-	
+
 	public static class Builder extends AbstractDataBuilder<Properties> {
 
 		public Builder() {
@@ -225,11 +225,11 @@ public class Properties implements DataSerializable {
 				Optional<ParticleColor> color = Optional.empty();
 				List<Location<World>> frame = new ArrayList<>();
 				List<Location<World>> fill = new ArrayList<>();
-				
-				if(container.contains(COLOR)) {
+
+				if (container.contains(COLOR)) {
 					color = ParticleColor.get(container.getString(COLOR).get());
 				}
-				
+
 				for (String loc : (List<String>) container.getList(FRAME).get()) {
 					String[] args = loc.split(":");
 

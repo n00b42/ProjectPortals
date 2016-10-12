@@ -34,7 +34,7 @@ public class ButtonListener {
 	public ButtonListener(Timings timings) {
 		this.timings = timings;
 	}
-	
+
 	@Listener
 	public void onChangeBlockEventModify(ChangeBlockEvent.Modify event, @Root Player player) {
 		timings.onChangeBlockEventModify().startTiming();

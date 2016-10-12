@@ -6,19 +6,9 @@ import co.aikar.timings.Timing;
 
 public class Timings {
 
-	private final Timing 
-		changeSignEvent, 
-		interactBlockEventSecondary, 
-		changeBlockEventModify, 
-		changeBlockEventPlace,
-		changeBlockEventBreak, 
-		constructPortalEvent,
-		moveEntityEvent, 
-		teleportEvent,
-		teleportEventServer, 
-		teleportEventLocal, 
-		destructEntityEventDeath, 
-		collideBlockEvent;
+	private final Timing changeSignEvent, interactBlockEventSecondary, changeBlockEventModify, changeBlockEventPlace,
+			changeBlockEventBreak, constructPortalEvent, moveEntityEvent, teleportEvent, teleportEventServer,
+			teleportEventLocal, destructEntityEventDeath, collideBlockEvent;
 
 	public Timings() {
 		this.changeSignEvent = timing("onChangeSignEvent");

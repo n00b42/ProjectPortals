@@ -41,7 +41,7 @@ public class CMDCreate implements CommandExecutor {
 		}
 		Player player = (Player) src;
 
-		String name = args.<String> getOne("name").get().toLowerCase();
+		String name = args.<String>getOne("name").get().toLowerCase();
 
 		if (Portal.get(name, PortalType.WARP).isPresent()) {
 			throw new CommandException(Text.of(TextColors.RED, name, " already exists"), false);
@@ -53,13 +53,13 @@ public class CMDCreate implements CommandExecutor {
 		AtomicReference<Double> price = new AtomicReference<>(0.0);
 
 		if (args.hasAny("price")) {
-			price.set(args.<Double> getOne("price").get());
+			price.set(args.<Double>getOne("price").get());
 		}
 
 		final boolean isBungee = args.hasAny("b");
 
 		if (args.hasAny("destination")) {
-			String destination = args.<String> getOne("destination").get();
+			String destination = args.<String>getOne("destination").get();
 
 			if (isBungee) {
 				Consumer<List<String>> consumer1 = (list) -> {
@@ -97,13 +97,13 @@ public class CMDCreate implements CommandExecutor {
 				}
 
 				world = Sponge.getServer().getWorld(destination);
-				
+
 				if (!world.isPresent()) {
 					throw new CommandException(Text.of(TextColors.RED, destination, " is not loaded or does not exist"), false);
 				}
 
 				if (args.hasAny("x,y,z")) {
-					String[] coords = args.<String> getOne("x,y,z").get().split(",");
+					String[] coords = args.<String>getOne("x,y,z").get().split(",");
 
 					if (coords[0].equalsIgnoreCase("random")) {
 						vector3d = Optional.of(new Vector3d(0, 0, 0));
@@ -117,7 +117,7 @@ public class CMDCreate implements CommandExecutor {
 				}
 
 				if (args.hasAny("direction")) {
-					rotation.set(args.<Rotation> getOne("direction").get());
+					rotation.set(args.<Rotation>getOne("direction").get());
 				}
 			}
 		} else {

@@ -39,21 +39,21 @@ public class CMDDestination implements CommandExecutor {
 			throw new CommandException(Text.of(TextColors.RED, "Must be a player"), false);
 		}
 		Player player = (Player) src;
-		
-		String name = args.<String> getOne("name").get().toLowerCase();
+
+		String name = args.<String>getOne("name").get().toLowerCase();
 
 		Optional<Portal> optionalPortal = Portal.get(name, PortalType.PORTAL);
-		
+
 		if (!optionalPortal.isPresent()) {
 			throw new CommandException(Text.of(TextColors.RED, name, " does not exist"), false);
 		}
 		Portal portal = optionalPortal.get();
 
-		String destination = args.<String> getOne("destination").get();
+		String destination = args.<String>getOne("destination").get();
 
 		if (portal instanceof Portal.Server) {
 			Portal.Server server = (Server) portal;
-			
+
 			Consumer<List<String>> consumer1 = (list) -> {
 				if (!list.contains(destination)) {
 					try {
@@ -77,11 +77,11 @@ public class CMDDestination implements CommandExecutor {
 			};
 
 			SpongyCord.API.getServerList(consumer1, player);
-			
+
 			server.setServer(destination);
 		} else {
 			Portal.Local local = (Portal.Local) portal;
-			
+
 			Optional<World> world = Sponge.getServer().getWorld(destination);
 
 			if (!world.isPresent()) {
@@ -89,11 +89,11 @@ public class CMDDestination implements CommandExecutor {
 			}
 
 			local.setWorld(world.get());
-			
+
 			if (args.hasAny("x,y,z")) {
 				Vector3d vector3d;
-				
-				String[] coords = args.<String> getOne("x,y,z").get().split(",");
+
+				String[] coords = args.<String>getOne("x,y,z").get().split(",");
 
 				if (coords[0].equalsIgnoreCase("random")) {
 					vector3d = new Vector3d(0, 0, 0);
@@ -104,15 +104,15 @@ public class CMDDestination implements CommandExecutor {
 						throw new CommandException(Text.of(TextColors.RED, coords.toString(), " is not valid"), true);
 					}
 				}
-				
+
 				local.setVector3d(vector3d);
 			}
 		}
 
 		portal.update();
-		
+
 		src.sendMessage(Text.of(TextColors.DARK_GREEN, "Portal destination updated"));
-		
+
 		return CommandResult.success();
 	}
 

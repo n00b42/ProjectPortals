@@ -24,7 +24,7 @@ public class SignPortalData extends AbstractSingleData<Portal, SignPortalData, I
 	public SignPortalData() {
 		super(null, PORTAL);
 	}
-	
+
 	public SignPortalData(Portal value) {
 		super(value, PORTAL);
 	}
@@ -77,14 +77,14 @@ public class SignPortalData extends AbstractSingleData<Portal, SignPortalData, I
 		public Builder() {
 			super(SignPortalData.class, 1);
 		}
-		
+
 		@Override
 		public Optional<SignPortalData> buildContent(DataView container) throws InvalidDataException {
 			if (container.contains(PORTAL.getQuery())) {
 				Portal portal = container.getSerializable(PORTAL.getQuery(), Portal.class).get();
 				return Optional.of(new SignPortalData(portal));
 			}
-			
+
 			return Optional.empty();
 		}
 

@@ -36,16 +36,16 @@ public abstract class CMDObjBase implements CommandExecutor {
 		}
 		Player player = (Player) src;
 
-		String destination = args.<String> getOne("destination").get();
+		String destination = args.<String>getOne("destination").get();
 
 		Optional<Vector3d> vector3d = Optional.empty();
 		AtomicReference<Rotation> direction = new AtomicReference<>(Rotation.EAST);
 		AtomicReference<Double> price = new AtomicReference<>(0.0);
 
 		if (args.hasAny("price")) {
-			price.set(args.<Double> getOne("price").get());
+			price.set(args.<Double>getOne("price").get());
 		}
-		
+
 		final boolean isBungee = args.hasAny("b");
 
 		if (isBungee) {
@@ -78,13 +78,13 @@ public abstract class CMDObjBase implements CommandExecutor {
 			SpongyCord.API.getServerList(consumer1, player);
 		} else {
 			Optional<World> world = Sponge.getServer().getWorld(destination);
-			
+
 			if (!world.isPresent()) {
 				throw new CommandException(Text.of(TextColors.RED, destination, " is not loaded or does not exist"), false);
 			}
 
 			if (args.hasAny("x,y,z")) {
-				String[] coords = args.<String> getOne("x,y,z").get().split(",");
+				String[] coords = args.<String>getOne("x,y,z").get().split(",");
 
 				if (coords[0].equalsIgnoreCase("random")) {
 					vector3d = Optional.of(new Vector3d(0, 0, 0));
@@ -93,12 +93,12 @@ public abstract class CMDObjBase implements CommandExecutor {
 						vector3d = Optional.of(new Vector3d(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2])));
 					} catch (Exception e) {
 						throw new CommandException(Text.of(TextColors.RED, coords.toString(), " is not valid"), true);
-					}		
+					}
 				}
 			}
 
 			if (args.hasAny("direction")) {
-				direction.set(args.<Rotation> getOne("direction").get());
+				direction.set(args.<Rotation>getOne("direction").get());
 			}
 
 			init(player, Optional.empty(), world, vector3d, direction.get(), price.get());

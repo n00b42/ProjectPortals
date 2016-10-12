@@ -19,11 +19,11 @@ import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 
 public class Serializer {
-	
+
 	public static String serialize(Portal portal) {
 		DataContainer container;
-		
-		if(portal instanceof Server) {
+
+		if (portal instanceof Server) {
 			container = ((Server) portal).toContainer();
 		} else {
 			container = ((Local) portal).toContainer();
@@ -48,12 +48,12 @@ public class Serializer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		DataView dataView = DataTranslators.CONFIGURATION_NODE.translate(node);
 
 		Optional<Local> optional = Sponge.getDataManager().deserialize(Local.class, dataView);
-		
-		if(optional.isPresent()) {
+
+		if (optional.isPresent()) {
 			return optional.get();
 		} else {
 			return Sponge.getDataManager().deserialize(Server.class, dataView).get();

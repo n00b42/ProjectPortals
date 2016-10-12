@@ -49,7 +49,7 @@ public class PortalListener {
 	public PortalListener(Timings timings) {
 		this.timings = timings;
 	}
-	
+
 	@Listener
 	@Exclude(value = { ChangeBlockEvent.Place.class })
 	public void onInteractBlockEventSecondary(InteractBlockEvent.Secondary event, @Root Player player) {
@@ -142,7 +142,7 @@ public class PortalListener {
 				return;
 			}
 			Portal.Local local = (Portal.Local) portal;
-			
+
 			if (!ConfigManager.get().getConfig().getNode("options", "portal", "teleport_item").getBoolean()) {
 				return;
 			}
@@ -155,7 +155,7 @@ public class PortalListener {
 			Location<World> spawnLocation = optionalSpawnLocation.get();
 
 			Vector3d rotation = portal.getRotation().toVector3d();
-			
+
 			event.setToTransform(new Transform<World>(spawnLocation.getExtent(), spawnLocation.getPosition(), rotation));
 		} finally {
 			timings.onMoveEntityEvent().stopTiming();
@@ -197,7 +197,7 @@ public class PortalListener {
 			Location<World> spawnLocation = optionalSpawnLocation.get();
 
 			Vector3d rotation = portal.getRotation().toVector3d();
-			
+
 			event.setToTransform(new Transform<World>(spawnLocation.getExtent(), spawnLocation.getPosition(), rotation));
 		} finally {
 			timings.onMoveEntityEvent().stopTiming();
@@ -238,9 +238,9 @@ public class PortalListener {
 				return;
 			}
 			cache.add(uuid);
-			
+
 			Teleport.teleport(player, portal);
-			
+
 			Sponge.getScheduler().createTaskBuilder().delayTicks(20).execute(c -> {
 				cache.remove(uuid);
 			}).submit(Main.getPlugin());

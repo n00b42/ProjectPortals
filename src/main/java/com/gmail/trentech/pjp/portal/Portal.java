@@ -1,8 +1,8 @@
 package com.gmail.trentech.pjp.portal;
 
-import static com.gmail.trentech.pjp.data.DataQueries.PROPERTIES;
 import static com.gmail.trentech.pjp.data.DataQueries.PORTAL_TYPE;
 import static com.gmail.trentech.pjp.data.DataQueries.PRICE;
+import static com.gmail.trentech.pjp.data.DataQueries.PROPERTIES;
 import static com.gmail.trentech.pjp.data.DataQueries.ROTATION;
 import static com.gmail.trentech.pjp.data.DataQueries.SERVER;
 import static com.gmail.trentech.pjp.data.DataQueries.VECTOR3D;
@@ -45,9 +45,9 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 	protected Rotation rotation = Rotation.EAST;
 	protected double price = 0;
 	protected Optional<Properties> properties = Optional.empty();
-	
+
 	protected static ConcurrentHashMap<String, Portal> cache = new ConcurrentHashMap<>();
-	
+
 	protected Portal(PortalType type, Rotation rotation, double price) {
 		this.type = type;
 		this.rotation = rotation;
@@ -57,32 +57,32 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 	public static Optional<Portal> get(String name, PortalType type) {
 		if (cache.containsKey(name)) {
 			Portal portal = cache.get(name);
-			
-			if(portal.getType().equals(type)) {
+
+			if (portal.getType().equals(type)) {
 				return Optional.of(cache.get(name));
 			}
 		}
 
 		return Optional.empty();
 	}
-	
+
 	public static Optional<Portal> get(Location<World> location, PortalType type) {
-		if(type.equals(PortalType.PORTAL)) {
-			for(Entry<String, Portal> entry : cache.entrySet()) {
+		if (type.equals(PortalType.PORTAL)) {
+			for (Entry<String, Portal> entry : cache.entrySet()) {
 				Portal portal = entry.getValue();
-				
-				if(!portal.getType().equals(type)) {
+
+				if (!portal.getType().equals(type)) {
 					continue;
 				}
-				
+
 				Properties properties = portal.getProperties().get();
-				
+
 				List<Location<World>> frame = properties.getFrame();
 
 				if (!frame.get(0).getExtent().equals(location.getExtent())) {
 					continue;
 				}
-				
+
 				for (Location<World> loc : frame) {
 					if (loc.getBlockPosition().equals(location.getBlockPosition())) {
 						return Optional.of(portal);
@@ -99,18 +99,18 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 
 		return get(location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ(), type);
 	}
-	
+
 	public static List<Portal> all(PortalType type) {
 		List<Portal> list = new ArrayList<>();
-		
-		for(Entry<String, Portal> entry : cache.entrySet()) {
+
+		for (Entry<String, Portal> entry : cache.entrySet()) {
 			Portal portal = entry.getValue();
-			
-			if(portal.getType().equals(type)) {
+
+			if (portal.getType().equals(type)) {
 				list.add(portal);
 			}
 		}
-		
+
 		return list;
 	}
 
@@ -124,14 +124,14 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 
 			while (result.next()) {
 				String name = result.getString("Name");
-				
+
 				Portal portal = Serializer.deserialize(result.getString("Data"));
 				portal.setName(name);
-				
+
 				cache.put(name, portal);
-				
-				if(portal.getProperties().isPresent()) {
-					Properties properties = portal.getProperties().get();				
+
+				if (portal.getProperties().isPresent()) {
+					Properties properties = portal.getProperties().get();
 					properties.getParticle().createTask(name, properties.getFill(), properties.getParticleColor());
 				}
 			}
@@ -141,10 +141,10 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void create(String name) {
 		this.name = name;
-		
+
 		try {
 			Connection connection = getDataSource().getConnection();
 
@@ -158,21 +158,21 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 			connection.close();
 
 			cache.put(name, this);
-			
-			if(properties.isPresent()) {
-				Properties properties = this.properties.get();				
+
+			if (properties.isPresent()) {
+				Properties properties = this.properties.get();
 				properties.getParticle().createTask(name, properties.getFill(), properties.getParticleColor());
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void create(Location<World> location) {
 		name = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
-		
+
 		create(name);
-		
+
 		Particle particle = Particles.getDefaultEffect("creation");
 		particle.spawnParticle(location, false, Particles.getDefaultColor("creation", particle.isColorable()));
 	}
@@ -191,16 +191,16 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 			connection.close();
 
 			cache.put(name, this);
-			
-			if(properties.isPresent()) {
+
+			if (properties.isPresent()) {
 				Properties properties = this.properties.get();
-				
+
 				for (Task task : Sponge.getScheduler().getScheduledTasks()) {
 					if (task.getName().equals(name)) {
 						break;
 					}
 				}
-				properties.update(true);				
+				properties.update(true);
 				properties.getParticle().createTask(name, properties.getFill(), properties.getParticleColor());
 			}
 
@@ -221,10 +221,10 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 			connection.close();
 
 			cache.remove(name);
-			
-			if(properties.isPresent()) {
+
+			if (properties.isPresent()) {
 				Properties properties = this.properties.get();
-				
+
 				for (Task task : Sponge.getScheduler().getScheduledTasks()) {
 					if (task.getName().equals(name)) {
 						task.cancel();
@@ -241,15 +241,15 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 	public PortalType getType() {
 		return type;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
-	
+
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	public Rotation getRotation() {
 		return rotation;
 	}
@@ -269,7 +269,7 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 	public Optional<Properties> getProperties() {
 		return properties;
 	}
-	
+
 	public void setProperties(Properties properties) {
 		this.properties = Optional.of(properties);
 	}
@@ -299,14 +299,14 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 		@Override
 		public DataContainer toContainer() {
 			DataContainer container = new MemoryDataContainer().set(PORTAL_TYPE, type.name()).set(SERVER, server).set(ROTATION, rotation.getName()).set(PRICE, price);
-					
-			if(properties.isPresent()) {
+
+			if (properties.isPresent()) {
 				container.set(PROPERTIES, properties.get());
 			}
-			
+
 			return container;
 		}
-		
+
 		public static class Builder extends AbstractDataBuilder<Server> {
 
 			public Builder() {
@@ -322,11 +322,11 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 					Double price = container.getDouble(PRICE).get();
 
 					Portal.Server portal = new Portal.Server(type, server, rotation, price);
-					
-					if(container.contains(PROPERTIES)) {
+
+					if (container.contains(PROPERTIES)) {
 						portal.setProperties(container.getSerializable(PROPERTIES, Properties.class).get());
 					}
-					
+
 					return Optional.of(portal);
 				}
 
@@ -334,7 +334,7 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 			}
 		}
 	}
-	
+
 	public static class Local extends Portal {
 
 		protected World world;
@@ -363,11 +363,11 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 		}
 
 		public Optional<Location<World>> getLocation() {
-			if(vector3d.isPresent()) {
+			if (vector3d.isPresent()) {
 				Vector3d vector3d = this.vector3d.get();
-				
-				if(vector3d.getX() == 0 && vector3d.getY() == 0 && vector3d.getZ() == 0) {	
-					return Optional.of(Teleport.getRandomLocation(world));	
+
+				if (vector3d.getX() == 0 && vector3d.getY() == 0 && vector3d.getZ() == 0) {
+					return Optional.of(Teleport.getRandomLocation(world));
 				} else {
 					return Optional.of(new Location<World>(world, vector3d));
 				}
@@ -375,7 +375,7 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 				return Optional.of(world.getSpawnLocation());
 			}
 		}
-		
+
 		@Override
 		public int getContentVersion() {
 			return 0;
@@ -385,18 +385,18 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 		public DataContainer toContainer() {
 			DataContainer container = new MemoryDataContainer().set(DataQueries.PORTAL_TYPE, type.name()).set(DataQueries.WORLD, world.getName()).set(DataQueries.ROTATION, rotation.getName()).set(DataQueries.PRICE, price);
 
-			if(properties.isPresent()) {
+			if (properties.isPresent()) {
 				container.set(PROPERTIES, properties.get());
 			}
-			
-			if(vector3d.isPresent()) {
+
+			if (vector3d.isPresent()) {
 				Vector3d vector3d = this.vector3d.get();
 				container.set(DataQueries.VECTOR3D, DataTranslators.VECTOR_3_D.translate(vector3d));
 			}
-			
+
 			return container;
 		}
-		
+
 		public static class Builder extends AbstractDataBuilder<Local> {
 
 			public Builder() {
@@ -407,27 +407,27 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 			protected Optional<Local> buildContent(DataView container) throws InvalidDataException {
 				if (container.contains(PORTAL_TYPE, WORLD, ROTATION, PRICE)) {
 					Optional<World> optionalWorld = Sponge.getServer().getWorld(container.getString(WORLD).get());
-					
-					if(!optionalWorld.isPresent()) {
+
+					if (!optionalWorld.isPresent()) {
 						return Optional.empty();
 					}
-					
+
 					PortalType type = PortalType.valueOf(container.getString(PORTAL_TYPE).get());
 					World world = optionalWorld.get();
 					Optional<Vector3d> vector3d = Optional.empty();
 					Rotation rotation = Rotation.get(container.getString(ROTATION).get()).get();
 					Double price = container.getDouble(PRICE).get();
 
-					if(container.contains(VECTOR3D)) {
+					if (container.contains(VECTOR3D)) {
 						vector3d = Optional.of(DataTranslators.VECTOR_3_D.translate(container.getView(VECTOR3D).get()));
 					}
-					
+
 					Portal.Local portal = new Portal.Local(type, world, vector3d, rotation, price);
-					
-					if(container.contains(PROPERTIES)) {
+
+					if (container.contains(PROPERTIES)) {
 						portal.setProperties(container.getSerializable(PROPERTIES, Properties.class).get());
 					}
-					
+
 					return Optional.of(portal);
 				}
 
@@ -435,8 +435,15 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 			}
 		}
 	}
-	
+
 	public enum PortalType {
-		BUTTON,DOOR,HOME,LEVER,PLATE,PORTAL,SIGN,WARP;
+		BUTTON,
+		DOOR,
+		HOME,
+		LEVER,
+		PLATE,
+		PORTAL,
+		SIGN,
+		WARP;
 	}
 }

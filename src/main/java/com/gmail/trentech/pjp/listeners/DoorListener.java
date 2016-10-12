@@ -38,7 +38,7 @@ public class DoorListener {
 	public DoorListener(Timings timings) {
 		this.timings = timings;
 	}
-	
+
 	@Listener
 	public void onChangeBlockEventBreak(ChangeBlockEvent.Break event, @Root Player player) {
 		timings.onChangeBlockEventBreak().startTiming();
@@ -138,11 +138,11 @@ public class DoorListener {
 			if (cache.contains(uuid)) {
 				return;
 			}
-			
+
 			cache.add(uuid);
-			
+
 			Teleport.teleport(player, portal);
-			
+
 			Sponge.getScheduler().createTaskBuilder().delayTicks(20).execute(c -> {
 				cache.remove(uuid);
 			}).submit(Main.getPlugin());

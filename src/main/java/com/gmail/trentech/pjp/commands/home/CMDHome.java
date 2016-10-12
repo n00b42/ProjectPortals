@@ -34,7 +34,7 @@ public class CMDHome implements CommandExecutor {
 		Player player = (Player) src;
 
 		if (args.hasAny("name")) {
-			String name = args.<String> getOne("name").get().toLowerCase();
+			String name = args.<String>getOne("name").get().toLowerCase();
 
 			Map<String, Portal> list = new HashMap<>();
 
@@ -60,9 +60,9 @@ public class CMDHome implements CommandExecutor {
 					throw new CommandException(Text.of(TextColors.RED, "you do not have permission to warp others"));
 				}
 
-				player = args.<Player> getOne("player").get();
+				player = args.<Player>getOne("player").get();
 			}
-			
+
 			Teleport.teleport(player, local);
 
 			return CommandResult.success();

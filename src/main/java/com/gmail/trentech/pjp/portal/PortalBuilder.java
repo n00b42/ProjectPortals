@@ -25,9 +25,9 @@ public class PortalBuilder {
 	private Portal portal;
 
 	public PortalBuilder(Portal portal, Location<World> location, Direction direction) {
-		if(portal.getProperties().isPresent()) {
+		if (portal.getProperties().isPresent()) {
 			this.portal = portal;
-			
+
 			if (direction.equals(Direction.NORTH)) {
 				direction = Direction.EAST;
 			} else if (direction.equals(Direction.EAST)) {
@@ -74,7 +74,7 @@ public class PortalBuilder {
 	public boolean spawnPortal() {
 		if (isValid()) {
 			if (!Sponge.getEventManager().post(new ConstructPortalEvent(portal.getProperties().get().getFrame(), portal.getProperties().get().getFill(), Cause.of(NamedCause.source(this))))) {
-				
+
 				Particle effect = Particles.getDefaultEffect("creation");
 				Optional<ParticleColor> effectColor = Particles.getDefaultColor("creation", portal.getProperties().get().getParticle().isColorable());
 

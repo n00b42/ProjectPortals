@@ -26,8 +26,8 @@ import com.gmail.trentech.pjp.listeners.LegacyListener;
 import com.gmail.trentech.pjp.listeners.PortalListener;
 import com.gmail.trentech.pjp.portal.LegacyBuilder;
 import com.gmail.trentech.pjp.portal.Portal;
-import com.gmail.trentech.pjp.portal.Properties;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
+import com.gmail.trentech.pjp.portal.Properties;
 import com.gmail.trentech.pjp.rotation.Rotation;
 import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Help;
@@ -51,29 +51,29 @@ public class CMDCreate implements CommandExecutor {
 		}
 		Player player = (Player) src;
 
-		String name = args.<String> getOne("name").get().toLowerCase();
+		String name = args.<String>getOne("name").get().toLowerCase();
 
 		if (Portal.get(name, PortalType.PORTAL).isPresent()) {
 			throw new CommandException(Text.of(TextColors.RED, name, " already exists"), false);
 		}
 
-		String destination = args.<String> getOne("destination").get();
+		String destination = args.<String>getOne("destination").get();
 
 		Optional<Vector3d> vector3d = Optional.empty();
 		AtomicReference<Rotation> rotation = new AtomicReference<>(Rotation.EAST);
 		AtomicReference<Double> price = new AtomicReference<>(0.0);
 		AtomicReference<Particle> particle = new AtomicReference<>(Particles.getDefaultEffect("portal"));
 		AtomicReference<Optional<ParticleColor>> color = new AtomicReference<>(Particles.getDefaultColor("portal", particle.get().isColorable()));
-		
+
 		if (args.hasAny("price")) {
-			price.set(args.<Double> getOne("price").get());
+			price.set(args.<Double>getOne("price").get());
 		}
 
 		if (args.hasAny("particle")) {
-			particle.set(args.<Particles> getOne("particle").get().getParticle());
+			particle.set(args.<Particles>getOne("particle").get().getParticle());
 
 			if (args.hasAny("color")) {
-				color.set(Optional.of(args.<ParticleColor> getOne("color").get()));
+				color.set(Optional.of(args.<ParticleColor>getOne("color").get()));
 			}
 		}
 
@@ -102,7 +102,7 @@ public class CMDCreate implements CommandExecutor {
 					Properties properties = new Properties(particle.get(), color.get());
 					server.setProperties(properties);
 					server.setName(name);
-					
+
 					if (ConfigManager.get().getConfig().getNode("options", "portal", "legacy_builder").getBoolean()) {
 						LegacyListener.builders.put(player.getUniqueId(), new LegacyBuilder(server));
 						player.sendMessage(Text.builder().color(TextColors.DARK_GREEN).append(Text.of("Begin building your portal frame, followed by ")).onClick(TextActions.runCommand("/pjp:portal save")).append(Text.of(TextColors.YELLOW, TextStyles.UNDERLINE, "/portal save")).build());
@@ -121,13 +121,13 @@ public class CMDCreate implements CommandExecutor {
 			SpongyCord.API.getServerList(consumer1, player);
 		} else {
 			Optional<World> world = Sponge.getServer().getWorld(destination);
-			
+
 			if (!world.isPresent()) {
 				throw new CommandException(Text.of(TextColors.RED, destination, " is not loaded or does not exist"), false);
 			}
 
 			if (args.hasAny("x,y,z")) {
-				String[] coords = args.<String> getOne("x,y,z").get().split(",");
+				String[] coords = args.<String>getOne("x,y,z").get().split(",");
 
 				if (coords[0].equalsIgnoreCase("random")) {
 					vector3d = Optional.of(new Vector3d(0, 0, 0));
@@ -141,16 +141,16 @@ public class CMDCreate implements CommandExecutor {
 			}
 
 			if (args.hasAny("rotation")) {
-				rotation.set(args.<Rotation> getOne("rotation").get());
+				rotation.set(args.<Rotation>getOne("rotation").get());
 			}
 
 			Portal.Local local = new Portal.Local(PortalType.PORTAL, world.get(), vector3d, rotation.get(), price.get());
 			Properties properties = new Properties(particle.get(), color.get());
 			local.setProperties(properties);
 			local.setName(name);
-			
+
 			if (ConfigManager.get().getConfig().getNode("options", "portal", "legacy_builder").getBoolean()) {
-				LegacyListener.builders.put(player.getUniqueId(), new LegacyBuilder(local));	
+				LegacyListener.builders.put(player.getUniqueId(), new LegacyBuilder(local));
 				player.sendMessage(Text.builder().color(TextColors.DARK_GREEN).append(Text.of("Begin building your portal frame, followed by ")).onClick(TextActions.runCommand("/pjp:portal save")).append(Text.of(TextColors.YELLOW, TextStyles.UNDERLINE, "/portal save")).build());
 			} else {
 				PortalListener.builders.put(player.getUniqueId(), local);

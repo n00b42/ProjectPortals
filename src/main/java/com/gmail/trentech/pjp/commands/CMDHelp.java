@@ -12,9 +12,9 @@ public class CMDHelp implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		Help help = args.<Help> getOne("command").get();
+		Help help = args.<Help>getOne("command").get();
 		help.execute(src);
-		
+
 		return CommandResult.success();
 	}
 }

@@ -26,15 +26,15 @@ public class CMDRemove implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		String name = args.<String> getOne("name").get().toLowerCase();
+		String name = args.<String>getOne("name").get().toLowerCase();
 
 		Optional<Portal> optionalPortal = Portal.get(name, PortalType.PORTAL);
-		
+
 		if (!optionalPortal.isPresent()) {
 			throw new CommandException(Text.of(TextColors.RED, name, " does not exist"), false);
 		}
 		Portal portal = optionalPortal.get();
-		
+
 		portal.remove();
 
 		src.sendMessage(Text.of(TextColors.DARK_GREEN, "Portal ", name, " removed"));

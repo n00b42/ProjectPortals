@@ -41,7 +41,7 @@ public class CMDCreate implements CommandExecutor {
 		}
 		Player player = (Player) src;
 
-		String name = args.<String> getOne("name").get().toLowerCase();
+		String name = args.<String>getOne("name").get().toLowerCase();
 
 		Map<String, Portal> list = new HashMap<>();
 
@@ -79,7 +79,7 @@ public class CMDCreate implements CommandExecutor {
 		list.put(name, new Portal.Local(PortalType.HOME, location.getExtent(), Optional.of(location.getPosition()), Rotation.getClosest(player.getRotation().getFloorY()), 0));
 
 		DataTransactionResult result = player.offer(new HomeData(list));
-		
+
 		if (!result.isSuccessful()) {
 			throw new CommandException(Text.of(TextColors.RED, "Could not create ", name), false);
 		} else {

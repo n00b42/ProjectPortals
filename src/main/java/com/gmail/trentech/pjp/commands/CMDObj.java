@@ -32,7 +32,7 @@ public class CMDObj {
 
 		@Override
 		protected void init(Player player, Optional<String> server, Optional<World> world, Optional<Vector3d> vector3d, Rotation rotation, double price) {
-			if(server.isPresent()) {
+			if (server.isPresent()) {
 				ButtonListener.builders.put(player.getUniqueId(), new Portal.Server(PortalType.BUTTON, server.get(), rotation, price));
 			} else {
 				ButtonListener.builders.put(player.getUniqueId(), new Portal.Local(PortalType.BUTTON, world.get(), vector3d, rotation, price));
@@ -54,7 +54,7 @@ public class CMDObj {
 
 		@Override
 		protected void init(Player player, Optional<String> server, Optional<World> world, Optional<Vector3d> vector3d, Rotation rotation, double price) {
-			if(server.isPresent()) {
+			if (server.isPresent()) {
 				DoorListener.builders.put(player.getUniqueId(), new Portal.Server(PortalType.DOOR, server.get(), rotation, price));
 			} else {
 				DoorListener.builders.put(player.getUniqueId(), new Portal.Local(PortalType.DOOR, world.get(), vector3d, rotation, price));
@@ -76,7 +76,7 @@ public class CMDObj {
 
 		@Override
 		protected void init(Player player, Optional<String> server, Optional<World> world, Optional<Vector3d> vector3d, Rotation rotation, double price) {
-			if(server.isPresent()) {
+			if (server.isPresent()) {
 				LeverListener.builders.put(player.getUniqueId(), new Portal.Server(PortalType.LEVER, server.get(), rotation, price));
 			} else {
 				LeverListener.builders.put(player.getUniqueId(), new Portal.Local(PortalType.LEVER, world.get(), vector3d, rotation, price));
@@ -98,7 +98,7 @@ public class CMDObj {
 
 		@Override
 		protected void init(Player player, Optional<String> server, Optional<World> world, Optional<Vector3d> vector3d, Rotation rotation, double price) {
-			if(server.isPresent()) {
+			if (server.isPresent()) {
 				PlateListener.builders.put(player.getUniqueId(), new Portal.Server(PortalType.PLATE, server.get(), rotation, price));
 			} else {
 				PlateListener.builders.put(player.getUniqueId(), new Portal.Local(PortalType.PLATE, world.get(), vector3d, rotation, price));
@@ -120,7 +120,7 @@ public class CMDObj {
 
 		@Override
 		protected void init(Player player, Optional<String> server, Optional<World> world, Optional<Vector3d> vector3d, Rotation rotation, double price) {
-			if(server.isPresent()) {
+			if (server.isPresent()) {
 				SignListener.builders.put(player.getUniqueId(), new Portal.Server(PortalType.SIGN, server.get(), rotation, price));
 			} else {
 				SignListener.builders.put(player.getUniqueId(), new Portal.Local(PortalType.SIGN, world.get(), vector3d, rotation, price));

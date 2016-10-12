@@ -26,16 +26,16 @@ public class CMDRename implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		String oldName = args.<String> getOne("oldName").get().toLowerCase();
+		String oldName = args.<String>getOne("oldName").get().toLowerCase();
 
 		Optional<Portal> optionalPortal = Portal.get(oldName, PortalType.PORTAL);
-		
+
 		if (!optionalPortal.isPresent()) {
 			throw new CommandException(Text.of(TextColors.RED, oldName, " does not exist"), false);
 		}
 		Portal portal = optionalPortal.get();
 
-		String newName = args.<String> getOne("newName").get().toLowerCase();
+		String newName = args.<String>getOne("newName").get().toLowerCase();
 
 		if (Portal.get(newName, PortalType.PORTAL).isPresent()) {
 			throw new CommandException(Text.of(TextColors.RED, newName, " already exists"), false);
@@ -45,7 +45,7 @@ public class CMDRename implements CommandExecutor {
 		portal.create(newName);
 
 		src.sendMessage(Text.of(TextColors.DARK_GREEN, "Portal renamed to ", newName));
-		
+
 		return CommandResult.success();
 	}
 

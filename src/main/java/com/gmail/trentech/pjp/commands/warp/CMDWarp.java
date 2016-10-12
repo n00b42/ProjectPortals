@@ -30,10 +30,10 @@ public class CMDWarp implements CommandExecutor {
 			}
 			Player player = ((Player) src);
 
-			String name = args.<String> getOne("name").get().toLowerCase();
+			String name = args.<String>getOne("name").get().toLowerCase();
 
 			Optional<Portal> optionalPortal = Portal.get(name, PortalType.WARP);
-			
+
 			if (!optionalPortal.isPresent()) {
 				throw new CommandException(Text.of(TextColors.RED, name, " does not exist"), false);
 			}
@@ -48,7 +48,7 @@ public class CMDWarp implements CommandExecutor {
 					throw new CommandException(Text.of(TextColors.RED, "you do not have permission to warp others"));
 				}
 
-				player = args.<Player> getOne("player").get();
+				player = args.<Player>getOne("player").get();
 			}
 
 			Teleport.teleport(player, portal);

@@ -24,7 +24,7 @@ public class Help {
 	private Optional<String> syntax = Optional.empty();
 	private Optional<String> example = Optional.empty();
 
-	private static ConcurrentHashMap<String,Help> list = new ConcurrentHashMap<>();
+	private static ConcurrentHashMap<String, Help> list = new ConcurrentHashMap<>();
 
 	public Help(String id, String command, String description) {
 		this.id = id;
@@ -43,11 +43,11 @@ public class Help {
 	public Optional<String> getPermission() {
 		return permission;
 	}
-	
+
 	public void setPermission(String permission) {
 		this.permission = Optional.of(permission);
 	}
-	
+
 	public Optional<String> getSyntax() {
 		return syntax;
 	}
@@ -105,24 +105,24 @@ public class Help {
 			}
 		}
 	}
-	
+
 	public static Optional<Help> get(String id) {
-		if(list.containsKey(id)) {
+		if (list.containsKey(id)) {
 			return Optional.of(list.get(id));
 		}
-		
+
 		return Optional.empty();
 	}
-	
+
 	public static Consumer<CommandSource> getHelp(String id) {
 		return (CommandSource src) -> {
-			if(list.containsKey(id)) {
+			if (list.containsKey(id)) {
 				Help help = list.get(id);
 				help.execute(src);
 			}
 		};
 	}
-	
+
 	public static Map<String, Help> all() {
 		return list;
 	}
