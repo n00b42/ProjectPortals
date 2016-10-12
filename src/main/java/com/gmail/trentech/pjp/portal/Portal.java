@@ -31,7 +31,6 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
-import com.gmail.trentech.pjp.data.DataQueries;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.rotation.Rotation;
@@ -383,7 +382,7 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 
 		@Override
 		public DataContainer toContainer() {
-			DataContainer container = new MemoryDataContainer().set(DataQueries.PORTAL_TYPE, type.name()).set(DataQueries.WORLD, world.getName()).set(DataQueries.ROTATION, rotation.getName()).set(DataQueries.PRICE, price);
+			DataContainer container = new MemoryDataContainer().set(PORTAL_TYPE, type.name()).set(WORLD, world.getName()).set(ROTATION, rotation.getName()).set(PRICE, price);
 
 			if (properties.isPresent()) {
 				container.set(PROPERTIES, properties.get());
@@ -391,7 +390,7 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 
 			if (vector3d.isPresent()) {
 				Vector3d vector3d = this.vector3d.get();
-				container.set(DataQueries.VECTOR3D, DataTranslators.VECTOR_3_D.translate(vector3d));
+				container.set(VECTOR3D, DataTranslators.VECTOR_3_D.translate(vector3d));
 			}
 
 			return container;

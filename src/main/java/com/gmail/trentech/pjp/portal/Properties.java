@@ -30,7 +30,6 @@ import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3i;
 import com.gmail.trentech.pjp.Main;
-import com.gmail.trentech.pjp.data.DataQueries;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
@@ -188,10 +187,10 @@ public class Properties implements DataSerializable {
 
 	@Override
 	public DataContainer toContainer() {
-		DataContainer container = new MemoryDataContainer().set(DataQueries.PARTICLE, particle.getName());
+		DataContainer container = new MemoryDataContainer().set(PARTICLE, particle.getName());
 
 		if (color.isPresent()) {
-			container.set(DataQueries.COLOR, color.get().getName());
+			container.set(COLOR, color.get().getName());
 		}
 
 		List<String> frame = new ArrayList<>();
@@ -199,14 +198,14 @@ public class Properties implements DataSerializable {
 		for (Location<World> location : this.frame) {
 			frame.add(location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ());
 		}
-		container.set(DataQueries.FRAME, frame);
+		container.set(FRAME, frame);
 
 		List<String> fill = new ArrayList<>();
 
 		for (Location<World> location : this.fill) {
 			fill.add(location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ());
 		}
-		container.set(DataQueries.FILL, fill);
+		container.set(FILL, fill);
 
 		return container;
 	}
