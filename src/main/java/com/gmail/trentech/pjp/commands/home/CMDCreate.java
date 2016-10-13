@@ -27,7 +27,7 @@ import com.gmail.trentech.pjp.utils.Help;
 public class CMDCreate implements CommandExecutor {
 
 	public CMDCreate() {
-		Help help = new Help("hcreate", "create", " Create a new home");
+		Help help = new Help("home create", "create", " Create a new home", false);
 		help.setPermission("pjp.cmd.home.create");
 		help.setSyntax(" /home create <name>\n /h c <name>");
 		help.setExample(" /home create MyHome");

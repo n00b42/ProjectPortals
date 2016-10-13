@@ -11,7 +11,6 @@ import com.gmail.trentech.pjp.commands.warp.CMDWarp;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.rotation.Rotation;
-import com.gmail.trentech.pjp.utils.Help;
 
 public class CommandManager {
 	
@@ -115,6 +114,13 @@ public class CommandManager {
 		    .executor(new com.gmail.trentech.pjp.commands.portal.CMDCreate())
 		    .build();
 
+	private CommandSpec cmdPortalDestination = CommandSpec.builder()
+		    .description(Text.of("Change a existing portals destination"))
+		    .permission("pjp.cmd.portal.rename")
+		    .arguments(GenericArguments.string(Text.of("name")), GenericArguments.string(Text.of("destination")), GenericArguments.optional(GenericArguments.string(Text.of("x,y,z"))))
+		    .executor(new com.gmail.trentech.pjp.commands.portal.CMDRename())
+		    .build();
+	
 	private CommandSpec cmdPortalRemove = CommandSpec.builder()
 		    .description(Text.of("Remove an existing portal"))
 		    .permission("pjp.cmd.portal.remove")
@@ -160,6 +166,7 @@ public class CommandManager {
 		    .description(Text.of("Top level portal command"))
 		    .permission("pjp.cmd.portal")
 		    .child(cmdPortalCreate, "create", "c")
+		    .child(cmdPortalDestination, "destination", "d")
 		    .child(cmdPortalRemove, "remove", "r")
 		    .child(cmdPortalRename, "rename", "rn")
 		    .child(cmdPortalParticle, "particle", "p")
@@ -225,17 +232,10 @@ public class CommandManager {
 		    .executor(new CMDObj.Sign())
 		    .build();
 	
-	private CommandSpec cmdHelp = CommandSpec.builder()
-		    .description(Text.of(" I need help with Project Portals"))
-		    .permission("pjp.cmd")
-		    .arguments(GenericArguments.choices(Text.of("command"), Help.all()))
-		    .executor(new CMDHelp())
-		    .build();
-	
 	public CommandSpec cmdPJP = CommandSpec.builder()
-		    .description(Text.of("Lists all Project Worlds commands"))
+		    .description(Text.of("Lists all Project Portals commands"))
 		    .permission("pjp.cmd")
-		    .child(cmdHelp, "help", "h")
+		    .arguments(GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("rawCommand"))))
 		    .executor(new CMDPjp())
 		    .build();
 }

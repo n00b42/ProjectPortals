@@ -46,9 +46,7 @@ public abstract class CMDObjBase implements CommandExecutor {
 			price.set(args.<Double>getOne("price").get());
 		}
 
-		final boolean isBungee = args.hasAny("b");
-
-		if (isBungee) {
+		if (args.hasAny("b")) {
 			Consumer<List<String>> consumer1 = (list) -> {
 				if (!list.contains(destination)) {
 					try {

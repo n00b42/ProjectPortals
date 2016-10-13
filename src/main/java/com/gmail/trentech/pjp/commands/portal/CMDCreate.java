@@ -37,9 +37,9 @@ import flavor.pie.spongycord.SpongyCord;
 public class CMDCreate implements CommandExecutor {
 
 	public CMDCreate() {
-		Help help = new Help("pcreate", "create", " Use this command to create a portal that will teleport you to other worlds");
+		Help help = new Help("portal create", "create", " Use this command to create a portal that will teleport you to other worlds", false);
 		help.setPermission("pjp.cmd.portal.create");
-		help.setSyntax(" /portal create <name> <destination> [-b] [-c <x,y,z>] [-d <rotation>] [-e <particle[:color]>] [-p <price>]\n /p <name> <destination> [-b] [-c <x,y,z>] [-d <rotation>] [-e <particle[:color]>] [-p <price>]");
+		help.setSyntax(" /portal create <name> <destination> [-b] [-c <x,y,z>] [-d <direction>] [-e <particle[:color]>] [-p <price>]\n /p <name> <destination> [-b] [-c <x,y,z>] [-d <direction>] [-e <particle[:color]>] [-p <price>]");
 		help.setExample(" /portal create MyPortal MyWorld\n /portal create MyPortal MyWorld -c -100,65,254\n /portal create MyPortal MyWorld -c random\n /portal create MyPortal MyWorld -c -100,65,254 -d south\n /portal create MyPortal MyWorld -d southeast\n /portal create MyPortal MyWorld -p 50\n /portal create MyPortal MyWorld -e REDSTONE:BLUE");
 		help.save();
 	}
@@ -77,9 +77,7 @@ public class CMDCreate implements CommandExecutor {
 			}
 		}
 
-		final boolean isBungee = args.hasAny("b");
-
-		if (isBungee) {
+		if (args.hasAny("b")) {
 			Consumer<List<String>> consumer1 = (list) -> {
 				if (!list.contains(destination)) {
 					try {
@@ -141,7 +139,7 @@ public class CMDCreate implements CommandExecutor {
 			}
 
 			if (args.hasAny("rotation")) {
-				rotation.set(args.<Rotation>getOne("rotation").get());
+				rotation.set(args.<Rotation>getOne("direction").get());
 			}
 
 			Portal.Local local = new Portal.Local(PortalType.PORTAL, world.get(), vector3d, rotation.get(), price.get());

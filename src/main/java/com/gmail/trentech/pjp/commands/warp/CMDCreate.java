@@ -27,10 +27,10 @@ import flavor.pie.spongycord.SpongyCord;
 public class CMDCreate implements CommandExecutor {
 
 	public CMDCreate() {
-		Help help = new Help("wcreate", "create", " Use this command to create a warp that will teleport you to other worlds");
+		Help help = new Help("warp create", "create", " Use this command to create a warp that will teleport you to other worlds", false);
 		help.setPermission("pjp.cmd.warp.create");
 		help.setSyntax(" /warp create <name> [<destination> [-b] [-c <x,y,z>] [-d <direction>]] [-p <price>]\n /w <name> [<destination> [-b] [-c <x,y,z>] [-d <direction>]] [-p <price>]");
-		help.setExample(" /warp create Lobby\n /warp create Lobby MyWorld\n /warp create Lobby MyWorld -c -100,65,254\n /warp create Random MyWorld -c random\n /warp create Lobby MyWorld -c -100,65,254 -d south\n /warp create Lobby MyWorld -d southeast\n /warp Lobby MyWorld -p 50\n /warp Lobby -p 50");
+		help.setExample(" /warp create Lobby\n /warp create Lobby MyWorld\n /warp create Lobby MyWorld -c -100,65,254\n /warp create Random MyWorld -c random\n /warp create Lobby MyWorld -c -100,65,254 -d south\n /warp create Lobby MyWorld -d southeast\n");
 		help.save();
 	}
 
@@ -56,12 +56,10 @@ public class CMDCreate implements CommandExecutor {
 			price.set(args.<Double>getOne("price").get());
 		}
 
-		final boolean isBungee = args.hasAny("b");
-
 		if (args.hasAny("destination")) {
 			String destination = args.<String>getOne("destination").get();
 
-			if (isBungee) {
+			if (args.hasAny("b")) {
 				Consumer<List<String>> consumer1 = (list) -> {
 					if (!list.contains(destination)) {
 						try {

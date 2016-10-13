@@ -21,7 +21,7 @@ import com.gmail.trentech.pjp.utils.Help;
 public class CMDParticle implements CommandExecutor {
 
 	public CMDParticle() {
-		Help help = new Help("particle", "particle", " change a portals particle effect. Color currently only available for REDSTONE");
+		Help help = new Help("portal particle", "particle", " change a portals particle effect. Color currently only available for REDSTONE", false);
 		help.setPermission("pjp.cmd.portal.particle");
 		help.setSyntax(" /portal particle <name> <type> [color]\n /p p <name> <type> [color]");
 		help.setExample(" /portal particle MyPortal CRIT\n /portal particle MyPortal REDSTONE BLUE");

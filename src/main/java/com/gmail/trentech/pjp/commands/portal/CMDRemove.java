@@ -17,7 +17,7 @@ import com.gmail.trentech.pjp.utils.Help;
 public class CMDRemove implements CommandExecutor {
 
 	public CMDRemove() {
-		Help help = new Help("premove", "remove", " Remove an existing portal");
+		Help help = new Help("portal remove", "remove", " Remove an existing portal", false);
 		help.setPermission("pjp.cmd.portal.remove");
 		help.setSyntax(" /portal remove <name>\n /p r <name>");
 		help.setExample(" /portal remove MyPortal");

@@ -17,7 +17,7 @@ import com.gmail.trentech.pjp.utils.Help;
 public class CMDPrice implements CommandExecutor {
 
 	public CMDPrice() {
-		Help help = new Help("wprice", "price", " Charge players for using warps. 0 to disable");
+		Help help = new Help("warp price", "price", " Charge players for using warps. 0 to disable", false);
 		help.setPermission("pjp.cmd.warp.price");
 		help.setSyntax(" /warp price <name> <price>\n /w p <name> <price>");
 		help.setExample(" /warp price Lobby 50\n /warp price Lobby 0");

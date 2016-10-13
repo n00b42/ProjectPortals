@@ -14,7 +14,6 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -26,6 +25,12 @@ import com.gmail.trentech.pjp.utils.Teleport;
 
 public class CMDHome implements CommandExecutor {
 
+	public CMDHome() {
+		Help help = new Help("home", "home", " Top level home command", true);
+		help.setPermission("pjp.cmd.home");
+		help.save();
+	}
+	
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if (!(src instanceof Player)) {
@@ -70,21 +75,9 @@ public class CMDHome implements CommandExecutor {
 
 		List<Text> list = new ArrayList<>();
 
-		if (src.hasPermission("pjp.cmd.home.others")) {
-			list.add(Text.of(TextColors.YELLOW, " /home <name> [player]\n"));
-		}
-		if (src.hasPermission("pjp.cmd.home.create")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("hcreate"))).append(Text.of(" /home create")).build());
-		}
-		if (src.hasPermission("pjp.cmd.home.remove")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("hremove"))).append(Text.of(" /home remove")).build());
-		}
-		if (src.hasPermission("pjp.cmd.home.rename")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("hrename"))).append(Text.of(" /home rename")).build());
-		}
-		if (src.hasPermission("pjp.cmd.home.list")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("hlist"))).append(Text.of(" /home list")).build());
-		}
+		list.add(Text.of(TextColors.YELLOW, " /home <name> [player]"));
+		
+		list.addAll(Help.getList(src, "home"));
 
 		if (src instanceof Player) {
 			PaginationList.Builder pages = PaginationList.builder();

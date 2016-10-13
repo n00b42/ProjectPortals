@@ -12,7 +12,6 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
 import com.gmail.trentech.pjp.portal.Portal;
@@ -22,6 +21,12 @@ import com.gmail.trentech.pjp.utils.Teleport;
 
 public class CMDWarp implements CommandExecutor {
 
+	public CMDWarp() {
+		Help help = new Help("warp", "warp", " Top level warp command", true);
+		help.setPermission("pjp.cmd.warp");
+		help.save();
+	}
+	
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if (args.hasAny("name")) {
@@ -58,24 +63,9 @@ public class CMDWarp implements CommandExecutor {
 
 		List<Text> list = new ArrayList<>();
 
-		if (src.hasPermission("pjp.cmd.warp.others")) {
-			list.add(Text.of(TextColors.YELLOW, " /warp <name> [player]\n"));
-		}
-		if (src.hasPermission("pjp.cmd.warp.create")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("wcreate"))).append(Text.of(" /warp create")).build());
-		}
-		if (src.hasPermission("pjp.cmd.warp.remove")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("wremove"))).append(Text.of(" /warp remove")).build());
-		}
-		if (src.hasPermission("pjp.cmd.warp.rename")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("wrename"))).append(Text.of(" /warp rename")).build());
-		}
-		if (src.hasPermission("pjp.cmd.warp.list")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("wlist"))).append(Text.of(" /warp list")).build());
-		}
-		if (src.hasPermission("pjp.cmd.warp.price")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("wprice"))).append(Text.of(" /warp price")).build());
-		}
+		list.add(Text.of(TextColors.YELLOW, " /warp <name> [player]"));
+		
+		list.addAll(Help.getList(src, "warp"));
 
 		if (src instanceof Player) {
 			PaginationList.Builder pages = PaginationList.builder();

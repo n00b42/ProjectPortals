@@ -17,10 +17,10 @@ import com.gmail.trentech.pjp.utils.Help;
 public class CMDRename implements CommandExecutor {
 
 	public CMDRename() {
-		Help help = new Help("wrename", "rename", " Rename portal");
+		Help help = new Help("warp rename", "rename", " Rename warp", false);
 		help.setPermission("pjp.cmd.warp.rename");
 		help.setSyntax(" /warp rename <oldName> <newName>\n /w rn <oldName> <newName>");
-		help.setExample(" /warp rename MyPortal ThisPortal");
+		help.setExample(" /warp rename Spawn Lobby");
 		help.save();
 	}
 

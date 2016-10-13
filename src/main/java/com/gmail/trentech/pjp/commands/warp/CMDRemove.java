@@ -17,7 +17,7 @@ import com.gmail.trentech.pjp.utils.Help;
 public class CMDRemove implements CommandExecutor {
 
 	public CMDRemove() {
-		Help help = new Help("wremove", "remove", " Remove an existing  warp point");
+		Help help = new Help("warp remove", "remove", " Remove an existing  warp point", false);
 		help.setPermission("pjp.cmd.warp.remove");
 		help.setSyntax(" /warp remove <name>\n /w r <name>");
 		help.setExample(" /warp remove OldSpawn");

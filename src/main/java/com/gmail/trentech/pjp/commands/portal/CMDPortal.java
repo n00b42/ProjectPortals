@@ -11,41 +11,23 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDPortal implements CommandExecutor {
 
+	public CMDPortal() {
+		Help help = new Help("portal", "portal", " Top level portal command", true);
+		help.setPermission("pjp.cmd.portal");
+		help.save();
+	}
+	
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		List<Text> list = new ArrayList<>();
 
-		if (src.hasPermission("pjp.cmd.portal.create")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("pcreate"))).append(Text.of(" /portal create")).build());
-		}
-		if (src.hasPermission("pjp.cmd.portal.remove")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("premove"))).append(Text.of(" /portal remove")).build());
-		}
-		if (src.hasPermission("pjp.cmd.portal.rename")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("prename"))).append(Text.of(" /portal rename")).build());
-		}
-		if (src.hasPermission("pjp.cmd.portal.destination")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("destination"))).append(Text.of(" /portal destination")).build());
-		}
-		if (src.hasPermission("pjp.cmd.portal.list")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("plist"))).append(Text.of(" /portal list")).build());
-		}
-		if (src.hasPermission("pjp.cmd.portal.save")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("save"))).append(Text.of(" /portal save")).build());
-		}
-		if (src.hasPermission("pjp.cmd.portal.particle")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("particle"))).append(Text.of(" /portal particle")).build());
-		}
-		if (src.hasPermission("pjp.cmd.portal.price")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("pprice"))).append(Text.of(" /portal price")).build());
-		}
+		list.addAll(Help.getList(src, "portal"));
 
 		if (src instanceof Player) {
 			PaginationList.Builder pages = PaginationList.builder();
