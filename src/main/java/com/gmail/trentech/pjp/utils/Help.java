@@ -164,6 +164,16 @@ public class Help {
 		return list;
 	}
 	
+	public static List<Help> getAll() {
+		List<Help> list = new ArrayList<>();
+		
+		for(Entry<String, Help> entry : map.entrySet()) {
+			list.add(entry.getValue());
+		}
+
+		return list;
+	}
+	
 	public static List<Text> getList(CommandSource src) {
 		return getList(src, getParents());
 	}
