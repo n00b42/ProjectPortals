@@ -85,7 +85,7 @@ public class Help {
 		map.put(getRawCommand(), this);
 	}
 
-	private void execute(CommandSource src) {
+	public void execute(CommandSource src) {
 		List<Text> list = new ArrayList<>();
 
 		list.add(Text.of(TextColors.GREEN, "Description:"));

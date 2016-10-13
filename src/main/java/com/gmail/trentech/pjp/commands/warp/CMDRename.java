@@ -1,7 +1,5 @@
 package com.gmail.trentech.pjp.commands.warp;
 
-import java.util.Optional;
-
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -26,14 +24,7 @@ public class CMDRename implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		String oldName = args.<String>getOne("oldName").get().toLowerCase();
-
-		Optional<Portal> optionalPortal = Portal.get(oldName, PortalType.WARP);
-
-		if (!optionalPortal.isPresent()) {
-			throw new CommandException(Text.of(TextColors.RED, oldName, " does not exist"), false);
-		}
-		Portal portal = optionalPortal.get();
+		Portal portal = args.<Portal>getOne("oldName").get();
 
 		String newName = args.<String>getOne("newName").get().toLowerCase();
 

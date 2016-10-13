@@ -68,7 +68,7 @@ public class CMDList implements CommandExecutor {
 				if (!location.equals(local.getLocation().get())) {
 					builder.onClick(TextActions.runCommand("/home " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Destination: ", TextColors.WHITE, worldName, ", random"));
 				} else {
-					Vector3d vector3d = local.getVector3d().get();
+					Vector3d vector3d = location.getPosition();
 					builder.onClick(TextActions.runCommand("/home " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Destination: ", TextColors.WHITE, worldName, ", ", vector3d.getFloorX(), ", ", vector3d.getFloorY(), ", ", vector3d.getFloorZ()));
 				}
 			} else {

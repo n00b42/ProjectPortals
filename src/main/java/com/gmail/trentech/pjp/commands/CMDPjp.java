@@ -22,17 +22,17 @@ public class CMDPjp implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		Optional<String> optionalCommand = args.<String>getOne("rawCommand");
+		Optional<Help> optionalHelp = args.<Help>getOne("rawCommand");
 		
-		if(optionalCommand.isPresent()) {
-			Help.execute(optionalCommand.get());
+		if(optionalHelp.isPresent()) {
+			optionalHelp.get().execute(src);
 			
 			return CommandResult.success();
 		}
 		
 		List<Text> list = new ArrayList<>();
 
-		list.add(Text.of(TextColors.YELLOW, " /pjp <rawCommand>"));
+		list.add(Text.of(TextColors.YELLOW, " /pjp [rawCommand]"));
 		
 		list.addAll(Help.getList(src));
 

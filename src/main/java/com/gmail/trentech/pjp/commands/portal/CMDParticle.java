@@ -14,7 +14,6 @@ import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.portal.Portal;
-import com.gmail.trentech.pjp.portal.Portal.PortalType;
 import com.gmail.trentech.pjp.portal.Properties;
 import com.gmail.trentech.pjp.utils.Help;
 
@@ -30,14 +29,7 @@ public class CMDParticle implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		String name = args.<String>getOne("name").get().toLowerCase();
-
-		Optional<Portal> optionalPortal = Portal.get(name, PortalType.PORTAL);
-
-		if (!optionalPortal.isPresent()) {
-			throw new CommandException(Text.of(TextColors.RED, name, " does not exist"), false);
-		}
-		Portal portal = optionalPortal.get();
+		Portal portal = args.<Portal>getOne("name").get();
 
 		Particle particle = args.<Particles>getOne("type").get().getParticle();
 

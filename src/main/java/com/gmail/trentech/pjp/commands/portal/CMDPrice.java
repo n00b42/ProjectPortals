@@ -1,7 +1,5 @@
 package com.gmail.trentech.pjp.commands.portal;
 
-import java.util.Optional;
-
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -11,7 +9,6 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import com.gmail.trentech.pjp.portal.Portal;
-import com.gmail.trentech.pjp.portal.Portal.PortalType;
 import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDPrice implements CommandExecutor {
@@ -26,21 +23,14 @@ public class CMDPrice implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		String name = args.<String>getOne("name").get().toLowerCase();
-
-		Optional<Portal> optionalPortal = Portal.get(name, PortalType.PORTAL);
-
-		if (!optionalPortal.isPresent()) {
-			throw new CommandException(Text.of(TextColors.RED, name, " does not exist"), false);
-		}
-		Portal portal = optionalPortal.get();
+		Portal portal = args.<Portal>getOne("name").get();
 
 		double price = args.<Double>getOne("price").get();
 
 		portal.setPrice(price);
 		portal.update();
 
-		src.sendMessage(Text.of(TextColors.DARK_GREEN, "Set price of portal ", name, " to $", price));
+		src.sendMessage(Text.of(TextColors.DARK_GREEN, "Set price of portal ", portal.getName(), " to $", price));
 
 		return CommandResult.success();
 	}

@@ -2,7 +2,6 @@ package com.gmail.trentech.pjp.commands.warp;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -15,7 +14,6 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import com.gmail.trentech.pjp.portal.Portal;
-import com.gmail.trentech.pjp.portal.Portal.PortalType;
 import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Teleport;
 
@@ -35,16 +33,9 @@ public class CMDWarp implements CommandExecutor {
 			}
 			Player player = ((Player) src);
 
-			String name = args.<String>getOne("name").get().toLowerCase();
+			Portal portal = args.<Portal>getOne("name").get();
 
-			Optional<Portal> optionalPortal = Portal.get(name, PortalType.WARP);
-
-			if (!optionalPortal.isPresent()) {
-				throw new CommandException(Text.of(TextColors.RED, name, " does not exist"), false);
-			}
-			Portal portal = optionalPortal.get();
-
-			if (!player.hasPermission("pjp.warps." + name)) {
+			if (!player.hasPermission("pjp.warps." + portal.getName())) {
 				throw new CommandException(Text.of(TextColors.RED, "you do not have permission to warp here"));
 			}
 
