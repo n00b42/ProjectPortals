@@ -31,6 +31,7 @@ import com.gmail.trentech.pjp.listeners.PlateListener;
 import com.gmail.trentech.pjp.listeners.PortalListener;
 import com.gmail.trentech.pjp.listeners.SignListener;
 import com.gmail.trentech.pjp.listeners.TeleportListener;
+import com.gmail.trentech.pjp.portal.LocationSerializable;
 import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.Properties;
 import com.gmail.trentech.pjp.utils.ConfigManager;
@@ -75,6 +76,7 @@ public class Main {
 
 		Timings timings = new Timings();
 
+		Sponge.getDataManager().registerBuilder(LocationSerializable.class, new LocationSerializable.Builder());
 		Sponge.getDataManager().registerBuilder(Properties.class, new Properties.Builder());
 		Sponge.getDataManager().registerBuilder(Portal.Local.class, new Portal.Local.Builder());
 		Sponge.getDataManager().registerBuilder(Portal.Server.class, new Portal.Server.Builder());

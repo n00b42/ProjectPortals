@@ -8,6 +8,11 @@ import static com.gmail.trentech.pjp.data.DataQueries.SERVER;
 import static com.gmail.trentech.pjp.data.DataQueries.VECTOR3D;
 import static com.gmail.trentech.pjp.data.DataQueries.WORLD;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -37,15 +42,18 @@ import com.gmail.trentech.pjp.rotation.Rotation;
 import com.gmail.trentech.pjp.utils.SQLUtils;
 import com.gmail.trentech.pjp.utils.Teleport;
 
+import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
+
 public abstract class Portal extends SQLUtils implements DataSerializable {
 
-	protected final PortalType type;
-	protected String name;
-	protected Rotation rotation = Rotation.EAST;
-	protected double price = 0;
-	protected Optional<Properties> properties = Optional.empty();
+	private final PortalType type;
+	private String name;
+	private Rotation rotation = Rotation.EAST;
+	private double price = 0;
+	private Optional<Properties> properties = Optional.empty();
 
-	protected static ConcurrentHashMap<String, Portal> cache = new ConcurrentHashMap<>();
+	private static ConcurrentHashMap<String, Portal> cache = new ConcurrentHashMap<>();
 
 	protected Portal(PortalType type, Rotation rotation, double price) {
 		this.type = type;
@@ -124,7 +132,7 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 			while (result.next()) {
 				String name = result.getString("Name");
 
-				Portal portal = Serializer.deserialize(result.getString("Data"));
+				Portal portal = deserialize(result.getString("Data"));
 				portal.setName(name);
 
 				cache.put(name, portal);
@@ -150,7 +158,7 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 			PreparedStatement statement = connection.prepareStatement("INSERT into Portals (Name, Data) VALUES (?, ?)");
 
 			statement.setString(1, name);
-			statement.setString(2, Serializer.serialize(this));
+			statement.setString(2, serialize(this));
 
 			statement.executeUpdate();
 
@@ -182,7 +190,7 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 
 			PreparedStatement statement = connection.prepareStatement("UPDATE Portals SET Data = ? WHERE Name = ?");
 
-			statement.setString(1, Serializer.serialize(this));
+			statement.setString(1, serialize(this));
 			statement.setString(2, name);
 
 			statement.executeUpdate();
@@ -275,7 +283,7 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 
 	public static class Server extends Portal {
 
-		protected String server;
+		private String server;
 
 		public Server(PortalType type, String server, Rotation rotation, double price) {
 			super(type, rotation, price);
@@ -297,10 +305,10 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 
 		@Override
 		public DataContainer toContainer() {
-			DataContainer container = new MemoryDataContainer().set(PORTAL_TYPE, type.name()).set(SERVER, server).set(ROTATION, rotation.getName()).set(PRICE, price);
+			DataContainer container = new MemoryDataContainer().set(PORTAL_TYPE, getType().name()).set(SERVER, server).set(ROTATION, getRotation().getName()).set(PRICE, getPrice());
 
-			if (properties.isPresent()) {
-				container.set(PROPERTIES, properties.get());
+			if (getProperties().isPresent()) {
+				container.set(PROPERTIES, getProperties().get());
 			}
 
 			return container;
@@ -336,8 +344,8 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 
 	public static class Local extends Portal {
 
-		protected World world;
-		protected Optional<Vector3d> vector3d;
+		private World world;
+		private Optional<Vector3d> vector3d;
 
 		public Local(PortalType type, World world, Optional<Vector3d> vector3d, Rotation rotation, double price) {
 			super(type, rotation, price);
@@ -382,10 +390,10 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 
 		@Override
 		public DataContainer toContainer() {
-			DataContainer container = new MemoryDataContainer().set(PORTAL_TYPE, type.name()).set(WORLD, world.getName()).set(ROTATION, rotation.getName()).set(PRICE, price);
+			DataContainer container = new MemoryDataContainer().set(PORTAL_TYPE, getType().name()).set(WORLD, world.getName()).set(ROTATION, getRotation().getName()).set(PRICE, getPrice());
 
-			if (properties.isPresent()) {
-				container.set(PROPERTIES, properties.get());
+			if (getProperties().isPresent()) {
+				container.set(PROPERTIES, getProperties().get());
 			}
 
 			if (vector3d.isPresent()) {
@@ -444,5 +452,45 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 		PORTAL,
 		SIGN,
 		WARP;
+	}
+	
+	public static String serialize(Portal portal) {
+		DataContainer container;
+
+		if (portal instanceof Server) {
+			container = ((Server) portal).toContainer();
+		} else {
+			container = ((Local) portal).toContainer();
+		}
+
+		ConfigurationNode node = DataTranslators.CONFIGURATION_NODE.translate(container);
+
+		StringWriter stringWriter = new StringWriter();
+		try {
+			HoconConfigurationLoader.builder().setSink(() -> new BufferedWriter(stringWriter)).build().save(node);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return stringWriter.toString();
+	}
+
+	public static Portal deserialize(String item) {
+		ConfigurationNode node = null;
+		try {
+			node = HoconConfigurationLoader.builder().setSource(() -> new BufferedReader(new StringReader(item))).build().load();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		DataView dataView = DataTranslators.CONFIGURATION_NODE.translate(node);
+
+		Optional<Local> optional = Sponge.getDataManager().deserialize(Local.class, dataView);
+
+		if (optional.isPresent()) {
+			return optional.get();
+		} else {
+			return Sponge.getDataManager().deserialize(Server.class, dataView).get();
+		}
 	}
 }

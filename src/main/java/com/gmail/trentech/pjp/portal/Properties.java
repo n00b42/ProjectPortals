@@ -196,14 +196,14 @@ public class Properties implements DataSerializable {
 		List<String> frame = new ArrayList<>();
 
 		for (Location<World> location : this.frame) {
-			frame.add(location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ());
+			frame.add(LocationSerializable.serialize(location));
 		}
 		container.set(FRAME, frame);
 
 		List<String> fill = new ArrayList<>();
 
 		for (Location<World> location : this.fill) {
-			fill.add(location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ());
+			fill.add(LocationSerializable.serialize(location));
 		}
 		container.set(FILL, fill);
 
@@ -230,33 +230,11 @@ public class Properties implements DataSerializable {
 				}
 
 				for (String loc : (List<String>) container.getList(FRAME).get()) {
-					String[] args = loc.split(":");
-
-					Optional<World> optional = Sponge.getServer().getWorld(args[0]);
-
-					if (!optional.isPresent()) {
-						continue;
-					}
-					World extent = optional.get();
-
-					String[] coords = args[1].split("\\.");
-
-					frame.add(new Location<World>(extent, Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2])));
+					frame.add(LocationSerializable.deserialize(loc));
 				}
 
 				for (String loc : (List<String>) container.getList(FILL).get()) {
-					String[] args = loc.split(":");
-
-					Optional<World> optional = Sponge.getServer().getWorld(args[0]);
-
-					if (!optional.isPresent()) {
-						continue;
-					}
-					World extent = optional.get();
-
-					String[] coords = args[1].split("\\.");
-
-					fill.add(new Location<World>(extent, Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2])));
+					fill.add(LocationSerializable.deserialize(loc));
 				}
 
 				return Optional.of(new Properties(frame, fill, particle, color));
