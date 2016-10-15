@@ -239,7 +239,7 @@ public class CommandManager {
 		    .description(Text.of("Lists all Project Portals commands"))
 		    .permission("pjp.cmd")
 		    .arguments(GenericArguments.optional(new HelpElement(Text.of("rawCommand"))))
-		    //.arguments(GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("rawCommand"))))
 		    .executor(new CMDPjp())
 		    .build();
+	
 }

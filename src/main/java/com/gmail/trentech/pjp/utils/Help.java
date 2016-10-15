@@ -9,7 +9,6 @@ import java.util.function.Consumer;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.service.pagination.PaginationService;
 import org.spongepowered.api.text.Text;
@@ -104,19 +103,11 @@ public class Help {
 			list.add(Text.of(TextColors.WHITE, getExample().get(), TextColors.DARK_GREEN));
 		}
 
-		if (src instanceof Player) {
-			PaginationList.Builder pages = Sponge.getServiceManager().provide(PaginationService.class).get().builder();
+		PaginationList.Builder pages = Sponge.getServiceManager().provide(PaginationService.class).get().builder();
 
-			pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, getCommand().toLowerCase())).build());
-
-			pages.contents(list);
-
-			pages.sendTo(src);
-		} else {
-			for (Text text : list) {
-				src.sendMessage(text);
-			}
-		}
+		pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, getCommand().toLowerCase())).build());
+		pages.contents(list);
+		pages.sendTo(src);
 	}
 
 	public static Optional<Help> get(String rawCommand) {
