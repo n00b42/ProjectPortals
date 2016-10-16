@@ -22,11 +22,11 @@ import com.gmail.trentech.pjp.utils.Help;
 public class CMDRename implements CommandExecutor {
 
 	public CMDRename() {
-		Help help = new Help("home rename", "rename", " Rename home", false);
-		help.setPermission("pjp.cmd.home.rename");
-		help.setSyntax(" /home rename <oldName> <newName>\n /h rn <oldName> <newName>");
-		help.setExample(" /home rename MyHome Castle");
-		help.save();
+		new Help("home rename", "rename", "Rename home", false)
+			.setPermission("pjp.cmd.home.rename")
+			.setUsage("/home rename <oldName> <newName>\n /h rn <oldName> <newName>")
+			.setExample("/home rename MyHome Castle")
+			.save();
 	}
 
 	@Override

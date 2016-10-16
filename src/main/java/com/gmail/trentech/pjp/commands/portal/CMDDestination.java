@@ -25,11 +25,11 @@ import flavor.pie.spongycord.SpongyCord;
 public class CMDDestination implements CommandExecutor {
 
 	public CMDDestination() {
-		Help help = new Help("portal destination", "destination", " change as existing portals destination", false);
-		help.setPermission("pjp.cmd.portal.destination");
-		help.setSyntax(" /portal destination <name> <destination> [x,y,z]\n /p d <name> <destination> [x,y,z]");
-		help.setExample(" /portal destination MyPortal DIM1\n /portal destination Skyland 100,65,400\n /portal destination Server1");
-		help.save();
+		new Help("portal destination", "destination", "Change as existing portals destination", false)
+			.setPermission("pjp.cmd.portal.destination")
+			.setUsage("/portal destination <name> <destination> [x,y,z]\n /p d <name> <destination> [x,y,z]")
+			.setExample("/portal destination MyPortal DIM1\n /portal destination Skyland 100,65,400\n /portal destination Server1")
+			.save();
 	}
 
 	@Override

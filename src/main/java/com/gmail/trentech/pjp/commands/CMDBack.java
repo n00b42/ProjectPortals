@@ -32,10 +32,10 @@ public class CMDBack implements CommandExecutor {
 	public static ConcurrentHashMap<Player, Location<World>> players = new ConcurrentHashMap<>();
 
 	public CMDBack() {
-		Help help = new Help("back", "back", " Use this command to teleport you to the location you previously came from", false);
-		help.setPermission("pjp.cmd.back");
-		help.setSyntax(" /back");
-		help.save();
+		new Help("back", "back", "Use this command to teleport you to the location you previously came from", false)
+			.setPermission("pjp.cmd.back")
+			.setUsage("/back")
+			.save();
 	}
 
 	@Override

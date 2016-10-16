@@ -14,11 +14,11 @@ import com.gmail.trentech.pjp.utils.Help;
 public class CMDRemove implements CommandExecutor {
 
 	public CMDRemove() {
-		Help help = new Help("portal remove", "remove", " Remove an existing portal", false);
-		help.setPermission("pjp.cmd.portal.remove");
-		help.setSyntax(" /portal remove <name>\n /p r <name>");
-		help.setExample(" /portal remove MyPortal");
-		help.save();
+		new Help("portal remove", "remove", "Remove an existing portal", false)
+			.setPermission("pjp.cmd.portal.remove")
+			.setUsage("/portal remove <name>\n /p r <name>")
+			.setExample("/portal remove MyPortal")
+			.save();
 	}
 
 	@Override

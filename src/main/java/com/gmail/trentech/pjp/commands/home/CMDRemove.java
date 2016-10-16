@@ -22,11 +22,11 @@ import com.gmail.trentech.pjp.utils.Help;
 public class CMDRemove implements CommandExecutor {
 
 	public CMDRemove() {
-		Help help = new Help("home remove", "remove", "Remove an existing home", false);
-		help.setPermission("pjp.cmd.home.remove");
-		help.setSyntax(" /home remove <name>\n /h r <name>");
-		help.setExample(" /home remove OldHome");
-		help.save();
+		new Help("home remove", "remove", "Remove an existing home", false)
+			.setPermission("pjp.cmd.home.remove")
+			.setUsage("/home remove <name>\n /h r <name>")
+			.setExample("/home remove OldHome")
+			.save();
 	}
 
 	@Override

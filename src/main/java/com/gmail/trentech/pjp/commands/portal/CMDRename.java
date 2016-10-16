@@ -15,11 +15,11 @@ import com.gmail.trentech.pjp.utils.Help;
 public class CMDRename implements CommandExecutor {
 
 	public CMDRename() {
-		Help help = new Help("portal rename", "rename", " Rename portal", false);
-		help.setPermission("pjp.cmd.portal.rename");
-		help.setSyntax(" /portal rename <oldName> <newName>\n /p rn <oldName> <newName>");
-		help.setExample(" /portal rename MyPortal ThisPortal");
-		help.save();
+		new Help("portal rename", "rename", "Rename portal", false)
+			.setPermission("pjp.cmd.portal.rename")
+			.setUsage("/portal rename <oldName> <newName>\n /p rn <oldName> <newName>")
+			.setExample("/portal rename MyPortal ThisPortal")
+			.save();
 	}
 
 	@Override

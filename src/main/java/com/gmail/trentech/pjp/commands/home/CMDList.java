@@ -29,10 +29,10 @@ import com.gmail.trentech.pjp.utils.Help;
 public class CMDList implements CommandExecutor {
 
 	public CMDList() {
-		Help help = new Help("home list", "list", " List all homes", false);
-		help.setPermission("pjp.cmd.home.list");
-		help.setSyntax(" /home list\n /h l");
-		help.save();
+		new Help("home list", "list", "List all homes", false)
+			.setPermission("pjp.cmd.home.list")
+			.setUsage("/home list\n /h l")
+			.save();
 	}
 
 	@Override

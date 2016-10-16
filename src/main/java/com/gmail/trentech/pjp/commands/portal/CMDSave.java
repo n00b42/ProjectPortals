@@ -20,10 +20,10 @@ import com.gmail.trentech.pjp.utils.Help;
 public class CMDSave implements CommandExecutor {
 
 	public CMDSave() {
-		Help help = new Help("portal save", "save", " Saves generated portal", false);
-		help.setPermission("pjp.cmd.portal.save");
-		help.setSyntax(" /portal save\n /p s");
-		help.save();
+		new Help("portal save", "save", "Saves generated portal", false)
+			.setPermission("pjp.cmd.portal.save")
+			.setUsage("/portal save\n /p s")
+			.save();
 	}
 
 	@Override

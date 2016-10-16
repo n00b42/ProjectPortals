@@ -29,10 +29,10 @@ import flavor.pie.spongycord.SpongyCord;
 public class CMDList implements CommandExecutor {
 
 	public CMDList() {
-		Help help = new Help("warp list", "list", " List all warp points", false);
-		help.setPermission("pjp.cmd.warp.list");
-		help.setSyntax(" /warp list\n /w l");
-		help.save();
+		new Help("warp list", "list", "List all warp points", false)
+		.setPermission("pjp.cmd.warp.list")
+		.setUsage("/warp list\n /w l")
+		.save();
 	}
 
 	@Override

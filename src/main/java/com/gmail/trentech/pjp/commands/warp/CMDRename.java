@@ -15,11 +15,11 @@ import com.gmail.trentech.pjp.utils.Help;
 public class CMDRename implements CommandExecutor {
 
 	public CMDRename() {
-		Help help = new Help("warp rename", "rename", " Rename warp", false);
-		help.setPermission("pjp.cmd.warp.rename");
-		help.setSyntax(" /warp rename <oldName> <newName>\n /w rn <oldName> <newName>");
-		help.setExample(" /warp rename Spawn Lobby");
-		help.save();
+		new Help("warp rename", "rename", "Rename warp", false)
+			.setPermission("pjp.cmd.warp.rename")
+			.setUsage("/warp rename <oldName> <newName>\n /w rn <oldName> <newName>")
+			.setExample("/warp rename Spawn Lobby")
+			.save();
 	}
 
 	@Override

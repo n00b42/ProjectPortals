@@ -27,11 +27,11 @@ import flavor.pie.spongycord.SpongyCord;
 public class CMDCreate implements CommandExecutor {
 
 	public CMDCreate() {
-		Help help = new Help("warp create", "create", " Use this command to create a warp that will teleport you to other worlds", false);
-		help.setPermission("pjp.cmd.warp.create");
-		help.setSyntax(" /warp create <name> [<destination> [-b] [-c <x,y,z>] [-d <direction>]] [-p <price>]\n /w <name> [<destination> [-b] [-c <x,y,z>] [-d <direction>]] [-p <price>]");
-		help.setExample(" /warp create Lobby\n /warp create Lobby MyWorld\n /warp create Lobby MyWorld -c -100,65,254\n /warp create Random MyWorld -c random\n /warp create Lobby MyWorld -c -100,65,254 -d south\n /warp create Lobby MyWorld -d southeast\n");
-		help.save();
+		new Help("warp create", "create", "Use this command to create a warp that will teleport you to other worlds", false)
+			.setPermission("pjp.cmd.warp.create")
+			.setUsage("/warp create <name> [<destination> [-b] [-c <x,y,z>] [-d <direction>]] [-p <price>]\n /w <name> [<destination> [-b] [-c <x,y,z>] [-d <direction>]] [-p <price>]")
+			.setExample("/warp create Lobby\n /warp create Lobby MyWorld\n /warp create Lobby MyWorld -c -100,65,254\n /warp create Random MyWorld -c random\n /warp create Lobby MyWorld -c -100,65,254 -d south\n /warp create Lobby MyWorld -d southeast\n")
+			.save();
 	}
 
 	@Override

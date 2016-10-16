@@ -29,10 +29,10 @@ import flavor.pie.spongycord.SpongyCord;
 public class CMDList implements CommandExecutor {
 
 	public CMDList() {
-		Help help = new Help("portal list", "list", " List all portals", false);
-		help.setPermission("pjp.cmd.portal.list");
-		help.setSyntax(" /portal list\n /p l");
-		help.save();
+		new Help("portal list", "list", "List all portals", false)
+			.setPermission("pjp.cmd.portal.list")
+			.setUsage("/portal list\n /p l")
+			.save();
 	}
 
 	@Override

@@ -9,7 +9,6 @@ import java.util.function.Consumer;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.service.pagination.PaginationService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
@@ -24,7 +23,7 @@ public class Help {
 	private final String description;
 	private final boolean hasChildren;
 	private Optional<String> permission = Optional.empty();
-	private Optional<String> syntax = Optional.empty();
+	private Optional<String> usage = Optional.empty();
 	private Optional<String> example = Optional.empty();
 
 	private static TreeMap<String, Help> map = new TreeMap<>();
@@ -52,24 +51,27 @@ public class Help {
 		return permission;
 	}
 
-	public void setPermission(String permission) {
+	public Help setPermission(String permission) {
 		this.permission = Optional.of(permission);
+		return this;
 	}
 
-	public Optional<String> getSyntax() {
-		return syntax;
+	public Optional<String> getUsage() {
+		return usage;
 	}
 
-	public void setSyntax(String syntax) {
-		this.syntax = Optional.of(syntax);
+	public Help setUsage(String usage) {
+		this.usage = Optional.of(usage);
+		return this;
 	}
 
 	public Optional<String> getExample() {
 		return example;
 	}
 
-	public void setExample(String example) {
+	public Help setExample(String example) {
 		this.example = Optional.of(example);
+		return this;
 	}
 
 	public String getCommand() {
@@ -88,26 +90,33 @@ public class Help {
 		List<Text> list = new ArrayList<>();
 
 		list.add(Text.of(TextColors.GREEN, "Description:"));
-		list.add(Text.of(TextColors.WHITE, getDescription()));
+		list.add(Text.of(TextColors.WHITE, " ", getDescription()));
 
-		if (getPermission().isPresent()) {
+		Optional<String> permission = getPermission();
+		
+		if (permission.isPresent()) {
 			list.add(Text.of(TextColors.GREEN, "Permission:"));
-			list.add(Text.of(TextColors.WHITE, " ", getPermission().get()));
+			list.add(Text.of(TextColors.WHITE, " ", permission.get()));
 		}
-		if (getSyntax().isPresent()) {
+		
+		Optional<String> usage = getUsage();
+		
+		if (usage.isPresent()) {
 			list.add(Text.of(TextColors.GREEN, "Syntax:"));
-			list.add(Text.of(TextColors.WHITE, getSyntax().get()));
+			list.add(Text.of(TextColors.WHITE, " ", usage.get()));
 		}
-		if (getExample().isPresent()) {
+		
+		Optional<String> example = getExample();
+		
+		if (example.isPresent()) {
 			list.add(Text.of(TextColors.GREEN, "Example:"));
-			list.add(Text.of(TextColors.WHITE, getExample().get(), TextColors.DARK_GREEN));
+			list.add(Text.of(TextColors.WHITE, " ", example.get(), TextColors.DARK_GREEN));
 		}
 
-		PaginationList.Builder pages = Sponge.getServiceManager().provide(PaginationService.class).get().builder();
-
-		pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, getCommand().toLowerCase())).build());
-		pages.contents(list);
-		pages.sendTo(src);
+		Sponge.getServiceManager().provide(PaginationService.class).get().builder()
+				.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, getCommand().toLowerCase())).build())
+				.contents(list)
+				.sendTo(src);
 	}
 
 	public static Optional<Help> get(String rawCommand) {

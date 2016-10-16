@@ -20,11 +20,11 @@ import com.gmail.trentech.pjp.utils.Help;
 public class CMDParticle implements CommandExecutor {
 
 	public CMDParticle() {
-		Help help = new Help("portal particle", "particle", " change a portals particle effect. Color currently only available for REDSTONE", false);
-		help.setPermission("pjp.cmd.portal.particle");
-		help.setSyntax(" /portal particle <name> <type> [color]\n /p p <name> <type> [color]");
-		help.setExample(" /portal particle MyPortal CRIT\n /portal particle MyPortal REDSTONE BLUE");
-		help.save();
+		new Help("portal particle", "particle", "Change a portals particle effect. Color currently only available for REDSTONE", false)
+			.setPermission("pjp.cmd.portal.particle")
+			.setUsage("/portal particle <name> <type> [color]\n /p p <name> <type> [color]")
+			.setExample("/portal particle MyPortal CRIT\n /portal particle MyPortal REDSTONE BLUE")
+			.save();
 	}
 
 	@Override
