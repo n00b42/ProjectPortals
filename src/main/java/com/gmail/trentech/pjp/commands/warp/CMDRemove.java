@@ -1,7 +1,5 @@
 package com.gmail.trentech.pjp.commands.warp;
 
-import java.util.Optional;
-
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -10,32 +8,17 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-import com.gmail.trentech.pjp.data.object.Warp;
-import com.gmail.trentech.pjp.utils.Help;
+import com.gmail.trentech.pjp.portal.Portal;
 
 public class CMDRemove implements CommandExecutor {
 
-	public CMDRemove() {
-		Help help = new Help("wremove", "remove", " Remove an existing  warp point");
-		help.setPermission("pjp.cmd.warp.remove");
-		help.setSyntax(" /warp remove <name>\n /w r <name>");
-		help.setExample(" /warp remove OldSpawn");
-		help.save();
-	}
-
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		String name = args.<String> getOne("name").get().toLowerCase();
+		Portal portal = args.<Portal>getOne("name").get();
 
-		Optional<Warp> optionalWarp = Warp.get(name);
+		portal.remove();
 
-		if (!optionalWarp.isPresent()) {
-			throw new CommandException(Text.of(TextColors.RED, name, " does not exist"), false);
-		}
-		Warp warp = optionalWarp.get();
-		warp.remove();
-
-		src.sendMessage(Text.of(TextColors.DARK_GREEN, "Warp ", name, " removed"));
+		src.sendMessage(Text.of(TextColors.DARK_GREEN, "Warp ", portal.getName(), " removed"));
 
 		return CommandResult.success();
 	}

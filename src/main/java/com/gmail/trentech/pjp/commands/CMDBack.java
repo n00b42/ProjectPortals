@@ -19,24 +19,16 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.data.object.Door;
-import com.gmail.trentech.pjp.data.object.Portal;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.events.TeleportEvent.Local;
-import com.gmail.trentech.pjp.utils.Help;
+import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.Portal.PortalType;
 
 public class CMDBack implements CommandExecutor {
 
 	public CommandSpec cmdBack = CommandSpec.builder().description(Text.of("Send player to last place they were")).permission("pjp.cmd.back").executor(this).build();
 
 	public static ConcurrentHashMap<Player, Location<World>> players = new ConcurrentHashMap<>();
-
-	public CMDBack() {
-		Help help = new Help("back", "back", " Use this command to teleport you to the location you previously came from");
-		help.setPermission("pjp.cmd.back");
-		help.setSyntax(" /back");
-		help.save();
-	}
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
@@ -49,16 +41,16 @@ public class CMDBack implements CommandExecutor {
 			throw new CommandException(Text.of(TextColors.RED, "No position to teleport to"));
 		}
 		Location<World> spawnLocation = players.get(player);
-		
-		while(Portal.get(spawnLocation).isPresent() || Door.get(spawnLocation).isPresent()) {
+
+		while (Portal.get(spawnLocation, PortalType.PORTAL).isPresent() || Portal.get(spawnLocation, PortalType.DOOR).isPresent()) {
 			ThreadLocalRandom random = ThreadLocalRandom.current();
-			
+
 			int x = (random.nextInt(5 * 2) - 5) + spawnLocation.getBlockX();
 			int z = (random.nextInt(5 * 2) - 5) + spawnLocation.getBlockZ();
 
 			Optional<Location<World>> optionalLocation = Sponge.getGame().getTeleportHelper().getSafeLocation(spawnLocation.getExtent().getLocation(x, spawnLocation.getBlockY(), z));
-			
-			if(optionalLocation.isPresent()) {
+
+			if (optionalLocation.isPresent()) {
 				spawnLocation = optionalLocation.get();
 			}
 		}

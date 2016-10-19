@@ -21,19 +21,11 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.data.Keys;
-import com.gmail.trentech.pjp.data.mutable.HomeData;
-import com.gmail.trentech.pjp.data.object.Home;
-import com.gmail.trentech.pjp.utils.Help;
+import com.gmail.trentech.pjp.portal.Portal;
 
 public class CMDList implements CommandExecutor {
-
-	public CMDList() {
-		Help help = new Help("hlist", "list", " List all homes");
-		help.setPermission("pjp.cmd.home.list");
-		help.setSyntax(" /home list\n /h l");
-		help.save();
-	}
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
@@ -42,52 +34,53 @@ public class CMDList implements CommandExecutor {
 		}
 		Player player = (Player) src;
 
-		Map<String, Home> homeList = new HashMap<>();
+		Map<String, Portal> list = new HashMap<>();
 
-		Optional<Map<String, Home>> optionalHomeList = player.get(Keys.HOMES);
+		Optional<Map<String, Portal>> optionalHomeList = player.get(Keys.PORTALS);
 
 		if (optionalHomeList.isPresent()) {
-			homeList = optionalHomeList.get();
-		} else {
-			player.offer(new HomeData(new HashMap<String, Home>()));
+			list = optionalHomeList.get();
 		}
 
-		List<Text> list = new ArrayList<>();
+		List<Text> pages = new ArrayList<>();
 
-		for (Entry<String, Home> entry : homeList.entrySet()) {
-			String homeName = entry.getKey().toString();
-			Home home = entry.getValue();
+		for (Entry<String, Portal> entry : list.entrySet()) {
+			String name = entry.getKey().toString();
+			Portal.Local local = (Portal.Local) entry.getValue();
 
-			Builder builder = Text.builder().color(TextColors.AQUA).onHover(TextActions.showText(Text.of(TextColors.WHITE, "Click to remove home")));
+			Builder builder = Text.builder().onHover(TextActions.showText(Text.of(TextColors.WHITE, "Click to teleport to home")));
 
-			Optional<Location<World>> optionalDestination = home.getDestination();
-			if (optionalDestination.isPresent()) {
-				Location<World> destination = optionalDestination.get();
+			Optional<Location<World>> optionalLocation = local.getLocation();
 
-				String worldName = destination.getExtent().getName();
-				int x = destination.getBlockX();
-				int y = destination.getBlockY();
-				int z = destination.getBlockZ();
+			if (optionalLocation.isPresent()) {
+				Location<World> location = optionalLocation.get();
 
-				builder.onClick(TextActions.runCommand("/home remove " + homeName)).append(Text.of(TextColors.AQUA, homeName, ": ", TextColors.GREEN, worldName, ", ", x, ", ", y, ", ", z));
+				String worldName = location.getExtent().getName();
+
+				if (!location.equals(local.getLocation().get())) {
+					builder.onClick(TextActions.runCommand("/home " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Destination: ", TextColors.WHITE, worldName, ", random"));
+				} else {
+					Vector3d vector3d = location.getPosition();
+					builder.onClick(TextActions.runCommand("/home " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Destination: ", TextColors.WHITE, worldName, ", ", vector3d.getFloorX(), ", ", vector3d.getFloorY(), ", ", vector3d.getFloorZ()));
+				}
 			} else {
-				builder.onClick(TextActions.runCommand("/home remove " + homeName)).append(Text.of(TextColors.AQUA, homeName, ": ", TextColors.RED, "INVALID DESTINATION"));
+				builder.onClick(TextActions.runCommand("/home " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.RED, " - DESTINATION ERROR"));
 			}
 
-			list.add(builder.build());
+			pages.add(builder.build());
 		}
 
-		if (list.isEmpty()) {
-			list.add(Text.of(TextColors.YELLOW, " No saved homes"));
+		if (pages.isEmpty()) {
+			pages.add(Text.of(TextColors.YELLOW, " No saved homes"));
 		}
 
-		PaginationList.Builder pages = PaginationList.builder();
+		PaginationList.Builder paginationList = PaginationList.builder();
 
-		pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, "Homes")).build());
+		paginationList.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, "Homes")).build());
 
-		pages.contents(list);
+		paginationList.contents(pages);
 
-		pages.sendTo(src);
+		paginationList.sendTo(src);
 
 		return CommandResult.success();
 	}

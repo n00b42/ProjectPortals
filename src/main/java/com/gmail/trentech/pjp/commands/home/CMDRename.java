@@ -18,16 +18,16 @@ import com.gmail.trentech.pjp.data.Keys;
 import com.gmail.trentech.pjp.data.mutable.HomeData;
 import com.gmail.trentech.pjp.portal.Portal;
 
-public class CMDRemove implements CommandExecutor {
+public class CMDRename implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if (!(src instanceof Player)) {
-			throw new CommandException(Text.of(TextColors.RED, "Must be a player"), false);
+			throw new CommandException(Text.of(TextColors.RED, "Must be a player"));
 		}
 		Player player = (Player) src;
 
-		String name = args.<String>getOne("name").get().toLowerCase();
+		String oldName = args.<String>getOne("oldName").get().toLowerCase();
 
 		Map<String, Portal> list = new HashMap<>();
 
@@ -37,20 +37,29 @@ public class CMDRemove implements CommandExecutor {
 			list = optionalList.get();
 		}
 
-		if (!list.containsKey(name)) {
-			throw new CommandException(Text.of(TextColors.RED, name, " does not exist"), false);
+		if (!list.containsKey(oldName)) {
+			throw new CommandException(Text.of(TextColors.RED, oldName, " does not exist"));
+		}
+		Portal.Local local = (Portal.Local) list.get(oldName);
+
+		String newName = args.<String>getOne("newName").get().toLowerCase();
+
+		if (list.containsKey(newName)) {
+			throw new CommandException(Text.of(TextColors.RED, newName, " already exists"), false);
 		}
 
-		list.remove(name);
+		list.remove(oldName);
+		list.put(newName, local);
 
 		DataTransactionResult result = player.offer(new HomeData(list));
 
 		if (!result.isSuccessful()) {
-			throw new CommandException(Text.of(TextColors.RED, "Could not remove ", name), false);
+			throw new CommandException(Text.of(TextColors.RED, "Could not rename ", oldName), false);
 		} else {
-			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Home ", name, " removed"));
+			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Home renamed to ", newName));
 		}
 
 		return CommandResult.success();
 	}
+
 }

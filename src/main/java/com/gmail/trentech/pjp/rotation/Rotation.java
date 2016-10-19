@@ -1,4 +1,4 @@
-package com.gmail.trentech.pjp.utils;
+package com.gmail.trentech.pjp.rotation;
 
 import java.util.Optional;
 
@@ -6,15 +6,15 @@ import com.flowpowered.math.vector.Vector3d;
 
 public enum Rotation {
 
-	SOUTH_EAST("southeast", -45), 
-	EAST("east", -90), 
-	NORTH_EAST("northeast", -135), 
-	NORTH("north", -180), 
-	NORTH_WEST("northwest", -225), 
-	WEST("west", -270), 
-	SOUTH_WEST("southwest", -315), 
-	SOUTH("south", -360);
-	
+	SOUTH_EAST("southeast", 315),
+	EAST("east", 270),
+	NORTH_EAST("northeast", 225),
+	NORTH("north", 180),
+	NORTH_WEST("northwest", 135),
+	WEST("west", 90),
+	SOUTH_WEST("southwest", 45),
+	SOUTH("south", 0);
+
 	private final String name;
 	private final int value;
 

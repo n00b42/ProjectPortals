@@ -1,20 +1,20 @@
-package com.gmail.trentech.pjp.utils;
+package com.gmail.trentech.pjp.rotation;
 
 import org.spongepowered.api.util.Direction;
 
 import com.flowpowered.math.vector.Vector3d;
 
-public enum PlayerDirection {
+public enum PlayerRotation {
 
-	EAST(Direction.EAST, -90), 
-	NORTH(Direction.NORTH, -180), 
-	WEST(Direction.WEST, -270),
-	SOUTH(Direction.SOUTH, -360);
-	
+	EAST(Direction.EAST, -90),
+	NORTH(Direction.NORTH, -180),
+	WEST(Direction.WEST, 90),
+	SOUTH(Direction.SOUTH, 0);
+
 	private final Direction direction;
 	private final int value;
 
-	private PlayerDirection(Direction direction, int value) {
+	private PlayerRotation(Direction direction, int value) {
 		this.direction = direction;
 		this.value = value;
 	}
@@ -31,8 +31,8 @@ public enum PlayerDirection {
 		return new Vector3d(0, getValue(), 0);
 	}
 
-	public static PlayerDirection getClosest(int value) {
-		PlayerDirection[] directions = PlayerDirection.values();
+	public static PlayerRotation getClosest(int value) {
+		PlayerRotation[] directions = PlayerRotation.values();
 
 		int distance = Math.abs(directions[0].getValue() - value);
 		int index = 0;

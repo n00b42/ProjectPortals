@@ -18,20 +18,12 @@ import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.data.Keys;
 import com.gmail.trentech.pjp.data.mutable.HomeData;
-import com.gmail.trentech.pjp.data.object.Home;
+import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.Portal.PortalType;
+import com.gmail.trentech.pjp.rotation.Rotation;
 import com.gmail.trentech.pjp.utils.ConfigManager;
-import com.gmail.trentech.pjp.utils.Help;
-import com.gmail.trentech.pjp.utils.Rotation;
 
 public class CMDCreate implements CommandExecutor {
-
-	public CMDCreate() {
-		Help help = new Help("hcreate", "create", " Create a new home");
-		help.setPermission("pjp.cmd.home.create");
-		help.setSyntax(" /home create <name>\n /h c <name>");
-		help.setExample(" /home create MyHome");
-		help.save();
-	}
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
@@ -40,19 +32,19 @@ public class CMDCreate implements CommandExecutor {
 		}
 		Player player = (Player) src;
 
-		String homeName = args.<String> getOne("name").get().toLowerCase();
+		String name = args.<String>getOne("name").get().toLowerCase();
 
-		Map<String, Home> homeList = new HashMap<>();
+		Map<String, Portal> list = new HashMap<>();
 
-		Optional<Map<String, Home>> optionalHomeList = player.get(Keys.HOMES);
+		Optional<Map<String, Portal>> optionalList = player.get(Keys.PORTALS);
 
-		if (optionalHomeList.isPresent()) {
-			homeList = optionalHomeList.get();
+		if (optionalList.isPresent()) {
+			list = optionalList.get();
 		}
 
 		int defaultAmount = ConfigManager.get().getConfig().getNode("options", "homes").getInt();
 
-		int amount = homeList.size();
+		int amount = list.size();
 
 		int extra = 0;
 		for (int i = 1; i <= 100; i++) {
@@ -69,21 +61,20 @@ public class CMDCreate implements CommandExecutor {
 			amount++;
 		}
 
-		if (homeList.containsKey(homeName)) {
-			throw new CommandException(Text.of(TextColors.RED, homeName, " already exists."), false);
+		if (list.containsKey(name)) {
+			throw new CommandException(Text.of(TextColors.RED, name, " already exists."), false);
 		}
 
 		Location<World> location = player.getLocation();
 
-		String destination = location.getExtent().getName() + ":" + location.getBlockX() + "." + location.getBlockY() + "." + location.getBlockZ();
+		list.put(name, new Portal.Local(PortalType.HOME, location.getExtent(), Optional.of(location.getPosition()), Rotation.getClosest(player.getRotation().getFloorY()), 0));
 
-		homeList.put(homeName, new Home(destination, Rotation.getClosest(player.getRotation().getFloorY())));
+		DataTransactionResult result = player.offer(new HomeData(list));
 
-		DataTransactionResult result = player.offer(new HomeData(homeList));
 		if (!result.isSuccessful()) {
-			throw new CommandException(Text.of(TextColors.RED, "Could not create ", homeName), false);
+			throw new CommandException(Text.of(TextColors.RED, "Could not create ", name), false);
 		} else {
-			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Home ", homeName, " create"));
+			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Home ", name, " create"));
 		}
 
 		return CommandResult.success();

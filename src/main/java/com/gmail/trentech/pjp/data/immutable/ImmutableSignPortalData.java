@@ -1,6 +1,6 @@
 package com.gmail.trentech.pjp.data.immutable;
 
-import static com.gmail.trentech.pjp.data.Keys.SIGN;
+import static com.gmail.trentech.pjp.data.Keys.PORTAL;
 
 import java.util.Optional;
 
@@ -11,16 +11,16 @@ import org.spongepowered.api.data.value.BaseValue;
 import org.spongepowered.api.data.value.immutable.ImmutableValue;
 
 import com.gmail.trentech.pjp.data.mutable.SignPortalData;
-import com.gmail.trentech.pjp.data.object.Sign;
+import com.gmail.trentech.pjp.portal.Portal;
 
-public class ImmutableSignPortalData extends AbstractImmutableSingleData<Sign, ImmutableSignPortalData, SignPortalData> {
+public class ImmutableSignPortalData extends AbstractImmutableSingleData<Portal, ImmutableSignPortalData, SignPortalData> {
 
-	public ImmutableSignPortalData(Sign value) {
-		super(value, SIGN);
+	public ImmutableSignPortalData(Portal value) {
+		super(value, PORTAL);
 	}
 
-	public ImmutableValue<Sign> sign() {
-		return Sponge.getRegistry().getValueFactory().createValue(SIGN, getValue(), getValue()).asImmutable();
+	public ImmutableValue<Portal> sign() {
+		return Sponge.getRegistry().getValueFactory().createValue(PORTAL, getValue(), getValue()).asImmutable();
 	}
 
 	@Override
@@ -34,12 +34,12 @@ public class ImmutableSignPortalData extends AbstractImmutableSingleData<Sign, I
 
 	@Override
 	public int getContentVersion() {
-		return 1;
+		return 0;
 	}
 
 	@Override
 	protected ImmutableValue<?> getValueGetter() {
-		return Sponge.getRegistry().getValueFactory().createValue(SIGN, getValue()).asImmutable();
+		return Sponge.getRegistry().getValueFactory().createValue(PORTAL, getValue()).asImmutable();
 	}
 
 	@Override

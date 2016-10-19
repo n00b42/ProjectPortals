@@ -1,4 +1,4 @@
-package com.gmail.trentech.pjp.commands.portal;
+package com.gmail.trentech.pjp.commands.warp;
 
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -19,14 +19,14 @@ public class CMDRename implements CommandExecutor {
 
 		String newName = args.<String>getOne("newName").get().toLowerCase();
 
-		if (Portal.get(newName, PortalType.PORTAL).isPresent()) {
+		if (Portal.get(newName, PortalType.WARP).isPresent()) {
 			throw new CommandException(Text.of(TextColors.RED, newName, " already exists"), false);
 		}
 
 		portal.remove();
 		portal.create(newName);
 
-		src.sendMessage(Text.of(TextColors.DARK_GREEN, "Portal renamed to ", newName));
+		src.sendMessage(Text.of(TextColors.DARK_GREEN, "Warp renamed to ", newName));
 
 		return CommandResult.success();
 	}

@@ -14,7 +14,6 @@ import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.data.object.Portal;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
@@ -23,43 +22,46 @@ import com.gmail.trentech.pjp.events.ConstructPortalEvent;
 public class PortalBuilder {
 
 	private boolean valid = false;
-	private List<Location<World>> frameList = new ArrayList<>();
-	private List<Location<World>> fillList = new ArrayList<>();
+	private Portal portal;
 
-	public PortalBuilder(Location<World> location, Direction direction) {
-		if (direction.equals(Direction.NORTH)) {
-			direction = Direction.EAST;
-		} else if (direction.equals(Direction.EAST)) {
-			direction = Direction.SOUTH;
-		} else if (direction.equals(Direction.SOUTH)) {
-			direction = Direction.WEST;
-		} else if (direction.equals(Direction.WEST)) {
-			direction = Direction.NORTH;
-		}
+	public PortalBuilder(Portal portal, Location<World> location, Direction direction) {
+		if (portal.getProperties().isPresent()) {
+			this.portal = portal;
 
-		findPortal(location, direction, Direction.UP);
+			if (direction.equals(Direction.NORTH)) {
+				direction = Direction.EAST;
+			} else if (direction.equals(Direction.EAST)) {
+				direction = Direction.SOUTH;
+			} else if (direction.equals(Direction.SOUTH)) {
+				direction = Direction.WEST;
+			} else if (direction.equals(Direction.WEST)) {
+				direction = Direction.NORTH;
+			}
 
-		if (!isValid()) {
-			fillList.clear();
-			frameList.clear();
+			findPortal(location, direction, Direction.UP);
 
-			if (direction.equals(Direction.NORTH) || direction.equals(Direction.SOUTH)) {
-				findPortal(location, direction, Direction.EAST);
+			if (!isValid()) {
+				portal.getProperties().get().getFill().clear();
+				portal.getProperties().get().getFrame().clear();
 
-				if (!isValid()) {
-					fillList.clear();
-					frameList.clear();
+				if (direction.equals(Direction.NORTH) || direction.equals(Direction.SOUTH)) {
+					findPortal(location, direction, Direction.EAST);
 
-					findPortal(location, direction, Direction.WEST);
-				}
-			} else {
-				findPortal(location, direction, Direction.NORTH);
+					if (!isValid()) {
+						portal.getProperties().get().getFill().clear();
+						portal.getProperties().get().getFrame().clear();
 
-				if (!isValid()) {
-					fillList.clear();
-					frameList.clear();
+						findPortal(location, direction, Direction.WEST);
+					}
+				} else {
+					findPortal(location, direction, Direction.NORTH);
 
-					findPortal(location, direction, Direction.SOUTH);
+					if (!isValid()) {
+						portal.getProperties().get().getFill().clear();
+						portal.getProperties().get().getFrame().clear();
+
+						findPortal(location, direction, Direction.SOUTH);
+					}
 				}
 			}
 		}
@@ -69,17 +71,19 @@ public class PortalBuilder {
 		return valid;
 	}
 
-	public boolean spawnPortal(PortalProperties properties) {
+	public boolean spawnPortal() {
 		if (isValid()) {
-			if (!Sponge.getEventManager().post(new ConstructPortalEvent(frameList, fillList, Cause.of(NamedCause.source(this))))) {
-				Particle effect = Particles.getDefaultEffect("creation");
-				Optional<ParticleColor> effectColor = Particles.getDefaultColor("creation", properties.getParticle().isColorable());
+			if (!Sponge.getEventManager().post(new ConstructPortalEvent(portal.getProperties().get().getFrame(), portal.getProperties().get().getFill(), Cause.of(NamedCause.source(this))))) {
 
-				for (Location<World> location : fillList) {
+				Particle effect = Particles.getDefaultEffect("creation");
+				Optional<ParticleColor> effectColor = Particles.getDefaultColor("creation", portal.getProperties().get().getParticle().isColorable());
+
+				for (Location<World> location : portal.getProperties().get().getFill()) {
 					effect.spawnParticle(location, false, effectColor);
 				}
 
-				new Portal(properties.getName(), properties.getDestination(), properties.getRotation(), frameList, fillList, properties.getParticle(), properties.getColor(), properties.getPrice(), properties.isBungee()).create();
+				portal.setProperties(portal.getProperties().get());
+				portal.create(portal.getName());
 
 				return true;
 			}
@@ -102,7 +106,7 @@ public class PortalBuilder {
 		if (isValid()) {
 			scanEdge(location, horizonal, vertical, true);
 
-			for (Location<World> loc : fillList) {
+			for (Location<World> loc : portal.getProperties().get().getFill()) {
 				List<Location<World>> list = new ArrayList<>();
 
 				list.add(loc.getRelative(vertical));
@@ -114,7 +118,7 @@ public class PortalBuilder {
 					BlockState state = loc2.getBlock();
 
 					if ((state.getType().equals(BlockTypes.AIR))) {
-						if (!fillList.contains(loc2)) {
+						if (!portal.getProperties().get().getFill().contains(loc2)) {
 							valid = false;
 							break;
 						}
@@ -138,8 +142,8 @@ public class PortalBuilder {
 				break;
 			}
 
-			if (!frameList.contains(loc)) {
-				frameList.add(loc);
+			if (!portal.getProperties().get().getFrame().contains(loc)) {
+				portal.getProperties().get().getFrame().add(loc);
 			}
 
 			if (!loc.getRelative(vertical).getBlock().getType().equals(BlockTypes.AIR)) {
@@ -158,8 +162,8 @@ public class PortalBuilder {
 				break;
 			}
 
-			if (!frameList.contains(loc)) {
-				frameList.add(loc);
+			if (!portal.getProperties().get().getFrame().contains(loc)) {
+				portal.getProperties().get().getFrame().add(loc);
 			}
 
 			if (!loc.getRelative(vertical).getBlock().getType().equals(BlockTypes.AIR)) {
@@ -177,8 +181,8 @@ public class PortalBuilder {
 			BlockState state = location.getBlock();
 
 			if (state.getType().equals(BlockTypes.AIR)) {
-				if (!fillList.contains(location)) {
-					fillList.add(location);
+				if (!portal.getProperties().get().getFill().contains(location)) {
+					portal.getProperties().get().getFill().add(location);
 				}
 				if (first) {
 					if (location.getRelative(vertical.getOpposite()).getBlock().getType().equals(BlockTypes.AIR)) {
@@ -192,8 +196,8 @@ public class PortalBuilder {
 				location = location.getRelative(direction);
 			} else {
 				if (i != 1) {
-					if (!frameList.contains(location)) {
-						frameList.add(location);
+					if (!portal.getProperties().get().getFrame().contains(location)) {
+						portal.getProperties().get().getFrame().add(location);
 					}
 					break;
 				} else {

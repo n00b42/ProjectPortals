@@ -15,16 +15,8 @@ import org.spongepowered.api.text.format.TextStyles;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.listeners.LegacyListener;
 import com.gmail.trentech.pjp.portal.LegacyBuilder;
-import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDSave implements CommandExecutor {
-
-	public CMDSave() {
-		Help help = new Help("save", "save", " Saves generated portal");
-		help.setPermission("pjp.cmd.portal.save");
-		help.setSyntax(" /portal save\n /p s");
-		help.save();
-	}
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
@@ -46,11 +38,11 @@ public class CMDSave implements CommandExecutor {
 		}
 
 		if (builder.build(player)) {
-			Sponge.getScheduler().createTaskBuilder().name("PJP" + builder.getName()).delayTicks(20).execute(t -> {
+			Sponge.getScheduler().createTaskBuilder().delayTicks(20).execute(t -> {
 				LegacyListener.builders.remove(player.getUniqueId());
 			}).submit(Main.getPlugin());
 
-			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Portal ", builder.getName(), " created successfully"));
+			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Portal ", builder.getPortal().getName(), " created successfully"));
 		}
 
 		return CommandResult.success();

@@ -10,45 +10,35 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-import com.gmail.trentech.pjp.data.object.Portal;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
-import com.gmail.trentech.pjp.utils.Help;
+import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.Properties;
 
 public class CMDParticle implements CommandExecutor {
 
-	public CMDParticle() {
-		Help help = new Help("particle", "particle", " change a portals particle effect. Color currently only available for REDSTONE");
-		help.setPermission("pjp.cmd.portal.particle");
-		help.setSyntax(" /portal particle <name> <type> [color]\n /p p <name> <type> [color]");
-		help.setExample(" /portal particle MyPortal CRIT\n /portal particle MyPortal REDSTONE BLUE");
-		help.save();
-	}
-
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		String name = args.<String> getOne("name").get().toLowerCase();
+		Portal portal = args.<Portal>getOne("name").get();
 
-		if (!Portal.get(name).isPresent()) {
-			throw new CommandException(Text.of(TextColors.RED, name, " does not exist"), false);
-		}
-		Portal portal = Portal.get(name).get();
-
-		Particle particle = args.<Particles> getOne("type").get().getParticle();
+		Particle particle = args.<Particles>getOne("type").get().getParticle();
 
 		Optional<ParticleColor> color = Optional.empty();
 
 		if (args.hasAny("color")) {
 			if (particle.isColorable()) {
-				color = Optional.of(args.<ParticleColor> getOne("color").get());
+				color = Optional.of(args.<ParticleColor>getOne("color").get());
 			} else {
 				src.sendMessage(Text.of(TextColors.YELLOW, "Colors currently only works with REDSTONE type"));
 			}
 		}
 
-		portal.setParticle(particle);
-		portal.setParticleColor(color);
+		Properties properties = portal.getProperties().get();
+		properties.setParticle(particle);
+		properties.setParticleColor(color);
+
+		portal.setProperties(properties);
 		portal.update();
 
 		return CommandResult.success();

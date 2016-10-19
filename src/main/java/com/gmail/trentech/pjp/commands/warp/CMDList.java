@@ -2,9 +2,8 @@ package com.gmail.trentech.pjp.commands.warp;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -14,68 +13,95 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.Text.Builder;
+import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.data.object.Warp;
-import com.gmail.trentech.pjp.utils.Help;
+import com.flowpowered.math.vector.Vector3d;
+import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.Portal.PortalType;
+
+import flavor.pie.spongycord.SpongyCord;
 
 public class CMDList implements CommandExecutor {
 
-	public CMDList() {
-		Help help = new Help("wlist", "list", " List all warp points");
-		help.setPermission("pjp.cmd.warp.list");
-		help.setSyntax(" /warp list\n /w l");
-		help.save();
-	}
-
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+		if (!(src instanceof Player)) {
+			throw new CommandException(Text.of(TextColors.RED, "Must be a player"), false);
+		}
+		Player player = (Player) src;
+
 		List<Text> list = new ArrayList<>();
 
-		ConcurrentHashMap<String, Warp> warps = Warp.all();
-
-		for (Entry<String, Warp> entry : warps.entrySet()) {
-			String name = entry.getKey();
-			Warp warp = entry.getValue();
+		for (Portal portal : Portal.all(PortalType.WARP)) {
+			String name = portal.getName();
 
 			if (!src.hasPermission("pjp.warps." + name)) {
 				continue;
 			}
 
-			Optional<Location<World>> optionalLocation = warp.getDestination();
+			Builder builder = Text.builder().onHover(TextActions.showText(Text.of(TextColors.WHITE, "Click to teleport to warp")));
 
-			if (!optionalLocation.isPresent()) {
-				continue;
-			}
+			if (portal instanceof Portal.Server) {
+				Portal.Server server = (Portal.Server) portal;
 
-			double price = warp.getPrice();
-			if (price == 0) {
-				list.add(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name));
+				Consumer<List<String>> consumer = (s) -> {
+					if (!s.contains(server.getServer())) {
+						try {
+							throw new CommandException(Text.of(TextColors.RED, server.getServer(), " does not exist"), false);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				};
+
+				SpongyCord.API.getServerList(consumer, player);
+
+				builder.onClick(TextActions.runCommand("/warp " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Server Destination: ", TextColors.WHITE, server.getServer()));
 			} else {
-				list.add(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Price: ", TextColors.WHITE, "$", warp.getPrice()));
+				Portal.Local local = (Portal.Local) portal;
+
+				Optional<Location<World>> optionalLocation = local.getLocation();
+
+				if (optionalLocation.isPresent()) {
+					Location<World> location = optionalLocation.get();
+
+					String worldName = location.getExtent().getName();
+
+					if (!location.equals(local.getLocation().get())) {
+						builder.onClick(TextActions.runCommand("/warp " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Destination: ", TextColors.WHITE, worldName, ", random"));
+					} else {
+						Vector3d vector3d = location.getPosition();
+						builder.onClick(TextActions.runCommand("/warp " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Destination: ", TextColors.WHITE, worldName, ", ", vector3d.getFloorX(), ", ", vector3d.getFloorY(), ", ", vector3d.getFloorZ()));
+					}
+				} else {
+					builder.onClick(TextActions.runCommand("/warp " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.RED, " - DESTINATION ERROR"));
+				}
 			}
 
+			double price = portal.getPrice();
+
+			if (price != 0) {
+				builder.append(Text.of(TextColors.GREEN, " Price: ", TextColors.WHITE, "$", price));
+			}
+
+			list.add(builder.build());
 		}
 
 		if (list.isEmpty()) {
 			list.add(Text.of(TextColors.YELLOW, " No warp points"));
 		}
 
-		if (src instanceof Player) {
-			PaginationList.Builder pages = PaginationList.builder();
+		PaginationList.Builder paginationList = PaginationList.builder();
 
-			pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, "Warps")).build());
+		paginationList.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, "Warps")).build());
 
-			pages.contents(list);
+		paginationList.contents(list);
 
-			pages.sendTo(src);
-		} else {
-			for (Text text : list) {
-				src.sendMessage(text);
-			}
-		}
+		paginationList.sendTo(src);
 
 		return CommandResult.success();
 	}

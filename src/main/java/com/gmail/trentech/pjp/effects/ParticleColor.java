@@ -7,22 +7,22 @@ import org.spongepowered.api.util.Color;
 
 public enum ParticleColor {
 
-	BLACK("BLACK", Color.BLACK), 
-	BLUE("BLUE", Color.BLUE), 
-	CYAN("CYAN", Color.CYAN), 
-	DARK_CYAN("DARK_CYAN", Color.DARK_CYAN), 
-	DARK_GREEN("DARK_GREEN", Color.DARK_GREEN), 
-	DARK_MAGENTA("DARK_MAGENTA", Color.DARK_MAGENTA), 
-	GRAY("GRAY", Color.GRAY), 
-	GREEN("GREEN", Color.GREEN), 
-	LIME("LIME", Color.LIME), 
-	MAGENTA("MAGENTA", Color.MAGENTA), 
-	NAVY("NAVY", Color.NAVY), 
-	PINK("PINK", Color.PINK), 
-	PURPLE("PURPLE", Color.PURPLE), 
-	RED("RED", Color.RED), 
-	WHITE("WHITE", Color.WHITE), 
-	YELLOW("YELLOW", Color.YELLOW), 
+	BLACK("BLACK", Color.BLACK),
+	BLUE("BLUE", Color.BLUE),
+	CYAN("CYAN", Color.CYAN),
+	DARK_CYAN("DARK_CYAN", Color.DARK_CYAN),
+	DARK_GREEN("DARK_GREEN", Color.DARK_GREEN),
+	DARK_MAGENTA("DARK_MAGENTA", Color.DARK_MAGENTA),
+	GRAY("GRAY", Color.GRAY),
+	GREEN("GREEN", Color.GREEN),
+	LIME("LIME", Color.LIME),
+	MAGENTA("MAGENTA", Color.MAGENTA),
+	NAVY("NAVY", Color.NAVY),
+	PINK("PINK", Color.PINK),
+	PURPLE("PURPLE", Color.PURPLE),
+	RED("RED", Color.RED),
+	WHITE("WHITE", Color.WHITE),
+	YELLOW("YELLOW", Color.YELLOW),
 	RAINBOW("RAINBOW", null);
 
 	private final Color color;

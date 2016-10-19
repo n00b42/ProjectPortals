@@ -16,8 +16,8 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
+import com.gmail.trentech.helpme.Help;
 import com.gmail.trentech.pjp.utils.ConfigManager;
-import com.gmail.trentech.pjp.utils.Help;
 
 import ninja.leaping.configurate.ConfigurationNode;
 
@@ -27,36 +27,70 @@ public class CMDPjp implements CommandExecutor {
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		List<Text> list = new ArrayList<>();
 
-		list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click to execute command "))).onClick(TextActions.runCommand("/pjp:pjp help")).append(Text.of(" /pjp help")).build());
-		
 		ConfigurationNode node = ConfigManager.get().getConfig().getNode("settings", "modules");
+		
+		if(Sponge.getPluginManager().getPlugin("helpme").isPresent()) {
+			List<Help> commands = new ArrayList<>();
+			
+			if (node.getNode("portals").getBoolean()) {
+				commands.add(Help.get("portal").get());
+			}
+			if (node.getNode("plates").getBoolean()) {
+				commands.add(Help.get("plate").get());
+			}
+			if (node.getNode("levers").getBoolean()) {
+				commands.add(Help.get("lever").get());
+			}
+			if (node.getNode("signs").getBoolean()) {
+				commands.add(Help.get("sign").get());
+			}
+			if (node.getNode("doors").getBoolean()) {
+				commands.add(Help.get("door").get());
+			}
+			if (node.getNode("buttons").getBoolean()) {
+				commands.add(Help.get("button").get());
+			}
+			if (node.getNode("homes").getBoolean()) {
+				commands.add(Help.get("home").get());
+			}
+			if (node.getNode("warps").getBoolean()) {
+				commands.add(Help.get("warp").get());
+			}
+			if (src.hasPermission("pjp.cmd.back")) {
+				commands.add(Help.get("back").get());
+			}
+
+			Help.executeList(src, commands);
+			
+			return CommandResult.success();
+		}
 
 		if (src.hasPermission("pjp.cmd.portal") && node.getNode("portals").getBoolean()) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for list of sub commands "))).onClick(TextActions.runCommand("/pjp:portal")).append(Text.of(" /portal")).build());
+			list.add(Text.builder().color(TextColors.GREEN).onClick(TextActions.runCommand("/pjp:portal")).append(Text.of(" /portal")).build());
 		}
 		if (src.hasPermission("pjp.cmd.plate") && node.getNode("plates").getBoolean()) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for usage infomation "))).onClick(TextActions.executeCallback(Help.getHelp("plate"))).append(Text.of(" /plate")).build());
+			list.add(Text.builder().color(TextColors.GREEN).onClick(TextActions.runCommand("/pjp:plate")).append(Text.of(" /plate")).build());
 		}
 		if (src.hasPermission("pjp.cmd.lever") && node.getNode("levers").getBoolean()) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for usage infomation "))).onClick(TextActions.executeCallback(Help.getHelp("lever"))).append(Text.of(" /lever")).build());
+			list.add(Text.builder().color(TextColors.GREEN).onClick(TextActions.runCommand("/pjp:lever")).append(Text.of(" /lever")).build());
 		}
 		if (src.hasPermission("pjp.cmd.sign") && node.getNode("signs").getBoolean()) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for usage infomation "))).onClick(TextActions.executeCallback(Help.getHelp("sign"))).append(Text.of(" /sign")).build());
+			list.add(Text.builder().color(TextColors.GREEN).onClick(TextActions.runCommand("/pjp:sign")).append(Text.of(" /sign")).build());
 		}
 		if (src.hasPermission("pjp.cmd.door") && node.getNode("doors").getBoolean()) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for usage infomation "))).onClick(TextActions.executeCallback(Help.getHelp("door"))).append(Text.of(" /door")).build());
+			list.add(Text.builder().color(TextColors.GREEN).onClick(TextActions.runCommand("/pjp:door")).append(Text.of(" /door")).build());
 		}
 		if (src.hasPermission("pjp.cmd.button") && node.getNode("buttons").getBoolean()) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for usage infomation "))).onClick(TextActions.executeCallback(Help.getHelp("button"))).append(Text.of(" /button")).build());
+			list.add(Text.builder().color(TextColors.GREEN).onClick(TextActions.runCommand("/pjp:button")).append(Text.of(" /button")).build());
 		}
 		if (src.hasPermission("pjp.cmd.home") && node.getNode("homes").getBoolean()) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for list of sub commands "))).onClick(TextActions.runCommand("/pjp:home")).append(Text.of(" /home")).build());
+			list.add(Text.builder().color(TextColors.GREEN).onClick(TextActions.runCommand("/pjp:home")).append(Text.of(" /home")).build());
 		}
 		if (src.hasPermission("pjp.cmd.warp") && node.getNode("warps").getBoolean()) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for list of sub commands "))).onClick(TextActions.runCommand("/pjp:warp")).append(Text.of(" /warp")).build());
+			list.add(Text.builder().color(TextColors.GREEN).onClick(TextActions.runCommand("/pjp:warp")).append(Text.of(" /warp")).build());
 		}
 		if (src.hasPermission("pjp.cmd.back")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for usage infomation "))).onClick(TextActions.executeCallback(Help.getHelp("back"))).append(Text.of(" /back")).build());
+			list.add(Text.builder().color(TextColors.GREEN).onClick(TextActions.runCommand("/pjp:back")).append(Text.of(" /back")).build());
 		}
 
 		if (src instanceof Player) {

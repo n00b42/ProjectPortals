@@ -1,7 +1,5 @@
 package com.gmail.trentech.pjp.commands.portal;
 
-import java.util.Optional;
-
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -10,32 +8,17 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-import com.gmail.trentech.pjp.data.object.Portal;
-import com.gmail.trentech.pjp.utils.Help;
+import com.gmail.trentech.pjp.portal.Portal;
 
 public class CMDRemove implements CommandExecutor {
 
-	public CMDRemove() {
-		Help help = new Help("premove", "remove", " Remove an existing portal");
-		help.setPermission("pjp.cmd.portal.remove");
-		help.setSyntax(" /portal remove <name>\n /p r <name>");
-		help.setExample(" /portal remove MyPortal");
-		help.save();
-	}
-
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		String name = args.<String> getOne("name").get().toLowerCase();
+		Portal portal = args.<Portal>getOne("name").get();
 
-		Optional<Portal> optionalPortal = Portal.get(name);
-
-		if (!optionalPortal.isPresent()) {
-			throw new CommandException(Text.of(TextColors.RED, name, " does not exist"), false);
-		}
-		Portal portal = optionalPortal.get();
 		portal.remove();
 
-		src.sendMessage(Text.of(TextColors.DARK_GREEN, "Portal ", name, " removed"));
+		src.sendMessage(Text.of(TextColors.DARK_GREEN, "Portal ", portal.getName(), " removed"));
 
 		return CommandResult.success();
 	}

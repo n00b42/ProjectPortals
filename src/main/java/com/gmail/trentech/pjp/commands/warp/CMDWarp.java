@@ -1,35 +1,17 @@
 package com.gmail.trentech.pjp.commands.warp;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
-
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.NamedCause;
-import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.world.Location;
-import org.spongepowered.api.world.World;
 
-import com.flowpowered.math.vector.Vector3d;
-import com.gmail.trentech.pjp.data.object.Warp;
-import com.gmail.trentech.pjp.events.TeleportEvent;
-import com.gmail.trentech.pjp.events.TeleportEvent.Local;
-import com.gmail.trentech.pjp.events.TeleportEvent.Server;
-import com.gmail.trentech.pjp.utils.Help;
-
-import flavor.pie.spongycord.SpongyCord;
+import com.gmail.trentech.helpme.Help;
+import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.utils.Teleport;
 
 public class CMDWarp implements CommandExecutor {
 
@@ -39,18 +21,11 @@ public class CMDWarp implements CommandExecutor {
 			if (!(src instanceof Player)) {
 				throw new CommandException(Text.of(TextColors.RED, "Must be a player"));
 			}
-			AtomicReference<Player> player = new AtomicReference<>((Player) src);
+			Player player = ((Player) src);
 
-			String warpName = args.<String> getOne("name").get().toLowerCase();
+			Portal portal = args.<Portal>getOne("name").get();
 
-			Optional<Warp> optionalWarp = Warp.get(warpName);
-
-			if (!optionalWarp.isPresent()) {
-				throw new CommandException(Text.of(TextColors.RED, warpName, " does not exist"));
-			}
-			Warp warp = optionalWarp.get();
-
-			if (!player.get().hasPermission("pjp.warps." + warpName)) {
+			if (!player.hasPermission("pjp.warps." + portal.getName())) {
 				throw new CommandException(Text.of(TextColors.RED, "you do not have permission to warp here"));
 			}
 
@@ -59,74 +34,17 @@ public class CMDWarp implements CommandExecutor {
 					throw new CommandException(Text.of(TextColors.RED, "you do not have permission to warp others"));
 				}
 
-				player.set(args.<Player> getOne("player").get());
+				player = args.<Player>getOne("player").get();
 			}
 
-			if (warp.isBungee()) {
-				Consumer<String> consumer = (server) -> {
-					Server teleportEvent = new TeleportEvent.Server(player.get(), server, warp.getServer(), warp.getPrice(), Cause.of(NamedCause.source(warp)));
-
-					if (!Sponge.getEventManager().post(teleportEvent)) {
-						SpongyCord.API.connectPlayer(player.get(), teleportEvent.getDestination());
-
-						player.get().setLocation(player.get().getWorld().getSpawnLocation());
-					}
-				};
-
-				SpongyCord.API.getServerName(consumer, player.get());
-			} else {
-				Optional<Location<World>> optionalSpawnLocation = warp.getDestination();
-
-				if (!optionalSpawnLocation.isPresent()) {
-					throw new CommandException(Text.of(TextColors.RED, "Destination does not exist or world is not loaded"));
-				}
-				Location<World> spawnLocation = optionalSpawnLocation.get();
-
-				Local teleportEvent = new TeleportEvent.Local(player.get(), player.get().getLocation(), spawnLocation, warp.getPrice(), Cause.of(NamedCause.source("warp")));
-
-				if (!Sponge.getEventManager().post(teleportEvent)) {
-					spawnLocation = teleportEvent.getDestination();
-
-					Vector3d rotation = warp.getRotation().toVector3d();
-
-					player.get().setLocationAndRotation(spawnLocation, rotation);
-				}
-			}
+			Teleport.teleport(player, portal);
 
 			return CommandResult.success();
 		}
 
-		List<Text> list = new ArrayList<>();
-
-		if (src.hasPermission("pjp.cmd.warp.others")) {
-			list.add(Text.of(TextColors.YELLOW, " /warp <name> [player]\n"));
-		}
-		if (src.hasPermission("pjp.cmd.warp.create")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("wcreate"))).append(Text.of(" /warp create")).build());
-		}
-		if (src.hasPermission("pjp.cmd.warp.remove")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("wremove"))).append(Text.of(" /warp remove")).build());
-		}
-		if (src.hasPermission("pjp.cmd.warp.list")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("wlist"))).append(Text.of(" /warp list")).build());
-		}
-		if (src.hasPermission("pjp.cmd.warp.price")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("wprice"))).append(Text.of(" /warp price")).build());
-		}
-
-		if (src instanceof Player) {
-			PaginationList.Builder pages = PaginationList.builder();
-
-			pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, "Command List")).build());
-
-			pages.contents(list);
-
-			pages.sendTo(src);
-		} else {
-			for (Text text : list) {
-				src.sendMessage(text);
-			}
-		}
+		src.sendMessage(Text.of(TextColors.YELLOW, " /warp <name> [player]"));
+		
+		Help.executeList(src, Help.get("warp").get().getChildren());
 
 		return CommandResult.success();
 	}
