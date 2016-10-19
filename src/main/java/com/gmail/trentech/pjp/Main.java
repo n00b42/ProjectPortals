@@ -150,7 +150,7 @@ public class Main {
 				
 			Help portalSave = new Help("portal save", "save", "Saves generated portal")
 					.setPermission("pjp.cmd.portal.save")
-					.addUsage("/portal save\n /p s")
+					.addUsage("/portal save")
 					.addUsage("/p s");
 			
 			Help portal = new Help("portal", "portal", " Top level portal command")
@@ -313,12 +313,12 @@ public class Main {
 			
 			Help warpList = new Help("warp list", "list", "List all warp points")
 					.setPermission("pjp.cmd.warp.list")
-					.addUsage("/warp list\n /w ls")
+					.addUsage("/warp list")
 					.addUsage("/w ls");
 			
 			Help warpPrice = new Help("warp price", "price", "Charge players for using warps. 0 to disable")
 					.setPermission("pjp.cmd.warp.price")
-					.addUsage("/warp price <name> <price>\n /w p <name> <price>")
+					.addUsage("/warp price <name> <price>")
 					.addUsage("/w p <name> <price>")
 					.addExample("/warp price Lobby 0")
 					.addExample("/warp price Lobby 50");
@@ -331,7 +331,7 @@ public class Main {
 			
 			Help warpRename = new Help("warp rename", "rename", "Rename warp")
 					.setPermission("pjp.cmd.warp.rename")
-					.addUsage("/warp rename <oldName> <newName>\n /w rn <oldName> <newName>")
+					.addUsage("/warp rename <oldName> <newName>")
 					.addUsage("/w rn <oldName> <newName>")
 					.addExample("/warp rename Spawn Lobby");
 			
