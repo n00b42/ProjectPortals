@@ -22,18 +22,10 @@ import org.spongepowered.api.world.World;
 import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
-import com.gmail.trentech.pjp.utils.Help;
 
 import flavor.pie.spongycord.SpongyCord;
 
 public class CMDList implements CommandExecutor {
-
-	public CMDList() {
-		new Help("warp list", "list", "List all warp points", false)
-		.setPermission("pjp.cmd.warp.list")
-		.setUsage("/warp list\n /w l")
-		.save();
-	}
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {

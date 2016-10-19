@@ -23,20 +23,12 @@ import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.events.TeleportEvent.Local;
 import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
-import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDBack implements CommandExecutor {
 
 	public CommandSpec cmdBack = CommandSpec.builder().description(Text.of("Send player to last place they were")).permission("pjp.cmd.back").executor(this).build();
 
 	public static ConcurrentHashMap<Player, Location<World>> players = new ConcurrentHashMap<>();
-
-	public CMDBack() {
-		new Help("back", "back", "Use this command to teleport you to the location you previously came from", false)
-			.setPermission("pjp.cmd.back")
-			.setUsage("/back")
-			.save();
-	}
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {

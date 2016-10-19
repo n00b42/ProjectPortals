@@ -30,19 +30,10 @@ import com.gmail.trentech.pjp.portal.Portal.PortalType;
 import com.gmail.trentech.pjp.portal.Properties;
 import com.gmail.trentech.pjp.rotation.Rotation;
 import com.gmail.trentech.pjp.utils.ConfigManager;
-import com.gmail.trentech.pjp.utils.Help;
 
 import flavor.pie.spongycord.SpongyCord;
 
 public class CMDCreate implements CommandExecutor {
-
-	public CMDCreate() {
-		new Help("portal create", "create", "Use this command to create a portal that will teleport you to other worlds", false)
-			.setPermission("pjp.cmd.portal.create")
-			.setUsage("/portal create <name> <destination> [-b] [-c <x,y,z>] [-d <direction>] [-e <particle[:color]>] [-p <price>]\n /p <name> <destination> [-b] [-c <x,y,z>] [-d <direction>] [-e <particle[:color]>] [-p <price>]")
-			.setExample("/portal create MyPortal MyWorld\n /portal create MyPortal MyWorld -c -100,65,254\n /portal create MyPortal MyWorld -c random\n /portal create MyPortal MyWorld -c -100,65,254 -d south\n /portal create MyPortal MyWorld -d southeast\n /portal create MyPortal MyWorld -p 50\n /portal create MyPortal MyWorld -e REDSTONE:BLUE")
-			.save();
-	}
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {

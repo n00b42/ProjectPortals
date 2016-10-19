@@ -10,17 +10,8 @@ import org.spongepowered.api.text.format.TextColors;
 
 import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
-import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDRename implements CommandExecutor {
-
-	public CMDRename() {
-		new Help("portal rename", "rename", "Rename portal", false)
-			.setPermission("pjp.cmd.portal.rename")
-			.setUsage("/portal rename <oldName> <newName>\n /p rn <oldName> <newName>")
-			.setExample("/portal rename MyPortal ThisPortal")
-			.save();
-	}
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {

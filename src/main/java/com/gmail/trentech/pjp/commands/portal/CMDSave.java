@@ -15,16 +15,8 @@ import org.spongepowered.api.text.format.TextStyles;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.listeners.LegacyListener;
 import com.gmail.trentech.pjp.portal.LegacyBuilder;
-import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDSave implements CommandExecutor {
-
-	public CMDSave() {
-		new Help("portal save", "save", "Saves generated portal", false)
-			.setPermission("pjp.cmd.portal.save")
-			.setUsage("/portal save\n /p s")
-			.save();
-	}
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {

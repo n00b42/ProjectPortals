@@ -22,17 +22,8 @@ import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
 import com.gmail.trentech.pjp.rotation.Rotation;
 import com.gmail.trentech.pjp.utils.ConfigManager;
-import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDCreate implements CommandExecutor {
-
-	public CMDCreate() {
-		new Help("home create", "create", "Create a new home", false)
-			.setPermission("pjp.cmd.home.create")
-			.setUsage("/home create <name>\n /h c <name>")
-			.setExample("/home create MyHome")
-			.save();
-	}
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {

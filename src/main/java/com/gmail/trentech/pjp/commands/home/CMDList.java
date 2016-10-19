@@ -24,16 +24,8 @@ import org.spongepowered.api.world.World;
 import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.data.Keys;
 import com.gmail.trentech.pjp.portal.Portal;
-import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDList implements CommandExecutor {
-
-	public CMDList() {
-		new Help("home list", "list", "List all homes", false)
-			.setPermission("pjp.cmd.home.list")
-			.setUsage("/home list\n /h l")
-			.save();
-	}
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {

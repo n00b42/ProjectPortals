@@ -4,7 +4,6 @@ import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.text.Text;
 
-import com.gmail.trentech.pjp.commands.elements.HelpElement;
 import com.gmail.trentech.pjp.commands.elements.PortalElement;
 import com.gmail.trentech.pjp.commands.home.CMDHome;
 import com.gmail.trentech.pjp.commands.portal.CMDPortal;
@@ -238,7 +237,6 @@ public class CommandManager {
 	public CommandSpec cmdPJP = CommandSpec.builder()
 		    .description(Text.of("Lists all Project Portals commands"))
 		    .permission("pjp.cmd")
-		    .arguments(GenericArguments.optional(new HelpElement(Text.of("rawCommand"))))
 		    .executor(new CMDPjp())
 		    .build();
 	

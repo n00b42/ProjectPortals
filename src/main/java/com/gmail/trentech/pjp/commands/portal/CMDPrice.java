@@ -9,17 +9,8 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import com.gmail.trentech.pjp.portal.Portal;
-import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDPrice implements CommandExecutor {
-
-	public CMDPrice() {
-		new Help("portal price", "price", "Charge players for using portals. 0 to disable", false)
-			.setPermission("pjp.cmd.portal.price")
-			.setUsage("/portal price <name> <price>\n /p pr <name> <price>")
-			.setExample("/portal price MyPortal 50\n /portal price MyPortal 0")
-			.save();
-	}
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {

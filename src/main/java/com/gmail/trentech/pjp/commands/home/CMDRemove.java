@@ -17,17 +17,8 @@ import org.spongepowered.api.text.format.TextColors;
 import com.gmail.trentech.pjp.data.Keys;
 import com.gmail.trentech.pjp.data.mutable.HomeData;
 import com.gmail.trentech.pjp.portal.Portal;
-import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDRemove implements CommandExecutor {
-
-	public CMDRemove() {
-		new Help("home remove", "remove", "Remove an existing home", false)
-			.setPermission("pjp.cmd.home.remove")
-			.setUsage("/home remove <name>\n /h r <name>")
-			.setExample("/home remove OldHome")
-			.save();
-	}
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {

@@ -10,17 +10,8 @@ import org.spongepowered.api.text.format.TextColors;
 
 import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
-import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDRename implements CommandExecutor {
-
-	public CMDRename() {
-		new Help("warp rename", "rename", "Rename warp", false)
-			.setPermission("pjp.cmd.warp.rename")
-			.setUsage("/warp rename <oldName> <newName>\n /w rn <oldName> <newName>")
-			.setExample("/warp rename Spawn Lobby")
-			.save();
-	}
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {

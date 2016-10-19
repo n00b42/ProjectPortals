@@ -1,8 +1,6 @@
 package com.gmail.trentech.pjp.commands.home;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -12,25 +10,18 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import com.gmail.trentech.helpme.Help;
 import com.gmail.trentech.pjp.data.Keys;
 import com.gmail.trentech.pjp.portal.Portal;
-import com.gmail.trentech.pjp.utils.Help;
 import com.gmail.trentech.pjp.utils.Teleport;
 
 public class CMDHome implements CommandExecutor {
 
-	public CMDHome() {
-		Help help = new Help("home", "home", " Top level home command", true);
-		help.setPermission("pjp.cmd.home");
-		help.save();
-	}
-	
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if (!(src instanceof Player)) {
@@ -73,25 +64,9 @@ public class CMDHome implements CommandExecutor {
 			return CommandResult.success();
 		}
 
-		List<Text> list = new ArrayList<>();
-
-		list.add(Text.of(TextColors.YELLOW, " /home <name> [player]"));
+		src.sendMessage(Text.of(TextColors.YELLOW, " /home <name> [player]"));
 		
-		list.addAll(Help.getList(src, "home"));
-
-		if (src instanceof Player) {
-			PaginationList.Builder pages = PaginationList.builder();
-
-			pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, "Command List")).build());
-
-			pages.contents(list);
-
-			pages.sendTo(src);
-		} else {
-			for (Text text : list) {
-				src.sendMessage(text);
-			}
-		}
+		Help.executeList(src, Help.get("home").get().getChildren());
 
 		return CommandResult.success();
 	}

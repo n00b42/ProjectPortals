@@ -22,18 +22,10 @@ import org.spongepowered.api.world.World;
 import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
-import com.gmail.trentech.pjp.utils.Help;
 
 import flavor.pie.spongycord.SpongyCord;
 
 public class CMDList implements CommandExecutor {
-
-	public CMDList() {
-		new Help("portal list", "list", "List all portals", false)
-			.setPermission("pjp.cmd.portal.list")
-			.setUsage("/portal list\n /p l")
-			.save();
-	}
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {

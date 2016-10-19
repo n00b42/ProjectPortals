@@ -15,17 +15,8 @@ import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.Properties;
-import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDParticle implements CommandExecutor {
-
-	public CMDParticle() {
-		new Help("portal particle", "particle", "Change a portals particle effect. Color currently only available for REDSTONE", false)
-			.setPermission("pjp.cmd.portal.particle")
-			.setUsage("/portal particle <name> <type> [color]\n /p p <name> <type> [color]")
-			.setExample("/portal particle MyPortal CRIT\n /portal particle MyPortal REDSTONE BLUE")
-			.save();
-	}
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {

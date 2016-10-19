@@ -9,17 +9,8 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import com.gmail.trentech.pjp.portal.Portal;
-import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDPrice implements CommandExecutor {
-
-	public CMDPrice() {
-		new Help("warp price", "price", "Charge players for using warps. 0 to disable", false)
-			.setPermission("pjp.cmd.warp.price")
-			.setUsage("/warp price <name> <price>\n /w p <name> <price>")
-			.setExample("/warp price Lobby 50\n /warp price Lobby 0")
-			.save();
-	}
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {

@@ -17,17 +17,8 @@ import org.spongepowered.api.text.format.TextColors;
 import com.gmail.trentech.pjp.data.Keys;
 import com.gmail.trentech.pjp.data.mutable.HomeData;
 import com.gmail.trentech.pjp.portal.Portal;
-import com.gmail.trentech.pjp.utils.Help;
 
 public class CMDRename implements CommandExecutor {
-
-	public CMDRename() {
-		new Help("home rename", "rename", "Rename home", false)
-			.setPermission("pjp.cmd.home.rename")
-			.setUsage("/home rename <oldName> <newName>\n /h rn <oldName> <newName>")
-			.setExample("/home rename MyHome Castle")
-			.save();
-	}
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
