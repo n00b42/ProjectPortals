@@ -7,7 +7,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.effect.particle.ParticleEffect;
-import org.spongepowered.api.effect.particle.ParticleEffect.Builder;
 import org.spongepowered.api.effect.particle.ParticleOptions;
 import org.spongepowered.api.effect.particle.ParticleType;
 import org.spongepowered.api.world.Location;
@@ -81,19 +80,19 @@ public class Particle {
 			return;
 		}
 
-		Builder particleBuilder = ParticleEffect.builder().type(getType());
+		ParticleEffect particle = ParticleEffect.builder().type(getType()).build();
 
 		for (int i = 0; i < 9; i++) {
 			if (isColorable() && color.isPresent()) {
-				particleBuilder.option(ParticleOptions.COLOR, color.get().getColor());
+				particle = ParticleEffect.builder().type(getType()).option(ParticleOptions.COLOR, color.get().getColor()).build();
 			}
 			
 			if (player) {
-				location.getExtent().spawnParticles(particleBuilder.build(), location.getPosition().add(random.nextDouble() - .5, random.nextDouble() - .5, random.nextDouble() - .5));
-				location.getExtent().spawnParticles(particleBuilder.build(), location.getPosition().add(random.nextDouble() - .5, random.nextDouble() - .5, random.nextDouble() - .5));
+				location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble() - .5, random.nextDouble() - .5, random.nextDouble() - .5));
+				location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble() - .5, random.nextDouble() - .5, random.nextDouble() - .5));
 			} else {
-				location.getExtent().spawnParticles(particleBuilder.build(), location.getPosition().add(random.nextDouble(), random.nextDouble(), random.nextDouble()));
-				location.getExtent().spawnParticles(particleBuilder.build(), location.getPosition().add(random.nextDouble(), random.nextDouble(), random.nextDouble()));
+				location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble(), random.nextDouble(), random.nextDouble()));
+				location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble(), random.nextDouble(), random.nextDouble()));
 			}
 		}
 	}
@@ -112,11 +111,11 @@ public class Particle {
 		} else {
 			Sponge.getScheduler().createTaskBuilder().interval(getTime(), TimeUnit.MILLISECONDS).name(name).execute(t -> {
 				ParticleEffect particle = ParticleEffect.builder().type(getType()).build();
-				Builder particleBuilder = ParticleEffect.builder().type(getType());
+
 				for (Location<World> location : locations) {
 					if (location.getExtent().getChunk(location.getChunkPosition()).get().isLoaded()) {
 						if (isColorable() && color.isPresent()) {
-							particleBuilder.option(ParticleOptions.COLOR, color.get().getColor());
+							particle = ParticleEffect.builder().type(getType()).option(ParticleOptions.COLOR, color.get().getColor()).build();
 						}
 
 						location.getExtent().spawnParticles(particle, location.getPosition().add(random.nextDouble(), random.nextDouble(), random.nextDouble()));
