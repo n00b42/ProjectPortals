@@ -50,7 +50,7 @@ public class CMDWarp implements CommandExecutor {
 
 		src.sendMessage(Text.of(TextColors.YELLOW, " /warp <name> [player]"));
 		
-		if(Sponge.getPluginManager().getPlugin("helpme").isPresent()) {
+		if (Sponge.getPluginManager().isLoaded("helpme")) {
 			Help.executeList(src, Help.get("warp").get().getChildren());
 			
 			return CommandResult.success();

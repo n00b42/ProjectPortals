@@ -29,7 +29,7 @@ public class CMDPjp implements CommandExecutor {
 
 		ConfigurationNode node = ConfigManager.get().getConfig().getNode("settings", "modules");
 		
-		if(Sponge.getPluginManager().getPlugin("helpme").isPresent()) {
+		if (Sponge.getPluginManager().isLoaded("helpme")) {
 			List<Help> commands = new ArrayList<>();
 			
 			if (node.getNode("portals").getBoolean()) {

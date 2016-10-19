@@ -97,7 +97,7 @@ public class Main {
 				Sponge.getEventManager().registerListeners(this, new LegacyListener(timings));
 			}
 			
-			if(Sponge.getPluginManager().getPlugin("helpme").isPresent()) {
+			if (Sponge.getPluginManager().isLoaded("helpme")) {
 				Help portalCreate = new Help("portal create", "create", "Use this command to create a portal that will teleport you to other worlds")
 						.setPermission("pjp.cmd.portal.create")
 						.addUsage("/portal create <name> <destination> [-b] [-c <x,y,z>] [-d <direction>] [-e <particle[:color]>] [-p <price>]")
@@ -174,7 +174,7 @@ public class Main {
 			Sponge.getEventManager().registerListeners(this, new ButtonListener(timings));
 			Sponge.getCommandManager().register(this, new CommandManager().cmdButton, "button", "b");
 
-			if(Sponge.getPluginManager().getPlugin("helpme").isPresent()) {
+			if (Sponge.getPluginManager().isLoaded("helpme")) {
 				Help button = new Help("button", "button", "Use this command to create a button that will teleport you to other worlds")
 						.setPermission("pjp.cmd.button")
 						.addUsage("/button <destination>  [-b] [-c <x,y,z>] [-d <rotation>] [-p <price>]")
@@ -214,7 +214,7 @@ public class Main {
 			Sponge.getEventManager().registerListeners(this, new PlateListener(timings));
 			Sponge.getCommandManager().register(this, new CommandManager().cmdPlate, "plate", "pp");
 
-			if(Sponge.getPluginManager().getPlugin("helpme").isPresent()) {
+			if (Sponge.getPluginManager().isLoaded("helpme")) {
 				Help plate = new Help("plate", "plate", "Use this command to create a pressure plate that will teleport you to other worlds")
 					    .setPermission("pjp.cmd.plate")
 						.addUsage("/plate <destination>  [-b] [-c <x,y,z>] [-d <rotation>] [-p <price>]")
@@ -235,7 +235,7 @@ public class Main {
 			Sponge.getEventManager().registerListeners(this, new SignListener(timings));
 			Sponge.getCommandManager().register(this, new CommandManager().cmdSign, "sign", "s");
 			
-			if(Sponge.getPluginManager().getPlugin("helpme").isPresent()) {
+			if (Sponge.getPluginManager().isLoaded("helpme")) {
 				Help sign = new Help("sign", "sign", "Use this command to create a sign that will teleport you to other worlds")
 					    .setPermission("pjp.cmd.sign")
 						.addUsage("/sign <destination>  [-b] [-c <x,y,z>] [-d <rotation>] [-p <price>]")
@@ -255,7 +255,7 @@ public class Main {
 			Sponge.getEventManager().registerListeners(this, new LeverListener(timings));
 			Sponge.getCommandManager().register(this, new CommandManager().cmdLever, "lever", "l");
 
-			if(Sponge.getPluginManager().getPlugin("helpme").isPresent()) {
+			if (Sponge.getPluginManager().isLoaded("helpme")) {
 				Help lever = new Help("lever", "lever", "Use this command to create a lever that will teleport you to other worlds")
 					    .setPermission("pjp.cmd.lever")
 						.addUsage("/lever <destination>  [-b] [-c <x,y,z>] [-d <rotation>] [-p <price>]")
@@ -275,7 +275,7 @@ public class Main {
 			Sponge.getDataManager().register(HomeData.class, ImmutableHomeData.class, new HomeData.Builder());
 			Sponge.getCommandManager().register(this, new CommandManager().cmdHome, "home", "h");
 
-			if(Sponge.getPluginManager().getPlugin("helpme").isPresent()) {
+			if (Sponge.getPluginManager().isLoaded("helpme")) {
 				Help homeCreate = new Help("home create", "create", "Create a new home")
 						.setPermission("pjp.cmd.home.create")
 						.addUsage("/home create <name>")
@@ -314,7 +314,7 @@ public class Main {
 		if (modules.getNode("warps").getBoolean()) {
 			Sponge.getCommandManager().register(this, new CommandManager().cmdWarp, "warp", "w");
 			
-			if(Sponge.getPluginManager().getPlugin("helpme").isPresent()) {
+			if (Sponge.getPluginManager().isLoaded("helpme")) {
 				Help warpCreate = new Help("warp create", "create", "Use this command to create a warp that will teleport you to other worlds")
 						.setPermission("pjp.cmd.warp.create")
 						.addUsage("/warp create <name> [<destination> [-b] [-c <x,y,z>] [-d <direction>]] [-p <price>]")

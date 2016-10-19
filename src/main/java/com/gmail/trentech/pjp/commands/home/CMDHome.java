@@ -71,7 +71,7 @@ public class CMDHome implements CommandExecutor {
 
 		src.sendMessage(Text.of(TextColors.YELLOW, " /home <name> [player]"));
 		
-		if(Sponge.getPluginManager().getPlugin("helpme").isPresent()) {
+		if (Sponge.getPluginManager().isLoaded("helpme")) {
 			Help.executeList(src, Help.get("home").get().getChildren());
 			
 			return CommandResult.success();

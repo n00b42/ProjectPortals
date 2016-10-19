@@ -60,7 +60,7 @@ public class CommandManager {
 		    .child(cmdWarpCreate, "create", "c")
 		    .child(cmdWarpRemove, "remove", "r")
 		    .child(cmdWarpRename, "rename", "rn")
-		    .child(cmdWarpList, "list", "l")
+		    .child(cmdWarpList, "list", "ls")
 		    .child(cmdWarpPrice, "price", "p")
 		    .executor(new CMDWarp())
 		    .build();
@@ -100,7 +100,7 @@ public class CommandManager {
 		    .child(cmdHomeCreate, "create", "c")
 		    .child(cmdHomeRemove, "remove", "r")
 		    .child(cmdHomeRename, "rename", "rn")
-		    .child(cmdHomeList, "list", "l")
+		    .child(cmdHomeList, "list", "ls")
 		    .executor(new CMDHome())
 		    .build();
 
@@ -173,7 +173,7 @@ public class CommandManager {
 		    .child(cmdPortalRename, "rename", "rn")
 		    .child(cmdPortalParticle, "particle", "p")
 		    .child(cmdPortalPrice, "price", "pr")
-		    .child(cmdPortalList, "list", "l")
+		    .child(cmdPortalList, "list", "ls")
 		    .child(cmdSave, "save", "s")
 		    .executor(new CMDPortal())
 		    .build();
