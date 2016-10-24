@@ -374,7 +374,7 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 				Vector3d vector3d = this.vector3d.get();
 
 				if (vector3d.getX() == 0 && vector3d.getY() == 0 && vector3d.getZ() == 0) {
-					return Optional.of(Teleport.getRandomLocation(world));
+					return Teleport.getRandomLocation(world);
 				} else {
 					return Optional.of(new Location<World>(world, vector3d));
 				}

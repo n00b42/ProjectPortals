@@ -1,10 +1,6 @@
 package com.gmail.trentech.pjp.utils;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -16,13 +12,14 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.TeleportHelper;
 import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
-import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.events.TeleportEvent.Local;
 import com.gmail.trentech.pjp.portal.Portal;
@@ -31,35 +28,7 @@ import flavor.pie.spongycord.SpongyCord;
 
 public class Teleport {
 
-	private static ConcurrentHashMap<UUID, List<Vector3d>> cache = new ConcurrentHashMap<>();
 	private static ThreadLocalRandom random = ThreadLocalRandom.current();
-
-	public static void cacheRandom(World world) {
-		Sponge.getScheduler().createTaskBuilder().execute(c -> {
-			Location<World> spawnLocation = world.getSpawnLocation();
-
-			int radius = ConfigManager.get().getConfig().getNode("options", "random_spawn_radius").getInt() / 2;
-
-			List<Vector3d> list = new ArrayList<>();
-			
-			while(list.size() < 10) {
-				double x = (random.nextDouble() * (radius * 2) - radius) + spawnLocation.getBlockX();
-				double y = random.nextDouble(59, 200 + 1);
-				double z = (random.nextDouble() * (radius * 2) - radius) + spawnLocation.getBlockZ();
-				
-				Optional<Location<World>> optionalLocation = getSafeLocation(world.getLocation(x, y, z));
-
-				if (!optionalLocation.isPresent()) {
-					continue;
-				}
-				Location<World> safeLocation = optionalLocation.get();
-
-				list.add(safeLocation.getPosition());
-			}
-
-			cache.put(world.getUniqueId(), list);
-		}).submit(Main.getPlugin());
-	}
 
 	public static Optional<Location<World>> getSafeLocation(Location<World> location) {
 		TeleportHelper teleportHelper = Sponge.getGame().getTeleportHelper();
@@ -98,26 +67,25 @@ public class Teleport {
 		return Optional.empty();
 	}
 	
-	public static Location<World> getRandomLocation(World world) {
-		List<Vector3d> list = cache.get(world.getUniqueId());
+	public static Optional<Location<World>> getRandomLocation(World world) {
+		Location<World> spawnLocation = world.getSpawnLocation();
 
-		Vector3d vetor3d = list.get(0);
-		
-		list.remove(vetor3d);
+		int radius = ConfigManager.get().getConfig().getNode("options", "random_spawn_radius").getInt() / 2;
 
-		if(list.isEmpty()) {
-			Sponge.getScheduler().createTaskBuilder().delayTicks(20).execute(t -> {
-				cacheRandom(world);
-			}).submit(Main.getPlugin());		
-		} else {
-			cache.put(world.getUniqueId(), list);
+		for(int i = 0; i < 20; i++) {
+			double x = (random.nextDouble() * (radius * 2) - radius) + spawnLocation.getBlockX();
+			double y = random.nextDouble(59, 200 + 1);
+			double z = (random.nextDouble() * (radius * 2) - radius) + spawnLocation.getBlockZ();
+			
+			Optional<Location<World>> optionalLocation = getSafeLocation(world.getLocation(x, y, z));
+
+			if (!optionalLocation.isPresent()) {
+				continue;
+			}
+			return optionalLocation;
 		}
-
-		Location<World> location = world.getLocation(vetor3d);
 		
-		location.getExtent().loadChunk(location.getChunkPosition(), true);
-		
-		return location;
+		return Optional.empty();
 	}
 
 	public static Consumer<CommandSource> unsafe(Location<World> location) {
@@ -165,6 +133,8 @@ public class Teleport {
 
 					bool.set(true);
 				}
+			} else {
+				player.sendMessage(Text.of(TextColors.RED, "Could not find location"));
 			}
 		}
 

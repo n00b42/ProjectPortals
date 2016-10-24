@@ -12,7 +12,6 @@ import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.event.entity.DestructEntityEvent;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.filter.Getter;
-import org.spongepowered.api.event.world.LoadWorldEvent;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.economy.EconomyService;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
@@ -44,11 +43,6 @@ public class TeleportListener {
 
 	public TeleportListener(Timings timings) {
 		this.timings = timings;
-	}
-
-	@Listener
-	public void onLoadWorldEvent(LoadWorldEvent event) {
-		Teleport.cacheRandom(event.getTargetWorld());
 	}
 
 	@Listener
