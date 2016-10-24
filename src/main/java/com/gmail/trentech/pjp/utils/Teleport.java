@@ -1,5 +1,7 @@
 package com.gmail.trentech.pjp.utils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,52 +31,92 @@ import flavor.pie.spongycord.SpongyCord;
 
 public class Teleport {
 
-	private static ConcurrentHashMap<UUID, Vector3d> cache = new ConcurrentHashMap<>();
+	private static ConcurrentHashMap<UUID, List<Vector3d>> cache = new ConcurrentHashMap<>();
 	private static ThreadLocalRandom random = ThreadLocalRandom.current();
 
 	public static void cacheRandom(World world) {
 		Sponge.getScheduler().createTaskBuilder().execute(c -> {
-			TeleportHelper teleportHelper = Sponge.getGame().getTeleportHelper();
-
 			Location<World> spawnLocation = world.getSpawnLocation();
 
 			int radius = ConfigManager.get().getConfig().getNode("options", "random_spawn_radius").getInt() / 2;
 
-			for (int i = 0; i < 49; i++) {
+			List<Vector3d> list = new ArrayList<>();
+			
+			while(list.size() < 10) {
 				double x = (random.nextDouble() * (radius * 2) - radius) + spawnLocation.getBlockX();
 				double y = random.nextDouble(59, 200 + 1);
 				double z = (random.nextDouble() * (radius * 2) - radius) + spawnLocation.getBlockZ();
-
-				Optional<Location<World>> optionalLocation = teleportHelper.getSafeLocation(world.getLocation(x, y, z));
+				
+				Optional<Location<World>> optionalLocation = getSafeLocation(world.getLocation(x, y, z));
 
 				if (!optionalLocation.isPresent()) {
 					continue;
 				}
-				Location<World> unsafeLocation = optionalLocation.get();
+				Location<World> safeLocation = optionalLocation.get();
 
-				BlockType blockType = unsafeLocation.getBlockType();
-
-				if (!blockType.equals(BlockTypes.AIR) || !unsafeLocation.getRelative(Direction.UP).getBlockType().equals(BlockTypes.AIR)) {
-					continue;
-				}
-
-				BlockType floorBlockType = unsafeLocation.getRelative(Direction.DOWN).getBlockType();
-
-				if (floorBlockType.equals(BlockTypes.WATER) || floorBlockType.equals(BlockTypes.LAVA) || floorBlockType.equals(BlockTypes.FLOWING_WATER) || floorBlockType.equals(BlockTypes.FLOWING_LAVA) || floorBlockType.equals(BlockTypes.FIRE)) {
-					continue;
-				}
-
-				unsafeLocation.getExtent().loadChunk(unsafeLocation.getChunkPosition(), true);
-
-				cache.put(world.getUniqueId(), unsafeLocation.getPosition());
-				break;
+				list.add(safeLocation.getPosition());
 			}
+
+			cache.put(world.getUniqueId(), list);
 		}).submit(Main.getPlugin());
 	}
 
+	public static Optional<Location<World>> getSafeLocation(Location<World> location) {
+		TeleportHelper teleportHelper = Sponge.getGame().getTeleportHelper();
+		
+		first:
+		for(int i = 0; i < 10; i++) {
+			Optional<Location<World>> optionalLocation = teleportHelper.getSafeLocation(location);
+
+			if (!optionalLocation.isPresent()) {
+				continue;
+			}
+			Location<World> unsafeLocation = optionalLocation.get();
+
+			BlockType blockType = unsafeLocation.getBlockType();
+
+			if (!blockType.equals(BlockTypes.AIR) || !unsafeLocation.getRelative(Direction.UP).getBlockType().equals(BlockTypes.AIR)) {
+				continue;
+			}
+
+			Location<World> floorLocation = unsafeLocation.getRelative(Direction.DOWN);
+			
+			for(int i2 = 0; i2 < 3; i2++) {
+				BlockType floorBlockType = floorLocation.getBlockType();
+				
+				if (floorBlockType.equals(BlockTypes.WATER) || floorBlockType.equals(BlockTypes.LAVA) || floorBlockType.equals(BlockTypes.FLOWING_WATER) || floorBlockType.equals(BlockTypes.FLOWING_LAVA) || floorBlockType.equals(BlockTypes.FIRE)) {
+					continue first;
+				}
+				floorLocation = floorLocation.getRelative(Direction.DOWN);
+			}
+
+			unsafeLocation.getExtent().loadChunk(unsafeLocation.getChunkPosition(), true);
+			
+			return optionalLocation;
+		}
+		
+		return Optional.empty();
+	}
+	
 	public static Location<World> getRandomLocation(World world) {
-		Location<World> location = world.getLocation(cache.get(world.getUniqueId()));
-		cacheRandom(world);
+		List<Vector3d> list = cache.get(world.getUniqueId());
+
+		Vector3d vetor3d = list.get(0);
+		
+		list.remove(vetor3d);
+
+		if(list.isEmpty()) {
+			Sponge.getScheduler().createTaskBuilder().delayTicks(20).execute(t -> {
+				cacheRandom(world);
+			}).submit(Main.getPlugin());		
+		} else {
+			cache.put(world.getUniqueId(), list);
+		}
+
+		Location<World> location = world.getLocation(vetor3d);
+		
+		location.getExtent().loadChunk(location.getChunkPosition(), true);
+		
 		return location;
 	}
 

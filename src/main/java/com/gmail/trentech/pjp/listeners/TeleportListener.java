@@ -5,7 +5,6 @@ import java.text.DecimalFormat;
 import java.util.Optional;
 
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.cause.Cause;
@@ -26,7 +25,6 @@ import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.text.title.Title;
 import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Location;
-import org.spongepowered.api.world.TeleportHelper;
 import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
@@ -105,9 +103,7 @@ public class TeleportListener {
 				return;
 			}
 
-			TeleportHelper teleportHelper = Sponge.getGame().getTeleportHelper();
-
-			Optional<Location<World>> optionalLocation = teleportHelper.getSafeLocation(dest);
+			Optional<Location<World>> optionalLocation = Teleport.getSafeLocation(dest);
 
 			if (!optionalLocation.isPresent()) {
 				player.sendMessage(Text.builder().color(TextColors.DARK_RED).append(Text.of("Unsafe spawn point detected. Teleport anyway? ")).onClick(TextActions.executeCallback(Teleport.unsafe(dest))).append(Text.of(TextColors.GOLD, TextStyles.UNDERLINE, "Click Here")).build());
@@ -168,14 +164,7 @@ public class TeleportListener {
 	}
 
 	@Listener
-	public void onDestructEntityEventDeath(DestructEntityEvent.Death event) {
-		Living entity = event.getTargetEntity();
-
-		if (!(entity instanceof Player)) {
-			return;
-		}
-		Player player = (Player) entity;
-
+	public void onDestructEntityEventDeath(DestructEntityEvent.Death event, @Getter("getTargetEntity") Player player) {
 		timings.onDestructEntityEventDeath().startTiming();
 
 		try {
