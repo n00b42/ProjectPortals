@@ -17,7 +17,9 @@ import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 
-import com.gmail.trentech.helpme.Help;
+import com.gmail.trentech.helpme.help.Argument;
+import com.gmail.trentech.helpme.help.Help;
+import com.gmail.trentech.helpme.help.Usage;
 import com.gmail.trentech.pjp.commands.CMDBack;
 import com.gmail.trentech.pjp.commands.CommandManager;
 import com.gmail.trentech.pjp.data.immutable.ImmutableHomeData;
@@ -45,7 +47,7 @@ import me.flibio.updatifier.Updatifier;
 import ninja.leaping.configurate.ConfigurationNode;
 
 @Updatifier(repoName = Resource.NAME, repoOwner = Resource.AUTHOR, version = Resource.VERSION)
-@Plugin(id = Resource.ID, name = Resource.NAME, version = Resource.VERSION, description = Resource.DESCRIPTION, authors = Resource.AUTHOR, url = Resource.URL, dependencies = { @Dependency(id = "Updatifier", optional = true), @Dependency(id = "helpme", optional = true) })
+@Plugin(id = Resource.ID, name = Resource.NAME, version = Resource.VERSION, description = Resource.DESCRIPTION, authors = Resource.AUTHOR, url = Resource.URL, dependencies = { @Dependency(id = "Updatifier", optional = true), @Dependency(id = "helpme", version = "0.2.1", optional = true) })
 public class Main {
 
 	@Inject
@@ -89,87 +91,13 @@ public class Main {
 
 		ConfigurationNode modules = config.getNode("settings", "modules");
 
-		if (modules.getNode("portals").getBoolean()) {
-			Sponge.getEventManager().registerListeners(this, new PortalListener(timings));
-			Sponge.getCommandManager().register(this, new CommandManager().cmdPortal, "portal", "p");
-
-			if (config.getNode("options", "portal", "legacy_builder").getBoolean()) {
-				Sponge.getEventManager().registerListeners(this, new LegacyListener(timings));
-			}
-			
-			if (Sponge.getPluginManager().isLoaded("helpme")) {
-				Help portalCreate = new Help("portal create", "create", "Use this command to create a portal that will teleport you to other worlds")
-						.setPermission("pjp.cmd.portal.create")
-						.addUsage("/portal create <name> <destination> [-b] [-c <x,y,z>] [-d <direction>] [-e <particle[:color]>] [-p <price>]")
-						.addUsage("/p <name> <destination> [-b] [-c <x,y,z>] [-d <direction>] [-e <particle[:color]>] [-p <price>]")
-						.addExample("/portal create MyPortal MyWorld -c -100,65,254")
-						.addExample("/portal create MyPortal MyWorld -c random")
-						.addExample("/portal create MyPortal MyWorld -c -100,65,254 -d south")
-						.addExample("/portal create MyPortal MyWorld -d southeast")
-						.addExample("/portal create MyPortal MyWorld -p 50")
-						.addExample("/portal create MyPortal MyWorld -e REDSTONE:BLUE")
-						.addExample("/portal create MyPortal MyWorld");
-				
-				Help portalDestination = new Help("portal destination", "destination", "Change as existing portals destination")
-						.setPermission("pjp.cmd.portal.destination")
-						.addUsage("/portal destination <name> <destination> [x,y,z]")
-						.addUsage("/p d <name> <destination> [x,y,z]")
-						.addExample("/portal destination Skyland 100,65,400")
-						.addExample("/portal destination Server1")
-						.addExample("/portal destination MyPortal DIM1");
-				
-				Help portalList = new Help("portal list", "list", "List all portals")
-						.setPermission("pjp.cmd.portal.list")
-						.addUsage("/portal list")
-						.addUsage("/p ls");
-				
-				Help portalParticle = new Help("portal particle", "particle", "Change a portals particle effect. Color currently only available for REDSTONE")
-						.setPermission("pjp.cmd.portal.particle")
-						.addUsage("/portal particle <name> <type> [color]")
-						.addUsage("/p p <name> <type> [color]")
-						.addExample("/portal particle MyPortal REDSTONE BLUE")
-						.addExample("/portal particle MyPortal CRIT");
-				
-				Help portalPrice = new Help("portal price", "price", "Charge players for using portals. 0 to disable")
-						.setPermission("pjp.cmd.portal.price")
-						.addUsage("/portal price <name> <price>")
-						.addUsage("/p pr <name> <price>")
-						.addExample("/portal price MyPortal 0")
-						.addExample("/portal price MyPortal 50");
-				
-				Help portalRemove = new Help("portal remove", "remove", "Remove an existing portal")
-						.setPermission("pjp.cmd.portal.remove")
-						.addUsage("/portal remove <name>")
-						.addUsage("/p r <name>")
-						.addExample("/portal remove MyPortal");
-				
-				Help portalRename = new Help("portal rename", "rename", "Rename portal")
-						.setPermission("pjp.cmd.portal.rename")
-						.addUsage("/portal rename <oldName> <newName>")
-						.addUsage("/p rn <oldName> <newName>")
-						.addExample("/portal rename MyPortal ThisPortal");
-					
-				Help portalSave = new Help("portal save", "save", "Saves generated portal")
-						.setPermission("pjp.cmd.portal.save")
-						.addUsage("/portal save")
-						.addUsage("/p s");
-				
-				Help portal = new Help("portal", "portal", " Top level portal command")
-						.setPermission("pjp.cmd.portal")
-						.addChild(portalSave)
-						.addChild(portalRename)
-						.addChild(portalRemove)
-						.addChild(portalPrice)
-						.addChild(portalParticle)
-						.addChild(portalList)
-						.addChild(portalDestination)
-						.addChild(portalCreate);
-				
-				Help.register(portal);
-			}
-
-			getLog().info("Portal module activated");
-		}
+		Usage usagePortal = new Usage(Argument.of("<destination>", "Specifies a world or server if [-b] is supplied"))
+				.addArgument(Argument.of("[-b]", "Specifies that <destination> is a bungee connected server"))
+				.addArgument(Argument.of("[-c <x,y,z>]", "Specifies the coordinates to set spawn to. x and z must fall within the range -30,000,000 to 30,000,000 (exclusive, without the "
+						+ "commas), and y must be within the range -4096 to 4096 inclusive. This is ignored if [-b] is supplied"))
+				.addArgument(Argument.of("[-d <direction>]", "Specifies the direction player will face upon teleporting. The following can be used: NORTH, NORTH_WEST, WEST, SOUTH_WEST, SOUTH, SOUTH_EAST, EAST, NORTH_EAST"))
+				.addArgument(Argument.of("[-p <price>]", "Specifies a price player will be charged for using portal"));
+		
 		if (modules.getNode("buttons").getBoolean()) {
 			Sponge.getEventManager().registerListeners(this, new ButtonListener(timings));
 			Sponge.getCommandManager().register(this, new CommandManager().cmdButton, "button", "b");
@@ -177,8 +105,7 @@ public class Main {
 			if (Sponge.getPluginManager().isLoaded("helpme")) {
 				Help button = new Help("button", "button", "Use this command to create a button that will teleport you to other worlds")
 						.setPermission("pjp.cmd.button")
-						.addUsage("/button <destination>  [-b] [-c <x,y,z>] [-d <rotation>] [-p <price>]")
-						.addUsage("/b <destination> [-b] [-c <x,y,z>] [-d <direction>] [-p <price>]")
+						.setUsage(usagePortal)
 						.addExample("/button MyWorld -c random")
 						.addExample("/button MyWorld -c -100,65,254 -d south")
 						.addExample("/button MyWorld -d southeast")
@@ -197,8 +124,7 @@ public class Main {
 			if(Sponge.getPluginManager().getPlugin("helpme").isPresent()) {
 				Help door = new Help("door", "door", "Use this command to create a door that will teleport you to other worlds")
 					    .setPermission("pjp.cmd.door")
-						.addUsage("/door <destination>  [-b] [-c <x,y,z>] [-d <rotation>] [-p <price>]")
-						.addUsage("/d <destination> [-b] [-c <x,y,z>] [-d <direction>] [-p <price>]")
+						.setUsage(usagePortal)
 						.addExample("/door MyWorld -c random")
 						.addExample("/door MyWorld -c -100,65,254 -d south")
 						.addExample("/door MyWorld -d southeast")
@@ -217,8 +143,7 @@ public class Main {
 			if (Sponge.getPluginManager().isLoaded("helpme")) {
 				Help plate = new Help("plate", "plate", "Use this command to create a pressure plate that will teleport you to other worlds")
 					    .setPermission("pjp.cmd.plate")
-						.addUsage("/plate <destination>  [-b] [-c <x,y,z>] [-d <rotation>] [-p <price>]")
-						.addUsage("/p <destination> [-b] [-c <x,y,z>] [-d <direction>] [-p <price>]")
+						.setUsage(usagePortal)
 						.addExample("/plate MyWorld -c random")
 						.addExample("/plate MyWorld -c -100,65,254 -d south")
 						.addExample("/plate MyWorld -d southeast")
@@ -238,8 +163,7 @@ public class Main {
 			if (Sponge.getPluginManager().isLoaded("helpme")) {
 				Help sign = new Help("sign", "sign", "Use this command to create a sign that will teleport you to other worlds")
 					    .setPermission("pjp.cmd.sign")
-						.addUsage("/sign <destination>  [-b] [-c <x,y,z>] [-d <rotation>] [-p <price>]")
-						.addUsage("/s <destination> [-b] [-c <x,y,z>] [-d <direction>] [-p <price>]")
+						.setUsage(usagePortal)
 						.addExample("/sign MyWorld -c random")
 						.addExample("/sign MyWorld -c -100,65,254 -d south")
 						.addExample("/sign MyWorld -d southeast")
@@ -258,8 +182,7 @@ public class Main {
 			if (Sponge.getPluginManager().isLoaded("helpme")) {
 				Help lever = new Help("lever", "lever", "Use this command to create a lever that will teleport you to other worlds")
 					    .setPermission("pjp.cmd.lever")
-						.addUsage("/lever <destination>  [-b] [-c <x,y,z>] [-d <rotation>] [-p <price>]")
-						.addUsage("/l <destination> [-b] [-c <x,y,z>] [-d <direction>] [-p <price>]")
+						.setUsage(usagePortal)
 						.addExample("/lever MyWorld -c random")
 						.addExample("/lever MyWorld -c -100,65,254 -d south")
 						.addExample("/lever MyWorld -d southeast")
@@ -271,32 +194,133 @@ public class Main {
 			
 			getLog().info("Lever module activated");
 		}
+		
+		if (modules.getNode("portals").getBoolean()) {
+			Sponge.getEventManager().registerListeners(this, new PortalListener(timings));
+			Sponge.getCommandManager().register(this, new CommandManager().cmdPortal, "portal", "p");
+
+			if (config.getNode("options", "portal", "legacy_builder").getBoolean()) {
+				Sponge.getEventManager().registerListeners(this, new LegacyListener(timings));
+			}
+			
+			if (Sponge.getPluginManager().isLoaded("helpme")) {
+				Usage usageCreate = new Usage(Argument.of("<name>", "Specifies the name of the new portal"))
+						.addArgument(Argument.of("<destination>", "Specifies a world or server if argument [-b] is supplied"))
+						.addArgument(Argument.of("[-b]", "Specifies that <destination> is a bungee connected server"))
+						.addArgument(Argument.of("[-c <x,y,z>]", "Specifies the coordinates to set spawn to. x and z must fall within the range -30,000,000 to 30,000,000 (exclusive, without the "
+								+ "commas), and y must be within the range -4096 to 4096 inclusive. This is ignored if [-b] is supplied"))
+						.addArgument(Argument.of("[-d <direction>]", "Specifies the direction player will face upon teleporting. The following can be used: NORTH, NORTH_WEST, WEST, SOUTH_WEST, SOUTH, SOUTH_EAST, EAST, NORTH_EAST"))
+						.addArgument(Argument.of("[-e <particle> [color]]", "Specifies a Particle and ParticleColor the portal will use. Colors are only compatible with REDSTONE_DUST"))
+						.addArgument(Argument.of("[-p <price>]", "Specifies a price player will be charged for using portal"));
+						
+				Help portalCreate = new Help("portal create", "create", "Use this command to create a portal that will teleport you to other worlds")
+						.setPermission("pjp.cmd.portal.create")
+						.setUsage(usageCreate)
+						.addExample("/portal create MyPortal MyWorld -c -100,65,254")
+						.addExample("/portal create MyPortal MyWorld -c random")
+						.addExample("/portal create MyPortal MyWorld -c -100,65,254 -d south")
+						.addExample("/portal create MyPortal MyWorld -d southeast")
+						.addExample("/portal create MyPortal MyWorld -p 50")
+						.addExample("/portal create MyPortal MyWorld -e REDSTONE:BLUE")
+						.addExample("/portal create MyPortal MyWorld");
+				
+				Usage usageDestination = new Usage(Argument.of("<name>", "Specifies the name of the targetted portal"))
+						.addArgument(Argument.of("<destination>", "Specifies a world or server if is bungee portal"))
+						.addArgument(Argument.of("[x,y,z]", "Specifies the coordinates to set spawn to. x and z must fall within the range -30,000,000 to 30,000,000 (exclusive, without the "
+								+ "commas), and y must be within the range -4096 to 4096 inclusive. This is ignored if is bungee portal"));
+				
+				Help portalDestination = new Help("portal destination", "destination", "Change as existing portals destination")
+						.setPermission("pjp.cmd.portal.destination")
+						.setUsage(usageDestination)
+						.addExample("/portal destination Skyland 100,65,400")
+						.addExample("/portal destination Server1")
+						.addExample("/portal destination MyPortal DIM1");
+				
+				Help portalList = new Help("portal list", "list", "List all portals")
+						.setPermission("pjp.cmd.portal.list");
+				
+				Usage usageParticle = new Usage(Argument.of("<name>", "Specifies the name of the targetted portal"))
+						.addArgument(Argument.of("<particle>", "Specifies the Particle the portal will use."))
+						.addArgument(Argument.of("[color]", "Specifies the color the Particles will be. Color currently only available for REDSTONE_DUST"));
+				
+				Help portalParticle = new Help("portal particle", "particle", "Change a portals particle effect.")
+						.setPermission("pjp.cmd.portal.particle")
+						.setUsage(usageParticle)
+						.addExample("/portal particle MyPortal REDSTONE BLUE")
+						.addExample("/portal particle MyPortal CRIT");
+				
+				Usage usagePrice = new Usage(Argument.of("<name>", "Specifies the name of the targetted portal"))
+						.addArgument(Argument.of("<price>", "Specifies a price player will be charged for using portal"));
+				
+				Help portalPrice = new Help("portal price", "price", "Charge players for using portals. 0 to disable")
+						.setPermission("pjp.cmd.portal.price")
+						.setUsage(usagePrice)
+						.addExample("/portal price MyPortal 0")
+						.addExample("/portal price MyPortal 50");
+				
+				Usage usageRemove = new Usage(Argument.of("<name>", "Specifies the name of the targetted portal"));
+						
+				Help portalRemove = new Help("portal remove", "remove", "Remove an existing portal")
+						.setPermission("pjp.cmd.portal.remove")
+						.setUsage(usageRemove)
+						.addExample("/portal remove MyPortal");
+				
+				Usage usageRename = new Usage(Argument.of("<oldName>", "Specifies the name of the targetted portal"))
+						.addArgument(Argument.of("<newName>", "Specifies the new name of the portal"));
+				
+				Help portalRename = new Help("portal rename", "rename", "Rename portal")
+						.setPermission("pjp.cmd.portal.rename")
+						.setUsage(usageRename)
+						.addExample("/portal rename MyPortal ThisPortal");
+					
+				Help portalSave = new Help("portal save", "save", "Saves generated portal")
+						.setPermission("pjp.cmd.portal.save");
+				
+				Help portal = new Help("portal", "portal", " Top level portal command")
+						.setPermission("pjp.cmd.portal")
+						.addChild(portalSave)
+						.addChild(portalRename)
+						.addChild(portalRemove)
+						.addChild(portalPrice)
+						.addChild(portalParticle)
+						.addChild(portalList)
+						.addChild(portalDestination)
+						.addChild(portalCreate);
+				
+				Help.register(portal);
+			}
+
+			getLog().info("Portal module activated");
+		}
+		
 		if (modules.getNode("homes").getBoolean()) {
 			Sponge.getDataManager().register(HomeData.class, ImmutableHomeData.class, new HomeData.Builder());
 			Sponge.getCommandManager().register(this, new CommandManager().cmdHome, "home", "h");
 
 			if (Sponge.getPluginManager().isLoaded("helpme")) {
+				Usage usageCreate = new Usage(Argument.of("<name>", "Specifies the name of the new home"));
+				
 				Help homeCreate = new Help("home create", "create", "Create a new home")
 						.setPermission("pjp.cmd.home.create")
-						.addUsage("/home create <name>")
-						.addUsage("/h c <name>")
+						.setUsage(usageCreate)
 						.addExample("/home create MyHome");
 				
 				Help homeList = new Help("home list", "list", "List all homes")
-						.setPermission("pjp.cmd.home.list")
-						.addUsage("/home list\n /h ls")
-						.addUsage("/h ls");
+						.setPermission("pjp.cmd.home.list");
+				
+				Usage usageRemove = new Usage(Argument.of("<name>", "Specifies the name of the targetted home"));
 				
 				Help homeRemove = new Help("home remove", "remove", "Remove an existing home")
 						.setPermission("pjp.cmd.home.remove")
-						.addUsage("/home remove <name>")
-						.addUsage("/h r <name>")
+						.setUsage(usageRemove)
 						.addExample("/home remove OldHome");
+				
+				Usage usageRename = new Usage(Argument.of("<oldName>", "Specifies the name of the targetted home"))
+						.addArgument(Argument.of("<newName>", "Specifies the new name of the home"));
 				
 				Help homeRename = new Help("home rename", "rename", "Rename home")
 						.setPermission("pjp.cmd.home.rename")
-						.addUsage("/home rename <oldName> <newName>")
-						.addUsage("/h rn <oldName> <newName>")
+						.setUsage(usageRename)
 						.addExample("/home rename MyHome Castle");
 				
 				Help home = new Help("home", "home", " Top level home command")
@@ -315,10 +339,17 @@ public class Main {
 			Sponge.getCommandManager().register(this, new CommandManager().cmdWarp, "warp", "w");
 			
 			if (Sponge.getPluginManager().isLoaded("helpme")) {
+				Usage usagecreate = new Usage(Argument.of("<name>", "Specifies the name of the new warp point"))
+						.addArgument(Argument.of("<destination>", "Specifies a world or server if [-b] is supplied"))
+						.addArgument(Argument.of("[-b]", "Specifies that <destination> is a bungee connected server"))
+						.addArgument(Argument.of("[-c <x,y,z>]", "Specifies the coordinates to set spawn to. x and z must fall within the range -30,000,000 to 30,000,000 (exclusive, without the "
+								+ "commas), and y must be within the range -4096 to 4096 inclusive. This is ignored if [-b] is supplied"))
+						.addArgument(Argument.of("[-d <direction>]", "Specifies the direction player will face upon teleporting. The following can be used: NORTH, NORTH_WEST, WEST, SOUTH_WEST, SOUTH, SOUTH_EAST, EAST, NORTH_EAST"))
+						.addArgument(Argument.of("[-p <price>]", "Specifies a price player will be charged for using this warp"));
+				
 				Help warpCreate = new Help("warp create", "create", "Use this command to create a warp that will teleport you to other worlds")
 						.setPermission("pjp.cmd.warp.create")
-						.addUsage("/warp create <name> [<destination> [-b] [-c <x,y,z>] [-d <direction>]] [-p <price>]")
-						.addUsage("/w <name> [<destination> [-b] [-c <x,y,z>] [-d <direction>]] [-p <price>]")
+						.setUsage(usagecreate)
 						.addExample("/warp create Lobby MyWorld")
 						.addExample("/warp create Lobby MyWorld -c -100,65,254")
 						.addExample("/warp create Random MyWorld -c random")
@@ -327,27 +358,30 @@ public class Main {
 						.addExample("/warp create Lobby");
 				
 				Help warpList = new Help("warp list", "list", "List all warp points")
-						.setPermission("pjp.cmd.warp.list")
-						.addUsage("/warp list")
-						.addUsage("/w ls");
+						.setPermission("pjp.cmd.warp.list");
+				
+				Usage usagePrice = new Usage(Argument.of("<name>", "Specifies the name of the targetted warp point"))
+						.addArgument(Argument.of("<price>", "Specifies a price player will be charged for using this warp"));
 				
 				Help warpPrice = new Help("warp price", "price", "Charge players for using warps. 0 to disable")
 						.setPermission("pjp.cmd.warp.price")
-						.addUsage("/warp price <name> <price>")
-						.addUsage("/w p <name> <price>")
+						.setUsage(usagePrice)
 						.addExample("/warp price Lobby 0")
 						.addExample("/warp price Lobby 50");
 				
+				Usage usageRemove = new Usage(Argument.of("<name>", "Specifies the name of the targetted warp point"));
+						
 				Help warpRemove = new Help("warp remove", "remove", "Remove an existing  warp point")
 						.setPermission("pjp.cmd.warp.remove")
-						.addUsage("/warp remove <name>")
-						.addUsage("/w r <name>")
+						.setUsage(usageRemove)
 						.addExample("/warp remove OldSpawn");
+				
+				Usage usageRename = new Usage(Argument.of("<oldName>", "Specifies the name of the targetted warp point"))
+						.addArgument(Argument.of("<newName>", "Specifies the new name of the warp point"));
 				
 				Help warpRename = new Help("warp rename", "rename", "Rename warp")
 						.setPermission("pjp.cmd.warp.rename")
-						.addUsage("/warp rename <oldName> <newName>")
-						.addUsage("/w rn <oldName> <newName>")
+						.setUsage(usageRename)
 						.addExample("/warp rename Spawn Lobby");
 				
 				Help warp = new Help("warp", "warp", " Top level warp command")

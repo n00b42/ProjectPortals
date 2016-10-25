@@ -140,7 +140,7 @@ public class CommandManager {
 	private CommandSpec cmdPortalParticle = CommandSpec.builder()
 		    .description(Text.of("Set particle effects of an existing portal"))
 		    .permission("pjp.cmd.portal.particle")
-		    .arguments(new PortalElement(Text.of("name"), PortalType.PORTAL), GenericArguments.enumValue(Text.of("type"), Particles.class)
+		    .arguments(new PortalElement(Text.of("name"), PortalType.PORTAL), GenericArguments.enumValue(Text.of("particle"), Particles.class)
 		    		, GenericArguments.optional(GenericArguments.enumValue(Text.of("color"), ParticleColor.class)))
 		    .executor(new com.gmail.trentech.pjp.commands.portal.CMDParticle())
 		    .build();

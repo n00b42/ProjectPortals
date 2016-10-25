@@ -22,7 +22,7 @@ public class CMDParticle implements CommandExecutor {
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		Portal portal = args.<Portal>getOne("name").get();
 
-		Particle particle = args.<Particles>getOne("type").get().getParticle();
+		Particle particle = args.<Particles>getOne("particle").get().getParticle();
 
 		Optional<ParticleColor> color = Optional.empty();
 
