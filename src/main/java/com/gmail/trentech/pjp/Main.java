@@ -221,7 +221,7 @@ public class Main {
 						.addExample("/portal create MyPortal MyWorld -c -100,65,254 -d south")
 						.addExample("/portal create MyPortal MyWorld -d southeast")
 						.addExample("/portal create MyPortal MyWorld -p 50")
-						.addExample("/portal create MyPortal MyWorld -e REDSTONE:BLUE")
+						.addExample("/portal create MyPortal MyWorld -e REDSTONE_DUST BLUE")
 						.addExample("/portal create MyPortal MyWorld");
 				
 				Usage usageDestination = new Usage(Argument.of("<name>", "Specifies the name of the targetted portal"))
@@ -246,7 +246,7 @@ public class Main {
 				Help portalParticle = new Help("portal particle", "particle", "Change a portals particle effect.")
 						.setPermission("pjp.cmd.portal.particle")
 						.setUsage(usageParticle)
-						.addExample("/portal particle MyPortal REDSTONE BLUE")
+						.addExample("/portal particle MyPortal REDSTONE_DUST BLUE")
 						.addExample("/portal particle MyPortal CRIT");
 				
 				Usage usagePrice = new Usage(Argument.of("<name>", "Specifies the name of the targetted portal"))

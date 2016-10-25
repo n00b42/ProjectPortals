@@ -22,7 +22,7 @@ public class CommandManager {
 		    .arguments(GenericArguments.string(Text.of("name")), GenericArguments.optional(GenericArguments.string(Text.of("destination"))), GenericArguments.flags().flag("b")
 		    		.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
 		    		.valueFlag(GenericArguments.enumValue(Text.of("direction"), Rotation.class), "d")
-    				.valueFlag(GenericArguments.string(Text.of("price")), "p").buildWith(GenericArguments.none()))
+    				.valueFlag(GenericArguments.doubleNum(Text.of("price")), "p").buildWith(GenericArguments.none()))
 		    .executor(new com.gmail.trentech.pjp.commands.warp.CMDCreate())
 		    .build();
 	
