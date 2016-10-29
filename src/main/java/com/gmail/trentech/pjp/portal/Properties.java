@@ -216,7 +216,6 @@ public class Properties implements DataSerializable {
 			super(Properties.class, 0);
 		}
 
-		@SuppressWarnings("unchecked")
 		@Override
 		protected Optional<Properties> buildContent(DataView container) throws InvalidDataException {
 			if (container.contains(FRAME, FILL, PARTICLE)) {
@@ -229,11 +228,11 @@ public class Properties implements DataSerializable {
 					color = ParticleColor.get(container.getString(COLOR).get());
 				}
 
-				for (String loc : (List<String>) container.getList(FRAME).get()) {
+				for (String loc : container.getStringList(FRAME).get()) {
 					frame.add(LocationSerializable.deserialize(loc));
 				}
 
-				for (String loc : (List<String>) container.getList(FILL).get()) {
+				for (String loc : container.getStringList(FILL).get()) {
 					fill.add(LocationSerializable.deserialize(loc));
 				}
 
