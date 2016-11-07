@@ -25,6 +25,7 @@ import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.util.Axis;
 import org.spongepowered.api.util.Direction;
+import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -98,7 +99,9 @@ public class Properties implements DataSerializable {
 
 		Sponge.getScheduler().createTaskBuilder().delayTicks(5).execute(c -> {
 			for (Location<World> location : getFill()) {
-				if (location.getExtent().getChunk(location.getChunkPosition()).get().isLoaded()) {
+				Optional<Chunk> optionalChunk = location.getExtent().getChunk(location.getChunkPosition());
+				
+				if(optionalChunk.isPresent() && optionalChunk.get().isLoaded()) {
 					if (reset) {
 						player.resetBlockChange(location.getBlockPosition());
 					} else {

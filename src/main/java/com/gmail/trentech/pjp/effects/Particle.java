@@ -9,6 +9,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.effect.particle.ParticleEffect;
 import org.spongepowered.api.effect.particle.ParticleOptions;
 import org.spongepowered.api.effect.particle.ParticleType;
+import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -113,7 +114,9 @@ public class Particle {
 				ParticleEffect particle = ParticleEffect.builder().type(getType()).build();
 
 				for (Location<World> location : locations) {
-					if (location.getExtent().getChunk(location.getChunkPosition()).get().isLoaded()) {
+					Optional<Chunk> optionalChunk = location.getExtent().getChunk(location.getChunkPosition());
+					
+					if(optionalChunk.isPresent() && optionalChunk.get().isLoaded()) {
 						if (isColorable() && color.isPresent()) {
 							particle = ParticleEffect.builder().type(getType()).option(ParticleOptions.COLOR, color.get().getColor()).build();
 						}
