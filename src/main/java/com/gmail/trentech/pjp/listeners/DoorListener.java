@@ -8,11 +8,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
-import org.spongepowered.api.block.BlockType;
-import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.Transaction;
+import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.filter.Getter;
@@ -67,7 +67,7 @@ public class DoorListener {
 		}
 	}
 
-	@Listener
+	@Listener(order = Order.POST)
 	public void onChangeBlockEventPlace(ChangeBlockEvent.Place event, @Root Player player) {
 		timings.onChangeBlockEventPlace().startTiming();
 
@@ -77,14 +77,14 @@ public class DoorListener {
 			}
 
 			for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
-				BlockType blockType = transaction.getFinal().getState().getType();
-
-				if (!blockType.equals(BlockTypes.ACACIA_DOOR) && !blockType.equals(BlockTypes.BIRCH_DOOR) && !blockType.equals(BlockTypes.DARK_OAK_DOOR) && !blockType.equals(BlockTypes.IRON_DOOR) && !blockType.equals(BlockTypes.JUNGLE_DOOR) && !blockType.equals(BlockTypes.SPRUCE_DOOR) && !blockType.equals(BlockTypes.WOODEN_DOOR)) {
-					continue;
-				}
-
 				Location<World> location = transaction.getFinal().getLocation().get();
 
+				Optional<Boolean> optionalOpen = location.get(Keys.OPEN);
+				
+				if(!optionalOpen.isPresent()) {
+					continue;
+				}				
+				
 				if (!player.hasPermission("pjp.door.place")) {
 					player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to place door portals"));
 					builders.remove(player.getUniqueId());
@@ -114,6 +114,16 @@ public class DoorListener {
 		try {
 			Location<World> location = player.getLocation();
 
+			Optional<Boolean> optionalOpen = location.get(Keys.OPEN);
+			
+			if(!optionalOpen.isPresent()) {
+				return;
+			}
+			
+			if(!optionalOpen.get()) {
+				return;
+			}
+			
 			Optional<Portal> optionalPortal = Portal.get(location, PortalType.DOOR);
 
 			if (!optionalPortal.isPresent()) {
