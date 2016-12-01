@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
@@ -22,6 +23,7 @@ import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.event.filter.type.Exclude;
+import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.Direction;
@@ -50,6 +52,25 @@ public class PortalListener {
 		this.timings = timings;
 	}
 
+	@Listener
+	public void onConnectionEvent(ClientConnectionEvent.Login event, @Root Player player) {
+		Location<World> location = event.getToTransform().getLocation();
+
+		while (Portal.get(location, PortalType.PORTAL).isPresent() || Portal.get(location, PortalType.DOOR).isPresent()) {
+			ThreadLocalRandom random = ThreadLocalRandom.current();
+
+			int x = (random.nextInt(3 * 2) - 3) + location.getBlockX();
+			int z = (random.nextInt(3 * 2) - 3) + location.getBlockZ();
+
+			Optional<Location<World>> optionalLocation = Sponge.getGame().getTeleportHelper().getSafeLocation(location.getExtent().getLocation(x, location.getBlockY(), z));
+
+			if (optionalLocation.isPresent()) {
+				location = optionalLocation.get();
+				event.setToTransform(new Transform<World>(location));
+			}
+		}
+	}
+	
 	@Listener
 	@Exclude(value = { ChangeBlockEvent.Place.class })
 	public void onInteractBlockEventSecondary(InteractBlockEvent.Secondary event, @Root Player player) {
@@ -163,7 +184,7 @@ public class PortalListener {
 	}
 
 	@Listener
-	public void onDisplaceEntityEventMoveLiving(MoveEntityEvent event, @Getter("getTargetEntity") Living living) {
+	public void onMoveEntityEventLiving(MoveEntityEvent event, @Getter("getTargetEntity") Living living) {
 		if (living instanceof Player) {
 			return;
 		}
