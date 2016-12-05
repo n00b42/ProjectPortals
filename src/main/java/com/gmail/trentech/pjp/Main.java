@@ -83,12 +83,14 @@ public class Main {
 		Sponge.getDataManager().registerBuilder(Portal.Server.class, new Portal.Server.Builder());
 
 		Sponge.getEventManager().registerListeners(this, new TeleportListener(timings));
-
-		Sponge.getCommandManager().register(this, new CMDBack().cmdBack, "back");
+		
 		Sponge.getCommandManager().register(this, new CommandManager().cmdPJP, "pjp");
 
 		ConfigurationNode modules = config.getNode("settings", "modules");
 		
+		if (modules.getNode("back").getBoolean()) {
+			Sponge.getCommandManager().register(this, new CMDBack().cmdBack, "back");
+		}
 		if (modules.getNode("buttons").getBoolean()) {
 			Sponge.getEventManager().registerListeners(this, new ButtonListener(timings));
 			Sponge.getCommandManager().register(this, new CommandManager().cmdButton, "button", "b");

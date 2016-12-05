@@ -105,25 +105,28 @@ public class ConfigManager {
 				config.getNode("settings", "modules", "portals").setValue(true);
 			}
 			if (config.getNode("settings", "modules", "buttons").isVirtual()) {
-				config.getNode("settings", "modules", "buttons").setValue(true);
+				config.getNode("settings", "modules", "buttons").setValue(false);
 			}
 			if (config.getNode("settings", "modules", "doors").isVirtual()) {
-				config.getNode("settings", "modules", "doors").setValue(true);
+				config.getNode("settings", "modules", "doors").setValue(false);
 			}
 			if (config.getNode("settings", "modules", "plates").isVirtual()) {
-				config.getNode("settings", "modules", "plates").setValue(true);
+				config.getNode("settings", "modules", "plates").setValue(false);
 			}
 			if (config.getNode("settings", "modules", "levers").isVirtual()) {
-				config.getNode("settings", "modules", "levers").setValue(true);
+				config.getNode("settings", "modules", "levers").setValue(false);
 			}
 			if (config.getNode("settings", "modules", "signs").isVirtual()) {
-				config.getNode("settings", "modules", "signs").setValue(true);
+				config.getNode("settings", "modules", "signs").setValue(false);
 			}
 			if (config.getNode("settings", "modules", "warps").isVirtual()) {
-				config.getNode("settings", "modules", "warps").setValue(true);
+				config.getNode("settings", "modules", "warps").setValue(false);
 			}
 			if (config.getNode("settings", "modules", "homes").isVirtual()) {
-				config.getNode("settings", "modules", "homes").setValue(true);
+				config.getNode("settings", "modules", "homes").setValue(false);
+			}
+			if (config.getNode("settings", "modules", "back").isVirtual()) {
+				config.getNode("settings", "modules", "back").setValue(true);
 			}
 		}
 
