@@ -11,6 +11,7 @@ public class DataQueries {
 	public static final DataQuery SERVER = of("server");
 	public static final DataQuery WORLD = of("world");
 	public static final DataQuery VECTOR3D = of("vector3d");
+	public static final DataQuery BED_RESPAWN = of("bedrespawn");
 	public static final DataQuery ROTATION = of("rotation");
 	public static final DataQuery PRICE = of("price");
 	public static final DataQuery FRAME = of("frame");

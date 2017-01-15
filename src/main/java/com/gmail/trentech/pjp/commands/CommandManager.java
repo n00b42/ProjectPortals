@@ -19,7 +19,7 @@ public class CommandManager {
 	private CommandSpec cmdWarpCreate = CommandSpec.builder()
 		    .description(Text.of("Create a new warp point"))
 		    .permission("pjp.cmd.warp.create")
-		    .arguments(GenericArguments.string(Text.of("name")), GenericArguments.optional(GenericArguments.string(Text.of("destination"))), GenericArguments.flags().flag("b")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))), GenericArguments.optional(GenericArguments.string(Text.of("destination"))), GenericArguments.flags().flag("b")
 		    		.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
 		    		.valueFlag(GenericArguments.enumValue(Text.of("direction"), Rotation.class), "d")
     				.valueFlag(GenericArguments.doubleNum(Text.of("price")), "p").buildWith(GenericArguments.none()))
@@ -29,21 +29,21 @@ public class CommandManager {
 	private CommandSpec cmdWarpRemove = CommandSpec.builder()
 		    .description(Text.of("Remove an existing warp point"))
 		    .permission("pjp.cmd.warp.remove")
-		    .arguments(new PortalElement(Text.of("name"), PortalType.WARP))
+		    .arguments(GenericArguments.optional(new PortalElement(Text.of("name"), PortalType.WARP)))
 		    .executor(new com.gmail.trentech.pjp.commands.warp.CMDRemove())
 		    .build();
 	
 	private CommandSpec cmdWarpRename = CommandSpec.builder()
 		    .description(Text.of("Rename an existing warp point"))
 		    .permission("pjp.cmd.warp.rename")
-		    .arguments(new PortalElement(Text.of("name"), PortalType.WARP), GenericArguments.string(Text.of("newName")))
+		    .arguments(GenericArguments.optional(new PortalElement(Text.of("name"), PortalType.WARP)), GenericArguments.optional(GenericArguments.string(Text.of("newName"))))
 		    .executor(new com.gmail.trentech.pjp.commands.warp.CMDRename())
 		    .build();
 	
 	private CommandSpec cmdWarpPrice = CommandSpec.builder()
 		    .description(Text.of("Set price of an existing warp point"))
 		    .permission("pjp.cmd.warp.price")
-		    .arguments(new PortalElement(Text.of("name"), PortalType.WARP), GenericArguments.doubleNum(Text.of("price")))
+		    .arguments(GenericArguments.optional(new PortalElement(Text.of("name"), PortalType.WARP)), GenericArguments.optional(GenericArguments.doubleNum(Text.of("price"))))
 		    .executor(new com.gmail.trentech.pjp.commands.warp.CMDPrice())
 		    .build();
 	
@@ -83,7 +83,7 @@ public class CommandManager {
 	private CommandSpec cmdHomeRename = CommandSpec.builder()
 		    .description(Text.of("Rename an existing home"))
 		    .permission("pjp.cmd.home.rename")
-		    .arguments(GenericArguments.string(Text.of("oldName")), GenericArguments.string(Text.of("newName")))
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("oldName"))), GenericArguments.optional(GenericArguments.string(Text.of("newName"))))
 		    .executor(new com.gmail.trentech.pjp.commands.home.CMDRename())
 		    .build();
 	
@@ -108,7 +108,7 @@ public class CommandManager {
 		    .description(Text.of("Create a new portal"))
 		    .permission("pjp.cmd.portal.create")
 		    .arguments()
-		    .arguments(GenericArguments.string(Text.of("name")), GenericArguments.string(Text.of("destination")), GenericArguments.flags().flag("b")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("name"))), GenericArguments.optional(GenericArguments.string(Text.of("destination"))), GenericArguments.flags().flag("b")
 		    		.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
 		    		.valueFlag(GenericArguments.enumValue(Text.of("direction"), Rotation.class), "d")
 		    		.valueFlag(GenericArguments.seq(GenericArguments.enumValue(Text.of("particle"), Particles.class), GenericArguments.optional(GenericArguments.enumValue(Text.of("color"), ParticleColor.class))), "e")
@@ -119,7 +119,7 @@ public class CommandManager {
 	private CommandSpec cmdPortalDestination = CommandSpec.builder()
 		    .description(Text.of("Change a existing portals destination"))
 		    .permission("pjp.cmd.portal.rename")
-		    .arguments(new PortalElement(Text.of("name"), PortalType.PORTAL), GenericArguments.string(Text.of("destination")), GenericArguments.optional(GenericArguments.string(Text.of("x,y,z"))))
+		    .arguments(GenericArguments.optional(new PortalElement(Text.of("name"), PortalType.PORTAL)), GenericArguments.optional(GenericArguments.string(Text.of("destination"))), GenericArguments.optional(GenericArguments.string(Text.of("x,y,z"))))
 		    .executor(new com.gmail.trentech.pjp.commands.portal.CMDRename())
 		    .build();
 	
@@ -133,14 +133,14 @@ public class CommandManager {
 	private CommandSpec cmdPortalRename = CommandSpec.builder()
 		    .description(Text.of("Rename an existing portal"))
 		    .permission("pjp.cmd.portal.rename")
-		    .arguments(new PortalElement(Text.of("name"), PortalType.PORTAL), GenericArguments.string(Text.of("newName")))
+		    .arguments(GenericArguments.optional(new PortalElement(Text.of("name"), PortalType.PORTAL)), GenericArguments.optional(GenericArguments.string(Text.of("newName"))))
 		    .executor(new com.gmail.trentech.pjp.commands.portal.CMDRename())
 		    .build();
 	
 	private CommandSpec cmdPortalParticle = CommandSpec.builder()
 		    .description(Text.of("Set particle effects of an existing portal"))
 		    .permission("pjp.cmd.portal.particle")
-		    .arguments(new PortalElement(Text.of("name"), PortalType.PORTAL), GenericArguments.enumValue(Text.of("particle"), Particles.class)
+		    .arguments(GenericArguments.optional(new PortalElement(Text.of("name"), PortalType.PORTAL)), GenericArguments.optional(GenericArguments.enumValue(Text.of("particle"), Particles.class))
 		    		, GenericArguments.optional(GenericArguments.enumValue(Text.of("color"), ParticleColor.class)))
 		    .executor(new com.gmail.trentech.pjp.commands.portal.CMDParticle())
 		    .build();
@@ -148,7 +148,7 @@ public class CommandManager {
 	private CommandSpec cmdPortalPrice = CommandSpec.builder()
 		    .description(Text.of("Set price of an existing portal"))
 		    .permission("pjp.cmd.portal.price")
-		    .arguments(new PortalElement(Text.of("name"), PortalType.PORTAL), GenericArguments.doubleNum(Text.of("price")))
+		    .arguments(GenericArguments.optional(new PortalElement(Text.of("name"), PortalType.PORTAL)), GenericArguments.optional(GenericArguments.doubleNum(Text.of("price"))))
 		    .executor(new com.gmail.trentech.pjp.commands.portal.CMDPrice())
 		    .build();
 	
@@ -183,7 +183,7 @@ public class CommandManager {
 		    .description(Text.of("Create a new button portal"))
 		    .permission("pjp.cmd.button")
 		    .arguments()
-		    .arguments(GenericArguments.string(Text.of("destination")), GenericArguments.flags().flag("b")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("destination"))), GenericArguments.flags().flag("b")
 		    		.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
 		    		.valueFlag(GenericArguments.enumValue(Text.of("direction"), Rotation.class), "d")
 		    		.valueFlag(GenericArguments.doubleNum(Text.of("price")), "p").buildWith(GenericArguments.none()))
@@ -194,7 +194,7 @@ public class CommandManager {
 		    .description(Text.of("Create a new door portal"))
 		    .permission("pjp.cmd.door")
 		    .arguments()
-		    .arguments(GenericArguments.string(Text.of("destination")), GenericArguments.flags().flag("b")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("destination"))), GenericArguments.flags().flag("b")
 		    		.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
 		    		.valueFlag(GenericArguments.enumValue(Text.of("direction"), Rotation.class), "d")
 		    		.valueFlag(GenericArguments.doubleNum(Text.of("price")), "p").buildWith(GenericArguments.none()))
@@ -205,7 +205,7 @@ public class CommandManager {
 		    .description(Text.of("Create a new lever portal"))
 		    .permission("pjp.cmd.lever")
 		    .arguments()
-		    .arguments(GenericArguments.string(Text.of("destination")), GenericArguments.flags().flag("b")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("destination"))), GenericArguments.flags().flag("b")
 		    		.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
 		    		.valueFlag(GenericArguments.enumValue(Text.of("direction"), Rotation.class), "d")
 		    		.valueFlag(GenericArguments.doubleNum(Text.of("price")), "p").buildWith(GenericArguments.none()))
@@ -216,7 +216,7 @@ public class CommandManager {
 		    .description(Text.of("Create a new pressure plate portal"))
 		    .permission("pjp.cmd.plate")
 		    .arguments()
-		    .arguments(GenericArguments.string(Text.of("destination")), GenericArguments.flags().flag("b")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("destination"))), GenericArguments.flags().flag("b")
 		    		.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
 		    		.valueFlag(GenericArguments.enumValue(Text.of("direction"), Rotation.class), "d")
 		    		.valueFlag(GenericArguments.doubleNum(Text.of("price")), "p").buildWith(GenericArguments.none()))
@@ -227,7 +227,7 @@ public class CommandManager {
 		    .description(Text.of("Create a new sign portal"))
 		    .permission("pjp.cmd.sign")
 		    .arguments()
-		    .arguments(GenericArguments.string(Text.of("destination")), GenericArguments.flags().flag("b")
+		    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("destination"))), GenericArguments.flags().flag("b")
 		    		.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
 		    		.valueFlag(GenericArguments.enumValue(Text.of("direction"), Rotation.class), "d")
 		    		.valueFlag(GenericArguments.string(Text.of("price")), "p").buildWith(GenericArguments.none()))

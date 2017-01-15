@@ -64,21 +64,27 @@ public class CMDList implements CommandExecutor {
 			} else {
 				Portal.Local local = (Portal.Local) portal;
 
-				Optional<Location<World>> optionalLocation = local.getLocation();
-
-				if (optionalLocation.isPresent()) {
-					Location<World> location = optionalLocation.get();
-
-					String worldName = location.getExtent().getName();
-
-					if (!location.equals(local.getLocation().get())) {
-						builder.onClick(TextActions.runCommand("/warp " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Destination: ", TextColors.WHITE, worldName, ", random"));
-					} else {
-						Vector3d vector3d = location.getPosition();
-						builder.onClick(TextActions.runCommand("/warp " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Destination: ", TextColors.WHITE, worldName, ", ", vector3d.getFloorX(), ", ", vector3d.getFloorY(), ", ", vector3d.getFloorZ()));
-					}
+				if(local.isBedSpawn()) {
+					String worldName = local.getWorld().getName();
+					
+					builder.onClick(TextActions.runCommand("/warp " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Destination: ", TextColors.WHITE, worldName, ", bed"));
 				} else {
-					builder.onClick(TextActions.runCommand("/warp " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.RED, " - DESTINATION ERROR"));
+					Optional<Location<World>> optionalLocation = local.getLocation();
+
+					if (optionalLocation.isPresent()) {
+						Location<World> location = optionalLocation.get();
+
+						String worldName = location.getExtent().getName();
+
+						if (!location.equals(local.getLocation().get())) {
+							builder.onClick(TextActions.runCommand("/warp " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Destination: ", TextColors.WHITE, worldName, ", random"));
+						} else {
+							Vector3d vector3d = location.getPosition();
+							builder.onClick(TextActions.runCommand("/warp " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Destination: ", TextColors.WHITE, worldName, ", ", vector3d.getFloorX(), ", ", vector3d.getFloorY(), ", ", vector3d.getFloorZ()));
+						}
+					} else {
+						builder.onClick(TextActions.runCommand("/warp " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.RED, " - DESTINATION ERROR"));
+					}	
 				}
 			}
 

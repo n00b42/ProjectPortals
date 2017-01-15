@@ -1,6 +1,8 @@
 package com.gmail.trentech.pjp.utils;
 
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -9,12 +11,14 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.Direction;
+import org.spongepowered.api.util.RespawnLocation;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.TeleportHelper;
 import org.spongepowered.api.world.World;
@@ -117,6 +121,34 @@ public class Teleport {
 		} else {
 			Portal.Local local = (Portal.Local) portal;
 
+			if(local.isBedSpawn()) {
+				Optional<Map<UUID, RespawnLocation>> optionalLocations = player.get(Keys.RESPAWN_LOCATIONS);
+				
+				if(optionalLocations.isPresent()) {
+					Map<UUID, RespawnLocation> respawnLocations = optionalLocations.get();
+
+					if(respawnLocations.containsKey(local.getWorld().getUniqueId())) {
+						Optional<Location<World>> optionalLocation = respawnLocations.get(local.getWorld().getUniqueId()).asLocation();
+						
+						if(optionalLocation.isPresent()) {
+							Location<World> spawnLocation = optionalLocation.get();
+							
+							Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, local.getPrice(), Cause.of(NamedCause.source(local)));
+
+							if (!Sponge.getEventManager().post(teleportEvent)) {
+								spawnLocation = teleportEvent.getDestination();
+
+								Vector3d rotation = local.getRotation().toVector3d();
+
+								player.setLocationAndRotation(spawnLocation, rotation);
+
+								return true;
+							}
+						}
+					}
+				}
+			}
+			
 			Optional<Location<World>> optionalSpawnLocation = local.getLocation();
 
 			if (optionalSpawnLocation.isPresent()) {

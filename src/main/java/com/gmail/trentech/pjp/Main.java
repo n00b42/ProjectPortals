@@ -45,7 +45,7 @@ import me.flibio.updatifier.Updatifier;
 import ninja.leaping.configurate.ConfigurationNode;
 
 @Updatifier(repoName = Resource.NAME, repoOwner = Resource.AUTHOR, version = Resource.VERSION)
-@Plugin(id = Resource.ID, name = Resource.NAME, version = Resource.VERSION, description = Resource.DESCRIPTION, authors = Resource.AUTHOR, url = Resource.URL, dependencies = { @Dependency(id = "Updatifier", optional = true), @Dependency(id = "helpme", version = "0.2.1", optional = true) })
+@Plugin(id = Resource.ID, name = Resource.NAME, version = Resource.VERSION, description = Resource.DESCRIPTION, authors = Resource.AUTHOR, url = Resource.URL, dependencies = { @Dependency(id = "Updatifier", optional = true), @Dependency(id = "helpme", version = "0.2.3", optional = false) })
 public class Main {
 
 	@Inject
@@ -79,9 +79,10 @@ public class Main {
 
 		Sponge.getDataManager().registerBuilder(LocationSerializable.class, new LocationSerializable.Builder());
 		Sponge.getDataManager().registerBuilder(Properties.class, new Properties.Builder());
-		Sponge.getDataManager().registerBuilder(Portal.Local.class, new Portal.Local.Builder());
+		Sponge.getDataManager().registerContentUpdater(Portal.Local.class, new Portal.Local.Update1());
+		Sponge.getDataManager().registerBuilder(Portal.Local.class, new Portal.Local.Builder());	
 		Sponge.getDataManager().registerBuilder(Portal.Server.class, new Portal.Server.Builder());
-
+		
 		Sponge.getEventManager().registerListeners(this, new TeleportListener(timings));
 		
 		Sponge.getCommandManager().register(this, new CommandManager().cmdPJP, "pjp");

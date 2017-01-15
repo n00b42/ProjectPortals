@@ -13,10 +13,12 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
+import com.gmail.trentech.helpme.help.Help;
 import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
 import com.gmail.trentech.pjp.rotation.Rotation;
@@ -32,6 +34,10 @@ public class CMDCreate implements CommandExecutor {
 		}
 		Player player = (Player) src;
 
+		if (!args.hasAny("name")) {
+			Help help = Help.get("warp create").get();
+			throw new CommandException(Text.builder().onClick(TextActions.executeCallback(help.execute())).append(help.getUsageText()).build(), false);
+		}
 		String name = args.<String>getOne("name").get().toLowerCase();
 
 		if (Portal.get(name, PortalType.WARP).isPresent()) {
@@ -40,6 +46,7 @@ public class CMDCreate implements CommandExecutor {
 
 		Optional<World> world = Optional.empty();
 		Optional<Vector3d> vector3d = Optional.empty();
+		boolean bedRespawn = false;
 		AtomicReference<Rotation> rotation = new AtomicReference<>(Rotation.EAST);
 		AtomicReference<Double> price = new AtomicReference<>(0.0);
 
@@ -90,12 +97,14 @@ public class CMDCreate implements CommandExecutor {
 				if (!world.isPresent()) {
 					throw new CommandException(Text.of(TextColors.RED, destination, " is not loaded or does not exist"), false);
 				}
-
+				
 				if (args.hasAny("x,y,z")) {
 					String[] coords = args.<String>getOne("x,y,z").get().split(",");
 
 					if (coords[0].equalsIgnoreCase("random")) {
 						vector3d = Optional.of(new Vector3d(0, 0, 0));
+					} else if(coords[0].equalsIgnoreCase("bed")) {
+						bedRespawn = true;
 					} else {
 						try {
 							vector3d = Optional.of(new Vector3d(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2])));
@@ -115,7 +124,7 @@ public class CMDCreate implements CommandExecutor {
 			rotation.set(Rotation.getClosest(player.getRotation().getFloorY()));
 		}
 
-		new Portal.Local(PortalType.WARP, world.get(), vector3d, rotation.get(), price.get()).create(name);
+		new Portal.Local(PortalType.WARP, world.get(), vector3d, rotation.get(), price.get(), bedRespawn).create(name);
 
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Warp ", name, " create"));
 

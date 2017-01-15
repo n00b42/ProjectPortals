@@ -24,11 +24,11 @@ public class CMDObj {
 		}
 
 		@Override
-		protected void init(Player player, Optional<String> server, Optional<World> world, Optional<Vector3d> vector3d, Rotation rotation, double price) {
+		protected void init(Player player, Optional<String> server, Optional<World> world, Optional<Vector3d> vector3d, Rotation rotation, double price, boolean bedRespawn) {
 			if (server.isPresent()) {
 				ButtonListener.builders.put(player.getUniqueId(), new Portal.Server(PortalType.BUTTON, server.get(), rotation, price));
 			} else {
-				ButtonListener.builders.put(player.getUniqueId(), new Portal.Local(PortalType.BUTTON, world.get(), vector3d, rotation, price));
+				ButtonListener.builders.put(player.getUniqueId(), new Portal.Local(PortalType.BUTTON, world.get(), vector3d, rotation, price, bedRespawn));
 			}
 		}
 	}
@@ -40,11 +40,11 @@ public class CMDObj {
 		}
 
 		@Override
-		protected void init(Player player, Optional<String> server, Optional<World> world, Optional<Vector3d> vector3d, Rotation rotation, double price) {
+		protected void init(Player player, Optional<String> server, Optional<World> world, Optional<Vector3d> vector3d, Rotation rotation, double price, boolean bedRespawn) {
 			if (server.isPresent()) {
 				DoorListener.builders.put(player.getUniqueId(), new Portal.Server(PortalType.DOOR, server.get(), rotation, price));
 			} else {
-				DoorListener.builders.put(player.getUniqueId(), new Portal.Local(PortalType.DOOR, world.get(), vector3d, rotation, price));
+				DoorListener.builders.put(player.getUniqueId(), new Portal.Local(PortalType.DOOR, world.get(), vector3d, rotation, price, bedRespawn));
 			}
 		}
 	}
@@ -56,11 +56,11 @@ public class CMDObj {
 		}
 
 		@Override
-		protected void init(Player player, Optional<String> server, Optional<World> world, Optional<Vector3d> vector3d, Rotation rotation, double price) {
+		protected void init(Player player, Optional<String> server, Optional<World> world, Optional<Vector3d> vector3d, Rotation rotation, double price, boolean bedRespawn) {
 			if (server.isPresent()) {
 				LeverListener.builders.put(player.getUniqueId(), new Portal.Server(PortalType.LEVER, server.get(), rotation, price));
 			} else {
-				LeverListener.builders.put(player.getUniqueId(), new Portal.Local(PortalType.LEVER, world.get(), vector3d, rotation, price));
+				LeverListener.builders.put(player.getUniqueId(), new Portal.Local(PortalType.LEVER, world.get(), vector3d, rotation, price, bedRespawn));
 			}
 		}
 	}
@@ -72,11 +72,11 @@ public class CMDObj {
 		}
 
 		@Override
-		protected void init(Player player, Optional<String> server, Optional<World> world, Optional<Vector3d> vector3d, Rotation rotation, double price) {
+		protected void init(Player player, Optional<String> server, Optional<World> world, Optional<Vector3d> vector3d, Rotation rotation, double price, boolean bedRespawn) {
 			if (server.isPresent()) {
 				PlateListener.builders.put(player.getUniqueId(), new Portal.Server(PortalType.PLATE, server.get(), rotation, price));
 			} else {
-				PlateListener.builders.put(player.getUniqueId(), new Portal.Local(PortalType.PLATE, world.get(), vector3d, rotation, price));
+				PlateListener.builders.put(player.getUniqueId(), new Portal.Local(PortalType.PLATE, world.get(), vector3d, rotation, price, bedRespawn));
 			}
 		}
 	}
@@ -88,11 +88,11 @@ public class CMDObj {
 		}
 
 		@Override
-		protected void init(Player player, Optional<String> server, Optional<World> world, Optional<Vector3d> vector3d, Rotation rotation, double price) {
+		protected void init(Player player, Optional<String> server, Optional<World> world, Optional<Vector3d> vector3d, Rotation rotation, double price, boolean bedRespawn) {
 			if (server.isPresent()) {
 				SignListener.builders.put(player.getUniqueId(), new Portal.Server(PortalType.SIGN, server.get(), rotation, price));
 			} else {
-				SignListener.builders.put(player.getUniqueId(), new Portal.Local(PortalType.SIGN, world.get(), vector3d, rotation, price));
+				SignListener.builders.put(player.getUniqueId(), new Portal.Local(PortalType.SIGN, world.get(), vector3d, rotation, price, bedRespawn));
 			}
 		}
 	}

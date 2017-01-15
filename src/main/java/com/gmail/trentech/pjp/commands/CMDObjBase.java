@@ -13,10 +13,12 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
+import com.gmail.trentech.helpme.help.Help;
 import com.gmail.trentech.pjp.rotation.Rotation;
 
 import flavor.pie.spongycord.SpongyCord;
@@ -36,12 +38,17 @@ public abstract class CMDObjBase implements CommandExecutor {
 		}
 		Player player = (Player) src;
 
+		if (!args.hasAny("destination")) {
+			Help help = Help.get(name).get();
+			throw new CommandException(Text.builder().onClick(TextActions.executeCallback(help.execute())).append(help.getUsageText()).build(), false);
+		}
 		String destination = args.<String>getOne("destination").get();
 
 		Optional<Vector3d> vector3d = Optional.empty();
 		AtomicReference<Rotation> direction = new AtomicReference<>(Rotation.EAST);
 		AtomicReference<Double> price = new AtomicReference<>(0.0);
-
+		boolean bedRespawn = false;
+		
 		if (args.hasAny("price")) {
 			price.set(args.<Double>getOne("price").get());
 		}
@@ -65,7 +72,7 @@ public abstract class CMDObjBase implements CommandExecutor {
 						}
 					}
 
-					init(player, Optional.of(destination), Optional.empty(), Optional.empty(), direction.get(), price.get());
+					init(player, Optional.of(destination), Optional.empty(), Optional.empty(), direction.get(), price.get(), false);
 
 					player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place " + name + " to create " + name + " portal"));
 				};
@@ -86,6 +93,8 @@ public abstract class CMDObjBase implements CommandExecutor {
 
 				if (coords[0].equalsIgnoreCase("random")) {
 					vector3d = Optional.of(new Vector3d(0, 0, 0));
+				} else if(coords[0].equalsIgnoreCase("bed")) {
+					bedRespawn = true;
 				} else {
 					try {
 						vector3d = Optional.of(new Vector3d(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2])));
@@ -99,7 +108,7 @@ public abstract class CMDObjBase implements CommandExecutor {
 				direction.set(args.<Rotation>getOne("direction").get());
 			}
 
-			init(player, Optional.empty(), world, vector3d, direction.get(), price.get());
+			init(player, Optional.empty(), world, vector3d, direction.get(), price.get(), bedRespawn);
 
 			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place " + name + " to create " + name + " portal"));
 		}
@@ -107,5 +116,5 @@ public abstract class CMDObjBase implements CommandExecutor {
 		return CommandResult.success();
 	}
 
-	protected abstract void init(Player player, Optional<String> server, Optional<World> world, Optional<Vector3d> vector3d, Rotation rotation, double price);
+	protected abstract void init(Player player, Optional<String> server, Optional<World> world, Optional<Vector3d> vector3d, Rotation rotation, double price, boolean bedRespawn);
 }

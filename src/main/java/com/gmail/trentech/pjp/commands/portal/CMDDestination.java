@@ -12,10 +12,12 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
+import com.gmail.trentech.helpme.help.Help;
 import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.Portal.Server;
 
@@ -30,8 +32,16 @@ public class CMDDestination implements CommandExecutor {
 		}
 		Player player = (Player) src;
 
+		if (!args.hasAny("name")) {
+			Help help = Help.get("portal destination").get();
+			throw new CommandException(Text.builder().onClick(TextActions.executeCallback(help.execute())).append(help.getUsageText()).build(), false);
+		}
 		Portal portal = args.<Portal>getOne("name").get();
 
+		if (!args.hasAny("destination")) {
+			Help help = Help.get("portal destination").get();
+			throw new CommandException(Text.builder().onClick(TextActions.executeCallback(help.execute())).append(help.getUsageText()).build(), false);
+		}
 		String destination = args.<String>getOne("destination").get();
 
 		if (portal instanceof Portal.Server) {

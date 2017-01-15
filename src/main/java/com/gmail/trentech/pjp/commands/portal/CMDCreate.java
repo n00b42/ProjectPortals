@@ -19,6 +19,7 @@ import org.spongepowered.api.text.format.TextStyles;
 import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
+import com.gmail.trentech.helpme.help.Help;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
@@ -42,6 +43,10 @@ public class CMDCreate implements CommandExecutor {
 		}
 		Player player = (Player) src;
 
+		if (!args.hasAny("name")) {
+			Help help = Help.get("portal create").get();
+			throw new CommandException(Text.builder().onClick(TextActions.executeCallback(help.execute())).append(help.getUsageText()).build(), false);
+		}
 		String name = args.<String>getOne("name").get().toLowerCase();
 
 		if (Portal.get(name, PortalType.PORTAL).isPresent()) {
@@ -53,6 +58,7 @@ public class CMDCreate implements CommandExecutor {
 		Optional<Vector3d> vector3d = Optional.empty();
 		AtomicReference<Rotation> rotation = new AtomicReference<>(Rotation.EAST);
 		AtomicReference<Double> price = new AtomicReference<>(0.0);
+		boolean bedRespawn = false;
 		AtomicReference<Particle> particle = new AtomicReference<>(Particles.getDefaultEffect("portal"));
 		AtomicReference<Optional<ParticleColor>> color = new AtomicReference<>(Particles.getDefaultColor("portal", particle.get().isColorable()));
 
@@ -120,6 +126,8 @@ public class CMDCreate implements CommandExecutor {
 
 				if (coords[0].equalsIgnoreCase("random")) {
 					vector3d = Optional.of(new Vector3d(0, 0, 0));
+				} else if(coords[0].equalsIgnoreCase("bed")) {
+					bedRespawn = true;
 				} else {
 					try {
 						vector3d = Optional.of(new Vector3d(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2])));
@@ -133,7 +141,7 @@ public class CMDCreate implements CommandExecutor {
 				rotation.set(args.<Rotation>getOne("direction").get());
 			}
 
-			Portal.Local local = new Portal.Local(PortalType.PORTAL, world.get(), vector3d, rotation.get(), price.get());
+			Portal.Local local = new Portal.Local(PortalType.PORTAL, world.get(), vector3d, rotation.get(), price.get(), bedRespawn);
 			Properties properties = new Properties(particle.get(), color.get());
 			local.setProperties(properties);
 			local.setName(name);

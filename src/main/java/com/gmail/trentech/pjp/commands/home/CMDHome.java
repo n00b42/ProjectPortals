@@ -1,21 +1,16 @@
 package com.gmail.trentech.pjp.commands.home;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -70,45 +65,9 @@ public class CMDHome implements CommandExecutor {
 		}
 
 		src.sendMessage(Text.of(TextColors.YELLOW, " /home <name> [player]"));
-		
-		if (Sponge.getPluginManager().isLoaded("helpme")) {
-			Help.executeList(src, Help.get("home").get().getChildren());
+
+		Help.executeList(src, Help.get("home").get().getChildren());
 			
-			return CommandResult.success();
-		}
-		
-		List<Text> list = new ArrayList<>();
-
-		if (src.hasPermission("pjp.cmd.home.others")) {
-			list.add(Text.of(TextColors.YELLOW, " /home <name> [player]\n"));
-		}
-		if (src.hasPermission("pjp.cmd.home.create")) {
-			list.add(Text.builder().color(TextColors.GREEN).onClick(TextActions.runCommand("/pjp:home create")).append(Text.of(" /home create")).build());
-		}
-		if (src.hasPermission("pjp.cmd.home.remove")) {
-			list.add(Text.builder().color(TextColors.GREEN).onClick(TextActions.runCommand("/pjp:home remove")).append(Text.of(" /home remove")).build());
-		}
-		if (src.hasPermission("pjp.cmd.home.rename")) {
-			list.add(Text.builder().color(TextColors.GREEN).onClick(TextActions.runCommand("/pjp:home rename")).append(Text.of(" /home rename")).build());
-		}
-		if (src.hasPermission("pjp.cmd.home.list")) {
-			list.add(Text.builder().color(TextColors.GREEN).onClick(TextActions.runCommand("/pjp:home list")).append(Text.of(" /home list")).build());
-		}
-
-		if (src instanceof Player) {
-			PaginationList.Builder pages = PaginationList.builder();
-
-			pages.title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, "Command List")).build());
-
-			pages.contents(list);
-
-			pages.sendTo(src);
-		} else {
-			for (Text text : list) {
-				src.sendMessage(text);
-			}
-		}
-
 		return CommandResult.success();
 	}
 

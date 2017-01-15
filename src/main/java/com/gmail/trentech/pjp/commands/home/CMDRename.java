@@ -12,8 +12,10 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.data.DataTransactionResult;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
+import com.gmail.trentech.helpme.help.Help;
 import com.gmail.trentech.pjp.data.Keys;
 import com.gmail.trentech.pjp.data.mutable.HomeData;
 import com.gmail.trentech.pjp.portal.Portal;
@@ -27,6 +29,10 @@ public class CMDRename implements CommandExecutor {
 		}
 		Player player = (Player) src;
 
+		if (!args.hasAny("oldName")) {
+			Help help = Help.get("home rename").get();
+			throw new CommandException(Text.builder().onClick(TextActions.executeCallback(help.execute())).append(help.getUsageText()).build(), false);
+		}
 		String oldName = args.<String>getOne("oldName").get().toLowerCase();
 
 		Map<String, Portal> list = new HashMap<>();
@@ -42,6 +48,10 @@ public class CMDRename implements CommandExecutor {
 		}
 		Portal.Local local = (Portal.Local) list.get(oldName);
 
+		if (!args.hasAny("newName")) {
+			Help help = Help.get("home rename").get();
+			throw new CommandException(Text.builder().onClick(TextActions.executeCallback(help.execute())).append(help.getUsageText()).build(), false);
+		}
 		String newName = args.<String>getOne("newName").get().toLowerCase();
 
 		if (list.containsKey(newName)) {
