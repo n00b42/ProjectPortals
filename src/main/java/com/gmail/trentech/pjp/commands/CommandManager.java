@@ -118,9 +118,9 @@ public class CommandManager {
 
 	private CommandSpec cmdPortalDestination = CommandSpec.builder()
 		    .description(Text.of("Change a existing portals destination"))
-		    .permission("pjp.cmd.portal.rename")
+		    .permission("pjp.cmd.portal.destination")
 		    .arguments(GenericArguments.optional(new PortalElement(Text.of("name"), PortalType.PORTAL)), GenericArguments.optional(GenericArguments.string(Text.of("destination"))), GenericArguments.optional(GenericArguments.string(Text.of("x,y,z"))))
-		    .executor(new com.gmail.trentech.pjp.commands.portal.CMDRename())
+		    .executor(new com.gmail.trentech.pjp.commands.portal.CMDDestination())
 		    .build();
 	
 	private CommandSpec cmdPortalRemove = CommandSpec.builder()
