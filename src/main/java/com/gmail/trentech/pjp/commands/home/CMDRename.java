@@ -15,7 +15,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
-import com.gmail.trentech.helpme.help.Help;
+import com.gmail.trentech.pjc.help.Help;
 import com.gmail.trentech.pjp.data.Keys;
 import com.gmail.trentech.pjp.data.mutable.HomeData;
 import com.gmail.trentech.pjp.portal.Portal;

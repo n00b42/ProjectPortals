@@ -24,6 +24,8 @@ import org.spongepowered.api.world.TeleportHelper;
 import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
+import com.gmail.trentech.pjc.core.ConfigManager;
+import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.events.TeleportEvent.Local;
 import com.gmail.trentech.pjp.portal.Portal;
@@ -74,7 +76,7 @@ public class Teleport {
 	public static Optional<Location<World>> getRandomLocation(World world) {
 		Location<World> spawnLocation = world.getSpawnLocation();
 
-		int radius = ConfigManager.get().getConfig().getNode("options", "random_spawn_radius").getInt() / 2;
+		int radius = ConfigManager.get(Main.getPlugin()).getConfig().getNode("options", "random_spawn_radius").getInt() / 2;
 
 		for(int i = 0; i < 20; i++) {
 			double x = (random.nextDouble() * (radius * 2) - radius) + spawnLocation.getBlockX();

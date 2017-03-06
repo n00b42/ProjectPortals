@@ -26,12 +26,12 @@ import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import com.gmail.trentech.pjc.core.ConfigManager;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.commands.CMDBack;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.events.TeleportEvent;
-import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Teleport;
 import com.gmail.trentech.pjp.utils.Timings;
 
@@ -106,7 +106,7 @@ public class TeleportListener {
 			}
 			event.setDestination(optionalLocation.get());
 
-			ConfigurationNode node = ConfigManager.get().getConfig().getNode("options", "teleport_message");
+			ConfigurationNode node = ConfigManager.get(Main.getPlugin()).getConfig().getNode("options", "teleport_message");
 
 			if (node.getNode("enable").getBoolean()) {
 				Text title = TextSerializers.FORMATTING_CODE.deserialize(node.getNode("title").getString().replaceAll("%WORLD%", dest.getExtent().getName()).replaceAll("\\%X%", Integer.toString(dest.getBlockX())).replaceAll("\\%Y%", Integer.toString(dest.getBlockY())).replaceAll("\\%Z%", Integer.toString(dest.getBlockZ())));

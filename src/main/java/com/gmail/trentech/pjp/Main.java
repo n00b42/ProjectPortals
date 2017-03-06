@@ -17,12 +17,14 @@ import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 
+import com.gmail.trentech.pjc.core.ConfigManager;
 import com.gmail.trentech.pjp.commands.CMDBack;
 import com.gmail.trentech.pjp.commands.CommandManager;
 import com.gmail.trentech.pjp.data.immutable.ImmutableHomeData;
 import com.gmail.trentech.pjp.data.immutable.ImmutableSignPortalData;
 import com.gmail.trentech.pjp.data.mutable.HomeData;
 import com.gmail.trentech.pjp.data.mutable.SignPortalData;
+import com.gmail.trentech.pjp.init.Common;
 import com.gmail.trentech.pjp.listeners.ButtonListener;
 import com.gmail.trentech.pjp.listeners.DoorListener;
 import com.gmail.trentech.pjp.listeners.LegacyListener;
@@ -34,8 +36,6 @@ import com.gmail.trentech.pjp.listeners.TeleportListener;
 import com.gmail.trentech.pjp.portal.LocationSerializable;
 import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.Properties;
-import com.gmail.trentech.pjp.utils.CommandHelp;
-import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Resource;
 import com.gmail.trentech.pjp.utils.SQLUtils;
 import com.gmail.trentech.pjp.utils.Timings;
@@ -45,7 +45,7 @@ import me.flibio.updatifier.Updatifier;
 import ninja.leaping.configurate.ConfigurationNode;
 
 @Updatifier(repoName = Resource.NAME, repoOwner = Resource.AUTHOR, version = Resource.VERSION)
-@Plugin(id = Resource.ID, name = Resource.NAME, version = Resource.VERSION, description = Resource.DESCRIPTION, authors = Resource.AUTHOR, url = Resource.URL, dependencies = { @Dependency(id = "Updatifier", optional = true), @Dependency(id = "helpme", version = "0.2.3", optional = false) })
+@Plugin(id = Resource.ID, name = Resource.NAME, version = Resource.VERSION, description = Resource.DESCRIPTION, authors = Resource.AUTHOR, url = Resource.URL, dependencies = { @Dependency(id = "Updatifier", optional = true), @Dependency(id = "pjc", optional = false) })
 public class Main {
 
 	@Inject
@@ -72,8 +72,9 @@ public class Main {
 
 	@Listener
 	public void onInitialization(GameInitializationEvent event) {
-		ConfigManager configManager = ConfigManager.init();
-		ConfigurationNode config = configManager.getConfig();
+		Common.initConfig();
+		
+		ConfigurationNode config = ConfigManager.get(getPlugin()).getConfig();
 
 		Timings timings = new Timings();
 
@@ -147,8 +148,8 @@ public class Main {
 			getLog().info("Warp module activated");
 		}
 
-		CommandHelp.init(modules);
-		
+		Common.initHelp();
+
 		SQLUtils.createTables();
 	}
 
@@ -165,8 +166,9 @@ public class Main {
 			Sponge.getCommandManager().removeMapping(mapping);
 		}
 
-		ConfigManager configManager = ConfigManager.init();
-		ConfigurationNode config = configManager.getConfig();
+		Common.initConfig();
+		
+		ConfigurationNode config = ConfigManager.get(getPlugin()).getConfig();
 
 		Timings timings = new Timings();
 

@@ -13,10 +13,10 @@ import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import com.gmail.trentech.pjc.core.ConfigManager;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
-import com.gmail.trentech.pjp.utils.ConfigManager;
 
 public class Particle {
 
@@ -61,7 +61,7 @@ public class Particle {
 			return;
 		}
 
-		if (ConfigManager.get().getConfig().getNode("options", "particles", "enable").getBoolean()) {
+		if (ConfigManager.get(Main.getPlugin()).getConfig().getNode("options", "particles", "enable").getBoolean()) {
 			spawnNonRepeat(location, player, color);
 		}
 	}
@@ -71,7 +71,7 @@ public class Particle {
 			return;
 		}
 
-		if (ConfigManager.get().getConfig().getNode("options", "particles", "enable").getBoolean()) {
+		if (ConfigManager.get(Main.getPlugin()).getConfig().getNode("options", "particles", "enable").getBoolean()) {
 			spawnRepeat(name, locations, color);
 		}
 	}

@@ -19,12 +19,13 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import com.gmail.trentech.pjc.core.ConfigManager;
+import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.Keys;
 import com.gmail.trentech.pjp.data.mutable.SignPortalData;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.portal.Portal;
-import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Teleport;
 import com.gmail.trentech.pjp.utils.Timings;
 
@@ -86,7 +87,7 @@ public class SignListener {
 			}
 			Portal portal = optionalPortal.get();
 
-			if (ConfigManager.get().getConfig().getNode("options", "advanced_permissions").getBoolean()) {
+			if (ConfigManager.get(Main.getPlugin()).getConfig().getNode("options", "advanced_permissions").getBoolean()) {
 				if (!player.hasPermission("pjp.sign." + location.getExtent().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ())) {
 					player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use this sign portal"));
 					event.setCancelled(true);

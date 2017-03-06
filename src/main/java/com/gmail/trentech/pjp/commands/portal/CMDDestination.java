@@ -17,7 +17,7 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
-import com.gmail.trentech.helpme.help.Help;
+import com.gmail.trentech.pjc.help.Help;
 import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.Portal.Server;
 

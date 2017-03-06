@@ -17,13 +17,14 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.helpme.help.Help;
+import com.gmail.trentech.pjc.core.ConfigManager;
+import com.gmail.trentech.pjc.help.Help;
+import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.Keys;
 import com.gmail.trentech.pjp.data.mutable.HomeData;
 import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
 import com.gmail.trentech.pjp.rotation.Rotation;
-import com.gmail.trentech.pjp.utils.ConfigManager;
 
 public class CMDCreate implements CommandExecutor {
 
@@ -48,7 +49,7 @@ public class CMDCreate implements CommandExecutor {
 			list = optionalList.get();
 		}
 
-		int defaultAmount = ConfigManager.get().getConfig().getNode("options", "homes").getInt();
+		int defaultAmount = ConfigManager.get(Main.getPlugin()).getConfig().getNode("options", "homes").getInt();
 
 		int amount = list.size();
 

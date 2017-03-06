@@ -19,7 +19,9 @@ import org.spongepowered.api.text.format.TextStyles;
 import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
-import com.gmail.trentech.helpme.help.Help;
+import com.gmail.trentech.pjc.core.ConfigManager;
+import com.gmail.trentech.pjc.help.Help;
+import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
@@ -30,7 +32,6 @@ import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
 import com.gmail.trentech.pjp.portal.Properties;
 import com.gmail.trentech.pjp.rotation.Rotation;
-import com.gmail.trentech.pjp.utils.ConfigManager;
 
 import flavor.pie.spongycord.SpongyCord;
 
@@ -98,7 +99,7 @@ public class CMDCreate implements CommandExecutor {
 					server.setProperties(properties);
 					server.setName(name);
 
-					if (ConfigManager.get().getConfig().getNode("options", "portal", "legacy_builder").getBoolean()) {
+					if (ConfigManager.get(Main.getPlugin()).getConfig().getNode("options", "portal", "legacy_builder").getBoolean()) {
 						LegacyListener.builders.put(player.getUniqueId(), new LegacyBuilder(server));
 						player.sendMessage(Text.builder().color(TextColors.DARK_GREEN).append(Text.of("Begin building your portal frame, followed by ")).onClick(TextActions.runCommand("/pjp:portal save")).append(Text.of(TextColors.YELLOW, TextStyles.UNDERLINE, "/portal save")).build());
 					} else {
@@ -146,7 +147,7 @@ public class CMDCreate implements CommandExecutor {
 			local.setProperties(properties);
 			local.setName(name);
 
-			if (ConfigManager.get().getConfig().getNode("options", "portal", "legacy_builder").getBoolean()) {
+			if (ConfigManager.get(Main.getPlugin()).getConfig().getNode("options", "portal", "legacy_builder").getBoolean()) {
 				LegacyListener.builders.put(player.getUniqueId(), new LegacyBuilder(local));
 				player.sendMessage(Text.builder().color(TextColors.DARK_GREEN).append(Text.of("Begin building your portal frame, followed by ")).onClick(TextActions.runCommand("/pjp:portal save")).append(Text.of(TextColors.YELLOW, TextStyles.UNDERLINE, "/portal save")).build());
 			} else {

@@ -9,7 +9,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-import com.gmail.trentech.helpme.help.Help;
+import com.gmail.trentech.pjc.help.Help;
 import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.utils.Teleport;
 

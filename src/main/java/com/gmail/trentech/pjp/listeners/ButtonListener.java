@@ -19,9 +19,10 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import com.gmail.trentech.pjc.core.ConfigManager;
+import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
-import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Teleport;
 import com.gmail.trentech.pjp.utils.Timings;
 
@@ -66,7 +67,7 @@ public class ButtonListener {
 				}
 				Portal portal = optionalPortal.get();
 
-				if (ConfigManager.get().getConfig().getNode("options", "advanced_permissions").getBoolean()) {
+				if (ConfigManager.get(Main.getPlugin()).getConfig().getNode("options", "advanced_permissions").getBoolean()) {
 					if (!player.hasPermission("pjp.button." + location.getExtent().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ())) {
 						player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use this button portal"));
 						event.setCancelled(true);

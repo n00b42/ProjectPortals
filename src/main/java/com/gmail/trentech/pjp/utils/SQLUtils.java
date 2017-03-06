@@ -9,13 +9,16 @@ import javax.sql.DataSource;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.service.sql.SqlService;
 
+import com.gmail.trentech.pjc.core.ConfigManager;
+import com.gmail.trentech.pjp.Main;
+
 public abstract class SQLUtils {
 
-	protected static String prefix = ConfigManager.get().getConfig().getNode("settings", "sql", "prefix").getString();
-	protected static boolean enableSQL = ConfigManager.get().getConfig().getNode("settings", "sql", "enable").getBoolean();
-	protected static String url = ConfigManager.get().getConfig().getNode("settings", "sql", "url").getString();
-	protected static String username = ConfigManager.get().getConfig().getNode("settings", "sql", "username").getString();
-	protected static String password = ConfigManager.get().getConfig().getNode("settings", "sql", "password").getString();
+	protected static String prefix = ConfigManager.get(Main.getPlugin()).getConfig().getNode("settings", "sql", "prefix").getString();
+	protected static boolean enableSQL = ConfigManager.get(Main.getPlugin()).getConfig().getNode("settings", "sql", "enable").getBoolean();
+	protected static String url = ConfigManager.get(Main.getPlugin()).getConfig().getNode("settings", "sql", "url").getString();
+	protected static String username = ConfigManager.get(Main.getPlugin()).getConfig().getNode("settings", "sql", "username").getString();
+	protected static String password = ConfigManager.get(Main.getPlugin()).getConfig().getNode("settings", "sql", "password").getString();
 	protected static SqlService sql;
 
 	protected static DataSource getDataSource() throws SQLException {

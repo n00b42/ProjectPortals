@@ -31,12 +31,12 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
+import com.gmail.trentech.pjc.core.ConfigManager;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.events.ConstructPortalEvent;
 import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
 import com.gmail.trentech.pjp.rotation.PlayerRotation;
-import com.gmail.trentech.pjp.utils.ConfigManager;
 import com.gmail.trentech.pjp.utils.Teleport;
 import com.gmail.trentech.pjp.utils.Timings;
 
@@ -126,7 +126,7 @@ public class PortalListener {
 				}
 			}
 
-			ConfigurationNode config = ConfigManager.get().getConfig();
+			ConfigurationNode config = ConfigManager.get(Main.getPlugin()).getConfig();
 
 			int size = config.getNode("options", "portal", "size").getInt();
 			if (locations.size() > size) {
@@ -164,7 +164,7 @@ public class PortalListener {
 			}
 			Portal.Local local = (Portal.Local) portal;
 
-			if (!ConfigManager.get().getConfig().getNode("options", "portal", "teleport_item").getBoolean()) {
+			if (!ConfigManager.get(Main.getPlugin()).getConfig().getNode("options", "portal", "teleport_item").getBoolean()) {
 				return;
 			}
 
@@ -206,7 +206,7 @@ public class PortalListener {
 			}
 			Portal.Local local = (Portal.Local) portal;
 
-			if (!ConfigManager.get().getConfig().getNode("options", "portal", "teleport_mob").getBoolean()) {
+			if (!ConfigManager.get(Main.getPlugin()).getConfig().getNode("options", "portal", "teleport_mob").getBoolean()) {
 				return;
 			}
 
@@ -241,7 +241,7 @@ public class PortalListener {
 			}
 			Portal portal = optionalPortal.get();
 
-			if (ConfigManager.get().getConfig().getNode("options", "advanced_permissions").getBoolean()) {
+			if (ConfigManager.get(Main.getPlugin()).getConfig().getNode("options", "advanced_permissions").getBoolean()) {
 				if (!player.hasPermission("pjp.portal." + portal.getName())) {
 					player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use this portal"));
 					return;
