@@ -3,6 +3,7 @@ package com.gmail.trentech.pjp;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
@@ -18,6 +19,7 @@ import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 
 import com.gmail.trentech.pjc.core.ConfigManager;
+import com.gmail.trentech.pjc.core.SQLManager;
 import com.gmail.trentech.pjp.commands.CMDBack;
 import com.gmail.trentech.pjp.commands.CommandManager;
 import com.gmail.trentech.pjp.data.immutable.ImmutableHomeData;
@@ -37,7 +39,6 @@ import com.gmail.trentech.pjp.portal.LocationSerializable;
 import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.Properties;
 import com.gmail.trentech.pjp.utils.Resource;
-import com.gmail.trentech.pjp.utils.SQLUtils;
 import com.gmail.trentech.pjp.utils.Timings;
 import com.google.inject.Inject;
 
@@ -150,7 +151,12 @@ public class Main {
 
 		Common.initHelp();
 
-		SQLUtils.createTables();
+		HashMap<String, String> hash = new HashMap<>();
+		
+		hash.put("Name", "TEXT");
+		hash.put("Data", "TEXT");
+
+		SQLManager.get(getPlugin()).createTable("PORTALS", hash);
 	}
 
 	@Listener

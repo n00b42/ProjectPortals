@@ -37,17 +37,18 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
+import com.gmail.trentech.pjc.Main;
+import com.gmail.trentech.pjc.core.SQLManager;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.rotation.Rotation;
-import com.gmail.trentech.pjp.utils.SQLUtils;
 import com.gmail.trentech.pjp.utils.Teleport;
 import com.google.common.reflect.TypeToken;
 
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 
-public abstract class Portal extends SQLUtils implements DataSerializable {
+public abstract class Portal implements DataSerializable {
 
 	private final PortalType type;
 	private String name;
@@ -125,9 +126,10 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 
 	public static void init() {
 		try {
-			Connection connection = getDataSource().getConnection();
+			SQLManager sqlManager = SQLManager.get(Main.getPlugin());
+			Connection connection = sqlManager.getDataSource().getConnection();
 
-			PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + getPrefix("PORTALS"));
+			PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + sqlManager.getPrefix("PORTALS"));
 
 			ResultSet result = statement.executeQuery();
 
@@ -155,9 +157,10 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 		this.name = name;
 
 		try {
-			Connection connection = getDataSource().getConnection();
+			SQLManager sqlManager = SQLManager.get(Main.getPlugin());
+			Connection connection = sqlManager.getDataSource().getConnection();
 
-			PreparedStatement statement = connection.prepareStatement("INSERT into " + getPrefix("PORTALS") + " (Name, Data) VALUES (?, ?)");
+			PreparedStatement statement = connection.prepareStatement("INSERT into " + sqlManager.getPrefix("PORTALS") + " (Name, Data) VALUES (?, ?)");
 
 			statement.setString(1, name);
 			statement.setString(2, serialize(this));
@@ -188,9 +191,10 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 
 	public void update() {
 		try {
-			Connection connection = getDataSource().getConnection();
+			SQLManager sqlManager = SQLManager.get(Main.getPlugin());
+			Connection connection = sqlManager.getDataSource().getConnection();
 
-			PreparedStatement statement = connection.prepareStatement("UPDATE " + getPrefix("PORTALS") + " SET Data = ? WHERE Name = ?");
+			PreparedStatement statement = connection.prepareStatement("UPDATE " + sqlManager.getPrefix("PORTALS") + " SET Data = ? WHERE Name = ?");
 
 			statement.setString(1, serialize(this));
 			statement.setString(2, name);
@@ -221,9 +225,10 @@ public abstract class Portal extends SQLUtils implements DataSerializable {
 
 	public void remove() {
 		try {
-			Connection connection = getDataSource().getConnection();
+			SQLManager sqlManager = SQLManager.get(Main.getPlugin());
+			Connection connection = sqlManager.getDataSource().getConnection();
 
-			PreparedStatement statement = connection.prepareStatement("DELETE from " + getPrefix("PORTALS") + " WHERE Name = ?");
+			PreparedStatement statement = connection.prepareStatement("DELETE from " + sqlManager.getPrefix("PORTALS") + " WHERE Name = ?");
 
 			statement.setString(1, name);
 			statement.executeUpdate();
