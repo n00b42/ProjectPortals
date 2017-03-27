@@ -37,6 +37,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
+import com.gmail.trentech.pjc.core.ConfigManager;
 import com.gmail.trentech.pjc.core.SQLManager;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.effects.Particle;
@@ -126,7 +127,9 @@ public abstract class Portal implements DataSerializable {
 
 	public static void init() {
 		try {
-			SQLManager sqlManager = SQLManager.get(Main.getPlugin());
+			String database = ConfigManager.get(Main.getPlugin()).getConfig().getNode("settings", "sql", "database").getString();
+
+			SQLManager sqlManager = SQLManager.get(Main.getPlugin(), database);
 			Connection connection = sqlManager.getDataSource().getConnection();
 
 			PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + sqlManager.getPrefix("PORTALS"));
@@ -157,7 +160,9 @@ public abstract class Portal implements DataSerializable {
 		this.name = name;
 
 		try {
-			SQLManager sqlManager = SQLManager.get(Main.getPlugin());
+			String database = ConfigManager.get(Main.getPlugin()).getConfig().getNode("settings", "sql", "database").getString();
+
+			SQLManager sqlManager = SQLManager.get(Main.getPlugin(), database);
 			Connection connection = sqlManager.getDataSource().getConnection();
 
 			PreparedStatement statement = connection.prepareStatement("INSERT into " + sqlManager.getPrefix("PORTALS") + " (Name, Data) VALUES (?, ?)");
@@ -191,7 +196,9 @@ public abstract class Portal implements DataSerializable {
 
 	public void update() {
 		try {
-			SQLManager sqlManager = SQLManager.get(Main.getPlugin());
+			String database = ConfigManager.get(Main.getPlugin()).getConfig().getNode("settings", "sql", "database").getString();
+
+			SQLManager sqlManager = SQLManager.get(Main.getPlugin(), database);
 			Connection connection = sqlManager.getDataSource().getConnection();
 
 			PreparedStatement statement = connection.prepareStatement("UPDATE " + sqlManager.getPrefix("PORTALS") + " SET Data = ? WHERE Name = ?");
@@ -225,7 +232,9 @@ public abstract class Portal implements DataSerializable {
 
 	public void remove() {
 		try {
-			SQLManager sqlManager = SQLManager.get(Main.getPlugin());
+			String database = ConfigManager.get(Main.getPlugin()).getConfig().getNode("settings", "sql", "database").getString();
+
+			SQLManager sqlManager = SQLManager.get(Main.getPlugin(), database);
 			Connection connection = sqlManager.getDataSource().getConnection();
 
 			PreparedStatement statement = connection.prepareStatement("DELETE from " + sqlManager.getPrefix("PORTALS") + " WHERE Name = ?");

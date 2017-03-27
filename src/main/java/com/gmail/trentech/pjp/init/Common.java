@@ -24,7 +24,9 @@ public class Common {
 	
 	public static void initData() {
 		try {
-			SQLManager sqlManager = SQLManager.get(Main.getPlugin());
+			String database = ConfigManager.get(Main.getPlugin()).getConfig().getNode("settings", "sql", "database").getString();
+
+			SQLManager sqlManager = SQLManager.get(Main.getPlugin(), database);
 			Connection connection = sqlManager.getDataSource().getConnection();
 
 			PreparedStatement statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS " + sqlManager.getPrefix("PORTALS") + " (Name TEXT, Data TEXT)");
@@ -366,6 +368,9 @@ public class Common {
 		}
 		if (config.getNode("settings", "modules", "back").isVirtual()) {
 			config.getNode("settings", "modules", "back").setValue(true);
+		}
+		if (config.getNode("settings", "sql", "database").isVirtual()) {
+			config.getNode("settings", "sql", "database").setValue(Main.getPlugin().getId());
 		}
 		
 		configManager.save();
