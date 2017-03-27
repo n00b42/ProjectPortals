@@ -47,7 +47,7 @@ public class TeleportListener {
 
 	@Listener
 	public void onTeleportEvent(TeleportEvent event) {
-		timings.onTeleportEvent().startTiming();
+		timings.onTeleportEvent().startTimingIfSync();
 
 		try {
 			Player player = event.getPlayer();
@@ -82,7 +82,7 @@ public class TeleportListener {
 
 	@Listener
 	public void onTeleportEventLocal(TeleportEvent.Local event) {
-		timings.onTeleportEventLocal().startTiming();
+		timings.onTeleportEventLocal().startTimingIfSync();
 
 		try {
 			Player player = event.getPlayer();
@@ -127,7 +127,7 @@ public class TeleportListener {
 
 	@Listener
 	public void onTeleportEventServer(TeleportEvent.Server event) {
-		timings.onTeleportEventServer().startTiming();
+		timings.onTeleportEventServer().startTimingIfSync();
 
 		try {
 			Player player = event.getPlayer();
@@ -146,7 +146,7 @@ public class TeleportListener {
 
 	@Listener
 	public void onMoveEntityEvent(MoveEntityEvent.Teleport event, @Getter("getTargetEntity") Player player) {
-		timings.onMoveEntityEvent().startTiming();
+		timings.onMoveEntityEvent().startTimingIfSync();
 
 		try {
 			if (player.hasPermission("pjp.cmd.back")) {

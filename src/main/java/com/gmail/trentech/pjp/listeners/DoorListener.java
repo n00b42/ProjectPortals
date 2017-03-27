@@ -157,7 +157,7 @@ public class DoorListener {
 				cache.remove(uuid);
 			}).submit(Main.getPlugin());
 		} finally {
-			timings.onMoveEntityEvent().stopTiming();
+			timings.onMoveEntityEvent().stopTimingIfSync();
 		}
 	}
 }

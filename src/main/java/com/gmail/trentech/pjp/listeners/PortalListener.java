@@ -147,7 +147,7 @@ public class PortalListener {
 
 	@Listener
 	public void onMoveEntityEventItem(MoveEntityEvent event, @Getter("getTargetEntity") Item item) {
-		timings.onMoveEntityEvent().startTiming();
+		timings.onMoveEntityEvent().startTimingIfSync();
 
 		try {
 			Location<World> location = item.getLocation();
@@ -179,7 +179,7 @@ public class PortalListener {
 
 			event.setToTransform(new Transform<World>(spawnLocation.getExtent(), spawnLocation.getPosition(), rotation));
 		} finally {
-			timings.onMoveEntityEvent().stopTiming();
+			timings.onMoveEntityEvent().stopTimingIfSync();
 		}
 	}
 
@@ -189,7 +189,7 @@ public class PortalListener {
 			return;
 		}
 
-		timings.onMoveEntityEvent().startTiming();
+		timings.onMoveEntityEvent().startTimingIfSync();
 
 		try {
 			Location<World> location = living.getLocation();
@@ -221,7 +221,7 @@ public class PortalListener {
 
 			event.setToTransform(new Transform<World>(spawnLocation.getExtent(), spawnLocation.getPosition(), rotation));
 		} finally {
-			timings.onMoveEntityEvent().stopTiming();
+			timings.onMoveEntityEvent().stopTimingIfSync();
 		}
 	}
 
@@ -229,7 +229,7 @@ public class PortalListener {
 
 	@Listener(order = Order.FIRST)
 	public void onMoveEntityEventPlayer(MoveEntityEvent event, @Getter("getTargetEntity") Player player) {
-		timings.onMoveEntityEvent().startTiming();
+		timings.onMoveEntityEvent().startTimingIfSync();
 
 		try {
 			Location<World> location = event.getFromTransform().getLocation();
@@ -266,7 +266,7 @@ public class PortalListener {
 				cache.remove(uuid);
 			}).submit(Main.getPlugin());
 		} finally {
-			timings.onMoveEntityEvent().stopTiming();
+			timings.onMoveEntityEvent().stopTimingIfSync();
 		}
 	}
 
