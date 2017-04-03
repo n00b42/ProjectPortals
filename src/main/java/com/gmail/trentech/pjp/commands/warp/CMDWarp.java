@@ -11,7 +11,6 @@ import org.spongepowered.api.text.format.TextColors;
 
 import com.gmail.trentech.pjc.help.Help;
 import com.gmail.trentech.pjp.portal.Portal;
-import com.gmail.trentech.pjp.utils.Teleport;
 
 public class CMDWarp implements CommandExecutor {
 
@@ -37,7 +36,7 @@ public class CMDWarp implements CommandExecutor {
 				player = args.<Player>getOne("player").get();
 			}
 
-			Teleport.teleport(player, portal);
+			Portal.teleportPlayer(player, portal);
 
 			return CommandResult.success();
 		}

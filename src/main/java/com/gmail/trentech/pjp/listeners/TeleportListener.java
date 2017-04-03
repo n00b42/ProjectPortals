@@ -27,12 +27,12 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjc.core.ConfigManager;
+import com.gmail.trentech.pjc.core.TeleportManager;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.commands.CMDBack;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.events.TeleportEvent;
-import com.gmail.trentech.pjp.utils.Teleport;
 import com.gmail.trentech.pjp.utils.Timings;
 
 import ninja.leaping.configurate.ConfigurationNode;
@@ -97,10 +97,10 @@ public class TeleportListener {
 				return;
 			}
 
-			Optional<Location<World>> optionalLocation = Teleport.getSafeLocation(dest);
+			Optional<Location<World>> optionalLocation = TeleportManager.getSafeLocation(dest);
 
 			if (!optionalLocation.isPresent()) {
-				player.sendMessage(Text.builder().color(TextColors.DARK_RED).append(Text.of("Unsafe spawn point detected. Teleport anyway? ")).onClick(TextActions.executeCallback(Teleport.unsafe(dest))).append(Text.of(TextColors.GOLD, TextStyles.UNDERLINE, "Click Here")).build());
+				player.sendMessage(Text.builder().color(TextColors.DARK_RED).append(Text.of("Unsafe spawn point detected. Teleport anyway? ")).onClick(TextActions.executeCallback(TeleportManager.setUnsafeLocation(dest))).append(Text.of(TextColors.GOLD, TextStyles.UNDERLINE, "Click Here")).build());
 				event.setCancelled(true);
 				return;
 			}

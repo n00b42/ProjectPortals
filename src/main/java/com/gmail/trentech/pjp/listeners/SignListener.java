@@ -26,7 +26,6 @@ import com.gmail.trentech.pjp.data.mutable.SignPortalData;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.portal.Portal;
-import com.gmail.trentech.pjp.utils.Teleport;
 import com.gmail.trentech.pjp.utils.Timings;
 
 public class SignListener {
@@ -101,7 +100,7 @@ public class SignListener {
 				}
 			}
 
-			Teleport.teleport(player, portal);
+			Portal.teleportPlayer(player, portal);
 		} finally {
 			timings.onChangeSignEvent().stopTiming();
 		}

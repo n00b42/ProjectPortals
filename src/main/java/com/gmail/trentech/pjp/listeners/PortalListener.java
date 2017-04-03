@@ -37,7 +37,6 @@ import com.gmail.trentech.pjp.events.ConstructPortalEvent;
 import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
 import com.gmail.trentech.pjp.rotation.PlayerRotation;
-import com.gmail.trentech.pjp.utils.Teleport;
 import com.gmail.trentech.pjp.utils.Timings;
 
 import ninja.leaping.configurate.ConfigurationNode;
@@ -260,7 +259,7 @@ public class PortalListener {
 			}
 			cache.add(uuid);
 
-			Teleport.teleport(player, portal);
+			Portal.teleportPlayer(player, portal);
 
 			Sponge.getScheduler().createTaskBuilder().delayTicks(20).execute(c -> {
 				cache.remove(uuid);

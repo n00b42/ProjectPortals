@@ -23,7 +23,6 @@ import com.gmail.trentech.pjc.core.ConfigManager;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
-import com.gmail.trentech.pjp.utils.Teleport;
 import com.gmail.trentech.pjp.utils.Timings;
 
 public class PlateListener {
@@ -81,7 +80,7 @@ public class PlateListener {
 					}
 				}
 
-				Teleport.teleport(player, portal);
+				Portal.teleportPlayer(player, portal);
 			}
 		} finally {
 			timings.onChangeBlockEventModify().stopTiming();

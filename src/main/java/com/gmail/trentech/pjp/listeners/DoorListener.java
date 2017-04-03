@@ -26,7 +26,6 @@ import com.gmail.trentech.pjc.core.ConfigManager;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
-import com.gmail.trentech.pjp.utils.Teleport;
 import com.gmail.trentech.pjp.utils.Timings;
 
 public class DoorListener {
@@ -151,7 +150,7 @@ public class DoorListener {
 
 			cache.add(uuid);
 
-			Teleport.teleport(player, portal);
+			Portal.teleportPlayer(player, portal);
 
 			Sponge.getScheduler().createTaskBuilder().delayTicks(20).execute(c -> {
 				cache.remove(uuid);

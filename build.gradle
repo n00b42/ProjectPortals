@@ -38,7 +38,7 @@ configurations {
 dependencies {
     compile "org.spongepowered:spongeapi:${project.apiVersion}"
     compile 'com.github.TrenTech:ProjectCore:-SNAPSHOT'
-	compile "com.github.pie-flavor:Spongee:-SNAPSHOT"
+	compile "com.github.pie-flavor:SpongyCord:-SNAPSHOT"
     shade "com.github.Flibio:Updatifier:-SNAPSHOT:api"
 }
 

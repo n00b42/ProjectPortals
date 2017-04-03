@@ -19,33 +19,46 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataSerializable;
 import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.MemoryDataContainer;
+import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.persistence.AbstractDataBuilder;
 import org.spongepowered.api.data.persistence.DataContentUpdater;
 import org.spongepowered.api.data.persistence.DataTranslators;
 import org.spongepowered.api.data.persistence.InvalidDataException;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.scheduler.Task;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.RespawnLocation;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjc.core.ConfigManager;
 import com.gmail.trentech.pjc.core.SQLManager;
+import com.gmail.trentech.pjc.core.TeleportManager;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.Particles;
+import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.rotation.Rotation;
-import com.gmail.trentech.pjp.utils.Teleport;
 import com.google.common.reflect.TypeToken;
 
+import flavor.pie.spongycord.SpongyCord;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 
@@ -401,7 +414,7 @@ public abstract class Portal implements DataSerializable {
 				Vector3d vector3d = this.vector3d.get();
 
 				if (vector3d.getX() == 0 && vector3d.getY() == 0 && vector3d.getZ() == 0) {
-					return Teleport.getRandomLocation(world);
+					return TeleportManager.getRandomLocation(world, ConfigManager.get(Main.getPlugin()).getConfig().getNode("options", "random_spawn_radius").getInt());
 				} else {
 					return Optional.of(new Location<World>(world, vector3d));
 				}
@@ -543,5 +556,79 @@ public abstract class Portal implements DataSerializable {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	public static boolean teleportPlayer(Player player, Portal portal) {
+		AtomicReference<Boolean> bool = new AtomicReference<>(false);
+
+		if (portal instanceof Portal.Server) {
+			Portal.Server server = (Portal.Server) portal;
+
+			Consumer<String> consumer = (serverName) -> {
+				TeleportEvent.Server teleportEvent = new TeleportEvent.Server(player, serverName, server.getServer(), server.getPrice(), Cause.of(NamedCause.source(server)));
+
+				if (!Sponge.getEventManager().post(teleportEvent)) {
+					SpongyCord.API.connectPlayer(player, teleportEvent.getDestination());
+
+					player.setLocation(player.getWorld().getSpawnLocation());
+
+					bool.set(true);
+				}
+			};
+
+			SpongyCord.API.getServerName(consumer, player);
+		} else {
+			Portal.Local local = (Portal.Local) portal;
+
+			if(local.isBedSpawn()) {
+				Optional<Map<UUID, RespawnLocation>> optionalLocations = player.get(Keys.RESPAWN_LOCATIONS);
+				
+				if(optionalLocations.isPresent()) {
+					Map<UUID, RespawnLocation> respawnLocations = optionalLocations.get();
+
+					if(respawnLocations.containsKey(local.getWorld().getUniqueId())) {
+						Optional<Location<World>> optionalLocation = respawnLocations.get(local.getWorld().getUniqueId()).asLocation();
+						
+						if(optionalLocation.isPresent()) {
+							Location<World> spawnLocation = optionalLocation.get();
+							
+							com.gmail.trentech.pjp.events.TeleportEvent.Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, local.getPrice(), Cause.of(NamedCause.source(local)));
+
+							if (!Sponge.getEventManager().post(teleportEvent)) {
+								spawnLocation = teleportEvent.getDestination();
+
+								Vector3d rotation = local.getRotation().toVector3d();
+
+								player.setLocationAndRotation(spawnLocation, rotation);
+
+								return true;
+							}
+						}
+					}
+				}
+			}
+			
+			Optional<Location<World>> optionalSpawnLocation = local.getLocation();
+
+			if (optionalSpawnLocation.isPresent()) {
+				Location<World> spawnLocation = optionalSpawnLocation.get();
+
+				com.gmail.trentech.pjp.events.TeleportEvent.Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, local.getPrice(), Cause.of(NamedCause.source(local)));
+
+				if (!Sponge.getEventManager().post(teleportEvent)) {
+					spawnLocation = teleportEvent.getDestination();
+
+					Vector3d rotation = local.getRotation().toVector3d();
+
+					player.setLocationAndRotation(spawnLocation, rotation);
+
+					bool.set(true);
+				}
+			} else {
+				player.sendMessage(Text.of(TextColors.RED, "Could not find location"));
+			}
+		}
+
+		return bool.get();
 	}
 }

@@ -18,7 +18,6 @@ import org.spongepowered.api.world.World;
 import com.gmail.trentech.pjc.help.Help;
 import com.gmail.trentech.pjp.data.Keys;
 import com.gmail.trentech.pjp.portal.Portal;
-import com.gmail.trentech.pjp.utils.Teleport;
 
 public class CMDHome implements CommandExecutor {
 
@@ -59,7 +58,7 @@ public class CMDHome implements CommandExecutor {
 				player = args.<Player>getOne("player").get();
 			}
 
-			Teleport.teleport(player, local);
+			Portal.teleportPlayer(player, local);
 
 			return CommandResult.success();
 		}
