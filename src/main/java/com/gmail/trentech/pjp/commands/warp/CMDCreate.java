@@ -47,6 +47,7 @@ public class CMDCreate implements CommandExecutor {
 		Optional<World> world = Optional.empty();
 		Optional<Vector3d> vector3d = Optional.empty();
 		boolean bedRespawn = false;
+		boolean force = false;
 		AtomicReference<Rotation> rotation = new AtomicReference<>(Rotation.EAST);
 		AtomicReference<Double> price = new AtomicReference<>(0.0);
 
@@ -117,6 +118,10 @@ public class CMDCreate implements CommandExecutor {
 				if (args.hasAny("direction")) {
 					rotation.set(args.<Rotation>getOne("direction").get());
 				}
+				
+				if (args.hasAny("f")) {
+					force = true;
+				}
 			}
 		} else {
 			world = Optional.of(player.getWorld());
@@ -124,7 +129,7 @@ public class CMDCreate implements CommandExecutor {
 			rotation.set(Rotation.getClosest(player.getRotation().getFloorY()));
 		}
 
-		new Portal.Local(PortalType.WARP, world.get(), vector3d, rotation.get(), price.get(), bedRespawn).create(name);
+		new Portal.Local(PortalType.WARP, world.get(), vector3d, rotation.get(), price.get(), bedRespawn, force).create(name);
 
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Warp ", name, " create"));
 

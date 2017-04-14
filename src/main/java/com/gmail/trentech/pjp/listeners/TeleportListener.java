@@ -91,19 +91,26 @@ public class TeleportListener {
 			src = src.getExtent().getLocation(src.getBlockX(), src.getBlockY(), src.getBlockZ());
 			Location<World> dest = event.getDestination();
 
-			if (!player.hasPermission("pjp.worlds." + dest.getExtent().getName()) && !player.hasPermission("pjw.worlds." + dest.getExtent().getName())) {
-				player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to travel to ", dest.getExtent().getName()));
-				event.setCancelled(true);
-				return;
+//			if (!player.hasPermission("pjp.worlds." + dest.getExtent().getName()) && !player.hasPermission("pjw.worlds." + dest.getExtent().getName())) {
+//				player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to travel to ", dest.getExtent().getName()));
+//				event.setCancelled(true);
+//				return;
+//			}
+
+			Optional<Location<World>> optionalLocation = Optional.empty();
+			
+			if(event.force()) {
+				optionalLocation = Optional.of(dest);
+			} else {
+				optionalLocation = TeleportManager.getSafeLocation(dest);
+				
+				if (!optionalLocation.isPresent()) {
+					player.sendMessage(Text.of(Text.builder().color(TextColors.RED).append(Text.of("Unsafe spawn point detected. ")).onClick(TextActions.executeCallback(TeleportManager.setUnsafeLocation(dest))).append(Text.of(TextColors.GOLD, TextStyles.UNDERLINE, "Click Here")).build(), TextColors.RED, " or use the -f flag on portal to force teleport."));
+					event.setCancelled(true);
+					return;
+				}
 			}
 
-			Optional<Location<World>> optionalLocation = TeleportManager.getSafeLocation(dest);
-
-			if (!optionalLocation.isPresent()) {
-				player.sendMessage(Text.builder().color(TextColors.DARK_RED).append(Text.of("Unsafe spawn point detected. Teleport anyway? ")).onClick(TextActions.executeCallback(TeleportManager.setUnsafeLocation(dest))).append(Text.of(TextColors.GOLD, TextStyles.UNDERLINE, "Click Here")).build());
-				event.setCancelled(true);
-				return;
-			}
 			event.setDestination(optionalLocation.get());
 
 			ConfigurationNode node = ConfigManager.get(Main.getPlugin()).getConfig().getNode("options", "teleport_message");

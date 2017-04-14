@@ -43,6 +43,7 @@ public class Common {
 		
 		Usage usagePortal = new Usage(Argument.of("<destination>", "Specifies a world or server if [-b] is supplied"))
 				.addArgument(Argument.of("[-b]", "Specifies that <destination> is a bungee connected server"))
+				.addArgument(Argument.of("[-f]", "Skips safe location check. Has no effect with '-c random' or '-c bed'"))
 				.addArgument(Argument.of("[-c <x,y,z>]", "Specifies the coordinates to set spawn to. x and z must fall within the range -30,000,000 to 30,000,000 (exclusive, without the "
 						+ "commas), and y must be within the range -4096 to 4096 inclusive. This is ignored if [-b] is supplied"))
 				.addArgument(Argument.of("[-d <direction>]", "Specifies the direction player will face upon teleporting. The following can be used: NORTH, NORTH_WEST, WEST, SOUTH_WEST, SOUTH, SOUTH_EAST, EAST, NORTH_EAST"))
@@ -112,6 +113,7 @@ public class Common {
 			Usage usageCreate = new Usage(Argument.of("<name>", "Specifies the name of the new portal"))
 					.addArgument(Argument.of("<destination>", "Specifies a world or server if argument [-b] is supplied"))
 					.addArgument(Argument.of("[-b]", "Specifies that <destination> is a bungee connected server"))
+					.addArgument(Argument.of("[-f]", "Skips safe location check. Has no effect with '-c random' or '-c bed'"))
 					.addArgument(Argument.of("[-c <x,y,z>]", "Specifies the coordinates to set spawn to. x and z must fall within the range -30,000,000 to 30,000,000 (exclusive, without the "
 							+ "commas), and y must be within the range -4096 to 4096 inclusive. This is ignored if [-b] is supplied"))
 					.addArgument(Argument.of("[-d <direction>]", "Specifies the direction player will face upon teleporting. The following can be used: NORTH, NORTH_WEST, WEST, SOUTH_WEST, SOUTH, SOUTH_EAST, EAST, NORTH_EAST"))
@@ -196,7 +198,8 @@ public class Common {
 		}
 		
 		if (modules.getNode("homes").getBoolean()) {
-			Usage usageCreate = new Usage(Argument.of("<name>", "Specifies the name of the new home"));
+			Usage usageCreate = new Usage(Argument.of("<name>", "Specifies the name of the new home"))
+					.addArgument(Argument.of("[-f]", "Skips safe location check. Has no effect with '-c random' or '-c bed'"));
 			
 			Help homeCreate = new Help("home create", "create", "Create a new home")
 					.setPermission("pjp.cmd.home.create")
@@ -233,6 +236,7 @@ public class Common {
 		if (modules.getNode("warps").getBoolean()) {
 			Usage usagecreate = new Usage(Argument.of("<name>", "Specifies the name of the new warp point"))
 					.addArgument(Argument.of("<destination>", "Specifies a world or server if [-b] is supplied"))
+					.addArgument(Argument.of("[-f]", "Skips safe location check. Has no effect with '-c random' or '-c bed'"))
 					.addArgument(Argument.of("[-b]", "Specifies that <destination> is a bungee connected server"))
 					.addArgument(Argument.of("[-c <x,y,z>]", "Specifies the coordinates to set spawn to. x and z must fall within the range -30,000,000 to 30,000,000 (exclusive, without the "
 							+ "commas), and y must be within the range -4096 to 4096 inclusive. This is ignored if [-b] is supplied"))

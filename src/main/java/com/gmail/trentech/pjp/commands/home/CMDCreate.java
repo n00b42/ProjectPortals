@@ -74,7 +74,13 @@ public class CMDCreate implements CommandExecutor {
 
 		Location<World> location = player.getLocation();
 
-		list.put(name, new Portal.Local(PortalType.HOME, location.getExtent(), Optional.of(location.getPosition()), Rotation.getClosest(player.getRotation().getFloorY()), 0, false));
+		boolean force = false;
+		
+		if(args.hasAny("f")) {
+			force = true;
+		}
+		
+		list.put(name, new Portal.Local(PortalType.HOME, location.getExtent(), Optional.of(location.getPosition()), Rotation.getClosest(player.getRotation().getFloorY()), 0, false, force));
 
 		DataTransactionResult result = player.offer(new HomeData(list));
 

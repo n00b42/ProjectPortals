@@ -55,7 +55,7 @@ public class CMDBack implements CommandExecutor {
 			}
 		}
 
-		Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, 0, Cause.of(NamedCause.source("back")));
+		Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, 0, true, Cause.of(NamedCause.source("back")));
 
 		if (!Sponge.getEventManager().post(teleportEvent)) {
 			spawnLocation = teleportEvent.getDestination();

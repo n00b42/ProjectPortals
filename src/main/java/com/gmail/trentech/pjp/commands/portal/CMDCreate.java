@@ -60,6 +60,7 @@ public class CMDCreate implements CommandExecutor {
 		AtomicReference<Rotation> rotation = new AtomicReference<>(Rotation.EAST);
 		AtomicReference<Double> price = new AtomicReference<>(0.0);
 		boolean bedRespawn = false;
+		boolean force = false;
 		AtomicReference<Particle> particle = new AtomicReference<>(Particles.getDefaultEffect("portal"));
 		AtomicReference<Optional<ParticleColor>> color = new AtomicReference<>(Particles.getDefaultColor("portal", particle.get().isColorable()));
 
@@ -140,7 +141,11 @@ public class CMDCreate implements CommandExecutor {
 				rotation.set(args.<Rotation>getOne("direction").get());
 			}
 
-			Portal.Local local = new Portal.Local(PortalType.PORTAL, world.get(), vector3d, rotation.get(), price.get(), bedRespawn);
+			if (args.hasAny("f")) {
+				force = true;
+			}
+			
+			Portal.Local local = new Portal.Local(PortalType.PORTAL, world.get(), vector3d, rotation.get(), price.get(), bedRespawn, force);
 			Properties properties = new Properties(particle.get(), color.get());
 			local.setProperties(properties);
 			local.setName(name);

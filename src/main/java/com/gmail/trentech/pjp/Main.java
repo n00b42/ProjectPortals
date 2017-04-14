@@ -3,6 +3,7 @@ package com.gmail.trentech.pjp;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.SQLException;
 
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
@@ -18,6 +19,7 @@ import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 
 import com.gmail.trentech.pjc.core.ConfigManager;
+import com.gmail.trentech.pjc.core.SQLManager;
 import com.gmail.trentech.pjp.commands.CMDBack;
 import com.gmail.trentech.pjp.commands.CommandManager;
 import com.gmail.trentech.pjp.data.immutable.ImmutableHomeData;
@@ -71,6 +73,13 @@ public class Main {
 
 	@Listener
 	public void onInitialization(GameInitializationEvent event) {
+		try {
+			SQLManager.get(Main.getPlugin()).getDataSource();
+		} catch (SQLException e) {
+			getLog().error("Could not connect to database");
+			return;
+		}
+		
 		Common.initConfig();
 		
 		ConfigurationNode config = ConfigManager.get(getPlugin()).getConfig();
@@ -79,9 +88,12 @@ public class Main {
 
 		Sponge.getDataManager().registerBuilder(LocationSerializable.class, new LocationSerializable.Builder());
 		Sponge.getDataManager().registerBuilder(Properties.class, new Properties.Builder());
-		Sponge.getDataManager().registerContentUpdater(Portal.Local.class, new Portal.Local.Update1());
+		
 		Sponge.getDataManager().registerBuilder(Portal.Local.class, new Portal.Local.Builder());	
 		Sponge.getDataManager().registerBuilder(Portal.Server.class, new Portal.Server.Builder());
+		
+		Sponge.getDataManager().registerContentUpdater(Portal.Local.class, new Portal.Local.Update1());
+		Sponge.getDataManager().registerContentUpdater(Portal.Local.class, new Portal.Local.Update2());
 		
 		Sponge.getEventManager().registerListeners(this, new TeleportListener(timings));
 		

@@ -48,6 +48,7 @@ public abstract class CMDObjBase implements CommandExecutor {
 		AtomicReference<Rotation> direction = new AtomicReference<>(Rotation.EAST);
 		AtomicReference<Double> price = new AtomicReference<>(0.0);
 		boolean bedRespawn = false;
+		boolean force = false;
 		
 		if (args.hasAny("price")) {
 			price.set(args.<Double>getOne("price").get());
@@ -72,7 +73,7 @@ public abstract class CMDObjBase implements CommandExecutor {
 						}
 					}
 
-					init(player, Optional.of(destination), Optional.empty(), Optional.empty(), direction.get(), price.get(), false);
+					init(player, Optional.of(destination), Optional.empty(), Optional.empty(), direction.get(), price.get(), false, false);
 
 					player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place " + name + " to create " + name + " portal"));
 				};
@@ -108,7 +109,11 @@ public abstract class CMDObjBase implements CommandExecutor {
 				direction.set(args.<Rotation>getOne("direction").get());
 			}
 
-			init(player, Optional.empty(), world, vector3d, direction.get(), price.get(), bedRespawn);
+			if (args.hasAny("f")) {
+				force = true;
+			}
+			
+			init(player, Optional.empty(), world, vector3d, direction.get(), price.get(), bedRespawn, force);
 
 			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place " + name + " to create " + name + " portal"));
 		}
@@ -116,5 +121,5 @@ public abstract class CMDObjBase implements CommandExecutor {
 		return CommandResult.success();
 	}
 
-	protected abstract void init(Player player, Optional<String> server, Optional<World> world, Optional<Vector3d> vector3d, Rotation rotation, double price, boolean bedRespawn);
+	protected abstract void init(Player player, Optional<String> server, Optional<World> world, Optional<Vector3d> vector3d, Rotation rotation, double price, boolean bedRespawn, boolean force);
 }
