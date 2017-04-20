@@ -3,12 +3,12 @@ package com.gmail.trentech.pjp;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.SQLException;
 
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandMapping;
 import org.spongepowered.api.config.ConfigDir;
+import org.spongepowered.api.data.DataRegistration;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
@@ -19,7 +19,6 @@ import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 
 import com.gmail.trentech.pjc.core.ConfigManager;
-import com.gmail.trentech.pjc.core.SQLManager;
 import com.gmail.trentech.pjp.commands.CMDBack;
 import com.gmail.trentech.pjp.commands.CommandManager;
 import com.gmail.trentech.pjp.data.immutable.ImmutableHomeData;
@@ -73,13 +72,6 @@ public class Main {
 
 	@Listener
 	public void onInitialization(GameInitializationEvent event) {
-		try {
-			SQLManager.get(Main.getPlugin()).getDataSource();
-		} catch (SQLException e) {
-			getLog().error("Could not connect to database");
-			return;
-		}
-		
 		Common.initConfig();
 		
 		ConfigurationNode config = ConfigManager.get(getPlugin()).getConfig();
@@ -123,7 +115,9 @@ public class Main {
 			getLog().info("Pressure plate module activated");
 		}
 		if (modules.getNode("signs").getBoolean()) {
-			Sponge.getDataManager().register(SignPortalData.class, ImmutableSignPortalData.class, new SignPortalData.Builder());
+			DataRegistration.builder().dataClass(SignPortalData.class).immutableClass(ImmutableSignPortalData.class)
+				.builder(new SignPortalData.Builder()).dataName("sign").manipulatorId("pjp_sign").buildAndRegister(Main.getPlugin());
+
 			Sponge.getEventManager().registerListeners(this, new SignListener(timings));
 			Sponge.getCommandManager().register(this, new CommandManager().cmdSign, "sign", "s");
 
@@ -148,7 +142,9 @@ public class Main {
 		}
 		
 		if (modules.getNode("homes").getBoolean()) {
-			Sponge.getDataManager().register(HomeData.class, ImmutableHomeData.class, new HomeData.Builder());
+			DataRegistration.builder().dataClass(HomeData.class).immutableClass(ImmutableHomeData.class)
+				.builder(new HomeData.Builder()).dataName("home").manipulatorId("pjp_home").buildAndRegister(Main.getPlugin());
+
 			Sponge.getCommandManager().register(this, new CommandManager().cmdHome, "home", "h");
 
 			getLog().info("Home module activated");

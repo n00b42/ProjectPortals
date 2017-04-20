@@ -33,7 +33,7 @@ public enum Particles {
 	WATER_SPLASH(new Particle("WATER_SPLASH", ParticleTypes.WATER_SPLASH, 7)),
 	WATER_WAKE(new Particle("WATER_WAKE", ParticleTypes.WATER_WAKE, 7)),
 	WATER_DROP(new Particle("WATER_DROP", ParticleTypes.WATER_DROP, 7)),
-	PORTAL2(new Particle("PORTAL2", ParticleTypes.PORTAL, 30)),
+	PORTAL2(new Particle("PORTAL2", ParticleTypes.PORTAL, 40)),
 	NONE(new Particle("NONE", null, 0));
 
 	private final Particle particle;
