@@ -20,10 +20,9 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
+import com.gmail.trentech.pjc.core.BungeeManager;
 import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
-
-import flavor.pie.spongycord.SpongyCord;
 
 public class CMDList implements CommandExecutor {
 
@@ -57,7 +56,7 @@ public class CMDList implements CommandExecutor {
 						}
 					}
 				};
-				SpongyCord.API.getServerList(consumer, player);
+				BungeeManager.getServers(consumer, player);
 
 				builder.onClick(TextActions.runCommand("/warp " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Server Destination: ", TextColors.WHITE, server.getServer()));
 			} else {

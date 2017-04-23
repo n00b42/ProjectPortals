@@ -19,6 +19,7 @@ import org.spongepowered.api.text.format.TextStyles;
 import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
+import com.gmail.trentech.pjc.core.BungeeManager;
 import com.gmail.trentech.pjc.core.ConfigManager;
 import com.gmail.trentech.pjc.help.Help;
 import com.gmail.trentech.pjp.Main;
@@ -32,8 +33,6 @@ import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
 import com.gmail.trentech.pjp.portal.Properties;
 import com.gmail.trentech.pjp.rotation.Rotation;
-
-import flavor.pie.spongycord.SpongyCord;
 
 public class CMDCreate implements CommandExecutor {
 
@@ -110,9 +109,9 @@ public class CMDCreate implements CommandExecutor {
 						player.sendMessage(Text.of(TextColors.DARK_GREEN, "Right click bottom with empty hand similar to vanilla nether portals "));
 					}
 				};
-				SpongyCord.API.getServerName(consumer2, player);
+				BungeeManager.getServer(consumer2, player);
 			};			
-			SpongyCord.API.getServerList(consumer1, player);
+			BungeeManager.getServers(consumer1, player);
 		} else {
 			Optional<World> world = Sponge.getServer().getWorld(destination);
 

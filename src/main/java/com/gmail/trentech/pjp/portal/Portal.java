@@ -49,6 +49,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
+import com.gmail.trentech.pjc.core.BungeeManager;
 import com.gmail.trentech.pjc.core.ConfigManager;
 import com.gmail.trentech.pjc.core.SQLManager;
 import com.gmail.trentech.pjc.core.TeleportManager;
@@ -59,7 +60,6 @@ import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.rotation.Rotation;
 import com.google.common.reflect.TypeToken;
 
-import flavor.pie.spongycord.SpongyCord;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 
@@ -582,13 +582,13 @@ public abstract class Portal implements DataSerializable {
 				TeleportEvent.Server teleportEvent = new TeleportEvent.Server(player, serverName, server.getServer(), server.getPrice(), server.getPermission(), Cause.of(NamedCause.source(server)));
 
 				if (!Sponge.getEventManager().post(teleportEvent)) {
-					SpongyCord.API.connectPlayer(player, teleportEvent.getDestination());
+					BungeeManager.connect(player, teleportEvent.getDestination());
 					player.setLocation(player.getWorld().getSpawnLocation());
 
 					bool.set(true);
 				}
 			};
-			SpongyCord.API.getServerName(consumer, player);
+			BungeeManager.getServer(consumer, player);
 		} else {
 			Portal.Local local = (Portal.Local) portal;
 

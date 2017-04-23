@@ -136,7 +136,7 @@ public class TeleportListener {
 		}
 	}
 
-	@Listener
+	//@Listener
 	public void onTeleportEventServer(TeleportEvent.Server event) {
 		timings.onTeleportEventServer().startTimingIfSync();
 

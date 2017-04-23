@@ -17,11 +17,10 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
+import com.gmail.trentech.pjc.core.BungeeManager;
 import com.gmail.trentech.pjc.help.Help;
 import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.Portal.Server;
-
-import flavor.pie.spongycord.SpongyCord;
 
 public class CMDDestination implements CommandExecutor {
 
@@ -65,9 +64,9 @@ public class CMDDestination implements CommandExecutor {
 						}
 					}
 				};
-				SpongyCord.API.getServerName(consumer2, player);
+				BungeeManager.getServer(consumer2, player);
 			};			
-			SpongyCord.API.getServerList(consumer1, player);
+			BungeeManager.getServers(consumer1, player);
 
 			server.setServer(destination);
 		} else {

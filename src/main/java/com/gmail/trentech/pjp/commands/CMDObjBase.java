@@ -18,10 +18,9 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
+import com.gmail.trentech.pjc.core.BungeeManager;
 import com.gmail.trentech.pjc.help.Help;
 import com.gmail.trentech.pjp.rotation.Rotation;
-
-import flavor.pie.spongycord.SpongyCord;
 
 public abstract class CMDObjBase implements CommandExecutor {
 
@@ -78,9 +77,9 @@ public abstract class CMDObjBase implements CommandExecutor {
 
 					player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place " + name + " to create " + name + " portal"));
 				};
-				SpongyCord.API.getServerName(consumer2, player);
+				BungeeManager.getServer(consumer2, player);
 			};			
-			SpongyCord.API.getServerList(consumer1, player);
+			BungeeManager.getServers(consumer1, player);
 		} else {
 			Optional<World> world = Sponge.getServer().getWorld(destination);
 

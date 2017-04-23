@@ -18,12 +18,11 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
+import com.gmail.trentech.pjc.core.BungeeManager;
 import com.gmail.trentech.pjc.help.Help;
 import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
 import com.gmail.trentech.pjp.rotation.Rotation;
-
-import flavor.pie.spongycord.SpongyCord;
 
 public class CMDCreate implements CommandExecutor {
 
@@ -82,9 +81,9 @@ public class CMDCreate implements CommandExecutor {
 
 						player.sendMessage(Text.of(TextColors.DARK_GREEN, "Warp ", name, " create"));
 					};
-					SpongyCord.API.getServerName(consumer2, player);
+					BungeeManager.getServer(consumer2, player);
 				};				
-				SpongyCord.API.getServerList(consumer1, player);
+				BungeeManager.getServers(consumer1, player);
 
 				return CommandResult.success();
 			} else {
