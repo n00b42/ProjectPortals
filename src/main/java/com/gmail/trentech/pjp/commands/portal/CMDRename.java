@@ -1,5 +1,6 @@
 package com.gmail.trentech.pjp.commands.portal;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -11,6 +12,7 @@ import org.spongepowered.api.text.format.TextColors;
 
 import com.gmail.trentech.pjc.help.Help;
 import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.PortalService;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
 
 public class CMDRename implements CommandExecutor {
@@ -29,12 +31,14 @@ public class CMDRename implements CommandExecutor {
 		}
 		String newName = args.<String>getOne("newName").get().toLowerCase();
 
-		if (Portal.get(newName, PortalType.PORTAL).isPresent()) {
+		PortalService portalService = Sponge.getServiceManager().provide(PortalService.class).get();
+		
+		if (portalService.get(newName, PortalType.PORTAL).isPresent()) {
 			throw new CommandException(Text.of(TextColors.RED, newName, " already exists"), false);
 		}
 
-		portal.remove();
-		portal.create(newName);
+		portalService.remove(portal);
+		portalService.create(portal, newName);
 
 		src.sendMessage(Text.of(TextColors.DARK_GREEN, "Portal renamed to ", newName));
 

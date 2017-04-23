@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
@@ -24,6 +25,7 @@ import com.gmail.trentech.pjp.data.mutable.SignPortalData;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.PortalService;
 import com.gmail.trentech.pjp.utils.Timings;
 
 public class SignListener {
@@ -84,7 +86,7 @@ public class SignListener {
 			}
 			Portal portal = optionalPortal.get();
 
-			Portal.teleportPlayer(player, portal);
+			Sponge.getServiceManager().provide(PortalService.class).get().teleportPlayer(player, portal);
 		} finally {
 			timings.onChangeSignEvent().stopTiming();
 		}

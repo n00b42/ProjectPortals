@@ -24,6 +24,7 @@ import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.PortalService;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
 import com.gmail.trentech.pjp.utils.Timings;
 
@@ -45,7 +46,9 @@ public class DoorListener {
 			for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 				Location<World> location = transaction.getFinal().getLocation().get();
 
-				Optional<Portal> optionalPortal = Portal.get(location, PortalType.DOOR);
+				PortalService portalService = Sponge.getServiceManager().provide(PortalService.class).get();
+				
+				Optional<Portal> optionalPortal = portalService.get(location, PortalType.DOOR);
 
 				if (!optionalPortal.isPresent()) {
 					continue;
@@ -56,7 +59,7 @@ public class DoorListener {
 					player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to break door portals"));
 					event.setCancelled(true);
 				} else {
-					portal.remove();
+					portalService.remove(portal);
 					player.sendMessage(Text.of(TextColors.DARK_GREEN, "Broke door portal"));
 				}
 			}
@@ -91,7 +94,7 @@ public class DoorListener {
 				}
 
 				Portal portal = builders.get(player.getUniqueId());
-				portal.create(location);
+				Sponge.getServiceManager().provide(PortalService.class).get().create(portal, location);
 
 				player.sendMessage(Text.of(TextColors.DARK_GREEN, "New door portal created"));
 
@@ -122,7 +125,9 @@ public class DoorListener {
 				return;
 			}
 			
-			Optional<Portal> optionalPortal = Portal.get(location, PortalType.DOOR);
+			PortalService portalService = Sponge.getServiceManager().provide(PortalService.class).get();
+			
+			Optional<Portal> optionalPortal = portalService.get(location, PortalType.DOOR);
 
 			if (!optionalPortal.isPresent()) {
 				return;
@@ -137,7 +142,7 @@ public class DoorListener {
 
 			cache.add(uuid);
 
-			Portal.teleportPlayer(player, portal);
+			portalService.teleportPlayer(player, portal);
 
 			Sponge.getScheduler().createTaskBuilder().delayTicks(20).execute(c -> {
 				cache.remove(uuid);

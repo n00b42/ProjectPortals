@@ -2,6 +2,7 @@ package com.gmail.trentech.pjp.commands.portal;
 
 import java.util.Optional;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -16,6 +17,7 @@ import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.PortalService;
 import com.gmail.trentech.pjp.portal.Properties;
 
 public class CMDParticle implements CommandExecutor {
@@ -49,7 +51,7 @@ public class CMDParticle implements CommandExecutor {
 		properties.setParticleColor(color);
 
 		portal.setProperties(properties);
-		portal.update();
+		Sponge.getServiceManager().provide(PortalService.class).get().update(portal);
 
 		return CommandResult.success();
 	}

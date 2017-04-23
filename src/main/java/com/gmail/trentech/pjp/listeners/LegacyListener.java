@@ -3,6 +3,7 @@ package com.gmail.trentech.pjp.listeners;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.Transaction;
@@ -14,8 +15,8 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.portal.LegacyBuilder;
-import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
+import com.gmail.trentech.pjp.portal.PortalService;
 import com.gmail.trentech.pjp.utils.Timings;
 
 public class LegacyListener {
@@ -37,7 +38,7 @@ public class LegacyListener {
 				for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 					Location<World> location = transaction.getFinal().getLocation().get();
 
-					if (!Portal.get(location, PortalType.PORTAL).isPresent()) {
+					if (!Sponge.getServiceManager().provide(PortalService.class).get().get(location, PortalType.PORTAL).isPresent()) {
 						continue;
 					}
 
@@ -76,7 +77,7 @@ public class LegacyListener {
 				for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 					Location<World> location = transaction.getFinal().getLocation().get();
 
-					if (!Portal.get(location, PortalType.PORTAL).isPresent()) {
+					if (!Sponge.getServiceManager().provide(PortalService.class).get().get(location, PortalType.PORTAL).isPresent()) {
 						continue;
 					}
 

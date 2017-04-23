@@ -16,6 +16,7 @@ import org.spongepowered.api.world.World;
 import com.gmail.trentech.pjc.core.ConfigManager;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.PortalService;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
 
 public class Particle {
@@ -104,7 +105,7 @@ public class Particle {
 		}
 
 		if (getName().equals("PORTAL2")) {
-			Portal portal = Portal.get(locations.get(0), PortalType.PORTAL).get();
+			Portal portal = Sponge.getServiceManager().provide(PortalService.class).get().get(locations.get(0), PortalType.PORTAL).get();
 
 			Sponge.getScheduler().createTaskBuilder().intervalTicks(getTime()).name(portal.getName()).execute(t -> {
 				portal.getProperties().get().update(false);

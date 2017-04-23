@@ -30,6 +30,7 @@ import com.gmail.trentech.pjp.listeners.LegacyListener;
 import com.gmail.trentech.pjp.listeners.PortalListener;
 import com.gmail.trentech.pjp.portal.LegacyBuilder;
 import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.PortalService;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
 import com.gmail.trentech.pjp.portal.Properties;
 import com.gmail.trentech.pjp.rotation.Rotation;
@@ -49,7 +50,7 @@ public class CMDCreate implements CommandExecutor {
 		}
 		String name = args.<String>getOne("name").get().toLowerCase();
 
-		if (Portal.get(name, PortalType.PORTAL).isPresent()) {
+		if (Sponge.getServiceManager().provide(PortalService.class).get().get(name, PortalType.PORTAL).isPresent()) {
 			throw new CommandException(Text.of(TextColors.RED, name, " already exists"), false);
 		}
 

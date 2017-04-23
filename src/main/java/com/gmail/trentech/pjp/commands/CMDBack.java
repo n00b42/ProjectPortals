@@ -21,8 +21,8 @@ import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.events.TeleportEvent.Local;
-import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
+import com.gmail.trentech.pjp.portal.PortalService;
 
 public class CMDBack implements CommandExecutor {
 
@@ -42,7 +42,9 @@ public class CMDBack implements CommandExecutor {
 		}
 		Location<World> spawnLocation = players.get(player);
 
-		while (Portal.get(spawnLocation, PortalType.PORTAL).isPresent() || Portal.get(spawnLocation, PortalType.DOOR).isPresent()) {
+		PortalService portalService = Sponge.getServiceManager().provide(PortalService.class).get();
+		
+		while (portalService.get(spawnLocation, PortalType.PORTAL).isPresent() || portalService.get(spawnLocation, PortalType.DOOR).isPresent()) {
 			ThreadLocalRandom random = ThreadLocalRandom.current();
 
 			int x = (random.nextInt(5 * 2) - 5) + spawnLocation.getBlockX();

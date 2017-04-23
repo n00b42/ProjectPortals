@@ -81,7 +81,7 @@ public class LegacyBuilder {
 				particle.spawnParticle(location, false, color);
 			}
 
-			portal.create(portal.getName());
+			Sponge.getServiceManager().provide(PortalService.class).get().create(portal, portal.getName());
 
 			return true;
 		}

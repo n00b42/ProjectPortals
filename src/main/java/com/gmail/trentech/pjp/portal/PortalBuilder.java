@@ -83,8 +83,9 @@ public class PortalBuilder {
 				}
 
 				portal.setProperties(portal.getProperties().get());
-				portal.create(portal.getName());
 
+				Sponge.getServiceManager().provide(PortalService.class).get().create(portal, portal.getName());
+				
 				return true;
 			}
 		}

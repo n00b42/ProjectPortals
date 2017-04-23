@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -22,6 +23,7 @@ import org.spongepowered.api.world.World;
 import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjc.core.BungeeManager;
 import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.PortalService;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
 
 public class CMDList implements CommandExecutor {
@@ -35,7 +37,9 @@ public class CMDList implements CommandExecutor {
 
 		List<Text> list = new ArrayList<>();
 
-		for (Portal portal : Portal.all(PortalType.WARP)) {
+		PortalService portalService = Sponge.getServiceManager().provide(PortalService.class).get();
+		
+		for (Portal portal : portalService.all(PortalType.WARP)) {
 			String name = portal.getName();
 
 			if (!src.hasPermission("pjp.warps." + name)) {

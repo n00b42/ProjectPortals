@@ -36,6 +36,7 @@ import com.gmail.trentech.pjp.listeners.SignListener;
 import com.gmail.trentech.pjp.listeners.TeleportListener;
 import com.gmail.trentech.pjp.portal.LocationSerializable;
 import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.PortalService;
 import com.gmail.trentech.pjp.portal.Properties;
 import com.gmail.trentech.pjp.utils.Resource;
 import com.gmail.trentech.pjp.utils.Timings;
@@ -85,6 +86,8 @@ public class Main {
 		Sponge.getDataManager().registerBuilder(Portal.Server.class, new Portal.Server.Builder());
 
 		Sponge.getEventManager().registerListeners(this, new TeleportListener(timings));
+		
+		Sponge.getServiceManager().setProvider(getPlugin(), PortalService.class, new PortalService());
 		
 		Sponge.getCommandManager().register(this, new CommandManager().cmdPJP, "pjp");
 
@@ -158,7 +161,7 @@ public class Main {
 
 	@Listener
 	public void onStartedServer(GameStartedServerEvent event) {
-		Portal.init();
+		Sponge.getServiceManager().provide(PortalService.class).get().init();
 	}
 
 	@Listener
@@ -233,7 +236,7 @@ public class Main {
 			getLog().info("Warp module activated");
 		}
 
-		Portal.init();
+		Sponge.getServiceManager().provide(PortalService.class).get().init();
 	}
 
 	public Logger getLog() {

@@ -1,5 +1,6 @@
 package com.gmail.trentech.pjp.commands.portal;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -11,6 +12,7 @@ import org.spongepowered.api.text.format.TextColors;
 
 import com.gmail.trentech.pjc.help.Help;
 import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.PortalService;
 
 public class CMDPrice implements CommandExecutor {
 
@@ -29,7 +31,7 @@ public class CMDPrice implements CommandExecutor {
 		double price = args.<Double>getOne("price").get();
 
 		portal.setPrice(price);
-		portal.update();
+		Sponge.getServiceManager().provide(PortalService.class).get().update(portal);
 
 		src.sendMessage(Text.of(TextColors.DARK_GREEN, "Set price of portal ", portal.getName(), " to $", price));
 

@@ -20,6 +20,7 @@ import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjc.core.BungeeManager;
 import com.gmail.trentech.pjc.help.Help;
 import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.PortalService;
 import com.gmail.trentech.pjp.portal.Portal.Server;
 
 public class CMDDestination implements CommandExecutor {
@@ -99,7 +100,7 @@ public class CMDDestination implements CommandExecutor {
 			}
 		}
 
-		portal.update();
+		Sponge.getServiceManager().provide(PortalService.class).get().update(portal);
 
 		src.sendMessage(Text.of(TextColors.DARK_GREEN, "Portal destination updated"));
 

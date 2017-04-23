@@ -35,6 +35,7 @@ import com.gmail.trentech.pjc.core.ConfigManager;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.events.ConstructPortalEvent;
 import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.PortalService;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
 import com.gmail.trentech.pjp.rotation.PlayerRotation;
 import com.gmail.trentech.pjp.utils.Timings;
@@ -55,7 +56,9 @@ public class PortalListener {
 	public void onConnectionEvent(ClientConnectionEvent.Login event, @Root Player player) {
 		Location<World> location = event.getToTransform().getLocation();
 
-		while (Portal.get(location, PortalType.PORTAL).isPresent() || Portal.get(location, PortalType.DOOR).isPresent()) {
+		PortalService portalService = Sponge.getServiceManager().provide(PortalService.class).get();
+		
+		while (portalService.get(location, PortalType.PORTAL).isPresent() || portalService.get(location, PortalType.DOOR).isPresent()) {
 			ThreadLocalRandom random = ThreadLocalRandom.current();
 
 			int x = (random.nextInt(3 * 2) - 3) + location.getBlockX();
@@ -118,7 +121,7 @@ public class PortalListener {
 			List<Location<World>> locations = event.getLocations();
 
 			for (Location<World> location : event.getLocations()) {
-				if (Portal.get(location, PortalType.PORTAL).isPresent()) {
+				if (Sponge.getServiceManager().provide(PortalService.class).get().get(location, PortalType.PORTAL).isPresent()) {
 					player.sendMessage(Text.of(TextColors.DARK_RED, "Portals cannot over lap other portals"));
 					event.setCancelled(true);
 					return;
@@ -151,7 +154,7 @@ public class PortalListener {
 		try {
 			Location<World> location = item.getLocation();
 
-			Optional<Portal> optionalPortal = Portal.get(location, PortalType.PORTAL);
+			Optional<Portal> optionalPortal = Sponge.getServiceManager().provide(PortalService.class).get().get(location, PortalType.PORTAL);
 
 			if (!optionalPortal.isPresent()) {
 				return;
@@ -193,7 +196,7 @@ public class PortalListener {
 		try {
 			Location<World> location = living.getLocation();
 
-			Optional<Portal> optionalPortal = Portal.get(location, PortalType.PORTAL);
+			Optional<Portal> optionalPortal = Sponge.getServiceManager().provide(PortalService.class).get().get(location, PortalType.PORTAL);
 
 			if (!optionalPortal.isPresent()) {
 				return;
@@ -233,7 +236,9 @@ public class PortalListener {
 		try {
 			Location<World> location = event.getFromTransform().getLocation();
 
-			Optional<Portal> optionalPortal = Portal.get(location, PortalType.PORTAL);
+			PortalService portalService = Sponge.getServiceManager().provide(PortalService.class).get();
+			
+			Optional<Portal> optionalPortal = portalService.get(location, PortalType.PORTAL);
 
 			if (!optionalPortal.isPresent()) {
 				return;
@@ -247,7 +252,7 @@ public class PortalListener {
 			}
 			cache.add(uuid);
 
-			Portal.teleportPlayer(player, portal);
+			portalService.teleportPlayer(player, portal);
 
 			Sponge.getScheduler().createTaskBuilder().delayTicks(20).execute(c -> {
 				cache.remove(uuid);
@@ -265,7 +270,7 @@ public class PortalListener {
 			for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 				Location<World> location = transaction.getFinal().getLocation().get();
 
-				if (!Portal.get(location, PortalType.PORTAL).isPresent()) {
+				if (!Sponge.getServiceManager().provide(PortalService.class).get().get(location, PortalType.PORTAL).isPresent()) {
 					continue;
 				}
 
@@ -285,7 +290,7 @@ public class PortalListener {
 			for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 				Location<World> location = transaction.getFinal().getLocation().get();
 
-				if (!Portal.get(location, PortalType.PORTAL).isPresent()) {
+				if (!Sponge.getServiceManager().provide(PortalService.class).get().get(location, PortalType.PORTAL).isPresent()) {
 					continue;
 				}
 

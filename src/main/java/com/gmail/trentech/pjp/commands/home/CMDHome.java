@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -18,6 +19,7 @@ import org.spongepowered.api.world.World;
 import com.gmail.trentech.pjc.help.Help;
 import com.gmail.trentech.pjp.data.Keys;
 import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.PortalService;
 
 public class CMDHome implements CommandExecutor {
 
@@ -58,7 +60,7 @@ public class CMDHome implements CommandExecutor {
 				player = args.<Player>getOne("player").get();
 			}
 
-			Portal.teleportPlayer(player, local);
+			Sponge.getServiceManager().provide(PortalService.class).get().teleportPlayer(player, local);
 
 			return CommandResult.success();
 		}

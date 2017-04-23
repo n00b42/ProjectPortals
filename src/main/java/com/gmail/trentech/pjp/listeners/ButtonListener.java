@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
@@ -20,6 +21,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.PortalService;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
 import com.gmail.trentech.pjp.utils.Timings;
 
@@ -57,14 +59,16 @@ public class ButtonListener {
 
 				Location<World> location = snapshot.getLocation().get();
 
-				Optional<Portal> optionalPortal = Portal.get(location, PortalType.BUTTON);
+				PortalService portalService = Sponge.getServiceManager().provide(PortalService.class).get();
+				
+				Optional<Portal> optionalPortal = portalService.get(location, PortalType.BUTTON);
 
 				if (!optionalPortal.isPresent()) {
 					continue;
 				}
 				Portal portal = optionalPortal.get();
 
-				Portal.teleportPlayer(player, portal);
+				portalService.teleportPlayer(player, portal);
 			}
 		} finally {
 			timings.onChangeBlockEventModify().stopTiming();
@@ -79,7 +83,8 @@ public class ButtonListener {
 			for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
 				Location<World> location = transaction.getFinal().getLocation().get();
 
-				Optional<Portal> optionalPortal = Portal.get(location, PortalType.BUTTON);
+				PortalService portalService = Sponge.getServiceManager().provide(PortalService.class).get();
+				Optional<Portal> optionalPortal = portalService.get(location, PortalType.BUTTON);
 
 				if (!optionalPortal.isPresent()) {
 					continue;
@@ -90,7 +95,7 @@ public class ButtonListener {
 					player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to break button portals"));
 					event.setCancelled(true);
 				} else {
-					portal.remove();
+					portalService.remove(portal);
 					player.sendMessage(Text.of(TextColors.DARK_GREEN, "Broke button portal"));
 				}
 			}
@@ -125,7 +130,7 @@ public class ButtonListener {
 				}
 
 				Portal portal = builders.get(player.getUniqueId());
-				portal.create(location);
+				Sponge.getServiceManager().provide(PortalService.class).get().create(portal, location);
 
 				player.sendMessage(Text.of(TextColors.DARK_GREEN, "New button portal created"));
 

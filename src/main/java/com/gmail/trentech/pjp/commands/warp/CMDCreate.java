@@ -22,6 +22,7 @@ import com.gmail.trentech.pjc.core.BungeeManager;
 import com.gmail.trentech.pjc.help.Help;
 import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
+import com.gmail.trentech.pjp.portal.PortalService;
 import com.gmail.trentech.pjp.rotation.Rotation;
 
 public class CMDCreate implements CommandExecutor {
@@ -39,7 +40,9 @@ public class CMDCreate implements CommandExecutor {
 		}
 		String name = args.<String>getOne("name").get().toLowerCase();
 
-		if (Portal.get(name, PortalType.WARP).isPresent()) {
+		PortalService portalService = Sponge.getServiceManager().provide(PortalService.class).get();
+		
+		if (portalService.get(name, PortalType.WARP).isPresent()) {
 			throw new CommandException(Text.of(TextColors.RED, name, " already exists"), false);
 		}
 
@@ -77,7 +80,7 @@ public class CMDCreate implements CommandExecutor {
 							}
 						}
 
-						new Portal.Server(PortalType.WARP, destination, rotation.get(), price.get(), permission.get()).create(name);
+						portalService.create(new Portal.Server(PortalType.WARP, destination, rotation.get(), price.get(), permission.get()), name);
 
 						player.sendMessage(Text.of(TextColors.DARK_GREEN, "Warp ", name, " create"));
 					};
@@ -127,7 +130,7 @@ public class CMDCreate implements CommandExecutor {
 			rotation.set(Rotation.getClosest(player.getRotation().getFloorY()));
 		}
 
-		new Portal.Local(PortalType.WARP, world.get(), vector3d, rotation.get(), price.get(), bedRespawn, force, permission.get()).create(name);
+		portalService.create(new Portal.Local(PortalType.WARP, world.get(), vector3d, rotation.get(), price.get(), bedRespawn, force, permission.get()), name);
 
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Warp ", name, " create"));
 

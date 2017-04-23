@@ -1,5 +1,6 @@
 package com.gmail.trentech.pjp.commands.warp;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -11,6 +12,7 @@ import org.spongepowered.api.text.format.TextColors;
 
 import com.gmail.trentech.pjc.help.Help;
 import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.PortalService;
 
 public class CMDWarp implements CommandExecutor {
 
@@ -36,7 +38,7 @@ public class CMDWarp implements CommandExecutor {
 				player = args.<Player>getOne("player").get();
 			}
 
-			Portal.teleportPlayer(player, portal);
+			Sponge.getServiceManager().provide(PortalService.class).get().teleportPlayer(player, portal);
 
 			return CommandResult.success();
 		}
