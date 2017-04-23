@@ -63,7 +63,8 @@ public class CMDCreate implements CommandExecutor {
 		boolean force = false;
 		AtomicReference<Particle> particle = new AtomicReference<>(Particles.getDefaultEffect("portal"));
 		AtomicReference<Optional<ParticleColor>> color = new AtomicReference<>(Particles.getDefaultColor("portal", particle.get().isColorable()));
-
+		AtomicReference<Optional<String>> permission = new AtomicReference<>(args.<String>getOne("permission"));
+		
 		if (args.hasAny("price")) {
 			price.set(args.<Double>getOne("price").get());
 		}
@@ -95,7 +96,7 @@ public class CMDCreate implements CommandExecutor {
 						}
 					}
 
-					Portal.Server server = new Portal.Server(PortalType.PORTAL, destination, rotation.get(), price.get());
+					Portal.Server server = new Portal.Server(PortalType.PORTAL, destination, rotation.get(), price.get(), permission.get());
 					Properties properties = new Properties(particle.get(), color.get());
 					server.setProperties(properties);
 					server.setName(name);
@@ -109,10 +110,8 @@ public class CMDCreate implements CommandExecutor {
 						player.sendMessage(Text.of(TextColors.DARK_GREEN, "Right click bottom with empty hand similar to vanilla nether portals "));
 					}
 				};
-
 				SpongyCord.API.getServerName(consumer2, player);
-			};
-
+			};			
 			SpongyCord.API.getServerList(consumer1, player);
 		} else {
 			Optional<World> world = Sponge.getServer().getWorld(destination);
@@ -145,7 +144,7 @@ public class CMDCreate implements CommandExecutor {
 				force = true;
 			}
 			
-			Portal.Local local = new Portal.Local(PortalType.PORTAL, world.get(), vector3d, rotation.get(), price.get(), bedRespawn, force);
+			Portal.Local local = new Portal.Local(PortalType.PORTAL, world.get(), vector3d, rotation.get(), price.get(), bedRespawn, force, permission.get());
 			Properties properties = new Properties(particle.get(), color.get());
 			local.setProperties(properties);
 			local.setName(name);

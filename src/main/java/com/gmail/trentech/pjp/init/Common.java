@@ -47,7 +47,8 @@ public class Common {
 				.addArgument(Argument.of("[-c <x,y,z>]", "Specifies the coordinates to set spawn to. x and z must fall within the range -30,000,000 to 30,000,000 (exclusive, without the "
 						+ "commas), and y must be within the range -4096 to 4096 inclusive. This is ignored if [-b] is supplied"))
 				.addArgument(Argument.of("[-d <direction>]", "Specifies the direction player will face upon teleporting. The following can be used: NORTH, NORTH_WEST, WEST, SOUTH_WEST, SOUTH, SOUTH_EAST, EAST, NORTH_EAST"))
-				.addArgument(Argument.of("[-p <price>]", "Specifies a price player will be charged for using portal"));
+				.addArgument(Argument.of("[-p <price>]", "Specifies a price player will be charged for using portal"))
+				.addArgument(Argument.of("[n <permission>]", "Allow you to assign a custom permission node to a portal. If no permission is provided everyone will have access."));
 		
 		if (modules.getNode("buttons").getBoolean()) {
 			Help button = new Help("button", "button", "Use this command to create a button that will teleport you to other worlds")
@@ -118,8 +119,9 @@ public class Common {
 							+ "commas), and y must be within the range -4096 to 4096 inclusive. This is ignored if [-b] is supplied"))
 					.addArgument(Argument.of("[-d <direction>]", "Specifies the direction player will face upon teleporting. The following can be used: NORTH, NORTH_WEST, WEST, SOUTH_WEST, SOUTH, SOUTH_EAST, EAST, NORTH_EAST"))
 					.addArgument(Argument.of("[-e <particle> [color]]", "Specifies a Particle and ParticleColor the portal will use. Colors are only compatible with REDSTONE_DUST"))
-					.addArgument(Argument.of("[-p <price>]", "Specifies a price player will be charged for using portal"));
-					
+					.addArgument(Argument.of("[-p <price>]", "Specifies a price player will be charged for using portal"))				
+					.addArgument(Argument.of("[n <permission>]", "Allow you to assign a custom permission node to a portal. If no permission is provided everyone will have access."));
+			
 			Help portalCreate = new Help("portal create", "create", "Use this command to create a portal that will teleport you to other worlds")
 					.setPermission("pjp.cmd.portal.create")
 					.setUsage(usageCreate)
@@ -241,7 +243,8 @@ public class Common {
 					.addArgument(Argument.of("[-c <x,y,z>]", "Specifies the coordinates to set spawn to. x and z must fall within the range -30,000,000 to 30,000,000 (exclusive, without the "
 							+ "commas), and y must be within the range -4096 to 4096 inclusive. This is ignored if [-b] is supplied"))
 					.addArgument(Argument.of("[-d <direction>]", "Specifies the direction player will face upon teleporting. The following can be used: NORTH, NORTH_WEST, WEST, SOUTH_WEST, SOUTH, SOUTH_EAST, EAST, NORTH_EAST"))
-					.addArgument(Argument.of("[-p <price>]", "Specifies a price player will be charged for using this warp"));
+					.addArgument(Argument.of("[-p <price>]", "Specifies a price player will be charged for using this warp"))
+					.addArgument(Argument.of("[n <permission>]", "Allow you to assign a custom permission node to a portal. If no permission is provided everyone will have access."));
 			
 			Help warpCreate = new Help("warp create", "create", "Use this command to create a warp that will teleport you to other worlds")
 					.setPermission("pjp.cmd.warp.create")
@@ -339,9 +342,6 @@ public class Common {
 			}
 			config.getNode("options", "teleport_message", "title").setValue("&2%WORLD%");
 			config.getNode("options", "teleport_message", "sub_title").setValue("&bx: %X%, y: %Y%, z: %Z%");
-		}
-		if (config.getNode("options", "advanced_permissions").isVirtual()) {
-			config.getNode("options", "advanced_permissions").setValue(false).setComment("Require permission node for each portal. ex. 'pjp.portal.<name>', 'pjp.button.<world_x_y_z>'. If false use 'pjp.portal.interact' instead");
 		}
 		if (config.getNode("settings", "modules").isVirtual()) {
 			config.getNode("settings", "modules").setComment("Toggle on and off specific features");

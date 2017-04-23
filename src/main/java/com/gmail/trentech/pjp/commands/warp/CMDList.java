@@ -57,7 +57,6 @@ public class CMDList implements CommandExecutor {
 						}
 					}
 				};
-
 				SpongyCord.API.getServerList(consumer, player);
 
 				builder.onClick(TextActions.runCommand("/warp " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Server Destination: ", TextColors.WHITE, server.getServer()));

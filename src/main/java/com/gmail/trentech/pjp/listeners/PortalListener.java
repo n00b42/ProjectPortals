@@ -240,18 +240,6 @@ public class PortalListener {
 			}
 			Portal portal = optionalPortal.get();
 
-			if (ConfigManager.get(Main.getPlugin()).getConfig().getNode("options", "advanced_permissions").getBoolean()) {
-				if (!player.hasPermission("pjp.portal." + portal.getName())) {
-					player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use this portal"));
-					return;
-				}
-			} else {
-				if (!player.hasPermission("pjp.portal.interact")) {
-					player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use portals"));
-					return;
-				}
-			}
-
 			UUID uuid = player.getUniqueId();
 
 			if (cache.contains(uuid)) {

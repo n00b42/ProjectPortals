@@ -65,10 +65,8 @@ public class CMDDestination implements CommandExecutor {
 						}
 					}
 				};
-
 				SpongyCord.API.getServerName(consumer2, player);
-			};
-
+			};			
 			SpongyCord.API.getServerList(consumer1, player);
 
 			server.setServer(destination);

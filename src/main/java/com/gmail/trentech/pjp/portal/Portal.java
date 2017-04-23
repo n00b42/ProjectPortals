@@ -1,7 +1,8 @@
 package com.gmail.trentech.pjp.portal;
 
-import static com.gmail.trentech.pjp.data.DataQueries.FORCE;
 import static com.gmail.trentech.pjp.data.DataQueries.BED_RESPAWN;
+import static com.gmail.trentech.pjp.data.DataQueries.FORCE;
+import static com.gmail.trentech.pjp.data.DataQueries.PERMISSION;
 import static com.gmail.trentech.pjp.data.DataQueries.PORTAL_TYPE;
 import static com.gmail.trentech.pjp.data.DataQueries.PRICE;
 import static com.gmail.trentech.pjp.data.DataQueries.PROPERTIES;
@@ -35,7 +36,6 @@ import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.MemoryDataContainer;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.persistence.AbstractDataBuilder;
-import org.spongepowered.api.data.persistence.DataContentUpdater;
 import org.spongepowered.api.data.persistence.DataTranslators;
 import org.spongepowered.api.data.persistence.InvalidDataException;
 import org.spongepowered.api.entity.living.player.Player;
@@ -69,15 +69,17 @@ public abstract class Portal implements DataSerializable {
 	private String name;
 	private Rotation rotation = Rotation.EAST;
 	private double price = 0;
-
+	private Optional<String> permission = Optional.empty();
+	
 	private Optional<Properties> properties = Optional.empty();
 
 	private static ConcurrentHashMap<String, Portal> cache = new ConcurrentHashMap<>();
 
-	protected Portal(PortalType type, Rotation rotation, double price) {
+	protected Portal(PortalType type, Rotation rotation, double price, Optional<String> permission) {
 		this.type = type;
 		this.rotation = rotation;
 		this.price = price;
+		this.permission = permission;
 	}
 
 	public static Optional<Portal> get(String name, PortalType type) {
@@ -305,6 +307,14 @@ public abstract class Portal implements DataSerializable {
 		this.price = price;
 	}
 
+	public Optional<String> getPermission() {
+		return permission;
+	}
+
+	public void setPermission(String permission) {
+		this.permission = Optional.of(permission);
+	}
+	
 	public Optional<Properties> getProperties() {
 		return properties;
 	}
@@ -317,8 +327,8 @@ public abstract class Portal implements DataSerializable {
 
 		private String server;
 
-		public Server(PortalType type, String server, Rotation rotation, double price) {
-			super(type, rotation, price);
+		public Server(PortalType type, String server, Rotation rotation, double price, Optional<String> permission) {
+			super(type, rotation, price, permission);
 			this.server = server;
 		}
 
@@ -339,6 +349,10 @@ public abstract class Portal implements DataSerializable {
 		public DataContainer toContainer() {
 			DataContainer container = new MemoryDataContainer().set(PORTAL_TYPE, getType().name()).set(SERVER, server).set(ROTATION, getRotation().getName()).set(PRICE, getPrice());
 
+			if (getPermission().isPresent()) {
+				container.set(PERMISSION, getPermission().get());
+			}
+			
 			if (getProperties().isPresent()) {
 				container.set(PROPERTIES, getProperties().get());
 			}
@@ -359,8 +373,9 @@ public abstract class Portal implements DataSerializable {
 					String server = container.getString(SERVER).get();
 					Rotation rotation = Rotation.get(container.getString(ROTATION).get()).get();
 					Double price = container.getDouble(PRICE).get();
+					Optional<String> permission = container.getString(PERMISSION);
 
-					Portal.Server portal = new Portal.Server(type, server, rotation, price);
+					Portal.Server portal = new Portal.Server(type, server, rotation, price, permission);
 
 					if (container.contains(PROPERTIES)) {
 						portal.setProperties(container.getSerializable(PROPERTIES, Properties.class).get());
@@ -381,8 +396,8 @@ public abstract class Portal implements DataSerializable {
 		private boolean bedSpawn;
 		private boolean force;
 		
-		public Local(PortalType type, World world, Optional<Vector3d> vector3d, Rotation rotation, double price, boolean bedSpawn, boolean force) {
-			super(type, rotation, price);
+		public Local(PortalType type, World world, Optional<Vector3d> vector3d, Rotation rotation, double price, boolean bedSpawn, boolean force, Optional<String> permission) {
+			super(type, rotation, price, permission);
 			this.world = world;
 			this.vector3d = vector3d;
 			this.bedSpawn = bedSpawn;
@@ -438,13 +453,17 @@ public abstract class Portal implements DataSerializable {
 		
 		@Override
 		public int getContentVersion() {
-			return 1;
+			return 0;
 		}
 
 		@Override
 		public DataContainer toContainer() {
 			DataContainer container = new MemoryDataContainer().set(PORTAL_TYPE, getType().name()).set(WORLD, world.getName()).set(ROTATION, getRotation().getName()).set(PRICE, getPrice()).set(BED_RESPAWN, isBedSpawn()).set(FORCE, force());
 
+			if (getPermission().isPresent()) {
+				container.set(PERMISSION, getPermission().get());
+			}
+			
 			if (getProperties().isPresent()) {
 				container.set(PROPERTIES, getProperties().get());
 			}
@@ -457,52 +476,6 @@ public abstract class Portal implements DataSerializable {
 			return container;
 		}
 
-		public static class Update1 implements DataContentUpdater {
-
-			@Override
-			public int getInputVersion() {
-				return 0;
-			}
-
-			@Override
-			public int getOutputVersion() {
-				return 1;
-			}
-
-			@Override
-			public DataView update(DataView container) {
-				if (!container.contains(BED_RESPAWN)) {
-					container.set(BED_RESPAWN, false);
-				}
-				
-				return container;
-			}
-			
-		}
-		
-		public static class Update2 implements DataContentUpdater {
-
-			@Override
-			public int getInputVersion() {
-				return 1;
-			}
-
-			@Override
-			public int getOutputVersion() {
-				return 2;
-			}
-
-			@Override
-			public DataView update(DataView container) {
-				if (!container.contains(FORCE)) {
-					container.set(FORCE, false);
-				}
-				
-				return container;
-			}
-			
-		}
-		
 		public static class Builder extends AbstractDataBuilder<Local> {
 
 			public Builder() {
@@ -525,6 +498,7 @@ public abstract class Portal implements DataSerializable {
 					Double price = container.getDouble(PRICE).get();
 					boolean bedRespawn = false;
 					boolean force = false;
+					Optional<String> permission = container.getString(PERMISSION);
 					
 					if(container.contains(BED_RESPAWN)) {
 						bedRespawn = container.getBoolean(BED_RESPAWN).get();
@@ -538,7 +512,7 @@ public abstract class Portal implements DataSerializable {
 						vector3d = Optional.of(DataTranslators.VECTOR_3_D.translate(container.getView(VECTOR3D).get()));
 					}
 
-					Portal.Local portal = new Portal.Local(type, world, vector3d, rotation, price, bedRespawn, force);
+					Portal.Local portal = new Portal.Local(type, world, vector3d, rotation, price, bedRespawn, force, permission);
 
 					if (container.contains(PROPERTIES)) {
 						portal.setProperties(container.getSerializable(PROPERTIES, Properties.class).get());
@@ -605,17 +579,15 @@ public abstract class Portal implements DataSerializable {
 			Portal.Server server = (Portal.Server) portal;
 
 			Consumer<String> consumer = (serverName) -> {
-				TeleportEvent.Server teleportEvent = new TeleportEvent.Server(player, serverName, server.getServer(), server.getPrice(), Cause.of(NamedCause.source(server)));
+				TeleportEvent.Server teleportEvent = new TeleportEvent.Server(player, serverName, server.getServer(), server.getPrice(), server.getPermission(), Cause.of(NamedCause.source(server)));
 
 				if (!Sponge.getEventManager().post(teleportEvent)) {
 					SpongyCord.API.connectPlayer(player, teleportEvent.getDestination());
-
 					player.setLocation(player.getWorld().getSpawnLocation());
 
 					bool.set(true);
 				}
 			};
-
 			SpongyCord.API.getServerName(consumer, player);
 		} else {
 			Portal.Local local = (Portal.Local) portal;
@@ -632,7 +604,7 @@ public abstract class Portal implements DataSerializable {
 						if(optionalLocation.isPresent()) {
 							Location<World> spawnLocation = optionalLocation.get();
 							
-							com.gmail.trentech.pjp.events.TeleportEvent.Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, local.getPrice(), local.force(), Cause.of(NamedCause.source(local)));
+							com.gmail.trentech.pjp.events.TeleportEvent.Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, local.getPrice(), local.force(), local.getPermission(), Cause.of(NamedCause.source(local)));
 
 							if (!Sponge.getEventManager().post(teleportEvent)) {
 								spawnLocation = teleportEvent.getDestination();
@@ -653,7 +625,7 @@ public abstract class Portal implements DataSerializable {
 			if (optionalSpawnLocation.isPresent()) {
 				Location<World> spawnLocation = optionalSpawnLocation.get();
 
-				com.gmail.trentech.pjp.events.TeleportEvent.Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, local.getPrice(), local.force(), Cause.of(NamedCause.source(local)));
+				com.gmail.trentech.pjp.events.TeleportEvent.Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, local.getPrice(), local.force(), local.getPermission(), Cause.of(NamedCause.source(local)));
 
 				if (!Sponge.getEventManager().post(teleportEvent)) {
 					spawnLocation = teleportEvent.getDestination();

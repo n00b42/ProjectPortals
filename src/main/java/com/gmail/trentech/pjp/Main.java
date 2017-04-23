@@ -83,10 +83,7 @@ public class Main {
 		
 		Sponge.getDataManager().registerBuilder(Portal.Local.class, new Portal.Local.Builder());	
 		Sponge.getDataManager().registerBuilder(Portal.Server.class, new Portal.Server.Builder());
-		
-		Sponge.getDataManager().registerContentUpdater(Portal.Local.class, new Portal.Local.Update1());
-		Sponge.getDataManager().registerContentUpdater(Portal.Local.class, new Portal.Local.Update2());
-		
+
 		Sponge.getEventManager().registerListeners(this, new TeleportListener(timings));
 		
 		Sponge.getCommandManager().register(this, new CommandManager().cmdPJP, "pjp");

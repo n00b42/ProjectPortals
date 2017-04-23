@@ -17,8 +17,6 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjc.core.ConfigManager;
-import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
 import com.gmail.trentech.pjp.utils.Timings;
@@ -54,20 +52,6 @@ public class LeverListener {
 					continue;
 				}
 				Portal portal = optionalPortal.get();
-
-				if (ConfigManager.get(Main.getPlugin()).getConfig().getNode("options", "advanced_permissions").getBoolean()) {
-					if (!player.hasPermission("pjp.lever." + location.getExtent().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ())) {
-						player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to use this lever portal"));
-						event.setCancelled(true);
-						return;
-					}
-				} else {
-					if (!player.hasPermission("pjp.lever.interact")) {
-						player.sendMessage(Text.of(TextColors.DARK_RED, "you do not have permission to interact with lever portals"));
-						event.setCancelled(true);
-						return;
-					}
-				}
 
 				Portal.teleportPlayer(player, portal);
 			}

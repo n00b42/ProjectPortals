@@ -54,8 +54,7 @@ public class CMDList implements CommandExecutor {
 							e.printStackTrace();
 						}
 					}
-				};
-
+				};		
 				SpongyCord.API.getServerList(consumer, player);
 
 				builder.append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Server Destination: ", TextColors.WHITE, server.getServer()));

@@ -50,7 +50,8 @@ public class CMDCreate implements CommandExecutor {
 		boolean force = false;
 		AtomicReference<Rotation> rotation = new AtomicReference<>(Rotation.EAST);
 		AtomicReference<Double> price = new AtomicReference<>(0.0);
-
+		AtomicReference<Optional<String>> permission = new AtomicReference<>(args.<String>getOne("permission"));
+		
 		if (args.hasAny("price")) {
 			price.set(args.<Double>getOne("price").get());
 		}
@@ -77,14 +78,12 @@ public class CMDCreate implements CommandExecutor {
 							}
 						}
 
-						new Portal.Server(PortalType.WARP, destination, rotation.get(), price.get()).create(name);
+						new Portal.Server(PortalType.WARP, destination, rotation.get(), price.get(), permission.get()).create(name);
 
 						player.sendMessage(Text.of(TextColors.DARK_GREEN, "Warp ", name, " create"));
 					};
-
 					SpongyCord.API.getServerName(consumer2, player);
-				};
-
+				};				
 				SpongyCord.API.getServerList(consumer1, player);
 
 				return CommandResult.success();
@@ -129,7 +128,7 @@ public class CMDCreate implements CommandExecutor {
 			rotation.set(Rotation.getClosest(player.getRotation().getFloorY()));
 		}
 
-		new Portal.Local(PortalType.WARP, world.get(), vector3d, rotation.get(), price.get(), bedRespawn, force).create(name);
+		new Portal.Local(PortalType.WARP, world.get(), vector3d, rotation.get(), price.get(), bedRespawn, force, permission.get()).create(name);
 
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Warp ", name, " create"));
 

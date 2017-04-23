@@ -49,6 +49,7 @@ public abstract class CMDObjBase implements CommandExecutor {
 		AtomicReference<Double> price = new AtomicReference<>(0.0);
 		boolean bedRespawn = false;
 		boolean force = false;
+		AtomicReference<Optional<String>> permission = new AtomicReference<>(args.<String>getOne("permission"));
 		
 		if (args.hasAny("price")) {
 			price.set(args.<Double>getOne("price").get());
@@ -73,14 +74,12 @@ public abstract class CMDObjBase implements CommandExecutor {
 						}
 					}
 
-					init(player, Optional.of(destination), Optional.empty(), Optional.empty(), direction.get(), price.get(), false, false);
+					init(player, Optional.of(destination), Optional.empty(), Optional.empty(), direction.get(), price.get(), false, false, permission.get());
 
 					player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place " + name + " to create " + name + " portal"));
 				};
-
 				SpongyCord.API.getServerName(consumer2, player);
-			};
-
+			};			
 			SpongyCord.API.getServerList(consumer1, player);
 		} else {
 			Optional<World> world = Sponge.getServer().getWorld(destination);
@@ -113,7 +112,7 @@ public abstract class CMDObjBase implements CommandExecutor {
 				force = true;
 			}
 			
-			init(player, Optional.empty(), world, vector3d, direction.get(), price.get(), bedRespawn, force);
+			init(player, Optional.empty(), world, vector3d, direction.get(), price.get(), bedRespawn, force, permission.get());
 
 			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place " + name + " to create " + name + " portal"));
 		}
@@ -121,5 +120,5 @@ public abstract class CMDObjBase implements CommandExecutor {
 		return CommandResult.success();
 	}
 
-	protected abstract void init(Player player, Optional<String> server, Optional<World> world, Optional<Vector3d> vector3d, Rotation rotation, double price, boolean bedRespawn, boolean force);
+	protected abstract void init(Player player, Optional<String> server, Optional<World> world, Optional<Vector3d> vector3d, Rotation rotation, double price, boolean bedRespawn, boolean force, Optional<String> permission);
 }

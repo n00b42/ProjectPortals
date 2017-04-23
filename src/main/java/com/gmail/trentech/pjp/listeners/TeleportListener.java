@@ -52,6 +52,16 @@ public class TeleportListener {
 		try {
 			Player player = event.getPlayer();
 
+			Optional<String> optionalPermission = event.getPermission();
+			
+			if(optionalPermission.isPresent()) {
+				if (!player.hasPermission(optionalPermission.get())) {
+					player.sendMessage(Text.of(TextColors.DARK_RED, "Requires permission ", TextColors.YELLOW, optionalPermission.get()));
+					event.setCancelled(true);
+					return;
+				}
+			}
+			
 			Location<World> src = player.getLocation();
 
 			double price = event.getPrice();
@@ -90,12 +100,6 @@ public class TeleportListener {
 			Location<World> src = event.getSource();
 			src = src.getExtent().getLocation(src.getBlockX(), src.getBlockY(), src.getBlockZ());
 			Location<World> dest = event.getDestination();
-
-//			if (!player.hasPermission("pjp.worlds." + dest.getExtent().getName()) && !player.hasPermission("pjw.worlds." + dest.getExtent().getName())) {
-//				player.sendMessage(Text.of(TextColors.DARK_RED, "You do not have permission to travel to ", dest.getExtent().getName()));
-//				event.setCancelled(true);
-//				return;
-//			}
 
 			Optional<Location<World>> optionalLocation = Optional.empty();
 			
