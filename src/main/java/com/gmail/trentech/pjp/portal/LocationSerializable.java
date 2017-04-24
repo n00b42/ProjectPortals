@@ -5,7 +5,6 @@ import static com.gmail.trentech.pjp.data.DataQueries.WORLD;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Optional;
@@ -22,6 +21,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
+import com.google.common.reflect.TypeToken;
 
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
@@ -79,30 +79,30 @@ public class LocationSerializable implements DataSerializable {
 			return Optional.empty();
 		}
 	}
-	
+
 	public static String serialize(Location<World> location) {
-		ConfigurationNode node = DataTranslators.CONFIGURATION_NODE.translate(new LocationSerializable(location).toContainer());
-
-		StringWriter stringWriter = new StringWriter();
 		try {
-			HoconConfigurationLoader.builder().setSink(() -> new BufferedWriter(stringWriter)).build().save(node);
-		} catch (IOException e) {
+			StringWriter sink = new StringWriter();
+			HoconConfigurationLoader loader = HoconConfigurationLoader.builder().setSink(() -> new BufferedWriter(sink)).build();
+			ConfigurationNode node = loader.createEmptyNode();
+			node.setValue(TypeToken.of(LocationSerializable.class), new LocationSerializable(location));		
+			loader.save(node);
+			return sink.toString();
+		} catch (Exception e) {
 			e.printStackTrace();
+			return null;
 		}
-
-		return stringWriter.toString();
 	}
-	
+
 	public static Location<World> deserialize(String item) {
-		ConfigurationNode node = null;
 		try {
-			node = HoconConfigurationLoader.builder().setSource(() -> new BufferedReader(new StringReader(item))).build().load();
-		} catch (IOException e) {
+			StringReader source = new StringReader(item);
+			HoconConfigurationLoader loader = HoconConfigurationLoader.builder().setSource(() -> new BufferedReader(source)).build();
+
+			return loader.load().getValue(TypeToken.of(LocationSerializable.class)).getLocation();
+		} catch (Exception e) {
 			e.printStackTrace();
+			return null;
 		}
-
-		DataView dataView = DataTranslators.CONFIGURATION_NODE.translate(node);
-
-		return Sponge.getDataManager().deserialize(LocationSerializable.class, dataView).get().getLocation();
 	}
 }
