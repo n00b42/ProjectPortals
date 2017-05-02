@@ -21,7 +21,6 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataSerializable;
 import org.spongepowered.api.data.DataView;
-import org.spongepowered.api.data.MemoryDataContainer;
 import org.spongepowered.api.data.persistence.AbstractDataBuilder;
 import org.spongepowered.api.data.persistence.DataTranslators;
 import org.spongepowered.api.data.persistence.InvalidDataException;
@@ -123,7 +122,7 @@ public abstract class Portal implements DataSerializable {
 
 		@Override
 		public DataContainer toContainer() {
-			DataContainer container = new MemoryDataContainer().set(PORTAL_TYPE, getType().name()).set(SERVER, server).set(ROTATION, getRotation().getName()).set(PRICE, getPrice());
+			DataContainer container = DataContainer.createNew().set(PORTAL_TYPE, getType().name()).set(SERVER, server).set(ROTATION, getRotation().getName()).set(PRICE, getPrice());
 
 			if (getPermission().isPresent()) {
 				container.set(PERMISSION, getPermission().get());
@@ -234,7 +233,7 @@ public abstract class Portal implements DataSerializable {
 
 		@Override
 		public DataContainer toContainer() {
-			DataContainer container = new MemoryDataContainer().set(PORTAL_TYPE, getType().name()).set(WORLD, world.getName()).set(ROTATION, getRotation().getName()).set(PRICE, getPrice()).set(BED_RESPAWN, isBedSpawn()).set(FORCE, force());
+			DataContainer container = DataContainer.createNew().set(PORTAL_TYPE, getType().name()).set(WORLD, world.getName()).set(ROTATION, getRotation().getName()).set(PRICE, getPrice()).set(BED_RESPAWN, isBedSpawn()).set(FORCE, force());
 
 			if (getPermission().isPresent()) {
 				container.set(PERMISSION, getPermission().get());

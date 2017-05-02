@@ -13,7 +13,6 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataSerializable;
 import org.spongepowered.api.data.DataView;
-import org.spongepowered.api.data.MemoryDataContainer;
 import org.spongepowered.api.data.persistence.AbstractDataBuilder;
 import org.spongepowered.api.data.persistence.DataTranslators;
 import org.spongepowered.api.data.persistence.InvalidDataException;
@@ -52,7 +51,7 @@ public class LocationSerializable implements DataSerializable {
 
 	@Override
 	public DataContainer toContainer() {
-		return new MemoryDataContainer().set(VECTOR3D, DataTranslators.VECTOR_3_D.translate(vector3d)).set(WORLD, world.getName());
+		return DataContainer.createNew().set(VECTOR3D, DataTranslators.VECTOR_3_D.translate(vector3d)).set(WORLD, world.getName());
 	}
 
 	public static class Builder extends AbstractDataBuilder<LocationSerializable> {
