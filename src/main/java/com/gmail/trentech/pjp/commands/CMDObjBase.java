@@ -20,6 +20,9 @@ import org.spongepowered.api.world.World;
 import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjc.core.BungeeManager;
 import com.gmail.trentech.pjc.help.Help;
+import com.gmail.trentech.pjp.portal.features.Command;
+import com.gmail.trentech.pjp.portal.features.Command.SourceType;
+import com.gmail.trentech.pjp.portal.features.Coordinate;
 import com.gmail.trentech.pjp.rotation.Rotation;
 
 public abstract class CMDObjBase implements CommandExecutor {
@@ -42,18 +45,22 @@ public abstract class CMDObjBase implements CommandExecutor {
 			throw new CommandException(Text.builder().onClick(TextActions.executeCallback(help.execute())).append(help.getUsageText()).build(), false);
 		}
 		String destination = args.<String>getOne("destination").get();
-
-		Optional<Vector3d> vector3d = Optional.empty();
+		
+		Optional<Coordinate> coordinate = Optional.empty();
 		AtomicReference<Rotation> direction = new AtomicReference<>(Rotation.EAST);
 		AtomicReference<Double> price = new AtomicReference<>(0.0);
-		boolean bedRespawn = false;
 		boolean force = false;
-		AtomicReference<Optional<String>> permission = new AtomicReference<>(args.<String>getOne("permission"));
+		Optional<String> permission = args.<String>getOne("permission");
+		AtomicReference<Optional<Command>> command = new AtomicReference<>(Optional.empty());
 		
 		if (args.hasAny("price")) {
 			price.set(args.<Double>getOne("price").get());
 		}
 
+		if (args.hasAny("command")) {
+			command.set(Optional.of(new Command(SourceType.CONSOLE, args.<String>getOne("command").get())));
+		}
+		
 		if (args.hasAny("b")) {
 			Consumer<List<String>> consumer1 = (list) -> {
 				if (!list.contains(destination)) {
@@ -73,7 +80,7 @@ public abstract class CMDObjBase implements CommandExecutor {
 						}
 					}
 
-					init(player, Optional.of(destination), Optional.empty(), Optional.empty(), direction.get(), price.get(), false, false, permission.get());
+					init(player, direction.get(), price.get(), false, Optional.of(destination), Optional.empty(), permission, command.get());
 
 					player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place " + name + " to create " + name + " portal"));
 				};
@@ -91,16 +98,18 @@ public abstract class CMDObjBase implements CommandExecutor {
 				String[] coords = args.<String>getOne("x,y,z").get().split(",");
 
 				if (coords[0].equalsIgnoreCase("random")) {
-					vector3d = Optional.of(new Vector3d(0, 0, 0));
+					coordinate = Optional.of(new Coordinate(world.get(), true, false));
 				} else if(coords[0].equalsIgnoreCase("bed")) {
-					bedRespawn = true;
+					coordinate = Optional.of(new Coordinate(world.get(), false, true));
 				} else {
 					try {
-						vector3d = Optional.of(new Vector3d(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2])));
+						coordinate = Optional.of(new Coordinate(world.get(), new Vector3d(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2]))));
 					} catch (Exception e) {
 						throw new CommandException(Text.of(TextColors.RED, coords.toString(), " is not valid"), true);
 					}
 				}
+			} else {
+				coordinate = Optional.of(new Coordinate(world.get(), false, false));
 			}
 
 			if (args.hasAny("direction")) {
@@ -111,7 +120,7 @@ public abstract class CMDObjBase implements CommandExecutor {
 				force = true;
 			}
 			
-			init(player, Optional.empty(), world, vector3d, direction.get(), price.get(), bedRespawn, force, permission.get());
+			init(player, direction.get(), price.get(), force, Optional.empty(), coordinate, permission, command.get());
 
 			player.sendMessage(Text.of(TextColors.DARK_GREEN, "Place " + name + " to create " + name + " portal"));
 		}
@@ -119,5 +128,5 @@ public abstract class CMDObjBase implements CommandExecutor {
 		return CommandResult.success();
 	}
 
-	protected abstract void init(Player player, Optional<String> server, Optional<World> world, Optional<Vector3d> vector3d, Rotation rotation, double price, boolean bedRespawn, boolean force, Optional<String> permission);
+	protected abstract void init(Player player, Rotation rotation, double price, boolean force, Optional<String> server, Optional<Coordinate> coordinate, Optional<String> permission, Optional<Command> command);
 }

@@ -37,6 +37,7 @@ import com.gmail.trentech.pjp.events.ConstructPortalEvent;
 import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.PortalService;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
+import com.gmail.trentech.pjp.portal.features.Coordinate;
 import com.gmail.trentech.pjp.rotation.PlayerRotation;
 import com.gmail.trentech.pjp.utils.Timings;
 
@@ -170,7 +171,14 @@ public class PortalListener {
 				return;
 			}
 
-			Optional<Location<World>> optionalSpawnLocation = local.getLocation();
+			Optional<Coordinate> optionalCoordinate = local.getCoordinate();
+			
+			if(!optionalCoordinate.isPresent()) {
+				return;
+			}
+			Coordinate coordinate = optionalCoordinate.get();
+			
+			Optional<Location<World>> optionalSpawnLocation = coordinate.getLocation();
 
 			if (!optionalSpawnLocation.isPresent()) {
 				return;
@@ -212,7 +220,14 @@ public class PortalListener {
 				return;
 			}
 
-			Optional<Location<World>> optionalSpawnLocation = local.getLocation();
+			Optional<Coordinate> optionalCoordinate = local.getCoordinate();
+			
+			if(!optionalCoordinate.isPresent()) {
+				return;
+			}
+			Coordinate coordinate = optionalCoordinate.get();
+			
+			Optional<Location<World>> optionalSpawnLocation = coordinate.getLocation();
 
 			if (!optionalSpawnLocation.isPresent()) {
 				return;
@@ -252,7 +267,7 @@ public class PortalListener {
 			}
 			cache.add(uuid);
 
-			portalService.teleportPlayer(player, portal);
+			portalService.execute(player, portal);
 
 			Sponge.getScheduler().createTaskBuilder().delayTicks(20).execute(c -> {
 				cache.remove(uuid);

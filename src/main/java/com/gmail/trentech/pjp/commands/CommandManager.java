@@ -23,6 +23,7 @@ public class CommandManager {
 		    		.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
 		    		.valueFlag(GenericArguments.enumValue(Text.of("direction"), Rotation.class), "d")
     				.valueFlag(GenericArguments.doubleNum(Text.of("price")), "p")
+    				.valueFlag(GenericArguments.string(Text.of("command")), "s")
     				.valueFlag(GenericArguments.string(Text.of("permission")), "n").buildWith(GenericArguments.none()))
 		    .executor(new com.gmail.trentech.pjp.commands.warp.CMDCreate())
 		    .build();
@@ -114,6 +115,7 @@ public class CommandManager {
 		    		.valueFlag(GenericArguments.enumValue(Text.of("direction"), Rotation.class), "d")
 		    		.valueFlag(GenericArguments.seq(GenericArguments.enumValue(Text.of("particle"), Particles.class), GenericArguments.optional(GenericArguments.enumValue(Text.of("color"), ParticleColor.class))), "e")
     				.valueFlag(GenericArguments.string(Text.of("price")), "p")
+    				.valueFlag(GenericArguments.string(Text.of("command")), "s")
     				.valueFlag(GenericArguments.string(Text.of("permission")), "n").buildWith(GenericArguments.none()))
 		    .executor(new com.gmail.trentech.pjp.commands.portal.CMDCreate())
 		    .build();
@@ -189,6 +191,7 @@ public class CommandManager {
 		    		.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
 		    		.valueFlag(GenericArguments.enumValue(Text.of("direction"), Rotation.class), "d")
 		    		.valueFlag(GenericArguments.doubleNum(Text.of("price")), "p")
+		    		.valueFlag(GenericArguments.string(Text.of("command")), "s")
 		    		.valueFlag(GenericArguments.string(Text.of("permission")), "n").buildWith(GenericArguments.none()))
 		    .executor(new CMDObj.Button())
 		    .build();
@@ -201,6 +204,7 @@ public class CommandManager {
 		    		.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
 		    		.valueFlag(GenericArguments.enumValue(Text.of("direction"), Rotation.class), "d")
 		    		.valueFlag(GenericArguments.doubleNum(Text.of("price")), "p")
+		    		.valueFlag(GenericArguments.string(Text.of("command")), "s")
 		    		.valueFlag(GenericArguments.string(Text.of("permission")), "n").buildWith(GenericArguments.none()))
 		    .executor(new CMDObj.Door())
 		    .build();
@@ -213,6 +217,7 @@ public class CommandManager {
 		    		.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
 		    		.valueFlag(GenericArguments.enumValue(Text.of("direction"), Rotation.class), "d")
 		    		.valueFlag(GenericArguments.doubleNum(Text.of("price")), "p")
+		    		.valueFlag(GenericArguments.string(Text.of("command")), "s")
 		    		.valueFlag(GenericArguments.string(Text.of("permission")), "n").buildWith(GenericArguments.none()))
 		    .executor(new CMDObj.Lever())
 		    .build();
@@ -225,6 +230,7 @@ public class CommandManager {
 		    		.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
 		    		.valueFlag(GenericArguments.enumValue(Text.of("direction"), Rotation.class), "d")
 		    		.valueFlag(GenericArguments.doubleNum(Text.of("price")), "p")
+		    		.valueFlag(GenericArguments.string(Text.of("command")), "s")
 		    		.valueFlag(GenericArguments.string(Text.of("permission")), "n").buildWith(GenericArguments.none()))
 		    .executor(new CMDObj.Plate())
 		    .build();
@@ -237,6 +243,7 @@ public class CommandManager {
 		    		.valueFlag(GenericArguments.string(Text.of("x,y,z")), "c")
 		    		.valueFlag(GenericArguments.enumValue(Text.of("direction"), Rotation.class), "d")
 		    		.valueFlag(GenericArguments.string(Text.of("price")), "p")
+		    		.valueFlag(GenericArguments.string(Text.of("command")), "s")
 		    		.valueFlag(GenericArguments.string(Text.of("permission")), "n").buildWith(GenericArguments.none()))
 		    .executor(new CMDObj.Sign())
 		    .build();

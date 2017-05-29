@@ -23,7 +23,9 @@ import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.data.Keys;
 import com.gmail.trentech.pjp.data.mutable.HomeData;
 import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.Portal.Local;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
+import com.gmail.trentech.pjp.portal.features.Coordinate;
 import com.gmail.trentech.pjp.rotation.Rotation;
 
 public class CMDCreate implements CommandExecutor {
@@ -80,7 +82,10 @@ public class CMDCreate implements CommandExecutor {
 			force = true;
 		}
 		
-		list.put(name, new Portal.Local(PortalType.HOME, location.getExtent(), Optional.of(location.getPosition()), Rotation.getClosest(player.getRotation().getFloorY()), 0, false, force, Optional.empty()));
+		Local portal = new Portal.Local(PortalType.HOME, Rotation.getClosest(player.getRotation().getFloorY()), 0, force);
+		portal.setCoordinate(new Coordinate(location));
+		
+		list.put(name, portal);
 
 		DataTransactionResult result = player.offer(new HomeData(list));
 

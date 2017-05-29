@@ -3,16 +3,18 @@ package com.gmail.trentech.pjp.commands;
 import java.util.Optional;
 
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.world.World;
 
-import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.listeners.ButtonListener;
 import com.gmail.trentech.pjp.listeners.DoorListener;
 import com.gmail.trentech.pjp.listeners.LeverListener;
 import com.gmail.trentech.pjp.listeners.PlateListener;
 import com.gmail.trentech.pjp.listeners.SignListener;
 import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.Portal.Local;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
+import com.gmail.trentech.pjp.portal.Portal.Server;
+import com.gmail.trentech.pjp.portal.features.Command;
+import com.gmail.trentech.pjp.portal.features.Coordinate;
 import com.gmail.trentech.pjp.rotation.Rotation;
 
 public class CMDObj {
@@ -24,11 +26,35 @@ public class CMDObj {
 		}
 
 		@Override
-		protected void init(Player player, Optional<String> server, Optional<World> world, Optional<Vector3d> vector3d, Rotation rotation, double price, boolean bedRespawn, boolean force, Optional<String> permission) {
+		protected void init(Player player, Rotation rotation, double price, boolean force, Optional<String> server, Optional<Coordinate> coordinate, Optional<String> permission, Optional<Command> command) {
 			if (server.isPresent()) {
-				ButtonListener.builders.put(player.getUniqueId(), new Portal.Server(PortalType.BUTTON, server.get(), rotation, price, permission));
+				Server portal = new Portal.Server(PortalType.BUTTON, server.get(), rotation, price);
+				
+				if(permission.isPresent()) {
+					portal.setPermission(permission.get());
+				}
+				
+				if(command.isPresent()) {
+					portal.setCommand(command.get());
+				}
+				
+				ButtonListener.builders.put(player.getUniqueId(), portal);
 			} else {
-				ButtonListener.builders.put(player.getUniqueId(), new Portal.Local(PortalType.BUTTON, world.get(), vector3d, rotation, price, bedRespawn, force, permission));
+				Local portal = new Portal.Local(PortalType.BUTTON, rotation, price, force);
+				
+				if(coordinate.isPresent()) {
+					portal.setCoordinate(coordinate.get());
+				}
+				
+				if(permission.isPresent()) {
+					portal.setPermission(permission.get());
+				}
+				
+				if(command.isPresent()) {
+					portal.setCommand(command.get());
+				}
+				
+				ButtonListener.builders.put(player.getUniqueId(), portal);
 			}
 		}
 	}
@@ -40,11 +66,35 @@ public class CMDObj {
 		}
 
 		@Override
-		protected void init(Player player, Optional<String> server, Optional<World> world, Optional<Vector3d> vector3d, Rotation rotation, double price, boolean bedRespawn, boolean force, Optional<String> permission) {
+		protected void init(Player player, Rotation rotation, double price, boolean force, Optional<String> server, Optional<Coordinate> coordinate, Optional<String> permission, Optional<Command> command) {
 			if (server.isPresent()) {
-				DoorListener.builders.put(player.getUniqueId(), new Portal.Server(PortalType.DOOR, server.get(), rotation, price, permission));
+				Server portal = new Portal.Server(PortalType.DOOR, server.get(), rotation, price);
+				
+				if(permission.isPresent()) {
+					portal.setPermission(permission.get());
+				}
+				
+				if(command.isPresent()) {
+					portal.setCommand(command.get());
+				}
+				
+				DoorListener.builders.put(player.getUniqueId(), portal);
 			} else {
-				DoorListener.builders.put(player.getUniqueId(), new Portal.Local(PortalType.DOOR, world.get(), vector3d, rotation, price, bedRespawn, force, permission));
+				Local portal = new Portal.Local(PortalType.DOOR, rotation, price, force);
+				
+				if(coordinate.isPresent()) {
+					portal.setCoordinate(coordinate.get());
+				}
+				
+				if(permission.isPresent()) {
+					portal.setPermission(permission.get());
+				}
+				
+				if(command.isPresent()) {
+					portal.setCommand(command.get());
+				}
+				
+				DoorListener.builders.put(player.getUniqueId(), portal);
 			}
 		}
 	}
@@ -56,11 +106,35 @@ public class CMDObj {
 		}
 
 		@Override
-		protected void init(Player player, Optional<String> server, Optional<World> world, Optional<Vector3d> vector3d, Rotation rotation, double price, boolean bedRespawn, boolean force, Optional<String> permission) {
+		protected void init(Player player, Rotation rotation, double price, boolean force, Optional<String> server, Optional<Coordinate> coordinate, Optional<String> permission, Optional<Command> command) {
 			if (server.isPresent()) {
-				LeverListener.builders.put(player.getUniqueId(), new Portal.Server(PortalType.LEVER, server.get(), rotation, price, permission));
+				Server portal = new Portal.Server(PortalType.LEVER, server.get(), rotation, price);
+				
+				if(permission.isPresent()) {
+					portal.setPermission(permission.get());
+				}
+				
+				if(command.isPresent()) {
+					portal.setCommand(command.get());
+				}
+				
+				LeverListener.builders.put(player.getUniqueId(), portal);
 			} else {
-				LeverListener.builders.put(player.getUniqueId(), new Portal.Local(PortalType.LEVER, world.get(), vector3d, rotation, price, bedRespawn, force, permission));
+				Local portal = new Portal.Local(PortalType.LEVER, rotation, price, force);
+				
+				if(coordinate.isPresent()) {
+					portal.setCoordinate(coordinate.get());
+				}
+				
+				if(permission.isPresent()) {
+					portal.setPermission(permission.get());
+				}
+				
+				if(command.isPresent()) {
+					portal.setCommand(command.get());
+				}
+				
+				LeverListener.builders.put(player.getUniqueId(), portal);
 			}
 		}
 	}
@@ -72,11 +146,35 @@ public class CMDObj {
 		}
 
 		@Override
-		protected void init(Player player, Optional<String> server, Optional<World> world, Optional<Vector3d> vector3d, Rotation rotation, double price, boolean bedRespawn, boolean force, Optional<String> permission) {
+		protected void init(Player player, Rotation rotation, double price, boolean force, Optional<String> server, Optional<Coordinate> coordinate, Optional<String> permission, Optional<Command> command) {
 			if (server.isPresent()) {
-				PlateListener.builders.put(player.getUniqueId(), new Portal.Server(PortalType.PLATE, server.get(), rotation, price, permission));
+				Server portal = new Portal.Server(PortalType.PLATE, server.get(), rotation, price);
+				
+				if(permission.isPresent()) {
+					portal.setPermission(permission.get());
+				}
+				
+				if(command.isPresent()) {
+					portal.setCommand(command.get());
+				}
+				
+				PlateListener.builders.put(player.getUniqueId(), portal);
 			} else {
-				PlateListener.builders.put(player.getUniqueId(), new Portal.Local(PortalType.PLATE, world.get(), vector3d, rotation, price, bedRespawn, force, permission));
+				Local portal = new Portal.Local(PortalType.PLATE, rotation, price, force);
+				
+				if(coordinate.isPresent()) {
+					portal.setCoordinate(coordinate.get());
+				}
+				
+				if(permission.isPresent()) {
+					portal.setPermission(permission.get());
+				}
+				
+				if(command.isPresent()) {
+					portal.setCommand(command.get());
+				}
+				
+				PlateListener.builders.put(player.getUniqueId(), portal);
 			}
 		}
 	}
@@ -88,11 +186,35 @@ public class CMDObj {
 		}
 
 		@Override
-		protected void init(Player player, Optional<String> server, Optional<World> world, Optional<Vector3d> vector3d, Rotation rotation, double price, boolean bedRespawn, boolean force, Optional<String> permission) {
+		protected void init(Player player, Rotation rotation, double price, boolean force, Optional<String> server, Optional<Coordinate> coordinate, Optional<String> permission, Optional<Command> command) {
 			if (server.isPresent()) {
-				SignListener.builders.put(player.getUniqueId(), new Portal.Server(PortalType.SIGN, server.get(), rotation, price, permission));
+				Server portal = new Portal.Server(PortalType.SIGN, server.get(), rotation, price);
+				
+				if(permission.isPresent()) {
+					portal.setPermission(permission.get());
+				}
+				
+				if(command.isPresent()) {
+					portal.setCommand(command.get());
+				}
+				
+				SignListener.builders.put(player.getUniqueId(), portal);
 			} else {
-				SignListener.builders.put(player.getUniqueId(), new Portal.Local(PortalType.SIGN, world.get(), vector3d, rotation, price, bedRespawn, force, permission));
+				Local portal = new Portal.Local(PortalType.SIGN, rotation, price, force);
+				
+				if(coordinate.isPresent()) {
+					portal.setCoordinate(coordinate.get());
+				}
+				
+				if(permission.isPresent()) {
+					portal.setPermission(permission.get());
+				}
+				
+				if(command.isPresent()) {
+					portal.setCommand(command.get());
+				}
+				
+				SignListener.builders.put(player.getUniqueId(), portal);
 			}
 		}
 	}

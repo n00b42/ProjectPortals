@@ -18,7 +18,7 @@ import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.PortalService;
-import com.gmail.trentech.pjp.portal.Properties;
+import com.gmail.trentech.pjp.portal.features.Properties;
 
 public class CMDParticle implements CommandExecutor {
 

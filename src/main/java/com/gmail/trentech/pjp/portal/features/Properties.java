@@ -1,4 +1,4 @@
-package com.gmail.trentech.pjp.portal;
+package com.gmail.trentech.pjp.portal.features;
 
 import static com.gmail.trentech.pjp.data.DataQueries.COLOR;
 import static com.gmail.trentech.pjp.data.DataQueries.FILL;
@@ -198,14 +198,14 @@ public class Properties implements DataSerializable {
 		List<String> frame = new ArrayList<>();
 
 		for (Location<World> location : this.frame) {
-			frame.add(LocationSerializable.serialize(location));
+			frame.add(Coordinate.serialize(location));
 		}
 		container.set(FRAME, frame);
 
 		List<String> fill = new ArrayList<>();
 
 		for (Location<World> location : this.fill) {
-			fill.add(LocationSerializable.serialize(location));
+			fill.add(Coordinate.serialize(location));
 		}
 		container.set(FILL, fill);
 
@@ -231,11 +231,11 @@ public class Properties implements DataSerializable {
 				}
 
 				for (String loc : container.getStringList(FRAME).get()) {
-					frame.add(LocationSerializable.deserialize(loc));
+					frame.add(Coordinate.deserialize(loc).get());
 				}
 
 				for (String loc : container.getStringList(FILL).get()) {
-					fill.add(LocationSerializable.deserialize(loc));
+					fill.add(Coordinate.deserialize(loc).get());
 				}
 
 				return Optional.of(new Properties(frame, fill, particle, color));

@@ -68,7 +68,7 @@ public class ButtonListener {
 				}
 				Portal portal = optionalPortal.get();
 
-				portalService.teleportPlayer(player, portal);
+				portalService.execute(player, portal);
 			}
 		} finally {
 			timings.onChangeBlockEventModify().stopTiming();

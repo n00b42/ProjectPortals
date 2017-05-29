@@ -13,8 +13,6 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.world.Location;
-import org.spongepowered.api.world.World;
 
 import com.gmail.trentech.pjc.help.Help;
 import com.gmail.trentech.pjp.data.Keys;
@@ -46,12 +44,6 @@ public class CMDHome implements CommandExecutor {
 			}
 			Portal.Local local = (Portal.Local) list.get(name);
 
-			Optional<Location<World>> optionalLocation = local.getLocation();
-
-			if (!optionalLocation.isPresent()) {
-				throw new CommandException(Text.of(TextColors.RED, name, " has invalid location"));
-			}
-
 			if (args.hasAny("player")) {
 				if (!src.hasPermission("pjp.cmd.home.others")) {
 					throw new CommandException(Text.of(TextColors.RED, "you do not have permission to warp others"));
@@ -60,7 +52,7 @@ public class CMDHome implements CommandExecutor {
 				player = args.<Player>getOne("player").get();
 			}
 
-			Sponge.getServiceManager().provide(PortalService.class).get().teleportPlayer(player, local);
+			Sponge.getServiceManager().provide(PortalService.class).get().execute(player, local);
 
 			return CommandResult.success();
 		}

@@ -86,7 +86,7 @@ public class SignListener {
 			}
 			Portal portal = optionalPortal.get();
 
-			Sponge.getServiceManager().provide(PortalService.class).get().teleportPlayer(player, portal);
+			Sponge.getServiceManager().provide(PortalService.class).get().execute(player, portal);
 		} finally {
 			timings.onChangeSignEvent().stopTiming();
 		}

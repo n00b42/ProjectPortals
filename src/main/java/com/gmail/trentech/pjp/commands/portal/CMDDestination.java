@@ -22,6 +22,7 @@ import com.gmail.trentech.pjc.help.Help;
 import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.PortalService;
 import com.gmail.trentech.pjp.portal.Portal.Server;
+import com.gmail.trentech.pjp.portal.features.Coordinate;
 
 public class CMDDestination implements CommandExecutor {
 
@@ -79,25 +80,27 @@ public class CMDDestination implements CommandExecutor {
 				throw new CommandException(Text.of(TextColors.RED, destination, " is not loaded or does not exist"), false);
 			}
 
-			local.setWorld(world.get());
-
+			Coordinate coordinate;
+			
 			if (args.hasAny("x,y,z")) {
-				Vector3d vector3d;
-
 				String[] coords = args.<String>getOne("x,y,z").get().split(",");
 
 				if (coords[0].equalsIgnoreCase("random")) {
-					vector3d = new Vector3d(0, 0, 0);
+					coordinate = new Coordinate(world.get(), true, false);
+				} else if(coords[0].equalsIgnoreCase("bed")) {
+					coordinate =new Coordinate(world.get(), false, true);
 				} else {
 					try {
-						vector3d = new Vector3d(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2]));
+						coordinate = new Coordinate(world.get(), new Vector3d(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2])));
 					} catch (Exception e) {
 						throw new CommandException(Text.of(TextColors.RED, coords.toString(), " is not valid"), true);
 					}
 				}
-
-				local.setVector3d(vector3d);
+			} else {
+				coordinate = new Coordinate(world.get(), false, false);
 			}
+			
+			local.setCoordinate(coordinate);
 		}
 
 		Sponge.getServiceManager().provide(PortalService.class).get().update(portal);

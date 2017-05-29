@@ -21,7 +21,12 @@ import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjc.core.BungeeManager;
 import com.gmail.trentech.pjc.help.Help;
 import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.Portal.Local;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
+import com.gmail.trentech.pjp.portal.Portal.Server;
+import com.gmail.trentech.pjp.portal.features.Command;
+import com.gmail.trentech.pjp.portal.features.Coordinate;
+import com.gmail.trentech.pjp.portal.features.Command.SourceType;
 import com.gmail.trentech.pjp.portal.PortalService;
 import com.gmail.trentech.pjp.rotation.Rotation;
 
@@ -46,18 +51,21 @@ public class CMDCreate implements CommandExecutor {
 			throw new CommandException(Text.of(TextColors.RED, name, " already exists"), false);
 		}
 
-		Optional<World> world = Optional.empty();
-		Optional<Vector3d> vector3d = Optional.empty();
-		boolean bedRespawn = false;
+		Optional<Coordinate> coordinate = Optional.empty();
 		boolean force = false;
 		AtomicReference<Rotation> rotation = new AtomicReference<>(Rotation.EAST);
 		AtomicReference<Double> price = new AtomicReference<>(0.0);
-		AtomicReference<Optional<String>> permission = new AtomicReference<>(args.<String>getOne("permission"));
+		Optional<String> permission = args.<String>getOne("permission");
+		AtomicReference<Optional<Command>> command = new AtomicReference<>(Optional.empty());
 		
 		if (args.hasAny("price")) {
 			price.set(args.<Double>getOne("price").get());
 		}
 
+		if (args.hasAny("command")) {
+			command.set(Optional.of(new Command(SourceType.CONSOLE, args.<String>getOne("command").get())));
+		}
+		
 		if (args.hasAny("destination")) {
 			String destination = args.<String>getOne("destination").get();
 
@@ -79,8 +87,17 @@ public class CMDCreate implements CommandExecutor {
 								e.printStackTrace();
 							}
 						}
+						Server portal = new Portal.Server(PortalType.WARP, destination, rotation.get(), price.get());
+						
+						if(permission.isPresent()) {
+							portal.setPermission(permission.get());
+						}
+						
+						if(command.get().isPresent()) {
+							portal.setCommand(command.get().get());
+						}
 
-						portalService.create(new Portal.Server(PortalType.WARP, destination, rotation.get(), price.get(), permission.get()), name);
+						portalService.create(portal, name);
 
 						player.sendMessage(Text.of(TextColors.DARK_GREEN, "Warp ", name, " create"));
 					};
@@ -94,7 +111,7 @@ public class CMDCreate implements CommandExecutor {
 					throw new CommandException(Text.of(TextColors.RED, destination, " is not loaded or does not exist"), false);
 				}
 
-				world = Sponge.getServer().getWorld(destination);
+				Optional<World> world = Sponge.getServer().getWorld(destination);
 
 				if (!world.isPresent()) {
 					throw new CommandException(Text.of(TextColors.RED, destination, " is not loaded or does not exist"), false);
@@ -104,16 +121,18 @@ public class CMDCreate implements CommandExecutor {
 					String[] coords = args.<String>getOne("x,y,z").get().split(",");
 
 					if (coords[0].equalsIgnoreCase("random")) {
-						vector3d = Optional.of(new Vector3d(0, 0, 0));
+						coordinate = Optional.of(new Coordinate(world.get(), true, false));
 					} else if(coords[0].equalsIgnoreCase("bed")) {
-						bedRespawn = true;
+						coordinate = Optional.of(new Coordinate(world.get(), false, true));
 					} else {
 						try {
-							vector3d = Optional.of(new Vector3d(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2])));
+							coordinate = Optional.of(new Coordinate(world.get(), new Vector3d(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2]))));
 						} catch (Exception e) {
 							throw new CommandException(Text.of(TextColors.RED, coords.toString(), " is not valid"), true);
 						}
 					}
+				} else {
+					coordinate = Optional.of(new Coordinate(world.get(), false, false));
 				}
 
 				if (args.hasAny("direction")) {
@@ -125,12 +144,25 @@ public class CMDCreate implements CommandExecutor {
 				}
 			}
 		} else {
-			world = Optional.of(player.getWorld());
-			vector3d = Optional.of(player.getLocation().getPosition());
+			coordinate = Optional.of(new Coordinate(player.getLocation()));
 			rotation.set(Rotation.getClosest(player.getRotation().getFloorY()));
 		}
 
-		portalService.create(new Portal.Local(PortalType.WARP, world.get(), vector3d, rotation.get(), price.get(), bedRespawn, force, permission.get()), name);
+		Local portal = new Portal.Local(PortalType.BUTTON, rotation.get(), price.get(), force);
+		
+		if(coordinate.isPresent()) {
+			portal.setCoordinate(coordinate.get());
+		}
+		
+		if(permission.isPresent()) {
+			portal.setPermission(permission.get());
+		}
+		
+		if(command.get().isPresent()) {
+			portal.setCommand(command.get().get());
+		}
+		
+		portalService.create(portal, name);
 
 		player.sendMessage(Text.of(TextColors.DARK_GREEN, "Warp ", name, " create"));
 

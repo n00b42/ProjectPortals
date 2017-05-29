@@ -30,9 +30,12 @@ import com.gmail.trentech.pjp.listeners.LegacyListener;
 import com.gmail.trentech.pjp.listeners.PortalListener;
 import com.gmail.trentech.pjp.portal.LegacyBuilder;
 import com.gmail.trentech.pjp.portal.Portal;
-import com.gmail.trentech.pjp.portal.PortalService;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
-import com.gmail.trentech.pjp.portal.Properties;
+import com.gmail.trentech.pjp.portal.PortalService;
+import com.gmail.trentech.pjp.portal.features.Command;
+import com.gmail.trentech.pjp.portal.features.Command.SourceType;
+import com.gmail.trentech.pjp.portal.features.Coordinate;
+import com.gmail.trentech.pjp.portal.features.Properties;
 import com.gmail.trentech.pjp.rotation.Rotation;
 
 public class CMDCreate implements CommandExecutor {
@@ -56,19 +59,23 @@ public class CMDCreate implements CommandExecutor {
 
 		String destination = args.<String>getOne("destination").get();
 
-		Optional<Vector3d> vector3d = Optional.empty();
+		Optional<Coordinate> coordinate = Optional.empty();
 		AtomicReference<Rotation> rotation = new AtomicReference<>(Rotation.EAST);
 		AtomicReference<Double> price = new AtomicReference<>(0.0);
-		boolean bedRespawn = false;
 		boolean force = false;
 		AtomicReference<Particle> particle = new AtomicReference<>(Particles.getDefaultEffect("portal"));
 		AtomicReference<Optional<ParticleColor>> color = new AtomicReference<>(Particles.getDefaultColor("portal", particle.get().isColorable()));
-		AtomicReference<Optional<String>> permission = new AtomicReference<>(args.<String>getOne("permission"));
+		Optional<String> permission = args.<String>getOne("permission");
+		AtomicReference<Optional<Command>> command = new AtomicReference<>(Optional.empty());
 		
 		if (args.hasAny("price")) {
 			price.set(args.<Double>getOne("price").get());
 		}
 
+		if (args.hasAny("command")) {
+			command.set(Optional.of(new Command(SourceType.CONSOLE, args.<String>getOne("command").get())));
+		}
+		
 		if (args.hasAny("particle")) {
 			particle.set(args.<Particles>getOne("particle").get().getParticle());
 
@@ -96,7 +103,16 @@ public class CMDCreate implements CommandExecutor {
 						}
 					}
 
-					Portal.Server server = new Portal.Server(PortalType.PORTAL, destination, rotation.get(), price.get(), permission.get());
+					Portal.Server server = new Portal.Server(PortalType.PORTAL, destination, rotation.get(), price.get());
+					
+					if(permission.isPresent()) {
+						server.setPermission(permission.get());
+					}
+					
+					if(command.get().isPresent()) {
+						server.setCommand(command.get().get());
+					}
+
 					Properties properties = new Properties(particle.get(), color.get());
 					server.setProperties(properties);
 					server.setName(name);
@@ -124,16 +140,18 @@ public class CMDCreate implements CommandExecutor {
 				String[] coords = args.<String>getOne("x,y,z").get().split(",");
 
 				if (coords[0].equalsIgnoreCase("random")) {
-					vector3d = Optional.of(new Vector3d(0, 0, 0));
+					coordinate = Optional.of(new Coordinate(world.get(), true, false));
 				} else if(coords[0].equalsIgnoreCase("bed")) {
-					bedRespawn = true;
+					coordinate = Optional.of(new Coordinate(world.get(), false, true));
 				} else {
 					try {
-						vector3d = Optional.of(new Vector3d(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2])));
+						coordinate = Optional.of(new Coordinate(world.get(), new Vector3d(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2]))));
 					} catch (Exception e) {
 						throw new CommandException(Text.of(TextColors.RED, coords.toString(), " is not valid"), true);
 					}
 				}
+			} else {
+				coordinate = Optional.of(new Coordinate(world.get(), false, false));
 			}
 
 			if (args.hasAny("rotation")) {
@@ -144,7 +162,20 @@ public class CMDCreate implements CommandExecutor {
 				force = true;
 			}
 			
-			Portal.Local local = new Portal.Local(PortalType.PORTAL, world.get(), vector3d, rotation.get(), price.get(), bedRespawn, force, permission.get());
+			Portal.Local local = new Portal.Local(PortalType.PORTAL, rotation.get(), price.get(), force);
+			
+			if(coordinate.isPresent()) {
+				local.setCoordinate(coordinate.get());
+			}
+			
+			if(permission.isPresent()) {
+				local.setPermission(permission.get());
+			}
+			
+			if(command.get().isPresent()) {
+				local.setCommand(command.get().get());
+			}
+			
 			Properties properties = new Properties(particle.get(), color.get());
 			local.setProperties(properties);
 			local.setName(name);
