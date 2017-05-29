@@ -24,6 +24,7 @@ import org.spongepowered.api.world.World;
 import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjp.data.Keys;
 import com.gmail.trentech.pjp.portal.Portal;
+import com.gmail.trentech.pjp.portal.features.Coordinate;
 
 public class CMDList implements CommandExecutor {
 
@@ -50,18 +51,28 @@ public class CMDList implements CommandExecutor {
 
 			Builder builder = Text.builder().onHover(TextActions.showText(Text.of(TextColors.WHITE, "Click to teleport to home")));
 
-			Optional<Location<World>> optionalLocation = local.getLocation();
-
-			if (optionalLocation.isPresent()) {
-				Location<World> location = optionalLocation.get();
-
-				String worldName = location.getExtent().getName();
-
-				if (!location.equals(local.getLocation().get())) {
+			Optional<Coordinate> optionalCoordinate = local.getCoordinate();
+			
+			if(optionalCoordinate.isPresent()) {
+				Coordinate coordinate = optionalCoordinate.get();
+				String worldName = coordinate.getWorld().getName();
+				
+				if(coordinate.isBedSpawn()) {	
+					builder.onClick(TextActions.runCommand("/home " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Destination: ", TextColors.WHITE, worldName, ", bed"));
+				} else if(coordinate.isRandom()) { 
 					builder.onClick(TextActions.runCommand("/home " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Destination: ", TextColors.WHITE, worldName, ", random"));
 				} else {
-					Vector3d vector3d = location.getPosition();
-					builder.onClick(TextActions.runCommand("/home " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Destination: ", TextColors.WHITE, worldName, ", ", vector3d.getFloorX(), ", ", vector3d.getFloorY(), ", ", vector3d.getFloorZ()));
+					Optional<Location<World>> optionalLocation = coordinate.getLocation();
+					
+					if (optionalLocation.isPresent()) {
+						Location<World> location = optionalLocation.get();
+
+						Vector3d vector3d = location.getPosition();
+						
+						builder.onClick(TextActions.runCommand("/home " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Destination: ", TextColors.WHITE, worldName, ", ", vector3d.getFloorX(), ", ", vector3d.getFloorY(), ", ", vector3d.getFloorZ()));
+					} else {
+						builder.onClick(TextActions.runCommand("/home " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.RED, " - DESTINATION ERROR"));
+					}	
 				}
 			} else {
 				builder.onClick(TextActions.runCommand("/home " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.RED, " - DESTINATION ERROR"));

@@ -25,6 +25,7 @@ import com.gmail.trentech.pjc.core.BungeeManager;
 import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.PortalService;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
+import com.gmail.trentech.pjp.portal.features.Coordinate;
 
 public class CMDList implements CommandExecutor {
 
@@ -62,21 +63,31 @@ public class CMDList implements CommandExecutor {
 			} else {
 				Portal.Local local = (Portal.Local) portal;
 
-				Optional<Location<World>> optionalLocation = local.getLocation();
-
-				if (optionalLocation.isPresent()) {
-					Location<World> location = optionalLocation.get();
-
-					String worldName = location.getExtent().getName();
-
-					if (!location.equals(local.getLocation().get())) {
-						builder.onClick(TextActions.runCommand("/warp " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Destination: ", TextColors.WHITE, worldName, ", random"));
+				Optional<Coordinate> optionalCoordinate = local.getCoordinate();
+				
+				if(optionalCoordinate.isPresent()) {
+					Coordinate coordinate = optionalCoordinate.get();
+					String worldName = coordinate.getWorld().getName();
+					
+					if(coordinate.isBedSpawn()) {	
+						builder.append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Destination: ", TextColors.WHITE, worldName, ", bed "));
+					} else if(coordinate.isRandom()) { 
+						builder.append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Destination: ", TextColors.WHITE, worldName, ", random "));
 					} else {
-						Vector3d vector3d = location.getPosition();
-						builder.onClick(TextActions.runCommand("/warp " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Destination: ", TextColors.WHITE, worldName, ", ", vector3d.getFloorX(), ", ", vector3d.getFloorY(), ", ", vector3d.getFloorZ()));
+						Optional<Location<World>> optionalLocation = coordinate.getLocation();
+						
+						if (optionalLocation.isPresent()) {
+							Location<World> location = optionalLocation.get();
+
+							Vector3d vector3d = location.getPosition();
+							
+							builder.append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.GREEN, " Destination: ", TextColors.WHITE, worldName, ", ", vector3d.getFloorX(), ", ", vector3d.getFloorY(), ", ", vector3d.getFloorZ(), " "));
+						} else {
+							builder.append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.RED, " - DESTINATION ERROR "));
+						}	
 					}
 				} else {
-					builder.onClick(TextActions.runCommand("/warp " + name)).append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.RED, " - DESTINATION ERROR"));
+					builder.append(Text.of(TextColors.GREEN, "Name: ", TextColors.WHITE, name, TextColors.RED, " - DESTINATION ERROR"));
 				}
 			}
 
@@ -84,6 +95,14 @@ public class CMDList implements CommandExecutor {
 
 			if (price != 0) {
 				builder.append(Text.of(TextColors.GREEN, " Price: ", TextColors.WHITE, "$", price));
+			}
+			
+			if(portal.getPermission().isPresent()) {
+				builder.append(Text.of(TextColors.GREEN, " Permission: ", TextColors.WHITE, portal.getPermission().get()));
+			}
+			
+			if(portal.getCommand().isPresent()) {
+				builder.append(Text.of(TextColors.GREEN, " Command: ", TextColors.WHITE, portal.getCommand().get().getCommand()));
 			}
 
 			list.add(builder.build());

@@ -46,6 +46,7 @@ public class Common {
 						+ "commas), and y must be within the range -4096 to 4096 inclusive. This is ignored if [-b] is supplied"))
 				.addArgument(Argument.of("[-d <direction>]", "Specifies the direction player will face upon teleporting. The following can be used: NORTH, NORTH_WEST, WEST, SOUTH_WEST, SOUTH, SOUTH_EAST, EAST, NORTH_EAST"))
 				.addArgument(Argument.of("[-p <price>]", "Specifies a price player will be charged for using portal"))
+				.addArgument(Argument.of("[-s <command>]", "Specifies a command to execute when using portal"))
 				.addArgument(Argument.of("[n <permission>]", "Allow you to assign a custom permission node to a portal. If no permission is provided everyone will have access."));
 		
 		if (modules.getNode("buttons").getBoolean()) {
@@ -117,7 +118,8 @@ public class Common {
 							+ "commas), and y must be within the range -4096 to 4096 inclusive. This is ignored if [-b] is supplied"))
 					.addArgument(Argument.of("[-d <direction>]", "Specifies the direction player will face upon teleporting. The following can be used: NORTH, NORTH_WEST, WEST, SOUTH_WEST, SOUTH, SOUTH_EAST, EAST, NORTH_EAST"))
 					.addArgument(Argument.of("[-e <particle> [color]]", "Specifies a Particle and ParticleColor the portal will use. Colors are only compatible with REDSTONE_DUST"))
-					.addArgument(Argument.of("[-p <price>]", "Specifies a price player will be charged for using portal"))				
+					.addArgument(Argument.of("[-p <price>]", "Specifies a price player will be charged for using portal"))
+					.addArgument(Argument.of("[-s <command>]", "Specifies a command to execute when using portal"))
 					.addArgument(Argument.of("[n <permission>]", "Allow you to assign a custom permission node to a portal. If no permission is provided everyone will have access."));
 			
 			Help portalCreate = new Help("portal create", "create", "Use this command to create a portal that will teleport you to other worlds")
@@ -242,6 +244,7 @@ public class Common {
 							+ "commas), and y must be within the range -4096 to 4096 inclusive. This is ignored if [-b] is supplied"))
 					.addArgument(Argument.of("[-d <direction>]", "Specifies the direction player will face upon teleporting. The following can be used: NORTH, NORTH_WEST, WEST, SOUTH_WEST, SOUTH, SOUTH_EAST, EAST, NORTH_EAST"))
 					.addArgument(Argument.of("[-p <price>]", "Specifies a price player will be charged for using this warp"))
+					.addArgument(Argument.of("[-s <command>]", "Specifies a command to execute when using portal"))
 					.addArgument(Argument.of("[n <permission>]", "Allow you to assign a custom permission node to a portal. If no permission is provided everyone will have access."));
 			
 			Help warpCreate = new Help("warp create", "create", "Use this command to create a warp that will teleport you to other worlds")

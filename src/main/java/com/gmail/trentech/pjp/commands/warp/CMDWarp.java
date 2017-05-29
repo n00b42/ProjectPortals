@@ -38,7 +38,7 @@ public class CMDWarp implements CommandExecutor {
 				player = args.<Player>getOne("player").get();
 			}
 
-			Sponge.getServiceManager().provide(PortalService.class).get().teleportPlayer(player, portal);
+			Sponge.getServiceManager().provide(PortalService.class).get().execute(player, portal);
 
 			return CommandResult.success();
 		}

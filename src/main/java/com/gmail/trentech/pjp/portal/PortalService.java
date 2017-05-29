@@ -34,6 +34,10 @@ import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.Particles;
 import com.gmail.trentech.pjp.events.TeleportEvent;
 import com.gmail.trentech.pjp.portal.Portal.PortalType;
+import com.gmail.trentech.pjp.portal.features.Command;
+import com.gmail.trentech.pjp.portal.features.Command.SourceType;
+import com.gmail.trentech.pjp.portal.features.Coordinate;
+import com.gmail.trentech.pjp.portal.features.Properties;
 
 public class PortalService {
 
@@ -232,10 +236,31 @@ public class PortalService {
 			e.printStackTrace();
 		}
 	}
-	
-	public boolean teleportPlayer(Player player, Portal portal) {
+
+	public boolean execute(Player player, Portal portal) {
 		AtomicReference<Boolean> bool = new AtomicReference<>(false);
 
+		Optional<String> optionalPermission = portal.getPermission();
+		
+		if(optionalPermission.isPresent()) {
+			if (!player.hasPermission(optionalPermission.get())) {
+				player.sendMessage(Text.of(TextColors.DARK_RED, "Requires permission ", TextColors.YELLOW, optionalPermission.get()));
+				return false;
+			}
+		}
+		
+		Optional<Command> optionalCommand = portal.getCommand();
+		
+		if(optionalCommand.isPresent()) {
+			Command command = optionalCommand.get();
+			
+			if(command.getSrcType().equals(SourceType.CONSOLE)) {
+				command.execute();
+			} else {
+				command.execute(player);
+			}
+		}
+		
 		if (portal instanceof Portal.Server) {
 			Portal.Server server = (Portal.Server) portal;
 
@@ -253,52 +278,60 @@ public class PortalService {
 		} else {
 			Portal.Local local = (Portal.Local) portal;
 
-			if(local.isBedSpawn()) {
-				Optional<Map<UUID, RespawnLocation>> optionalLocations = player.get(Keys.RESPAWN_LOCATIONS);
+			Optional<Coordinate> optionalCoodinate = local.getCoordinate();
+			
+			if(optionalCoodinate.isPresent()) {
+				Coordinate coordinate = optionalCoodinate.get();
 				
-				if(optionalLocations.isPresent()) {
-					Map<UUID, RespawnLocation> respawnLocations = optionalLocations.get();
-
-					if(respawnLocations.containsKey(local.getWorld().getUniqueId())) {
-						Optional<Location<World>> optionalLocation = respawnLocations.get(local.getWorld().getUniqueId()).asLocation();
+				if(coordinate.isBedSpawn()) {
+					Optional<Map<UUID, RespawnLocation>> optionalLocations = player.get(Keys.RESPAWN_LOCATIONS);
+					
+					if(optionalLocations.isPresent()) {
+						Map<UUID, RespawnLocation> respawnLocations = optionalLocations.get();
 						
-						if(optionalLocation.isPresent()) {
-							Location<World> spawnLocation = optionalLocation.get();
+						UUID worldUuid = coordinate.getWorld().getUniqueId();
+						
+						if(respawnLocations.containsKey(worldUuid)) {
+							Optional<Location<World>> optionalLocation = respawnLocations.get(worldUuid).asLocation();
 							
-							com.gmail.trentech.pjp.events.TeleportEvent.Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, local.getPrice(), local.force(), local.getPermission(), Cause.of(NamedCause.source(local)));
+							if(optionalLocation.isPresent()) {
+								Location<World> spawnLocation = optionalLocation.get();
+								
+								com.gmail.trentech.pjp.events.TeleportEvent.Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, local.getPrice(), local.force(), local.getPermission(), Cause.of(NamedCause.source(local)));
 
-							if (!Sponge.getEventManager().post(teleportEvent)) {
-								spawnLocation = teleportEvent.getDestination();
+								if (!Sponge.getEventManager().post(teleportEvent)) {
+									spawnLocation = teleportEvent.getDestination();
 
-								Vector3d rotation = local.getRotation().toVector3d();
+									Vector3d rotation = local.getRotation().toVector3d();
 
-								player.setLocationAndRotation(spawnLocation, rotation);
+									player.setLocationAndRotation(spawnLocation, rotation);
 
-								return true;
+									return true;
+								}
 							}
 						}
 					}
 				}
-			}
-			
-			Optional<Location<World>> optionalSpawnLocation = local.getLocation();
 
-			if (optionalSpawnLocation.isPresent()) {
-				Location<World> spawnLocation = optionalSpawnLocation.get();
+				Optional<Location<World>> optionalSpawnLocation = coordinate.getLocation();
 
-				com.gmail.trentech.pjp.events.TeleportEvent.Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, local.getPrice(), local.force(), local.getPermission(), Cause.of(NamedCause.source(local)));
-
-				if (!Sponge.getEventManager().post(teleportEvent)) {
-					spawnLocation = teleportEvent.getDestination();
-
-					Vector3d rotation = local.getRotation().toVector3d();
-
-					player.setLocationAndRotation(spawnLocation, rotation);
-
-					bool.set(true);
+				if (optionalSpawnLocation.isPresent()) {
+					Location<World> spawnLocation = optionalSpawnLocation.get();
+		
+					com.gmail.trentech.pjp.events.TeleportEvent.Local teleportEvent = new TeleportEvent.Local(player, player.getLocation(), spawnLocation, local.getPrice(), local.force(), local.getPermission(), Cause.of(NamedCause.source(local)));
+		
+					if (!Sponge.getEventManager().post(teleportEvent)) {
+						spawnLocation = teleportEvent.getDestination();
+		
+						Vector3d rotation = local.getRotation().toVector3d();
+		
+						player.setLocationAndRotation(spawnLocation, rotation);
+		
+						bool.set(true);
+					}
+				} else {
+					player.sendMessage(Text.of(TextColors.RED, "Could not find location"));
 				}
-			} else {
-				player.sendMessage(Text.of(TextColors.RED, "Could not find location"));
 			}
 		}
 

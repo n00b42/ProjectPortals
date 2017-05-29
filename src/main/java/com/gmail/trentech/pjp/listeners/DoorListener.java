@@ -142,7 +142,7 @@ public class DoorListener {
 
 			cache.add(uuid);
 
-			portalService.teleportPlayer(player, portal);
+			portalService.execute(player, portal);
 
 			Sponge.getScheduler().createTaskBuilder().delayTicks(20).execute(c -> {
 				cache.remove(uuid);
