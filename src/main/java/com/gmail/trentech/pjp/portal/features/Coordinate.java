@@ -1,9 +1,9 @@
 package com.gmail.trentech.pjp.portal.features;
 
-import static com.gmail.trentech.pjp.data.DataQueries.WORLD;
-import static com.gmail.trentech.pjp.data.DataQueries.VECTOR3D;
-import static com.gmail.trentech.pjp.data.DataQueries.RANDOM;
 import static com.gmail.trentech.pjp.data.DataQueries.BED_RESPAWN;
+import static com.gmail.trentech.pjp.data.DataQueries.RANDOM;
+import static com.gmail.trentech.pjp.data.DataQueries.VECTOR3D;
+import static com.gmail.trentech.pjp.data.DataQueries.WORLD;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -15,6 +15,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataSerializable;
 import org.spongepowered.api.data.DataView;
+import org.spongepowered.api.data.MemoryDataContainer;
 import org.spongepowered.api.data.persistence.AbstractDataBuilder;
 import org.spongepowered.api.data.persistence.DataTranslators;
 import org.spongepowered.api.data.persistence.InvalidDataException;
@@ -86,7 +87,7 @@ public class Coordinate implements DataSerializable {
 
 	@Override
 	public DataContainer toContainer() {
-		DataContainer dataContainer = DataContainer.createNew().set(WORLD, world.getName()).set(RANDOM, random).set(BED_RESPAWN, bedSpawn);
+		DataContainer dataContainer = new MemoryDataContainer().set(WORLD, world.getName()).set(RANDOM, random).set(BED_RESPAWN, bedSpawn);
 		
 		if(vector3d.isPresent()) {
 			dataContainer.set(VECTOR3D, DataTranslators.VECTOR_3_D.translate(vector3d.get()));

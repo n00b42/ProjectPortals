@@ -16,6 +16,7 @@ import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataSerializable;
 import org.spongepowered.api.data.DataView;
+import org.spongepowered.api.data.MemoryDataContainer;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.persistence.AbstractDataBuilder;
 import org.spongepowered.api.data.persistence.InvalidDataException;
@@ -189,7 +190,7 @@ public class Properties implements DataSerializable {
 
 	@Override
 	public DataContainer toContainer() {
-		DataContainer container = DataContainer.createNew().set(PARTICLE, particle.getName());
+		DataContainer container = new MemoryDataContainer().set(PARTICLE, particle.getName());
 
 		if (color.isPresent()) {
 			container.set(COLOR, color.get().getName());

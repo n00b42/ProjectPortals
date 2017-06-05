@@ -9,6 +9,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataSerializable;
 import org.spongepowered.api.data.DataView;
+import org.spongepowered.api.data.MemoryDataContainer;
 import org.spongepowered.api.data.persistence.AbstractDataBuilder;
 import org.spongepowered.api.data.persistence.InvalidDataException;
 import org.spongepowered.api.entity.living.player.Player;
@@ -50,7 +51,7 @@ public class Command implements DataSerializable {
 
 	@Override
 	public DataContainer toContainer() {
-		return DataContainer.createNew().set(SRCTYPE, srcType.name()).set(COMMAND, command);
+		return new MemoryDataContainer().set(SRCTYPE, srcType.name()).set(COMMAND, command);
 	}
 	
 	public static class Builder extends AbstractDataBuilder<Command> {
