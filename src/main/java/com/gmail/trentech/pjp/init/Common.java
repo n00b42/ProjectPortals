@@ -117,7 +117,7 @@ public class Common {
 					.addArgument(Argument.of("[-c <x,y,z>]", "Specifies the coordinates to set spawn to. x and z must fall within the range -30,000,000 to 30,000,000 (exclusive, without the "
 							+ "commas), and y must be within the range -4096 to 4096 inclusive. This is ignored if [-b] is supplied"))
 					.addArgument(Argument.of("[-d <direction>]", "Specifies the direction player will face upon teleporting. The following can be used: NORTH, NORTH_WEST, WEST, SOUTH_WEST, SOUTH, SOUTH_EAST, EAST, NORTH_EAST"))
-					.addArgument(Argument.of("[-e <particle> [color]]", "Specifies a Particle and ParticleColor the portal will use. Colors are only compatible with REDSTONE_DUST"))
+					.addArgument(Argument.of("[-e <particle> [color]]", "Specifies a Particle and ParticleColor the portal will use. Colors are only compatible with REDSTONE"))
 					.addArgument(Argument.of("[-p <price>]", "Specifies a price player will be charged for using portal"))
 					.addArgument(Argument.of("[-s <command>]", "Specifies a command to execute when using portal"))
 					.addArgument(Argument.of("[n <permission>]", "Allow you to assign a custom permission node to a portal. If no permission is provided everyone will have access."));
@@ -130,7 +130,7 @@ public class Common {
 					.addExample("/portal create MyPortal MyWorld -c -100,65,254 -d south")
 					.addExample("/portal create MyPortal MyWorld -d southeast")
 					.addExample("/portal create MyPortal MyWorld -p 50")
-					.addExample("/portal create MyPortal MyWorld -e REDSTONE_DUST BLUE")
+					.addExample("/portal create MyPortal MyWorld -e REDSTONE BLUE")
 					.addExample("/portal create MyPortal MyWorld");
 			
 			Usage usageDestination = new Usage(Argument.of("<name>", "Specifies the name of the targetted portal"))
@@ -150,12 +150,12 @@ public class Common {
 			
 			Usage usageParticle = new Usage(Argument.of("<name>", "Specifies the name of the targetted portal"))
 					.addArgument(Argument.of("<particle>", "Specifies the Particle the portal will use."))
-					.addArgument(Argument.of("[color]", "Specifies the color the Particles will be. Color currently only available for REDSTONE_DUST"));
+					.addArgument(Argument.of("[color]", "Specifies the color the Particles will be. Color currently only available for REDSTONE"));
 			
 			Help portalParticle = new Help("portal particle", "particle", "Change a portals particle effect.")
 					.setPermission("pjp.cmd.portal.particle")
 					.setUsage(usageParticle)
-					.addExample("/portal particle MyPortal REDSTONE_DUST BLUE")
+					.addExample("/portal particle MyPortal REDSTONE BLUE")
 					.addExample("/portal particle MyPortal CRIT");
 			
 			Usage usagePrice = new Usage(Argument.of("<name>", "Specifies the name of the targetted portal"))
@@ -320,7 +320,7 @@ public class Common {
 			config.getNode("options", "particles", "enable").setValue(true).setComment("Enable particle effects");
 			config.getNode("options", "particles", "portal", "type").setValue("PORTAL2").setComment("Default particle type for portals");
 			config.getNode("options", "particles", "portal", "color").setValue("NONE").setComment("Default Color of Particle if supported, otherwise set \"NONE\"");
-			config.getNode("options", "particles", "teleport", "type").setValue("REDSTONE_DUST").setComment("Default particle type when teleporting");
+			config.getNode("options", "particles", "teleport", "type").setValue("REDSTONE").setComment("Default particle type when teleporting");
 			config.getNode("options", "particles", "teleport", "color").setValue("RAINBOW").setComment("Default Color of Particle if supported, otherwise set \"NONE\"");
 			config.getNode("options", "particles", "creation", "type").setValue("WITCH_SPELL").setComment("Default particle type when creating any kind of portal");
 			config.getNode("options", "particles", "creation", "color").setValue("NONE").setComment("Default Color of Particle if supported, otherwise set \"NONE\"");
@@ -330,7 +330,7 @@ public class Common {
 			config.getNode("options", "particles", "creation", "type").setValue("WITCH_SPELL");
 		}
 		if(config.getNode("options", "particles", "teleport", "type").getString().equals("REDSTONE")) {
-			config.getNode("options", "particles", "teleport", "type").setValue("REDSTONE_DUST");
+			config.getNode("options", "particles", "teleport", "type").setValue("REDSTONE");
 		}
 		if (config.getNode("options", "random_spawn_radius").isVirtual()) {
 			config.getNode("options", "random_spawn_radius").setValue(5000).setComment("World radius for random spawn portals.");
