@@ -24,14 +24,19 @@ public class CMDParticle implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+		Help help = Help.get("portal particle").get();
+		
+		if (args.hasAny("help")) {		
+			help.execute(src);
+			return CommandResult.empty();
+		}
+		
 		if (!args.hasAny("name")) {
-			Help help = Help.get("portal particle").get();
 			throw new CommandException(Text.builder().onClick(TextActions.executeCallback(help.execute())).append(help.getUsageText()).build(), false);
 		}
 		Portal portal = args.<Portal>getOne("name").get();
 
 		if (!args.hasAny("particle")) {
-			Help help = Help.get("portal particle").get();
 			throw new CommandException(Text.builder().onClick(TextActions.executeCallback(help.execute())).append(help.getUsageText()).build(), false);
 		}
 		Particle particle = args.<Particles>getOne("particle").get().getParticle();

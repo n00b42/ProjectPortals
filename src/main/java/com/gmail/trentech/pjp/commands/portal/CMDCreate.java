@@ -42,13 +42,19 @@ public class CMDCreate implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+		Help help = Help.get("portal create").get();
+		
+		if (args.hasAny("help")) {		
+			help.execute(src);
+			return CommandResult.empty();
+		}
+		
 		if (!(src instanceof Player)) {
 			throw new CommandException(Text.of(TextColors.RED, "Must be a player"), false);
 		}
 		Player player = (Player) src;
 
 		if (!args.hasAny("name")) {
-			Help help = Help.get("portal create").get();
 			throw new CommandException(Text.builder().onClick(TextActions.executeCallback(help.execute())).append(help.getUsageText()).build(), false);
 		}
 		String name = args.<String>getOne("name").get().toLowerCase();
