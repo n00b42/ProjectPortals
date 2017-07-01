@@ -64,10 +64,10 @@ public class CMDHome implements CommandExecutor {
 			return CommandResult.success();
 		}
 
-		src.sendMessage(Text.of(TextColors.YELLOW, " /home <name> [player]"));
+		//src.sendMessage(Text.of(TextColors.YELLOW, " /home <name> [player]"));
 
 		Help.executeList(src, Help.get("home").get().getChildren());
-		src.sendMessage(Text.of(TextColors.YELLOW, "home <command> --help"));	
+		//src.sendMessage(Text.of(TextColors.YELLOW, "home <command> --help"));	
 		return CommandResult.success();
 	}
 
