@@ -53,7 +53,7 @@ public class CMDWarp implements CommandExecutor {
 		src.sendMessage(Text.of(TextColors.YELLOW, " /warp <name> [player]"));
 
 		Help.executeList(src, Help.get("warp").get().getChildren());
-		//src.sendMessage(Text.of(TextColors.YELLOW, "warp <command> --help"));
+		src.sendMessage(Text.of(TextColors.YELLOW, " /helpme warp <rawCommand>"));
 		
 		return CommandResult.success();
 	}
