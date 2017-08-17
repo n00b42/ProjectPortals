@@ -19,14 +19,19 @@ public class CMDRename implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+		Help help = Help.get("portal rename").get();
+		
+		if (args.hasAny("help")) {		
+			help.execute(src);
+			return CommandResult.empty();
+		}
+		
 		if (!args.hasAny("oldName")) {
-			Help help = Help.get("portal rename").get();
 			throw new CommandException(Text.builder().onClick(TextActions.executeCallback(help.execute())).append(help.getUsageText()).build(), false);
 		}
 		Portal portal = args.<Portal>getOne("oldName").get();
 
 		if (!args.hasAny("newName")) {
-			Help help = Help.get("portal rename").get();
 			throw new CommandException(Text.builder().onClick(TextActions.executeCallback(help.execute())).append(help.getUsageText()).build(), false);
 		}
 		String newName = args.<String>getOne("newName").get().toLowerCase();

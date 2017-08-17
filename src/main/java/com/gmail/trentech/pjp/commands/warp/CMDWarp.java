@@ -18,6 +18,13 @@ public class CMDWarp implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+		Help help = Help.get("warp").get();
+		
+		if (args.hasAny("help")) {		
+			help.execute(src);
+			return CommandResult.empty();
+		}
+		
 		if (args.hasAny("name")) {
 			if (!(src instanceof Player)) {
 				throw new CommandException(Text.of(TextColors.RED, "Must be a player"));
@@ -46,7 +53,8 @@ public class CMDWarp implements CommandExecutor {
 		src.sendMessage(Text.of(TextColors.YELLOW, " /warp <name> [player]"));
 
 		Help.executeList(src, Help.get("warp").get().getChildren());
-
+		src.sendMessage(Text.of(TextColors.YELLOW, " /helpme warp <rawCommand>"));
+		
 		return CommandResult.success();
 	}
 

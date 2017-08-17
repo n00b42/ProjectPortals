@@ -34,8 +34,11 @@ public enum Particles {
 	WATER_WAKE(new Particle("WATER_WAKE", ParticleTypes.WATER_WAKE, 7)),
 	WATER_DROP(new Particle("WATER_DROP", ParticleTypes.WATER_DROP, 7)),
 	PORTAL2(new Particle("PORTAL2", ParticleTypes.PORTAL, 40)),
-	NONE(new Particle("NONE", null, 0));
-
+	MOB_SPELL(new Particle("MOB_SPELL", ParticleTypes.MOB_SPELL, 50)),
+	AMBIENT_MOB_SPELL(new Particle("AMBIENT_MOB_SPELL", ParticleTypes.AMBIENT_MOB_SPELL, 50)),
+	NONE(new Particle("NONE", null, 0)),
+	BARRIER(new Particle("BARRIER", ParticleTypes.BARRIER, 2000));
+	
 	private final Particle particle;
 
 	private Particles(Particle particle) {

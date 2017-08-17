@@ -22,6 +22,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
+import com.gmail.trentech.pjc.help.Help;
 import com.gmail.trentech.pjp.data.Keys;
 import com.gmail.trentech.pjp.portal.Portal;
 import com.gmail.trentech.pjp.portal.features.Coordinate;
@@ -30,6 +31,13 @@ public class CMDList implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+		Help help = Help.get("home list").get();
+		
+		if (args.hasAny("help")) {		
+			help.execute(src);
+			return CommandResult.empty();
+		}
+		
 		if (!(src instanceof Player)) {
 			throw new CommandException(Text.of(TextColors.RED, "Must be a player"), false);
 		}

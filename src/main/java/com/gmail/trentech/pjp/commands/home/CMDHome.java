@@ -23,6 +23,13 @@ public class CMDHome implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+		Help help = Help.get("home").get();
+		
+		if (args.hasAny("help")) {		
+			help.execute(src);
+			return CommandResult.empty();
+		}
+		
 		if (!(src instanceof Player)) {
 			throw new CommandException(Text.of(TextColors.RED, "Must be a player"));
 		}
@@ -60,7 +67,7 @@ public class CMDHome implements CommandExecutor {
 		src.sendMessage(Text.of(TextColors.YELLOW, " /home <name> [player]"));
 
 		Help.executeList(src, Help.get("home").get().getChildren());
-			
+		src.sendMessage(Text.of(TextColors.YELLOW, " /helpme home <rawCommand>"));	
 		return CommandResult.success();
 	}
 

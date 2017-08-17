@@ -12,6 +12,7 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 
+import com.gmail.trentech.pjc.help.Help;
 import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.listeners.LegacyListener;
 import com.gmail.trentech.pjp.portal.LegacyBuilder;
@@ -20,6 +21,13 @@ public class CMDSave implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+		Help help = Help.get("portal save").get();
+		
+		if (args.hasAny("help")) {		
+			help.execute(src);
+			return CommandResult.empty();
+		}
+		
 		if (!(src instanceof Player)) {
 			throw new CommandException(Text.of(TextColors.RED, "Must be a player"), false);
 		}

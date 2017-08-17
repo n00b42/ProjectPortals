@@ -18,14 +18,19 @@ public class CMDPrice implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+		Help help = Help.get("warp price").get();
+		
+		if (args.hasAny("help")) {		
+			help.execute(src);
+			return CommandResult.empty();
+		}
+		
 		if (!args.hasAny("name")) {
-			Help help = Help.get("warp price").get();
 			throw new CommandException(Text.builder().onClick(TextActions.executeCallback(help.execute())).append(help.getUsageText()).build(), false);
 		}
 		Portal portal = args.<Portal>getOne("name").get();
 
 		if (!args.hasAny("price")) {
-			Help help = Help.get("warp price").get();
 			throw new CommandException(Text.builder().onClick(TextActions.executeCallback(help.execute())).append(help.getUsageText()).build(), false);
 		}
 		double price = args.<Double>getOne("price").get();

@@ -24,13 +24,19 @@ public class CMDRename implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+		Help help = Help.get("home rename").get();
+		
+		if (args.hasAny("help")) {		
+			help.execute(src);
+			return CommandResult.empty();
+		}
+		
 		if (!(src instanceof Player)) {
 			throw new CommandException(Text.of(TextColors.RED, "Must be a player"));
 		}
 		Player player = (Player) src;
 
 		if (!args.hasAny("oldName")) {
-			Help help = Help.get("home rename").get();
 			throw new CommandException(Text.builder().onClick(TextActions.executeCallback(help.execute())).append(help.getUsageText()).build(), false);
 		}
 		String oldName = args.<String>getOne("oldName").get().toLowerCase();
@@ -49,7 +55,6 @@ public class CMDRename implements CommandExecutor {
 		Portal.Local local = (Portal.Local) list.get(oldName);
 
 		if (!args.hasAny("newName")) {
-			Help help = Help.get("home rename").get();
 			throw new CommandException(Text.builder().onClick(TextActions.executeCallback(help.execute())).append(help.getUsageText()).build(), false);
 		}
 		String newName = args.<String>getOne("newName").get().toLowerCase();
