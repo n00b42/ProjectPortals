@@ -115,9 +115,11 @@ public class Main {
 			getLog().info("Pressure plate module activated");
 		}
 		if (modules.getNode("signs").getBoolean()) {
-			DataRegistration.builder().dataClass(SignPortalData.class).immutableClass(ImmutableSignPortalData.class)
+			DataRegistration<SignPortalData, ImmutableSignPortalData> signData = DataRegistration.builder().dataClass(SignPortalData.class).immutableClass(ImmutableSignPortalData.class)
 				.builder(new SignPortalData.Builder()).dataName("sign").manipulatorId("pjp_sign").buildAndRegister(Main.getPlugin());
-
+			
+			Sponge.getDataManager().registerLegacyManipulatorIds("com.gmail.trentech.pjp.data.mutable.SignPortalData", signData);
+			
 			Sponge.getEventManager().registerListeners(this, new SignListener(timings));
 			Sponge.getCommandManager().register(this, new Commands().cmdSign, "sign", "s");
 
@@ -142,9 +144,11 @@ public class Main {
 		}
 		
 		if (modules.getNode("homes").getBoolean()) {
-			DataRegistration.builder().dataClass(HomeData.class).immutableClass(ImmutableHomeData.class)
+			DataRegistration<HomeData, ImmutableHomeData> homeData = DataRegistration.builder().dataClass(HomeData.class).immutableClass(ImmutableHomeData.class)
 				.builder(new HomeData.Builder()).dataName("home").manipulatorId("pjp_home").buildAndRegister(Main.getPlugin());
 
+			Sponge.getDataManager().registerLegacyManipulatorIds("com.gmail.trentech.pjp.data.mutable.HomeData", homeData);
+			
 			Sponge.getCommandManager().register(this, new Commands().cmdHome, "home", "h");
 
 			getLog().info("Home module activated");
