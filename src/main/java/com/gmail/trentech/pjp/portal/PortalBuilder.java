@@ -9,7 +9,6 @@ import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -71,9 +70,9 @@ public class PortalBuilder {
 		return valid;
 	}
 
-	public boolean spawnPortal() {
+	public boolean spawnPortal(Cause cause) {
 		if (isValid()) {
-			if (!Sponge.getEventManager().post(new ConstructPortalEvent(portal.getProperties().get().getFrame(), portal.getProperties().get().getFill(), Cause.of(NamedCause.source(this))))) {
+			if (!Sponge.getEventManager().post(new ConstructPortalEvent(portal.getProperties().get().getFrame(), portal.getProperties().get().getFill(), cause))) {
 
 				Particle effect = Particles.getDefaultEffect("creation");
 				Optional<ParticleColor> effectColor = Particles.getDefaultColor("creation", portal.getProperties().get().getParticle().isColorable());

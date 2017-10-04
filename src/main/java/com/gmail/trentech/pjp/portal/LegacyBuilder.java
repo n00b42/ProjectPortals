@@ -7,12 +7,12 @@ import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.NamedCause;
+import org.spongepowered.api.event.cause.EventContext;
+import org.spongepowered.api.event.cause.EventContextKeys;
 import org.spongepowered.api.world.BlockChangeFlag;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.gmail.trentech.pjp.Main;
 import com.gmail.trentech.pjp.effects.Particle;
 import com.gmail.trentech.pjp.effects.ParticleColor;
 import com.gmail.trentech.pjp.effects.Particles;
@@ -67,14 +67,14 @@ public class LegacyBuilder {
 			return false;
 		}
 
-		if (!Sponge.getEventManager().post(new ConstructPortalEvent(portal.getProperties().get().getFrame(), portal.getProperties().get().getFill(), Cause.source(Main.getPlugin()).named(NamedCause.simulated(player)).build()))) {
+		if (!Sponge.getEventManager().post(new ConstructPortalEvent(portal.getProperties().get().getFrame(), portal.getProperties().get().getFill(), Cause.builder().append(portal).build(EventContext.builder().add(EventContextKeys.CREATOR, player).build())))) {
 			BlockState block = BlockTypes.AIR.getDefaultState();
 
 			Particle particle = Particles.getDefaultEffect("creation");
 			Optional<ParticleColor> color = Particles.getDefaultColor("creation", particle.isColorable());
 
 			for (Location<World> location : portal.getProperties().get().getFill()) {
-				if (!location.getExtent().setBlock(location.getBlockX(), location.getBlockY(), location.getBlockZ(), block, BlockChangeFlag.NONE, Cause.source(Main.getPlugin()).named(NamedCause.simulated(player)).build())) {
+				if (!location.getExtent().setBlock(location.getBlockX(), location.getBlockY(), location.getBlockZ(), block, BlockChangeFlag.NONE)) {
 					return false;
 				}
 

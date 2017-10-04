@@ -8,7 +8,8 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.NamedCause;
+import org.spongepowered.api.event.cause.EventContext;
+import org.spongepowered.api.event.cause.EventContextKeys;
 import org.spongepowered.api.event.entity.DestructEntityEvent;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.filter.Getter;
@@ -73,7 +74,7 @@ public class TeleportListener {
 
 				UniqueAccount account = economy.getOrCreateAccount(player.getUniqueId()).get();
 
-				if (account.withdraw(economy.getDefaultCurrency(), new BigDecimal(price), Cause.of(NamedCause.source(Main.getPlugin()))).getResult() != ResultType.SUCCESS) {
+				if (account.withdraw(economy.getDefaultCurrency(), new BigDecimal(price), Cause.of(EventContext.builder().add(EventContextKeys.PLAYER, player).build(), player)).getResult() != ResultType.SUCCESS) {
 					player.sendMessage(Text.of(TextColors.DARK_RED, "Not enough money. You need $", new DecimalFormat("#,###,##0.00").format(price)));
 					event.setCancelled(true);
 					return;
@@ -136,7 +137,7 @@ public class TeleportListener {
 		}
 	}
 
-	//@Listener
+	@Listener
 	public void onTeleportEventServer(TeleportEvent.Server event) {
 		timings.onTeleportEventServer().startTimingIfSync();
 

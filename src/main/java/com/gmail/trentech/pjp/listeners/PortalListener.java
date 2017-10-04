@@ -19,6 +19,9 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.block.InteractBlockEvent;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.EventContext;
+import org.spongepowered.api.event.cause.EventContextKeys;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.filter.cause.Root;
@@ -101,7 +104,7 @@ public class PortalListener {
 
 			com.gmail.trentech.pjp.portal.PortalBuilder builder = new com.gmail.trentech.pjp.portal.PortalBuilder(portal, location, direction);
 
-			if (!builder.spawnPortal()) {
+			if (!builder.spawnPortal(Cause.of(EventContext.builder().add(EventContextKeys.CREATOR, player).build(), player))) {
 				player.sendMessage(Text.of(TextColors.DARK_RED, "Not a valid portal shape"));
 				return;
 			}
