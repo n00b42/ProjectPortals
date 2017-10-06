@@ -1,14 +1,11 @@
 package com.gmail.trentech.pjp.portal.features;
 
-import static com.gmail.trentech.pjp.data.DataQueries.WORLD;
-import static com.gmail.trentech.pjp.data.DataQueries.VECTOR3D;
-import static com.gmail.trentech.pjp.data.DataQueries.RANDOM;
 import static com.gmail.trentech.pjp.data.DataQueries.BED_RESPAWN;
+import static com.gmail.trentech.pjp.data.DataQueries.RANDOM;
+import static com.gmail.trentech.pjp.data.DataQueries.VECTOR3D;
+import static com.gmail.trentech.pjp.data.DataQueries.WORLD;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.io.IOException;
 import java.util.Optional;
 
 import org.spongepowered.api.Sponge;
@@ -16,6 +13,7 @@ import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataSerializable;
 import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.persistence.AbstractDataBuilder;
+import org.spongepowered.api.data.persistence.DataFormats;
 import org.spongepowered.api.data.persistence.DataTranslators;
 import org.spongepowered.api.data.persistence.InvalidDataException;
 import org.spongepowered.api.world.Location;
@@ -25,10 +23,6 @@ import com.flowpowered.math.vector.Vector3d;
 import com.gmail.trentech.pjc.core.ConfigManager;
 import com.gmail.trentech.pjc.core.TeleportManager;
 import com.gmail.trentech.pjp.Main;
-import com.google.common.reflect.TypeToken;
-
-import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 
 public class Coordinate implements DataSerializable {
 
@@ -130,25 +124,17 @@ public class Coordinate implements DataSerializable {
 
 	public static String serialize(Location<World> location) {
 		try {
-			StringWriter sink = new StringWriter();
-			HoconConfigurationLoader loader = HoconConfigurationLoader.builder().setSink(() -> new BufferedWriter(sink)).build();
-			ConfigurationNode node = loader.createEmptyNode();
-			node.setValue(TypeToken.of(Coordinate.class), new Coordinate(location));		
-			loader.save(node);
-			return sink.toString();
-		} catch (Exception e) {
-			e.printStackTrace();
+			return DataFormats.JSON.write(new Coordinate(location).toContainer());
+		} catch (IOException e1) {
+			e1.printStackTrace();
 			return null;
 		}
 	}
 
-	public static Optional<Location<World>> deserialize(String item) {
+	public static Optional<Location<World>> deserialize(String coordinate) {
 		try {
-			StringReader source = new StringReader(item);
-			HoconConfigurationLoader loader = HoconConfigurationLoader.builder().setSource(() -> new BufferedReader(source)).build();
-
-			return loader.load().getValue(TypeToken.of(Coordinate.class)).getLocation();
-		} catch (Exception e) {
+			return Sponge.getDataManager().deserialize(Coordinate.class, DataFormats.JSON.read(coordinate)).get().getLocation();
+		} catch (InvalidDataException | IOException e) {
 			e.printStackTrace();
 			return null;
 		}

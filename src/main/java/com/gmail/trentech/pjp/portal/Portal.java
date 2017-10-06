@@ -10,26 +10,21 @@ import static com.gmail.trentech.pjp.data.DataQueries.PROPERTIES;
 import static com.gmail.trentech.pjp.data.DataQueries.ROTATION;
 import static com.gmail.trentech.pjp.data.DataQueries.SERVER;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.io.IOException;
 import java.util.Optional;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataSerializable;
 import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.persistence.AbstractDataBuilder;
+import org.spongepowered.api.data.persistence.DataFormats;
 import org.spongepowered.api.data.persistence.InvalidDataException;
 
 import com.gmail.trentech.pjp.portal.features.Command;
 import com.gmail.trentech.pjp.portal.features.Coordinate;
 import com.gmail.trentech.pjp.portal.features.Properties;
 import com.gmail.trentech.pjp.rotation.Rotation;
-import com.google.common.reflect.TypeToken;
-
-import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 
 public abstract class Portal implements DataSerializable {
 
@@ -281,37 +276,20 @@ public abstract class Portal implements DataSerializable {
 		SIGN,
 		WARP;
 	}
-	
+
 	public static String serialize(Portal portal) {
 		try {
-			StringWriter sink = new StringWriter();
-			HoconConfigurationLoader loader = HoconConfigurationLoader.builder().setSink(() -> new BufferedWriter(sink)).build();
-			ConfigurationNode node = loader.createEmptyNode();
-			if (portal instanceof Server) {
-				node.setValue(TypeToken.of(Server.class), ((Server) portal));
-			} else {
-				node.setValue(TypeToken.of(Local.class), ((Local) portal));
-			}
-			
-			loader.save(node);
-			return sink.toString();
-		} catch (Exception e) {
-			e.printStackTrace();
+			return DataFormats.JSON.write(portal.toContainer());
+		} catch (IOException e1) {
+			e1.printStackTrace();
 			return null;
 		}
 	}
 
-	public static Portal deserialize(String item) {
+	public static Portal deserialize(String portal) {
 		try {
-			StringReader source = new StringReader(item);
-			HoconConfigurationLoader loader = HoconConfigurationLoader.builder().setSource(() -> new BufferedReader(source)).build();
-			ConfigurationNode node = loader.load();
-			try{
-				return node.getValue(TypeToken.of(Local.class));
-			} catch(Exception e) {
-				return node.getValue(TypeToken.of(Server.class));
-			}
-		} catch (Exception e) {
+			return Sponge.getDataManager().deserialize(Portal.class, DataFormats.JSON.read(portal)).get();
+		} catch (InvalidDataException | IOException e) {
 			e.printStackTrace();
 			return null;
 		}
