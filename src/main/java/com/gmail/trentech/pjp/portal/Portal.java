@@ -286,10 +286,10 @@ public abstract class Portal implements DataSerializable {
 		}
 	}
 
-	public static Portal deserialize(String portal) {
+	public static Portal deserialize(String portal, String type) {
 		try {
-			return Sponge.getDataManager().deserialize(Portal.class, DataFormats.JSON.read(portal)).get();
-		} catch (InvalidDataException | IOException e) {
+			return Sponge.getDataManager().deserialize((Class<Portal>) Class.forName(type), DataFormats.JSON.read(portal)).get();
+		} catch (InvalidDataException | IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 			return null;
 		}

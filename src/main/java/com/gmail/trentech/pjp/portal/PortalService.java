@@ -116,7 +116,7 @@ public class PortalService {
 			while (result.next()) {
 				String name = result.getString("Name");
 
-				Portal portal = Portal.deserialize(result.getString("Data"));
+				Portal portal = Portal.deserialize(result.getString("Data"), result.getString("Type"));
 				portal.setName(name);
 
 				cache.put(name, portal);
@@ -139,10 +139,11 @@ public class PortalService {
 			SQLManager sqlManager = SQLManager.get(Main.getPlugin());
 			Connection connection = sqlManager.getDataSource().getConnection();
 
-			PreparedStatement statement = connection.prepareStatement("INSERT into " + sqlManager.getPrefix("PORTALS") + " (Name, Data) VALUES (?, ?)");
+			PreparedStatement statement = connection.prepareStatement("INSERT into " + sqlManager.getPrefix("PORTALS") + " (Name, Type, Data) VALUES (?, ?, ?)");
 
 			statement.setString(1, portal.getName());
-			statement.setString(2, Portal.serialize(portal));
+			statement.setString(2, portal.getClass().getName());
+			statement.setString(3, Portal.serialize(portal));
 
 			statement.executeUpdate();
 
@@ -175,10 +176,11 @@ public class PortalService {
 			SQLManager sqlManager = SQLManager.get(Main.getPlugin());
 			Connection connection = sqlManager.getDataSource().getConnection();
 
-			PreparedStatement statement = connection.prepareStatement("UPDATE " + sqlManager.getPrefix("PORTALS") + " SET Data = ? WHERE Name = ?");
+			PreparedStatement statement = connection.prepareStatement("UPDATE " + sqlManager.getPrefix("PORTALS") + " SET Data = ?, Type=? WHERE Name = ?");
 
 			statement.setString(1, Portal.serialize(portal));
-			statement.setString(2, portal.getName());
+			statement.setString(2, portal.getClass().getName());
+			statement.setString(3, portal.getName());
 
 			statement.executeUpdate();
 
